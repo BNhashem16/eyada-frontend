@@ -1,0 +1,221 @@
+'use client';
+
+import Link from 'next/link';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  User,
+  Phone,
+  MoreVertical,
+  X,
+  Star,
+  ChevronLeft,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Appointment } from '@/types';
+import { AppointmentStatus } from '@/types/enums';
+import { formatDate, formatTime, isPast } from '@/lib/utils/date';
+import { getInitials } from '@/lib/utils';
+import { useState } from 'react';
+
+interface AppointmentCardProps {
+  appointment: Appointment;
+  onCancel?: (id: string) => void;
+  onRate?: (appointment: Appointment) => void;
+}
+
+const statusLabels: Record<AppointmentStatus, string> = {
+  [AppointmentStatus.PENDING]: 'قيد الانتظار',
+  [AppointmentStatus.CONFIRMED]: 'مؤكد',
+  [AppointmentStatus.CHECKED_IN]: 'في العيادة',
+  [AppointmentStatus.COMPLETED]: 'مكتمل',
+  [AppointmentStatus.CANCELLED]: 'ملغي',
+  [AppointmentStatus.NO_SHOW]: 'لم يحضر',
+};
+
+const statusVariants: Record<AppointmentStatus, 'warning' | 'success' | 'primary' | 'default' | 'destructive' | 'secondary'> = {
+  [AppointmentStatus.PENDING]: 'warning',
+  [AppointmentStatus.CONFIRMED]: 'success',
+  [AppointmentStatus.CHECKED_IN]: 'primary',
+  [AppointmentStatus.COMPLETED]: 'default',
+  [AppointmentStatus.CANCELLED]: 'destructive',
+  [AppointmentStatus.NO_SHOW]: 'secondary',
+};
+
+export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCardProps) {
+  const [showMenu, setShowMenu] = useState(false);
+
+  const canCancel =
+    appointment.status === AppointmentStatus.PENDING ||
+    appointment.status === AppointmentStatus.CONFIRMED;
+
+  const canRate =
+    appointment.status === AppointmentStatus.COMPLETED && !appointment.rating;
+
+  const appointmentDate = new Date(appointment.appointmentDate);
+  const isUpcoming = !isPast(appointmentDate) && canCancel;
+
+  return (
+    <Card className={`overflow-hidden ${isUpcoming ? 'border-primary-200' : ''}`}>
+      <CardContent className="p-0">
+        <div className="flex flex-col sm:flex-row">
+          {/* Date Column */}
+          <div className={`p-4 sm:p-5 sm:w-32 flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 text-center ${
+            isUpcoming ? 'bg-primary-50' : 'bg-gray-50'
+          }`}>
+            <span className={`text-3xl font-bold ${isUpcoming ? 'text-primary-600' : 'text-gray-900'}`}>
+              {formatDate(appointmentDate, 'd')}
+            </span>
+            <div className="text-sm text-gray-600">
+              <div>{formatDate(appointmentDate, 'MMM')}</div>
+              <div>{formatDate(appointmentDate, 'yyyy')}</div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 p-4 sm:p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                {/* Doctor Info */}
+                {appointment.clinic?.doctor && (
+                  <Link
+                    href={`/doctors/${appointment.clinic.doctor.id}`}
+                    className="flex items-center gap-3 mb-3 group"
+                  >
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src={appointment.clinic.doctor.user?.profilePicture || undefined}
+                      />
+                      <AvatarFallback>
+                        {getInitials(appointment.clinic.doctor.user?.name || '')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                        د. {appointment.clinic.doctor.user?.name}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {appointment.clinic.doctor.specialty?.nameAr}
+                      </p>
+                    </div>
+                  </Link>
+                )}
+
+                {/* Time */}
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                  <Clock className="h-4 w-4 text-gray-400" />
+                  <span dir="ltr">{formatTime(appointment.startTime)}</span>
+                  <span className="text-gray-300">|</span>
+                  <span>{formatDate(appointmentDate, 'EEEE')}</span>
+                </div>
+
+                {/* Clinic */}
+                {appointment.clinic && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                    <MapPin className="h-4 w-4 text-gray-400" />
+                    <span>{appointment.clinic.name}</span>
+                    {appointment.clinic.city && (
+                      <>
+                        <span className="text-gray-300">-</span>
+                        <span>{appointment.clinic.city.nameAr}</span>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Service */}
+                {appointment.service && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span className="text-gray-400">الخدمة:</span>
+                    <span>{appointment.service.nameAr || appointment.service.nameEn}</span>
+                    <Badge variant="outline" size="sm">
+                      {appointment.service.price} ج.م
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              {/* Status & Actions */}
+              <div className="flex flex-col items-end gap-2">
+                <Badge variant={statusVariants[appointment.status]}>
+                  {statusLabels[appointment.status]}
+                </Badge>
+
+                {/* Actions Menu */}
+                {(canCancel || canRate) && (
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowMenu(!showMenu)}
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+
+                    {showMenu && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-40"
+                          onClick={() => setShowMenu(false)}
+                        />
+                        <div className="absolute end-0 mt-1 w-40 rounded-lg bg-white border border-gray-200 shadow-lg z-50 py-1">
+                          {canCancel && (
+                            <button
+                              onClick={() => {
+                                setShowMenu(false);
+                                onCancel?.(appointment.id);
+                              }}
+                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error-600 hover:bg-error-50"
+                            >
+                              <X className="h-4 w-4" />
+                              إلغاء الموعد
+                            </button>
+                          )}
+                          {canRate && (
+                            <button
+                              onClick={() => {
+                                setShowMenu(false);
+                                onRate?.(appointment);
+                              }}
+                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-warning-600 hover:bg-warning-50"
+                            >
+                              <Star className="h-4 w-4" />
+                              تقييم الطبيب
+                            </button>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Rating Badge */}
+            {appointment.rating && (
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-1 text-sm">
+                  <span className="text-gray-500">تقييمك:</span>
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${
+                        i < appointment.rating!.rating
+                          ? 'fill-warning-400 text-warning-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

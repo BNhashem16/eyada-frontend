@@ -1,0 +1,254 @@
+import {
+  Role,
+  Gender,
+  AppointmentStatus,
+  PaymentStatus,
+  ServiceType,
+  DayOfWeek,
+  DoctorStatus,
+  RelationshipType,
+} from './enums';
+
+// Bilingual text support
+export interface Multilingual {
+  ar: string;
+  en: string;
+}
+
+// Base timestamps for all models
+export interface Timestamps {
+  createdAt: string;
+  updatedAt: string;
+}
+
+// User model
+export interface User extends Timestamps {
+  id: string;
+  email: string;
+  phoneNumber: string;
+  fullName: string;
+  role: Role;
+  isActive: boolean;
+  isApproved: boolean;
+  lastLoginAt?: string;
+}
+
+// Auth response from login/register
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
+
+// Auth tokens
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
+// Specialty model
+export interface Specialty extends Timestamps {
+  id: string;
+  name: Multilingual;
+  description?: Multilingual;
+  icon?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+// State (Governorate) model
+export interface State extends Timestamps {
+  id: string;
+  name: Multilingual;
+  code: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+// City model
+export interface City extends Timestamps {
+  id: string;
+  stateId: string;
+  name: Multilingual;
+  isActive: boolean;
+  sortOrder: number;
+  state?: State;
+}
+
+// Doctor Profile model
+export interface DoctorProfile extends Timestamps {
+  id: string;
+  userId: string;
+  specialtyId: string;
+  licenseNumber?: string;
+  yearsOfExperience?: number;
+  qualifications?: Multilingual;
+  bio?: Multilingual;
+  profileImage?: string;
+  showPhoneNumber: boolean;
+  showWhatsappNumber: boolean;
+  whatsappNumbers: string[];
+  status: DoctorStatus;
+  averageRating: number;
+  totalRatings: number;
+  totalAppointments: number;
+  approvedAt?: string;
+  approvedBy?: string;
+  user: User;
+  specialty: Specialty;
+  clinics?: Clinic[];
+}
+
+// Patient Profile model
+export interface PatientProfile extends Timestamps {
+  id: string;
+  userId: string;
+  dateOfBirth?: string;
+  age?: number;
+  gender?: Gender;
+  whatsappNumber?: string;
+  usePhoneAsWhatsapp: boolean;
+  bloodType?: string;
+  chronicDiseases?: string[];
+  allergies?: string[];
+  familyHeadId?: string;
+  relationshipToHead: RelationshipType;
+  user: User;
+  familyMembers?: PatientProfile[];
+}
+
+// Clinic model
+export interface Clinic extends Timestamps {
+  id: string;
+  doctorProfileId: string;
+  cityId: string;
+  name: Multilingual;
+  description?: Multilingual;
+  address: Multilingual;
+  buildingNumber?: string;
+  floorNumber?: string;
+  clinicNumber?: string;
+  landmark?: Multilingual;
+  latitude?: number;
+  longitude?: number;
+  phoneNumbers: string[];
+  whatsappNumbers: string[];
+  images: string[];
+  isActive: boolean;
+  doctorProfile?: DoctorProfile;
+  city?: City;
+  schedules?: ClinicSchedule[];
+  serviceTypes?: ClinicServiceType[];
+}
+
+// Clinic Schedule model
+export interface ClinicSchedule extends Timestamps {
+  id: string;
+  clinicId: string;
+  dayOfWeek: DayOfWeek;
+  shifts: ScheduleShift[];
+  slotDuration: number;
+  isActive: boolean;
+}
+
+// Schedule Shift
+export interface ScheduleShift {
+  startTime: string;
+  endTime: string;
+  breakTime?: string;
+}
+
+// Clinic Service Type model
+export interface ClinicServiceType extends Timestamps {
+  id: string;
+  doctorProfileId: string;
+  clinicId?: string;
+  serviceType: ServiceType;
+  name?: Multilingual;
+  price: number;
+  duration: number;
+  reVisitValidityDays?: number;
+  isActive: boolean;
+}
+
+// Appointment model
+export interface Appointment extends Timestamps {
+  id: string;
+  bookingNumber: string;
+  clinicId: string;
+  doctorProfileId: string;
+  patientProfileId: string;
+  bookedForPatientId: string;
+  serviceTypeId: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  queueNumber?: number;
+  estimatedWaitTime?: number;
+  status: AppointmentStatus;
+  paymentStatus: PaymentStatus;
+  paymentMethod?: string;
+  patientName: string;
+  patientAge?: number;
+  serviceName: Multilingual;
+  price: number;
+  patientNotes?: string;
+  symptoms?: string;
+  diagnosis?: string;
+  prescription?: string;
+  doctorNotes?: string;
+  cancellationReason?: string;
+  cancelledById?: string;
+  cancelledAt?: string;
+  bookedBy: string;
+  bookedById: string;
+  completedAt?: string;
+  clinic?: Clinic;
+  doctorProfile?: DoctorProfile;
+  patientProfile?: PatientProfile;
+  bookedForPatient?: PatientProfile;
+  serviceType?: ClinicServiceType;
+  rating?: Rating;
+}
+
+// Rating model
+export interface Rating extends Timestamps {
+  id: string;
+  appointmentId: string;
+  doctorProfileId: string;
+  patientProfileId: string;
+  rating: number;
+  review?: string;
+  isVisible: boolean;
+  appointment?: Appointment;
+  doctorProfile?: DoctorProfile;
+  patientProfile?: PatientProfile;
+}
+
+// Available slot for booking
+export interface AvailableSlot {
+  time: string;
+  isAvailable: boolean;
+}
+
+// Pagination metadata
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+// Paginated response
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
+
+// API Error response
+export interface ApiError {
+  statusCode: number;
+  message: string;
+  error?: string;
+}

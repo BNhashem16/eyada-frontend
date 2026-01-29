@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"C:/Nest/eyada\" log --oneline)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx next build)",
+      "Bash(tee:*)",
+      "Bash(echo:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 30 npm run dev:*)",
+      "Bash(npm --version:*)",
+      "Bash(\"/c/Program Files/nodejs/npm\" install)",
+      "Bash(cmd.exe /c \"cd C:\\\\Nest\\\\eyada\\\\react\\\\eyada && npm install\")",
+      "Bash(powershell.exe -Command \"cd ''C:\\\\Nest\\\\eyada\\\\react\\\\eyada''; npm install 2>&1\")"
+    ]
+  }
+}

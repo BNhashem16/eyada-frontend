@@ -1,0 +1,167 @@
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { API_BASE_URL, AUTH_ENDPOINTS } from './endpoints';
+import type { ApiError, AuthTokens } from '@/types';
+
+// Create axios instance
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 30000,
+});
+
+// Token storage keys
+const ACCESS_TOKEN_KEY = 'eyada_access_token';
+const REFRESH_TOKEN_KEY = 'eyada_refresh_token';
+
+// Token management functions
+export const tokenStorage = {
+  getAccessToken: (): string | null => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
+  },
+
+  getRefreshToken: (): string | null => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
+  },
+
+  setTokens: (tokens: AuthTokens): void => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
+    localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+  },
+
+  clearTokens: (): void => {
+    if (typeof window === 'undefined') return;
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+  },
+};
+
+// Flag to prevent multiple refresh attempts
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+// Subscribe to token refresh
+const subscribeTokenRefresh = (callback: (token: string) => void) => {
+  refreshSubscribers.push(callback);
+};
+
+// Notify subscribers with new token
+const onTokenRefreshed = (token: string) => {
+  refreshSubscribers.forEach((callback) => callback(token));
+  refreshSubscribers = [];
+};
+
+// Request interceptor - Add auth token
+apiClient.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const token = tokenStorage.getAccessToken();
+
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor - Handle token refresh
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError<ApiError>) => {
+    const originalRequest = error.config;
+
+    // If no config or no response, reject
+    if (!originalRequest || !error.response) {
+      return Promise.reject(error);
+    }
+
+    // If 401 and not a refresh request
+    if (
+      error.response.status === 401 &&
+      !originalRequest.url?.includes(AUTH_ENDPOINTS.REFRESH) &&
+      !originalRequest.url?.includes(AUTH_ENDPOINTS.LOGIN)
+    ) {
+      const refreshToken = tokenStorage.getRefreshToken();
+
+      if (!refreshToken) {
+        tokenStorage.clearTokens();
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        // Wait for the refresh to complete
+        return new Promise((resolve) => {
+          subscribeTokenRefresh((token: string) => {
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            resolve(apiClient(originalRequest));
+          });
+        });
+      }
+
+      isRefreshing = true;
+
+      try {
+        const response = await axios.post<AuthTokens>(
+          `${API_BASE_URL}${AUTH_ENDPOINTS.REFRESH}`,
+          { refreshToken }
+        );
+
+        const { accessToken, refreshToken: newRefreshToken } = response.data;
+
+        tokenStorage.setTokens({
+          accessToken,
+          refreshToken: newRefreshToken,
+        });
+
+        isRefreshing = false;
+        onTokenRefreshed(accessToken);
+
+        // Retry original request
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        tokenStorage.clearTokens();
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+// Helper function for API calls
+export async function apiGet<T>(url: string, params?: Record<string, unknown>): Promise<T> {
+  const response = await apiClient.get<T>(url, { params });
+  return response.data;
+}
+
+export async function apiPost<T>(url: string, data?: unknown): Promise<T> {
+  const response = await apiClient.post<T>(url, data);
+  return response.data;
+}
+
+export async function apiPatch<T>(url: string, data?: unknown): Promise<T> {
+  const response = await apiClient.patch<T>(url, data);
+  return response.data;
+}
+
+export async function apiDelete<T>(url: string): Promise<T> {
+  const response = await apiClient.delete<T>(url);
+  return response.data;
+}
+
+export default apiClient;
