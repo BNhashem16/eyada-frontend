@@ -19,8 +19,9 @@ import {
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuthStore } from '@/lib/auth/store';
+import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
 import { getInitials } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const navLinks = [
   { href: '/doctors', label: 'الأطباء', icon: Stethoscope },
@@ -36,6 +37,7 @@ export default function PublicLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuthStore();
+  const isHydrated = useIsHydrated();
 
   const getDashboardLink = () => {
     switch (user?.role) {
@@ -91,7 +93,9 @@ export default function PublicLayout({
 
             {/* Auth Buttons / User Menu */}
             <div className="flex items-center gap-3">
-              {isAuthenticated && user ? (
+              {!isHydrated ? (
+                <Skeleton className="h-8 w-24" />
+              ) : isAuthenticated && user ? (
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -201,7 +205,7 @@ export default function PublicLayout({
                   </Link>
                 );
               })}
-              {!isAuthenticated && (
+              {isHydrated && !isAuthenticated && (
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}

@@ -31,6 +31,9 @@ export interface User extends Timestamps {
   isActive: boolean;
   isApproved: boolean;
   lastLoginAt?: string;
+  profilePicture?: string;
+  // Alias for fullName (some components use name)
+  name?: string;
 }
 
 // Auth response from login/register

@@ -76,20 +76,20 @@ export function ProtectedRoute({
  */
 export function GuestRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, isAuthenticated, isLoading } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
   const isHydrated = useIsHydrated();
 
   useEffect(() => {
     if (!isHydrated) return;
 
-    if (!isLoading && isAuthenticated && user) {
+    if (isAuthenticated && user) {
       const dashboardPath = getRoleDashboard(user.role);
       router.replace(dashboardPath);
     }
-  }, [isHydrated, isAuthenticated, isLoading, user, router]);
+  }, [isHydrated, isAuthenticated, user, router]);
 
-  // Show nothing while checking
-  if (!isHydrated || isLoading) {
+  // Show loading only while hydrating (not during login)
+  if (!isHydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />

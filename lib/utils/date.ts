@@ -1,6 +1,6 @@
-import { format, parseISO, isValid, formatDistance, isToday, isBefore, isSameDay, addDays } from 'date-fns';
+import { format, parseISO, isValid, formatDistance, isToday, isBefore, isSameDay, addDays, isPast } from 'date-fns';
 
-export { isToday, isBefore, isSameDay, addDays };
+export { isToday, isBefore, isSameDay, addDays, isPast };
 import { ar, enUS } from 'date-fns/locale';
 
 export type SupportedLocale = 'ar' | 'en';

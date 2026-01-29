@@ -53,22 +53,43 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
 
         try {
-          const response = await apiPost<AuthResponse>(
+          const response = await apiPost<any>(
             AUTH_ENDPOINTS.LOGIN,
             credentials
           );
 
+          // Debug: log the response to see its structure
+          console.log('Login response:', JSON.stringify(response, null, 2));
+
+          // Handle different response structures
+          const data = response.data || response;
+          const accessToken = data.accessToken || data.access_token;
+          const refreshToken = data.refreshToken || data.refresh_token;
+          const userData = data.user;
+
+          if (!accessToken || !userData) {
+            console.error('Invalid response structure:', response);
+            throw new Error('Invalid login response');
+          }
+
           tokenStorage.setTokens({
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
+            accessToken,
+            refreshToken,
           });
 
+          // Add name alias for fullName
+          const user = {
+            ...userData,
+            name: userData.fullName || userData.full_name || userData.name || '',
+          };
+
           set({
-            user: response.user,
+            user,
             isAuthenticated: true,
             isLoading: false,
           });
         } catch (error) {
+          console.error('Login error:', error);
           set({ isLoading: false });
           throw error;
         }
@@ -88,8 +109,14 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: response.refreshToken,
           });
 
+          // Add name alias for fullName
+          const user = {
+            ...response.user,
+            name: response.user.fullName,
+          };
+
           set({
-            user: response.user,
+            user,
             isAuthenticated: true,
             isLoading: false,
           });
@@ -141,8 +168,13 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           const response = await apiClient.get<User>(AUTH_ENDPOINTS.ME);
+          // Add name alias for fullName
+          const user = {
+            ...response.data,
+            name: response.data.fullName,
+          };
           set({
-            user: response.data,
+            user,
             isAuthenticated: true,
             isLoading: false,
           });
@@ -171,6 +203,10 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
+        // Add name alias if missing (for backwards compatibility)
+        if (state?.user && !state.user.name && state.user.fullName) {
+          state.user.name = state.user.fullName;
+        }
         state?.setHydrated();
       },
     }
