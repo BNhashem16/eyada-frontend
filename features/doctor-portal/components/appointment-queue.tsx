@@ -146,12 +146,12 @@ export function AppointmentQueue() {
             </div>
 
             {/* Clinic Filter */}
-            <Select value={selectedClinic} onValueChange={setSelectedClinic}>
+            <Select value={selectedClinic || 'all'} onValueChange={(v) => setSelectedClinic(v === 'all' ? '' : v)}>
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="كل العيادات" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">كل العيادات</SelectItem>
+                <SelectItem value="all">كل العيادات</SelectItem>
                 {clinics?.map((clinic) => (
                   <SelectItem key={clinic.id} value={clinic.id}>
                     {clinic.name}
@@ -162,14 +162,14 @@ export function AppointmentQueue() {
 
             {/* Status Filter */}
             <Select
-              value={statusFilter}
-              onValueChange={(v) => setStatusFilter(v as AppointmentStatus | '')}
+              value={statusFilter || 'all'}
+              onValueChange={(v) => setStatusFilter(v === 'all' ? '' : v as AppointmentStatus)}
             >
               <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder="كل الحالات" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">كل الحالات</SelectItem>
+                <SelectItem value="all">كل الحالات</SelectItem>
                 {Object.entries(statusLabels).map(([status, label]) => (
                   <SelectItem key={status} value={status}>
                     {label}

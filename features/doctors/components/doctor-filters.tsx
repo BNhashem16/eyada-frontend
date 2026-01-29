@@ -41,11 +41,12 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
     const fetchData = async () => {
       try {
         const [specialtiesRes, statesRes] = await Promise.all([
-          apiGet<Specialty[]>(PUBLIC_ENDPOINTS.SPECIALTIES),
-          apiGet<State[]>(PUBLIC_ENDPOINTS.STATES),
+          apiGet<{ data: Specialty[] } | Specialty[]>(PUBLIC_ENDPOINTS.SPECIALTIES),
+          apiGet<{ data: State[] } | State[]>(PUBLIC_ENDPOINTS.STATES),
         ]);
-        setSpecialties(specialtiesRes);
-        setStates(statesRes);
+        // Handle both { data: [...] } and [...] response formats
+        setSpecialties(Array.isArray(specialtiesRes) ? specialtiesRes : specialtiesRes.data || []);
+        setStates(Array.isArray(statesRes) ? statesRes : statesRes.data || []);
       } catch (error) {
         console.error('Failed to fetch filter data:', error);
       }
@@ -58,10 +59,10 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
     if (filters.stateId) {
       const fetchCities = async () => {
         try {
-          const citiesRes = await apiGet<City[]>(
+          const citiesRes = await apiGet<{ data: City[] } | City[]>(
             `${PUBLIC_ENDPOINTS.CITIES}?stateId=${filters.stateId}`
           );
-          setCities(citiesRes);
+          setCities(Array.isArray(citiesRes) ? citiesRes : citiesRes.data || []);
         } catch (error) {
           console.error('Failed to fetch cities:', error);
         }
@@ -105,14 +106,14 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
 
       {/* Specialty */}
       <Select
-        value={filters.specialtyId || ''}
-        onValueChange={(value) => handleFilterChange('specialtyId', value || undefined)}
+        value={filters.specialtyId || 'all'}
+        onValueChange={(value) => handleFilterChange('specialtyId', value === 'all' ? undefined : value)}
       >
         <SelectTrigger className="bg-white">
           <SelectValue placeholder="التخصص" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">كل التخصصات</SelectItem>
+          <SelectItem value="all">كل التخصصات</SelectItem>
           {specialties.map((specialty) => (
             <SelectItem key={specialty.id} value={specialty.id}>
               {specialty.nameAr || specialty.nameEn}
@@ -123,14 +124,14 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
 
       {/* State */}
       <Select
-        value={filters.stateId || ''}
-        onValueChange={(value) => handleFilterChange('stateId', value || undefined)}
+        value={filters.stateId || 'all'}
+        onValueChange={(value) => handleFilterChange('stateId', value === 'all' ? undefined : value)}
       >
         <SelectTrigger className="bg-white">
           <SelectValue placeholder="المحافظة" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">كل المحافظات</SelectItem>
+          <SelectItem value="all">كل المحافظات</SelectItem>
           {states.map((state) => (
             <SelectItem key={state.id} value={state.id}>
               {state.nameAr || state.nameEn}
@@ -141,15 +142,15 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
 
       {/* City */}
       <Select
-        value={filters.cityId || ''}
-        onValueChange={(value) => handleFilterChange('cityId', value || undefined)}
+        value={filters.cityId || 'all'}
+        onValueChange={(value) => handleFilterChange('cityId', value === 'all' ? undefined : value)}
         disabled={!filters.stateId}
       >
         <SelectTrigger className="bg-white">
           <SelectValue placeholder="المدينة" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">كل المدن</SelectItem>
+          <SelectItem value="all">كل المدن</SelectItem>
           {cities.map((city) => (
             <SelectItem key={city.id} value={city.id}>
               {city.nameAr || city.nameEn}
@@ -160,14 +161,14 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
 
       {/* Rating */}
       <Select
-        value={filters.minRating?.toString() || ''}
-        onValueChange={(value) => handleFilterChange('minRating', value ? Number(value) : undefined)}
+        value={filters.minRating?.toString() || 'all'}
+        onValueChange={(value) => handleFilterChange('minRating', value === 'all' ? undefined : Number(value))}
       >
         <SelectTrigger className="bg-white">
           <SelectValue placeholder="التقييم" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">كل التقييمات</SelectItem>
+          <SelectItem value="all">كل التقييمات</SelectItem>
           <SelectItem value="4">4+ نجوم</SelectItem>
           <SelectItem value="3">3+ نجوم</SelectItem>
           <SelectItem value="2">2+ نجوم</SelectItem>
@@ -176,14 +177,14 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
 
       {/* Sort */}
       <Select
-        value={filters.sortBy || ''}
-        onValueChange={(value) => handleFilterChange('sortBy', value || undefined)}
+        value={filters.sortBy || 'all'}
+        onValueChange={(value) => handleFilterChange('sortBy', value === 'all' ? undefined : value)}
       >
         <SelectTrigger className="bg-white">
           <SelectValue placeholder="ترتيب حسب" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">الأكثر صلة</SelectItem>
+          <SelectItem value="all">الأكثر صلة</SelectItem>
           <SelectItem value="rating">الأعلى تقييماً</SelectItem>
           <SelectItem value="experience">الأكثر خبرة</SelectItem>
           <SelectItem value="price">السعر (الأقل)</SelectItem>

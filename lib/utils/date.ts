@@ -1,4 +1,6 @@
-import { format, parseISO, isValid, formatDistance } from 'date-fns';
+import { format, parseISO, isValid, formatDistance, isToday, isBefore, isSameDay, addDays } from 'date-fns';
+
+export { isToday, isBefore, isSameDay, addDays };
 import { ar, enUS } from 'date-fns/locale';
 
 export type SupportedLocale = 'ar' | 'en';
@@ -79,4 +81,20 @@ export function getDayName(
     en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   };
   return days[locale][dayIndex] || '';
+}
+
+/**
+ * Format relative date (alias for getRelativeTime)
+ */
+export const formatRelativeDate = getRelativeTime;
+
+/**
+ * Get an array of dates for the week starting from a given date
+ */
+export function getWeekDays(startDate: Date, count: number = 7): Date[] {
+  const days: Date[] = [];
+  for (let i = 0; i < count; i++) {
+    days.push(addDays(startDate, i));
+  }
+  return days;
 }
