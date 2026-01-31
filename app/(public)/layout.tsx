@@ -6,8 +6,6 @@ import {
   Search,
   Stethoscope,
   Building2,
-  Calendar,
-  User,
   Menu,
   X,
   LogIn,
@@ -15,6 +13,7 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronDown,
+  Grid3X3,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -22,9 +21,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
 import { getInitials } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ThemeToggle } from '@/components/common/theme-toggle';
 
 const navLinks = [
-  { href: '/specialties', label: 'التخصصات', icon: Search },
+  { href: '/specialties', label: 'التخصصات', icon: Grid3X3 },
   { href: '/doctors', label: 'الأطباء', icon: Stethoscope },
   { href: '/clinics', label: 'العيادات', icon: Building2 },
 ];
@@ -39,9 +39,6 @@ export default function PublicLayout({
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuthStore();
   const isHydrated = useIsHydrated();
-
-  // Debug: log auth state
-  console.log('Auth state:', { isHydrated, isAuthenticated, user });
 
   const getDashboardLink = () => {
     switch (user?.role) {
@@ -59,9 +56,9 @@ export default function PublicLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
@@ -69,7 +66,7 @@ export default function PublicLayout({
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">عيادة</span>
+              <span className="text-xl font-bold text-foreground">عيادة</span>
             </Link>
 
             {/* Desktop Nav */}
@@ -84,8 +81,8 @@ export default function PublicLayout({
                     href={link.href}
                     className={`flex items-center gap-2 text-sm font-medium transition-colors ${
                       isActive
-                        ? 'text-primary-600'
-                        : 'text-gray-600 hover:text-primary-600'
+                        ? 'text-primary-600 dark:text-primary-400'
+                        : 'text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -96,14 +93,17 @@ export default function PublicLayout({
             </nav>
 
             {/* Auth Buttons / User Menu */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
               {!isHydrated ? (
                 <Skeleton className="h-8 w-24" />
               ) : isAuthenticated && user ? (
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-accent transition-colors"
                   >
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user.profilePicture || undefined} />
@@ -111,10 +111,10 @@ export default function PublicLayout({
                         {getInitials(user.name || '')}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden sm:block text-sm font-medium text-gray-700 max-w-[120px] truncate">
+                    <span className="hidden sm:block text-sm font-medium text-foreground max-w-[120px] truncate">
                       {user.name}
                     </span>
-                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </button>
 
                   {/* User Dropdown */}
@@ -124,17 +124,17 @@ export default function PublicLayout({
                         className="fixed inset-0 z-40"
                         onClick={() => setUserMenuOpen(false)}
                       />
-                      <div className="absolute end-0 mt-2 w-56 rounded-lg bg-white border border-gray-200 shadow-lg z-50 py-1">
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-sm font-medium text-gray-900">
+                      <div className="absolute end-0 mt-2 w-56 rounded-lg bg-card border border-border shadow-lg z-50 py-1">
+                        <div className="px-4 py-3 border-b border-border">
+                          <p className="text-sm font-medium text-foreground">
                             {user.name}
                           </p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
+                          <p className="text-xs text-muted-foreground">{user.email}</p>
                         </div>
                         <Link
                           href={getDashboardLink()}
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-accent"
                         >
                           <LayoutDashboard className="h-4 w-4" />
                           لوحة التحكم
@@ -144,7 +144,7 @@ export default function PublicLayout({
                             logout();
                             setUserMenuOpen(false);
                           }}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-error-600 hover:bg-error-50 w-full"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 w-full"
                         >
                           <LogOut className="h-4 w-4" />
                           تسجيل الخروج
@@ -172,7 +172,7 @@ export default function PublicLayout({
 
               {/* Mobile Menu Button */}
               <button
-                className="md:hidden p-2 text-gray-600"
+                className="md:hidden p-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? (
@@ -187,7 +187,7 @@ export default function PublicLayout({
 
         {/* Mobile Nav */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
+          <div className="md:hidden border-t border-border bg-card">
             <nav className="container mx-auto px-4 py-4 space-y-2">
               {navLinks.map((link) => {
                 const Icon = link.icon;
@@ -200,8 +200,8 @@ export default function PublicLayout({
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${
                       isActive
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                        : 'text-muted-foreground hover:bg-accent'
                     }`}
                   >
                     <Icon className="h-5 w-5" />
@@ -213,7 +213,7 @@ export default function PublicLayout({
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-accent"
                 >
                   <LogIn className="h-5 w-5" />
                   تسجيل الدخول
@@ -228,7 +228,7 @@ export default function PublicLayout({
       <main>{children}</main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white mt-16">
+      <footer className="bg-gray-900 dark:bg-gray-950 text-white mt-16">
         <div className="container mx-auto px-4 py-12">
           <div className="grid gap-8 md:grid-cols-4">
             {/* Logo & Description */}

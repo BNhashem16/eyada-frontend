@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProtectedRoute } from '@/lib/auth/guards';
 import { useAuthStore } from '@/lib/auth/store';
 import { getInitials } from '@/lib/utils';
+import { ThemeToggle } from '@/components/common/theme-toggle';
 
 const menuItems = [
   { href: '/admin/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
@@ -32,9 +33,9 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuthStore();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-slate-900 text-white">
+      <header className="sticky top-0 z-40 bg-gray-900 dark:bg-gray-950 text-white">
         <div className="flex h-16 items-center justify-between px-4">
           {/* Logo */}
           <div className="flex items-center gap-4">
@@ -57,6 +58,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
           {/* User Info */}
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <div className="flex items-center gap-2">
               <Avatar className="h-9 w-9 border-2 border-primary-500">
                 <AvatarImage src={user?.profilePicture || undefined} />
@@ -77,7 +79,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
       <div className="flex">
         {/* Sidebar - Desktop */}
-        <aside className="hidden lg:block w-64 bg-slate-800 text-white min-h-[calc(100vh-4rem)]">
+        <aside className="hidden lg:block w-64 bg-gray-800 dark:bg-gray-900 text-white min-h-[calc(100vh-4rem)]">
           <nav className="p-4 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -92,7 +94,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                     isActive
                       ? 'bg-primary-600 text-white'
-                      : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -101,11 +103,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               );
             })}
 
-            <div className="my-4 border-t border-slate-700" />
+            <div className="my-4 border-t border-gray-700" />
 
             <button
               onClick={() => logout()}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               <LogOut className="h-5 w-5" />
               تسجيل الخروج
@@ -120,8 +122,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               className="absolute inset-0 bg-black/50"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="absolute inset-y-0 start-0 w-72 bg-slate-800 text-white">
-              <div className="flex items-center justify-between p-4 border-b border-slate-700">
+            <aside className="absolute inset-y-0 start-0 w-72 bg-gray-800 dark:bg-gray-900 text-white">
+              <div className="flex items-center justify-between p-4 border-b border-gray-700">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-10 w-10 border-2 border-primary-500">
                     <AvatarImage src={user?.profilePicture || undefined} />
@@ -154,7 +156,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                         isActive
                           ? 'bg-primary-600 text-white'
-                          : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                          : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                       }`}
                     >
                       <Icon className="h-5 w-5" />
@@ -163,14 +165,14 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   );
                 })}
 
-                <div className="my-4 border-t border-slate-700" />
+                <div className="my-4 border-t border-gray-700" />
 
                 <button
                   onClick={() => {
                     logout();
                     setSidebarOpen(false);
                   }}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   <LogOut className="h-5 w-5" />
                   تسجيل الخروج

@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProtectedRoute } from '@/lib/auth/guards';
 import { useAuthStore } from '@/lib/auth/store';
 import { getInitials } from '@/lib/utils';
+import { ThemeToggle } from '@/components/common/theme-toggle';
 
 const menuItems = [
   { href: '/secretary/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
@@ -27,14 +28,14 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuthStore();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="flex h-16 items-center justify-between px-4">
           {/* Logo */}
           <div className="flex items-center gap-4">
             <button
-              className="lg:hidden p-2 text-gray-600"
+              className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               <Menu className="h-6 w-6" />
@@ -43,12 +44,13 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 hidden sm:block">عيادة</span>
+              <span className="text-xl font-bold text-foreground hidden sm:block">عيادة</span>
             </Link>
           </div>
 
           {/* User Info */}
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <div className="flex items-center gap-2">
               <Avatar className="h-9 w-9">
                 <AvatarImage src={user?.profilePicture || undefined} />
@@ -57,10 +59,10 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-700 max-w-[150px] truncate">
+                <p className="text-sm font-medium text-foreground max-w-[150px] truncate">
                   {user?.name}
                 </p>
-                <p className="text-xs text-gray-500">سكرتير</p>
+                <p className="text-xs text-muted-foreground">سكرتير</p>
               </div>
             </div>
           </div>
@@ -69,7 +71,7 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
 
       <div className="flex">
         {/* Sidebar - Desktop */}
-        <aside className="hidden lg:block w-64 bg-white border-e border-gray-200 min-h-[calc(100vh-4rem)]">
+        <aside className="hidden lg:block w-64 bg-card border-e border-border min-h-[calc(100vh-4rem)]">
           <nav className="p-4 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -83,8 +85,8 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-primary-50 text-primary-600 font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
+                      : 'text-muted-foreground hover:bg-accent'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -93,11 +95,11 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
               );
             })}
 
-            <div className="my-4 border-t border-gray-200" />
+            <div className="my-4 border-t border-border" />
 
             <button
               onClick={() => logout()}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 hover:bg-error-50 transition-colors"
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors"
             >
               <LogOut className="h-5 w-5" />
               تسجيل الخروج
@@ -112,20 +114,20 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
               className="absolute inset-0 bg-black/50"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="absolute inset-y-0 start-0 w-72 bg-white">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <aside className="absolute inset-y-0 start-0 w-72 bg-card">
+              <div className="flex items-center justify-between p-4 border-b border-border">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={user?.profilePicture || undefined} />
                     <AvatarFallback>{getInitials(user?.name || '')}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold text-gray-900">{user?.name}</p>
-                    <p className="text-sm text-gray-500">سكرتير</p>
+                    <p className="font-semibold text-foreground">{user?.name}</p>
+                    <p className="text-sm text-muted-foreground">سكرتير</p>
                   </div>
                 </div>
                 <button onClick={() => setSidebarOpen(false)}>
-                  <X className="h-6 w-6 text-gray-400" />
+                  <X className="h-6 w-6 text-muted-foreground" />
                 </button>
               </div>
 
@@ -143,8 +145,8 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                         isActive
-                          ? 'bg-primary-50 text-primary-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
+                          ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
+                          : 'text-muted-foreground hover:bg-accent'
                       }`}
                     >
                       <Icon className="h-5 w-5" />
@@ -153,14 +155,14 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
                   );
                 })}
 
-                <div className="my-4 border-t border-gray-200" />
+                <div className="my-4 border-t border-border" />
 
                 <button
                   onClick={() => {
                     logout();
                     setSidebarOpen(false);
                   }}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 hover:bg-error-50"
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
                 >
                   <LogOut className="h-5 w-5" />
                   تسجيل الخروج

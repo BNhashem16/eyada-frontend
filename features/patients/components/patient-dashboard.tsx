@@ -65,12 +65,12 @@ export function PatientDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-primary-100 flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-primary-600" />
+              <div className="h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">المواعيد القادمة</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">المواعيد القادمة</p>
+                <p className="text-2xl font-bold text-foreground">
                   {isLoading ? '-' : upcomingAppointments.length}
                 </p>
               </div>
@@ -81,12 +81,12 @@ export function PatientDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-success-100 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-success-600" />
+              <div className="h-12 w-12 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">المواعيد المكتملة</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">المواعيد المكتملة</p>
+                <p className="text-2xl font-bold text-foreground">
                   {isLoading
                     ? '-'
                     : appointments.filter((a) => a.status === AppointmentStatus.COMPLETED)
@@ -101,12 +101,12 @@ export function PatientDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-lg bg-warning-100 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-warning-600" />
+                <div className="h-12 w-12 rounded-lg bg-warning-100 dark:bg-warning-900/30 flex items-center justify-center">
+                  <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">تنبيه</p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="text-sm text-muted-foreground">تنبيه</p>
+                  <p className="font-semibold text-foreground">
                     {upcomingAppointments.length > 0
                       ? `لديك ${upcomingAppointments.length} موعد قادم`
                       : 'لا توجد مواعيد قادمة'}
@@ -128,7 +128,7 @@ export function PatientDashboard() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary-600" />
+            <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             المواعيد القادمة
           </CardTitle>
           <Button asChild variant="ghost" size="sm">
@@ -142,7 +142,7 @@ export function PatientDashboard() {
           {isLoading ? (
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div key={i} className="flex items-center gap-4 p-3 bg-muted rounded-lg">
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-5 w-32" />
@@ -160,7 +160,7 @@ export function PatientDashboard() {
                 return (
                   <div
                     key={appointment.id}
-                    className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-4 p-3 bg-muted rounded-lg hover:bg-accent transition-colors"
                   >
                     <Avatar className="h-12 w-12">
                       <AvatarImage
@@ -171,10 +171,10 @@ export function PatientDashboard() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900 truncate">
+                      <p className="font-semibold text-foreground truncate">
                         د. {appointment.clinic?.doctor?.user?.name}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {formatDate(date, 'EEEE, d MMMM')} -{' '}
                         <span dir="ltr">{formatTime(appointment.startTime)}</span>
                       </p>
@@ -194,8 +194,8 @@ export function PatientDashboard() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <Calendar className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-600">لا توجد مواعيد قادمة</p>
+              <Calendar className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">لا توجد مواعيد قادمة</p>
               <Button asChild className="mt-4">
                 <Link href="/doctors">احجز موعد الآن</Link>
               </Button>
@@ -207,46 +207,46 @@ export function PatientDashboard() {
       {/* Quick Actions */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Link href="/doctors">
-          <Card className="hover:border-primary-300 hover:shadow-md transition-all cursor-pointer h-full">
+          <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-primary-100 flex items-center justify-center">
-                <Stethoscope className="h-7 w-7 text-primary-600" />
+              <div className="h-14 w-14 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                <Stethoscope className="h-7 w-7 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">ابحث عن طبيب</h3>
-                <p className="text-sm text-gray-500">تصفح الأطباء واحجز موعد</p>
+                <h3 className="font-semibold text-foreground">ابحث عن طبيب</h3>
+                <p className="text-sm text-muted-foreground">تصفح الأطباء واحجز موعد</p>
               </div>
-              <ChevronLeft className="h-5 w-5 text-gray-400 ms-auto" />
+              <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
           </Card>
         </Link>
 
         <Link href="/patient/profile">
-          <Card className="hover:border-primary-300 hover:shadow-md transition-all cursor-pointer h-full">
+          <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-secondary-100 flex items-center justify-center">
-                <User className="h-7 w-7 text-secondary-600" />
+              <div className="h-14 w-14 rounded-xl bg-secondary-100 dark:bg-secondary-900/30 flex items-center justify-center">
+                <User className="h-7 w-7 text-secondary-600 dark:text-secondary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">الملف الشخصي</h3>
-                <p className="text-sm text-gray-500">تحديث بياناتك الشخصية</p>
+                <h3 className="font-semibold text-foreground">الملف الشخصي</h3>
+                <p className="text-sm text-muted-foreground">تحديث بياناتك الشخصية</p>
               </div>
-              <ChevronLeft className="h-5 w-5 text-gray-400 ms-auto" />
+              <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
           </Card>
         </Link>
 
         <Link href="/patient/family">
-          <Card className="hover:border-primary-300 hover:shadow-md transition-all cursor-pointer h-full">
+          <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-warning-100 flex items-center justify-center">
-                <Users className="h-7 w-7 text-warning-600" />
+              <div className="h-14 w-14 rounded-xl bg-warning-100 dark:bg-warning-900/30 flex items-center justify-center">
+                <Users className="h-7 w-7 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">أفراد العائلة</h3>
-                <p className="text-sm text-gray-500">إدارة أفراد عائلتك</p>
+                <h3 className="font-semibold text-foreground">أفراد العائلة</h3>
+                <p className="text-sm text-muted-foreground">إدارة أفراد عائلتك</p>
               </div>
-              <ChevronLeft className="h-5 w-5 text-gray-400 ms-auto" />
+              <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
           </Card>
         </Link>

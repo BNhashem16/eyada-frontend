@@ -49,14 +49,14 @@ export function SpecialtyCard({ specialty }: SpecialtyCardProps) {
 
   return (
     <Link href={`/doctors?specialtyId=${specialty.id}`}>
-      <Card className="group h-full hover:shadow-lg hover:border-primary-200 transition-all duration-200 cursor-pointer">
+      <Card className="group h-full hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800 transition-all duration-200 cursor-pointer">
         <CardContent className="p-6 flex flex-col items-center text-center">
-          <div className="h-16 w-16 rounded-2xl bg-primary-100 flex items-center justify-center mb-4 group-hover:bg-primary-200 transition-colors">
-            <Icon className="h-8 w-8 text-primary-600" />
+          <div className="h-16 w-16 rounded-2xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mb-4 group-hover:bg-primary-200 dark:group-hover:bg-primary-800/40 transition-colors">
+            <Icon className="h-8 w-8 text-primary-600 dark:text-primary-400" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">{name}</h3>
+          <h3 className="text-lg font-bold text-foreground mb-2">{name}</h3>
           {description && (
-            <p className="text-sm text-gray-500 line-clamp-2">{description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
           )}
         </CardContent>
       </Card>

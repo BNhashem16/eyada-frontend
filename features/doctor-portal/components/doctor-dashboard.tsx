@@ -92,12 +92,12 @@ export function DoctorDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-warning-100 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-warning-600" />
+              <div className="h-12 w-12 rounded-lg bg-warning-100 dark:bg-warning-900/30 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">بانتظار التأكيد</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">بانتظار التأكيد</p>
+                <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : pendingCount}
                 </p>
               </div>
@@ -108,12 +108,12 @@ export function DoctorDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-primary-100 flex items-center justify-center">
-                <Users className="h-6 w-6 text-primary-600" />
+              <div className="h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">في الانتظار</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">في الانتظار</p>
+                <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : confirmedCount + checkedInCount}
                 </p>
               </div>
@@ -124,12 +124,12 @@ export function DoctorDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-success-100 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-success-600" />
+              <div className="h-12 w-12 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">مكتمل اليوم</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">مكتمل اليوم</p>
+                <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : completedCount}
                 </p>
               </div>
@@ -140,12 +140,12 @@ export function DoctorDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-lg bg-secondary-100 flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-secondary-600" />
+              <div className="h-12 w-12 rounded-lg bg-secondary-100 dark:bg-secondary-900/30 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-secondary-600 dark:text-secondary-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">إجمالي اليوم</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-muted-foreground">إجمالي اليوم</p>
+                <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : appointments.length}
                 </p>
               </div>
@@ -158,7 +158,7 @@ export function DoctorDashboard() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary-600" />
+            <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             قائمة الانتظار
           </CardTitle>
           <Button asChild variant="ghost" size="sm">
@@ -172,7 +172,7 @@ export function DoctorDashboard() {
           {appointmentsLoading ? (
             <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div key={i} className="flex items-center gap-4 p-3 bg-muted rounded-lg">
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-5 w-32" />
@@ -188,12 +188,12 @@ export function DoctorDashboard() {
                 <div
                   key={appointment.id}
                   className={`flex items-center gap-4 p-3 rounded-lg ${
-                    index === 0 ? 'bg-primary-50 border border-primary-200' : 'bg-gray-50'
+                    index === 0 ? 'bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800' : 'bg-muted'
                   }`}
                 >
                   <div
                     className={`h-8 w-8 rounded-full flex items-center justify-center font-bold ${
-                      index === 0 ? 'bg-primary-500 text-white' : 'bg-gray-200 text-gray-600'
+                      index === 0 ? 'bg-primary-500 text-white' : 'bg-muted-foreground/20 text-muted-foreground'
                     }`}
                   >
                     {index + 1}
@@ -207,10 +207,10 @@ export function DoctorDashboard() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 truncate">
+                    <p className="font-semibold text-foreground truncate">
                       {appointment.patient?.user?.name}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       <span dir="ltr">{formatTime(appointment.startTime)}</span>
                       {' - '}
                       {appointment.service?.nameAr || appointment.service?.nameEn}
@@ -230,8 +230,8 @@ export function DoctorDashboard() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <Users className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-600">لا يوجد مرضى في قائمة الانتظار</p>
+              <Users className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">لا يوجد مرضى في قائمة الانتظار</p>
             </div>
           )}
         </CardContent>
@@ -240,46 +240,46 @@ export function DoctorDashboard() {
       {/* Quick Actions */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Link href="/doctor/appointments">
-          <Card className="hover:border-primary-300 hover:shadow-md transition-all cursor-pointer h-full">
+          <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-primary-100 flex items-center justify-center">
-                <Calendar className="h-7 w-7 text-primary-600" />
+              <div className="h-14 w-14 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                <Calendar className="h-7 w-7 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">المواعيد</h3>
-                <p className="text-sm text-gray-500">إدارة مواعيد المرضى</p>
+                <h3 className="font-semibold text-foreground">المواعيد</h3>
+                <p className="text-sm text-muted-foreground">إدارة مواعيد المرضى</p>
               </div>
-              <ChevronLeft className="h-5 w-5 text-gray-400 ms-auto" />
+              <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
           </Card>
         </Link>
 
         <Link href="/doctor/clinics">
-          <Card className="hover:border-primary-300 hover:shadow-md transition-all cursor-pointer h-full">
+          <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-secondary-100 flex items-center justify-center">
-                <Building2 className="h-7 w-7 text-secondary-600" />
+              <div className="h-14 w-14 rounded-xl bg-secondary-100 dark:bg-secondary-900/30 flex items-center justify-center">
+                <Building2 className="h-7 w-7 text-secondary-600 dark:text-secondary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">العيادات</h3>
-                <p className="text-sm text-gray-500">إدارة العيادات والمواعيد</p>
+                <h3 className="font-semibold text-foreground">العيادات</h3>
+                <p className="text-sm text-muted-foreground">إدارة العيادات والمواعيد</p>
               </div>
-              <ChevronLeft className="h-5 w-5 text-gray-400 ms-auto" />
+              <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
           </Card>
         </Link>
 
         <Link href="/doctor/profile">
-          <Card className="hover:border-primary-300 hover:shadow-md transition-all cursor-pointer h-full">
+          <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-warning-100 flex items-center justify-center">
-                <Star className="h-7 w-7 text-warning-600" />
+              <div className="h-14 w-14 rounded-xl bg-warning-100 dark:bg-warning-900/30 flex items-center justify-center">
+                <Star className="h-7 w-7 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">الملف الشخصي</h3>
-                <p className="text-sm text-gray-500">تحديث بياناتك والتقييمات</p>
+                <h3 className="font-semibold text-foreground">الملف الشخصي</h3>
+                <p className="text-sm text-muted-foreground">تحديث بياناتك والتقييمات</p>
               </div>
-              <ChevronLeft className="h-5 w-5 text-gray-400 ms-auto" />
+              <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
           </Card>
         </Link>

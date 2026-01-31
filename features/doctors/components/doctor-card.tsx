@@ -18,18 +18,18 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
   const totalRatings = doctor.totalRatings ?? 0;
 
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary-200">
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800">
       <CardContent className="p-0">
         <div className="flex flex-col sm:flex-row">
           {/* Doctor Image */}
-          <div className="relative h-48 w-full sm:h-auto sm:w-48 flex-shrink-0 bg-gradient-to-br from-primary-50 to-primary-100">
+          <div className="relative h-48 w-full sm:h-auto sm:w-48 flex-shrink-0 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/30 dark:to-primary-800/30">
             <Avatar className="h-full w-full rounded-none">
               <AvatarImage
                 src={doctor.user?.profilePicture || undefined}
                 alt={doctor.user?.name}
                 className="object-cover"
               />
-              <AvatarFallback className="rounded-none text-4xl bg-gradient-to-br from-primary-100 to-primary-200 text-primary-700">
+              <AvatarFallback className="rounded-none text-4xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/50 dark:to-primary-800/50 text-primary-700 dark:text-primary-300">
                 {getInitials(doctor.user?.name || '')}
               </AvatarFallback>
             </Avatar>
@@ -48,11 +48,11 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
             <div className="mb-3">
               <Link
                 href={`/doctors/${doctor.id}`}
-                className="inline-block text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors"
+                className="inline-block text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 د. {doctor.user?.name}
               </Link>
-              <p className="text-sm text-gray-600 mt-0.5">
+              <p className="text-sm text-muted-foreground mt-0.5">
                 {doctor.specialty?.nameAr || doctor.specialty?.nameEn}
               </p>
             </div>
@@ -61,11 +61,11 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center gap-1">
                 <Star className="h-4 w-4 fill-warning-400 text-warning-400" />
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-foreground">
                   {averageRating.toFixed(1)}
                 </span>
               </div>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted-foreground">
                 ({totalRatings} تقييم)
               </span>
             </div>
@@ -73,28 +73,28 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
             {/* Location & Experience */}
             <div className="space-y-2 mb-4">
               {doctor.clinics && doctor.clinics.length > 0 && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin className="h-4 w-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
                   <span>
                     {doctor.clinics[0].city?.nameAr}, {doctor.clinics[0].state?.nameAr}
                   </span>
                 </div>
               )}
               {doctor.yearsOfExperience && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="h-4 w-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
                   <span>{doctor.yearsOfExperience} سنة خبرة</span>
                 </div>
               )}
             </div>
 
             {/* Price & Book Button */}
-            <div className="flex items-center justify-between gap-4 pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between gap-4 pt-3 border-t border-border">
               <div>
                 {doctor.clinics && doctor.clinics[0]?.services?.[0]?.price && (
                   <div className="text-sm">
-                    <span className="text-gray-500">الكشف: </span>
-                    <span className="font-bold text-primary-600">
+                    <span className="text-muted-foreground">الكشف: </span>
+                    <span className="font-bold text-primary-600 dark:text-primary-400">
                       {doctor.clinics[0].services[0].price} ج.م
                     </span>
                   </div>

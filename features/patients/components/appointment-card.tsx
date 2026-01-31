@@ -60,17 +60,17 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
   const isUpcoming = !isPast(appointmentDate) && canCancel;
 
   return (
-    <Card className={`overflow-hidden ${isUpcoming ? 'border-primary-200' : ''}`}>
+    <Card className={`overflow-hidden ${isUpcoming ? 'border-primary-200 dark:border-primary-800' : ''}`}>
       <CardContent className="p-0">
         <div className="flex flex-col sm:flex-row">
           {/* Date Column */}
           <div className={`p-4 sm:p-5 sm:w-32 flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-1 text-center ${
-            isUpcoming ? 'bg-primary-50' : 'bg-gray-50'
+            isUpcoming ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-muted'
           }`}>
-            <span className={`text-3xl font-bold ${isUpcoming ? 'text-primary-600' : 'text-gray-900'}`}>
+            <span className={`text-3xl font-bold ${isUpcoming ? 'text-primary-600 dark:text-primary-400' : 'text-foreground'}`}>
               {formatDate(appointmentDate, 'd')}
             </span>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               <div>{formatDate(appointmentDate, 'MMM')}</div>
               <div>{formatDate(appointmentDate, 'yyyy')}</div>
             </div>
@@ -95,10 +95,10 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                      <p className="font-semibold text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                         د. {appointment.clinic.doctor.user?.name}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {appointment.clinic.doctor.specialty?.nameAr}
                       </p>
                     </div>
@@ -106,21 +106,21 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                 )}
 
                 {/* Time */}
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                  <Clock className="h-4 w-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                  <Clock className="h-4 w-4" />
                   <span dir="ltr">{formatTime(appointment.startTime)}</span>
-                  <span className="text-gray-300">|</span>
+                  <span className="text-border">|</span>
                   <span>{formatDate(appointmentDate, 'EEEE')}</span>
                 </div>
 
                 {/* Clinic */}
                 {appointment.clinic && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                    <MapPin className="h-4 w-4 text-gray-400" />
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                    <MapPin className="h-4 w-4" />
                     <span>{appointment.clinic.name}</span>
                     {appointment.clinic.city && (
                       <>
-                        <span className="text-gray-300">-</span>
+                        <span className="text-border">-</span>
                         <span>{appointment.clinic.city.nameAr}</span>
                       </>
                     )}
@@ -129,8 +129,8 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
 
                 {/* Service */}
                 {appointment.service && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-gray-400">الخدمة:</span>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>الخدمة:</span>
                     <span>{appointment.service.nameAr || appointment.service.nameEn}</span>
                     <Badge variant="outline" size="sm">
                       {appointment.service.price} ج.م
@@ -162,14 +162,14 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                           className="fixed inset-0 z-40"
                           onClick={() => setShowMenu(false)}
                         />
-                        <div className="absolute end-0 mt-1 w-40 rounded-lg bg-white border border-gray-200 shadow-lg z-50 py-1">
+                        <div className="absolute end-0 mt-1 w-40 rounded-lg bg-card border border-border shadow-lg z-50 py-1">
                           {canCancel && (
                             <button
                               onClick={() => {
                                 setShowMenu(false);
                                 onCancel?.(appointment.id);
                               }}
-                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error-600 hover:bg-error-50"
+                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
                             >
                               <X className="h-4 w-4" />
                               إلغاء الموعد
@@ -181,7 +181,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                                 setShowMenu(false);
                                 onRate?.(appointment);
                               }}
-                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-warning-600 hover:bg-warning-50"
+                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-warning-600 dark:text-warning-400 hover:bg-warning-50 dark:hover:bg-warning-900/20"
                             >
                               <Star className="h-4 w-4" />
                               تقييم الطبيب
@@ -197,16 +197,16 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
 
             {/* Rating Badge */}
             {appointment.rating && (
-              <div className="mt-3 pt-3 border-t border-gray-100">
+              <div className="mt-3 pt-3 border-t border-border">
                 <div className="flex items-center gap-1 text-sm">
-                  <span className="text-gray-500">تقييمك:</span>
+                  <span className="text-muted-foreground">تقييمك:</span>
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
                       className={`h-4 w-4 ${
                         i < appointment.rating!.rating
                           ? 'fill-warning-400 text-warning-400'
-                          : 'text-gray-300'
+                          : 'text-muted-foreground/30'
                       }`}
                     />
                   ))}

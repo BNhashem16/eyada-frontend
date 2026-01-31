@@ -36,12 +36,12 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
   )?.price;
 
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary-200">
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800">
       <CardContent className="p-5">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Clinic Icon */}
-          <div className="flex-shrink-0 h-20 w-20 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center">
-            <Stethoscope className="h-10 w-10 text-primary-600" />
+          <div className="flex-shrink-0 h-20 w-20 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/30 dark:to-primary-800/30 flex items-center justify-center">
+            <Stethoscope className="h-10 w-10 text-primary-600 dark:text-primary-400" />
           </div>
 
           {/* Clinic Info */}
@@ -50,7 +50,7 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
               <div>
                 <Link
                   href={`/clinics/${clinic.id}`}
-                  className="text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors"
+                  className="text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                 >
                   {clinic.name}
                 </Link>
@@ -62,15 +62,15 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
               </div>
               {consultationPrice && (
                 <div className="text-end">
-                  <span className="text-sm text-gray-500">الكشف</span>
-                  <div className="font-bold text-primary-600">{consultationPrice} ج.م</div>
+                  <span className="text-sm text-muted-foreground">الكشف</span>
+                  <div className="font-bold text-primary-600 dark:text-primary-400">{consultationPrice} ج.م</div>
                 </div>
               )}
             </div>
 
             {/* Location */}
-            <div className="flex items-center gap-2 mt-3 text-sm text-gray-600">
-              <MapPin className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
               <span>
                 {clinic.addressLine1}
                 {clinic.city && `, ${clinic.city.nameAr}`}
@@ -80,8 +80,8 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
 
             {/* Working Hours */}
             {workingDays && workingDays.length > 0 && (
-              <div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
-                <Clock className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4" />
                 <span>
                   {workingDays.join('، ')}
                   {clinic.schedules && clinic.schedules.length > 3 && '...'}
@@ -91,8 +91,8 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
 
             {/* Phone */}
             {clinic.phone && (
-              <div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
-                <Phone className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                <Phone className="h-4 w-4" />
                 <span dir="ltr">{clinic.phone}</span>
               </div>
             )}
@@ -115,7 +115,7 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
 
             {/* Book Button */}
             {showBookButton && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="mt-4 pt-4 border-t border-border">
                 <Button asChild size="sm" className="gap-1">
                   <Link href={`/clinics/${clinic.id}`}>
                     <Calendar className="h-4 w-4" />

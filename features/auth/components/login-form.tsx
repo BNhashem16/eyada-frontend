@@ -61,7 +61,7 @@ export function LoginForm() {
           </Label>
           <Link
             href="/forgot-password"
-            className="text-sm text-primary-600 hover:underline"
+            className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
           >
             نسيت كلمة المرور؟
           </Link>
@@ -80,7 +80,7 @@ export function LoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -100,9 +100,9 @@ export function LoginForm() {
       </Button>
 
       {/* Register Link */}
-      <p className="text-center text-gray-600">
+      <p className="text-center text-muted-foreground">
         ليس لديك حساب؟{' '}
-        <Link href="/register" className="text-primary-600 hover:underline">
+        <Link href="/register" className="text-primary-600 dark:text-primary-400 hover:underline">
           إنشاء حساب جديد
         </Link>
       </p>
