@@ -1,0 +1,521 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Frown,
+  Loader2,
+  MapPin,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
+  useAdminStates,
+  useAdminCities,
+  useCreateState,
+  useUpdateState,
+  useDeleteState,
+  useCreateCity,
+  useUpdateCity,
+  useDeleteCity,
+} from '../hooks';
+import { State, City, Multilingual } from '@/types';
+
+interface StateFormData {
+  nameAr: string;
+  nameEn: string;
+  code: string;
+}
+
+interface CityFormData {
+  stateId: string;
+  nameAr: string;
+  nameEn: string;
+}
+
+const initialStateForm: StateFormData = { nameAr: '', nameEn: '', code: '' };
+const initialCityForm: CityFormData = { stateId: '', nameAr: '', nameEn: '' };
+
+export function LocationsManagement() {
+  const { data: states, isLoading: statesLoading } = useAdminStates();
+  const { data: cities } = useAdminCities();
+
+  const createState = useCreateState();
+  const updateState = useUpdateState();
+  const deleteState = useDeleteState();
+  const createCity = useCreateCity();
+  const updateCity = useUpdateCity();
+  const deleteCity = useDeleteCity();
+
+  const [expandedStates, setExpandedStates] = useState<Set<string>>(new Set());
+  const [stateDialogOpen, setStateDialogOpen] = useState(false);
+  const [cityDialogOpen, setCityDialogOpen] = useState(false);
+  const [editingState, setEditingState] = useState<State | null>(null);
+  const [editingCity, setEditingCity] = useState<City | null>(null);
+  const [deleteStateId, setDeleteStateId] = useState<string | null>(null);
+  const [deleteCityId, setDeleteCityId] = useState<string | null>(null);
+  const [stateForm, setStateForm] = useState<StateFormData>(initialStateForm);
+  const [cityForm, setCityForm] = useState<CityFormData>(initialCityForm);
+
+  const toggleState = (stateId: string) => {
+    setExpandedStates((prev) => {
+      const next = new Set(prev);
+      if (next.has(stateId)) {
+        next.delete(stateId);
+      } else {
+        next.add(stateId);
+      }
+      return next;
+    });
+  };
+
+  const getCitiesForState = (stateId: string) => {
+    return cities?.filter((c) => c.stateId === stateId) || [];
+  };
+
+  // State handlers
+  const handleOpenCreateState = () => {
+    setEditingState(null);
+    setStateForm(initialStateForm);
+    setStateDialogOpen(true);
+  };
+
+  const handleOpenEditState = (state: State) => {
+    setEditingState(state);
+    setStateForm({
+      nameAr: state.name.ar,
+      nameEn: state.name.en,
+      code: state.code || '',
+    });
+    setStateDialogOpen(true);
+  };
+
+  const handleSubmitState = () => {
+    const name: Multilingual = { ar: stateForm.nameAr, en: stateForm.nameEn };
+
+    if (editingState) {
+      updateState.mutate(
+        { id: editingState.id, name, code: stateForm.code || undefined },
+        { onSuccess: () => { setStateDialogOpen(false); setEditingState(null); } }
+      );
+    } else {
+      createState.mutate(
+        { name, code: stateForm.code || undefined },
+        { onSuccess: () => { setStateDialogOpen(false); setStateForm(initialStateForm); } }
+      );
+    }
+  };
+
+  const handleDeleteState = () => {
+    if (!deleteStateId) return;
+    deleteState.mutate(deleteStateId, { onSuccess: () => setDeleteStateId(null) });
+  };
+
+  const handleToggleStateActive = (state: State) => {
+    updateState.mutate({ id: state.id, isActive: !state.isActive });
+  };
+
+  // City handlers
+  const handleOpenCreateCity = (stateId: string) => {
+    setEditingCity(null);
+    setCityForm({ ...initialCityForm, stateId });
+    setCityDialogOpen(true);
+  };
+
+  const handleOpenEditCity = (city: City) => {
+    setEditingCity(city);
+    setCityForm({
+      stateId: city.stateId,
+      nameAr: city.name.ar,
+      nameEn: city.name.en,
+    });
+    setCityDialogOpen(true);
+  };
+
+  const handleSubmitCity = () => {
+    const name: Multilingual = { ar: cityForm.nameAr, en: cityForm.nameEn };
+
+    if (editingCity) {
+      updateCity.mutate(
+        { id: editingCity.id, name },
+        { onSuccess: () => { setCityDialogOpen(false); setEditingCity(null); } }
+      );
+    } else {
+      createCity.mutate(
+        { stateId: cityForm.stateId, name },
+        { onSuccess: () => { setCityDialogOpen(false); setCityForm(initialCityForm); } }
+      );
+    }
+  };
+
+  const handleDeleteCity = () => {
+    if (!deleteCityId) return;
+    deleteCity.mutate(deleteCityId, { onSuccess: () => setDeleteCityId(null) });
+  };
+
+  const handleToggleCityActive = (city: City) => {
+    updateCity.mutate({ id: city.id, isActive: !city.isActive });
+  };
+
+  if (statesLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6 space-y-4">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <>
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold">المحافظات والمدن</h3>
+            <Button onClick={handleOpenCreateState}>
+              <Plus className="h-4 w-4 me-2" />
+              إضافة محافظة
+            </Button>
+          </div>
+
+          {!states || states.length === 0 ? (
+            <div className="text-center py-10">
+              <MapPin className="h-12 w-12 mx-auto text-gray-300 mb-4" />
+              <p className="text-gray-500">لا توجد محافظات</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {states
+                .sort((a, b) => a.sortOrder - b.sortOrder)
+                .map((state) => {
+                  const stateCities = getCitiesForState(state.id);
+                  const isExpanded = expandedStates.has(state.id);
+
+                  return (
+                    <Collapsible
+                      key={state.id}
+                      open={isExpanded}
+                      onOpenChange={() => toggleState(state.id)}
+                    >
+                      <div className="border rounded-lg">
+                        <CollapsibleTrigger asChild>
+                          <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50">
+                            <div className="flex items-center gap-3">
+                              {isExpanded ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                              <span className="font-medium">{state.name.ar}</span>
+                              <span className="text-gray-500 text-sm">
+                                ({state.name.en})
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {stateCities.length} مدينة
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                checked={state.isActive}
+                                onCheckedChange={() => handleToggleStateActive(state)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenEditState(state);
+                                }}
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-error-600"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeleteStateId(state.id);
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CollapsibleTrigger>
+
+                        <CollapsibleContent>
+                          <div className="border-t bg-gray-50 p-4">
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="text-sm font-medium text-gray-600">
+                                المدن
+                              </span>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleOpenCreateCity(state.id)}
+                              >
+                                <Plus className="h-3 w-3 me-1" />
+                                إضافة مدينة
+                              </Button>
+                            </div>
+
+                            {stateCities.length === 0 ? (
+                              <p className="text-sm text-gray-500 text-center py-4">
+                                لا توجد مدن
+                              </p>
+                            ) : (
+                              <div className="space-y-2">
+                                {stateCities
+                                  .sort((a, b) => a.sortOrder - b.sortOrder)
+                                  .map((city) => (
+                                    <div
+                                      key={city.id}
+                                      className="flex items-center justify-between bg-white rounded p-3"
+                                    >
+                                      <div>
+                                        <span className="font-medium">
+                                          {city.name.ar}
+                                        </span>
+                                        <span className="text-gray-500 text-sm ms-2">
+                                          ({city.name.en})
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Switch
+                                          checked={city.isActive}
+                                          onCheckedChange={() =>
+                                            handleToggleCityActive(city)
+                                          }
+                                        />
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => handleOpenEditCity(city)}
+                                        >
+                                          <Edit2 className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="text-error-600"
+                                          onClick={() => setDeleteCityId(city.id)}
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
+                        </CollapsibleContent>
+                      </div>
+                    </Collapsible>
+                  );
+                })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* State Dialog */}
+      <Dialog open={stateDialogOpen} onOpenChange={setStateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingState ? 'تعديل محافظة' : 'إضافة محافظة جديدة'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>الاسم بالعربية *</Label>
+                <Input
+                  value={stateForm.nameAr}
+                  onChange={(e) =>
+                    setStateForm((f) => ({ ...f, nameAr: e.target.value }))
+                  }
+                  placeholder="القاهرة"
+                />
+              </div>
+              <div>
+                <Label>الاسم بالإنجليزية *</Label>
+                <Input
+                  value={stateForm.nameEn}
+                  onChange={(e) =>
+                    setStateForm((f) => ({ ...f, nameEn: e.target.value }))
+                  }
+                  placeholder="Cairo"
+                  dir="ltr"
+                />
+              </div>
+            </div>
+            <div>
+              <Label>الكود</Label>
+              <Input
+                value={stateForm.code}
+                onChange={(e) =>
+                  setStateForm((f) => ({ ...f, code: e.target.value }))
+                }
+                placeholder="CAI"
+                dir="ltr"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setStateDialogOpen(false)}>
+              إلغاء
+            </Button>
+            <Button
+              onClick={handleSubmitState}
+              disabled={
+                !stateForm.nameAr ||
+                !stateForm.nameEn ||
+                createState.isPending ||
+                updateState.isPending
+              }
+            >
+              {(createState.isPending || updateState.isPending) && (
+                <Loader2 className="h-4 w-4 me-2 animate-spin" />
+              )}
+              {editingState ? 'تحديث' : 'إضافة'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* City Dialog */}
+      <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingCity ? 'تعديل مدينة' : 'إضافة مدينة جديدة'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>الاسم بالعربية *</Label>
+                <Input
+                  value={cityForm.nameAr}
+                  onChange={(e) =>
+                    setCityForm((f) => ({ ...f, nameAr: e.target.value }))
+                  }
+                  placeholder="مدينة نصر"
+                />
+              </div>
+              <div>
+                <Label>الاسم بالإنجليزية *</Label>
+                <Input
+                  value={cityForm.nameEn}
+                  onChange={(e) =>
+                    setCityForm((f) => ({ ...f, nameEn: e.target.value }))
+                  }
+                  placeholder="Nasr City"
+                  dir="ltr"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCityDialogOpen(false)}>
+              إلغاء
+            </Button>
+            <Button
+              onClick={handleSubmitCity}
+              disabled={
+                !cityForm.nameAr ||
+                !cityForm.nameEn ||
+                createCity.isPending ||
+                updateCity.isPending
+              }
+            >
+              {(createCity.isPending || updateCity.isPending) && (
+                <Loader2 className="h-4 w-4 me-2 animate-spin" />
+              )}
+              {editingCity ? 'تحديث' : 'إضافة'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete State Confirmation */}
+      <AlertDialog open={!!deleteStateId} onOpenChange={() => setDeleteStateId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف المحافظة</AlertDialogTitle>
+            <AlertDialogDescription>
+              سيتم حذف جميع المدن التابعة لهذه المحافظة. هل أنت متأكد؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteState}
+              className="bg-error-600 hover:bg-error-700"
+            >
+              حذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete City Confirmation */}
+      <AlertDialog open={!!deleteCityId} onOpenChange={() => setDeleteCityId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف المدينة</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من حذف هذه المدينة؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteCity}
+              className="bg-error-600 hover:bg-error-700"
+            >
+              حذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}

@@ -24,6 +24,7 @@ import { getInitials } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const navLinks = [
+  { href: '/specialties', label: 'التخصصات', icon: Search },
   { href: '/doctors', label: 'الأطباء', icon: Stethoscope },
   { href: '/clinics', label: 'العيادات', icon: Building2 },
 ];
