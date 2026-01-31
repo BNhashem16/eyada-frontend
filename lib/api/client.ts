@@ -143,25 +143,34 @@ apiClient.interceptors.response.use(
   }
 );
 
+// Helper to unwrap API response { success: true, data: {...} }
+function unwrapResponse<T>(responseData: any): T {
+  // If response has success/data structure, unwrap it
+  if (responseData && typeof responseData === 'object' && 'success' in responseData && 'data' in responseData) {
+    return responseData.data;
+  }
+  return responseData;
+}
+
 // Helper function for API calls
 export async function apiGet<T>(url: string, params?: Record<string, unknown>): Promise<T> {
   const response = await apiClient.get<T>(url, { params });
-  return response.data;
+  return unwrapResponse<T>(response.data);
 }
 
 export async function apiPost<T>(url: string, data?: unknown): Promise<T> {
   const response = await apiClient.post<T>(url, data);
-  return response.data;
+  return unwrapResponse<T>(response.data);
 }
 
 export async function apiPatch<T>(url: string, data?: unknown): Promise<T> {
   const response = await apiClient.patch<T>(url, data);
-  return response.data;
+  return unwrapResponse<T>(response.data);
 }
 
 export async function apiDelete<T>(url: string): Promise<T> {
   const response = await apiClient.delete<T>(url);
-  return response.data;
+  return unwrapResponse<T>(response.data);
 }
 
 export default apiClient;

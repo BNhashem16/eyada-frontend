@@ -33,8 +33,7 @@ export function useRegister() {
       if (currentUser) {
         switch (currentUser.role) {
           case 'DOCTOR':
-            // Doctor needs to complete profile
-            router.push('/doctor/profile/setup');
+            router.push('/doctor/dashboard');
             break;
           case 'PATIENT':
           default:

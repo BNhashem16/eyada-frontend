@@ -53,35 +53,31 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
 
         try {
-          const response = await apiPost<any>(
+          const response = await apiPost<AuthResponse>(
             AUTH_ENDPOINTS.LOGIN,
             credentials
           );
 
-          // Debug: log the response to see its structure
-          console.log('Login response:', JSON.stringify(response, null, 2));
+          console.log('Login response (unwrapped):', response);
 
-          // Handle different response structures
-          const data = response.data || response;
-          const accessToken = data.accessToken || data.access_token;
-          const refreshToken = data.refreshToken || data.refresh_token;
-          const userData = data.user;
+          // Extract tokens - handle different naming conventions
+          const accessToken = response.accessToken || (response as any).access_token;
+          const refreshToken = response.refreshToken || (response as any).refresh_token;
 
-          if (!accessToken || !userData) {
-            console.error('Invalid response structure:', response);
-            throw new Error('Invalid login response');
+          if (!accessToken) {
+            throw new Error('Invalid login response - no access token');
           }
 
           tokenStorage.setTokens({
             accessToken,
-            refreshToken,
+            refreshToken: refreshToken || '',
           });
 
           // Add name alias for fullName
-          const user = {
-            ...userData,
-            name: userData.fullName || userData.full_name || userData.name || '',
-          };
+          const user = response.user ? {
+            ...response.user,
+            name: response.user.fullName || (response.user as any).full_name || (response.user as any).name || '',
+          } : null;
 
           set({
             user,
@@ -104,16 +100,26 @@ export const useAuthStore = create<AuthState>()(
             data
           );
 
+          console.log('Register response (unwrapped):', response);
+
+          // Extract tokens - handle different naming conventions
+          const accessToken = response.accessToken || (response as any).access_token;
+          const refreshToken = response.refreshToken || (response as any).refresh_token;
+
+          if (!accessToken) {
+            throw new Error('Invalid register response - no access token');
+          }
+
           tokenStorage.setTokens({
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
+            accessToken,
+            refreshToken: refreshToken || '',
           });
 
           // Add name alias for fullName
-          const user = {
+          const user = response.user ? {
             ...response.user,
-            name: response.user.fullName,
-          };
+            name: response.user.fullName || (response.user as any).full_name || (response.user as any).name || '',
+          } : null;
 
           set({
             user,
@@ -121,6 +127,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error) {
+          console.error('Register error:', error);
           set({ isLoading: false });
           throw error;
         }

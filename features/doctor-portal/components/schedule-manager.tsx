@@ -268,7 +268,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                       onChange={(e) =>
                         handleSlotDurationChange(index, Number(e.target.value))
                       }
-                      className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                     >
                       <option value={15}>15 دقيقة</option>
                       <option value={20}>20 دقيقة</option>

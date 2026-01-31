@@ -1,10 +1,7 @@
-import { Metadata } from 'next';
-import { User } from 'lucide-react';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'الملف الشخصي - الطبيب',
-  description: 'تعديل الملف الشخصي للطبيب',
-};
+import { User } from 'lucide-react';
+import { DoctorProfileForm } from '@/features/doctor-portal/components';
 
 export default function DoctorProfilePage() {
   return (
@@ -20,10 +17,8 @@ export default function DoctorProfilePage() {
         </div>
       </div>
 
-      {/* TODO: Add doctor profile form */}
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
-        صفحة الملف الشخصي للطبيب - قيد التطوير
-      </div>
+      {/* Profile Form */}
+      <DoctorProfileForm />
     </div>
   );
 }

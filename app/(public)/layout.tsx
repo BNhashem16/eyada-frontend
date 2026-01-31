@@ -39,6 +39,9 @@ export default function PublicLayout({
   const { isAuthenticated, user, logout } = useAuthStore();
   const isHydrated = useIsHydrated();
 
+  // Debug: log auth state
+  console.log('Auth state:', { isHydrated, isAuthenticated, user });
+
   const getDashboardLink = () => {
     switch (user?.role) {
       case 'DOCTOR':

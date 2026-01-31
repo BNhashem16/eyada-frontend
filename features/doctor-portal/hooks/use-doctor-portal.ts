@@ -30,7 +30,21 @@ export function useUpdateDoctorProfile() {
 
   return useMutation({
     mutationFn: async (data: Partial<DoctorProfile>) => {
-      return apiPatch<DoctorProfile>(DOCTOR_ENDPOINTS.PROFILE, data);
+      return apiPatch<DoctorProfile>(DOCTOR_ENDPOINTS.UPDATE_PROFILE, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['doctor-profile'] });
+    },
+  });
+}
+
+// Create profile for new doctors
+export function useCreateDoctorProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: Partial<DoctorProfile> & { specialtyId: string }) => {
+      return apiPost<DoctorProfile>(DOCTOR_ENDPOINTS.UPDATE_PROFILE, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['doctor-profile'] });

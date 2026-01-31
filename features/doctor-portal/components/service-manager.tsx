@@ -373,7 +373,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 id="description"
                 {...register('description')}
                 rows={2}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
                 placeholder="وصف مختصر للخدمة..."
               />
             </div>
