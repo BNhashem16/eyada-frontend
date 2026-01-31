@@ -7,6 +7,11 @@
 
 /* Theme Variables */
 @theme inline {
+  /* Font Families */
+  --font-family-sans: var(--font-cairo, 'Cairo', 'Tajawal', system-ui, sans-serif);
+  --font-family-arabic: var(--font-cairo, 'Cairo', 'Tajawal', system-ui, sans-serif);
+  --font-family-english: var(--font-inter, 'Inter', system-ui, sans-serif);
+
   /* Primary - Medical Blue */
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
@@ -209,18 +214,22 @@ html {
 body {
   background-color: rgb(var(--background));
   color: rgb(var(--foreground));
-  font-family: var(--font-cairo, 'Cairo', 'Tajawal', system-ui, sans-serif);
+  font-family: var(--font-family-sans);
+  font-feature-settings: "ss01", "ss02", "cv01", "cv03";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* RTL Support */
-[dir="rtl"] {
-  font-family: var(--font-cairo, 'Cairo', 'Tajawal', system-ui, sans-serif);
+/* RTL Support - Cairo Font for Arabic */
+[dir="rtl"],
+html[lang="ar"] {
+  font-family: var(--font-family-arabic);
 }
 
-[dir="ltr"] {
-  font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
+/* LTR Support - Inter Font for English */
+[dir="ltr"],
+html[lang="en"] {
+  font-family: var(--font-family-english);
 }
 
 /* Focus Styles */

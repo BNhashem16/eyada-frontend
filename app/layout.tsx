@@ -3,17 +3,19 @@ import { Cairo, Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/providers';
 
-// Arabic font (Primary)
+// Arabic font (Primary) - Cairo from Google Fonts
 const cairo = Cairo({
   variable: '--font-cairo',
   subsets: ['arabic', 'latin'],
+  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
   display: 'swap',
 });
 
-// English font
+// English font - Inter from Google Fonts
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
   display: 'swap',
 });
 
@@ -68,7 +70,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body
-        className={`${cairo.variable} ${inter.variable} min-h-screen bg-background font-sans antialiased`}
+        className={`${cairo.variable} ${inter.variable} min-h-screen bg-background antialiased`}
       >
         <Providers>{children}</Providers>
       </body>
