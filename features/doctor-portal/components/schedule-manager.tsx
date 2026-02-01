@@ -42,7 +42,7 @@ const dayNames: Record<DayOfWeek, string> = {
 
 interface DaySchedule {
   dayOfWeek: DayOfWeek;
-  isAvailable: boolean;
+  isActive: boolean;
   startTime: string;
   endTime: string;
   slotDuration: number;
@@ -64,11 +64,13 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
       const scheduleMap = new Map(schedules.map((s) => [s.dayOfWeek, s]));
       const initialSchedules = dayOrder.map((day) => {
         const existing = scheduleMap.get(day);
+        // Get first shift's times (backend stores in shifts array)
+        const firstShift = existing?.shifts?.[0];
         return {
           dayOfWeek: day,
-          isAvailable: existing?.isAvailable ?? false,
-          startTime: existing?.startTime ?? '09:00',
-          endTime: existing?.endTime ?? '17:00',
+          isActive: existing?.isActive ?? false,
+          startTime: firstShift?.startTime ?? '09:00',
+          endTime: firstShift?.endTime ?? '17:00',
           slotDuration: existing?.slotDuration ?? 30,
           id: existing?.id,
         };
@@ -82,7 +84,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
       const updated = [...prev];
       updated[dayIndex] = {
         ...updated[dayIndex],
-        isAvailable: !updated[dayIndex].isAvailable,
+        isActive: !updated[dayIndex].isActive,
       };
       return updated;
     });
@@ -126,7 +128,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
             clinicId,
             scheduleId: schedule.id,
             data: {
-              isAvailable: schedule.isAvailable,
+              isActive: schedule.isActive,
               startTime: schedule.startTime,
               endTime: schedule.endTime,
               slotDuration: schedule.slotDuration,
@@ -138,7 +140,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
             clinicId,
             data: {
               dayOfWeek: schedule.dayOfWeek,
-              isAvailable: schedule.isAvailable,
+              isActive: schedule.isActive,
               startTime: schedule.startTime,
               endTime: schedule.endTime,
               slotDuration: schedule.slotDuration,
@@ -210,7 +212,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
             <div
               key={schedule.dayOfWeek}
               className={`flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-lg transition-colors ${
-                schedule.isAvailable ? 'bg-muted' : 'bg-muted/50'
+                schedule.isActive ? 'bg-muted' : 'bg-muted/50'
               }`}
             >
               {/* Day Toggle */}
@@ -218,14 +220,14 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                 <input
                   type="checkbox"
                   id={`day-${schedule.dayOfWeek}`}
-                  checked={schedule.isAvailable}
+                  checked={schedule.isActive}
                   onChange={() => handleToggleDay(index)}
                   className="h-5 w-5 rounded border-border text-primary-600 focus:ring-primary-500"
                 />
                 <Label
                   htmlFor={`day-${schedule.dayOfWeek}`}
                   className={`cursor-pointer font-medium ${
-                    schedule.isAvailable ? 'text-foreground' : 'text-muted-foreground'
+                    schedule.isActive ? 'text-foreground' : 'text-muted-foreground'
                   }`}
                 >
                   {dayNames[schedule.dayOfWeek]}
@@ -233,7 +235,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
               </div>
 
               {/* Time Inputs */}
-              {schedule.isAvailable && (
+              {schedule.isActive && (
                 <div className="flex flex-wrap items-center gap-4 flex-1">
                   <div className="flex items-center gap-2">
                     <Label className="text-sm text-muted-foreground whitespace-nowrap">من</Label>
@@ -280,7 +282,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                 </div>
               )}
 
-              {!schedule.isAvailable && (
+              {!schedule.isActive && (
                 <span className="text-sm text-muted-foreground">مغلق</span>
               )}
             </div>

@@ -160,27 +160,30 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <CardContent>
                 {sortedSchedules.length > 0 ? (
                   <div className="space-y-3">
-                    {sortedSchedules.map((schedule) => (
-                      <div
-                        key={schedule.id}
-                        className={`flex items-center justify-between p-3 rounded-lg ${
-                          schedule.isAvailable
-                            ? 'bg-muted'
-                            : 'bg-muted/50 text-muted-foreground'
-                        }`}
-                      >
-                        <span className="font-medium">
-                          {dayNames[schedule.dayOfWeek]}
-                        </span>
-                        {schedule.isAvailable ? (
-                          <span dir="ltr">
-                            {schedule.startTime} - {schedule.endTime}
+                    {sortedSchedules.map((schedule) => {
+                      const firstShift = schedule.shifts?.[0];
+                      return (
+                        <div
+                          key={schedule.id}
+                          className={`flex items-center justify-between p-3 rounded-lg ${
+                            schedule.isActive
+                              ? 'bg-muted'
+                              : 'bg-muted/50 text-muted-foreground'
+                          }`}
+                        >
+                          <span className="font-medium">
+                            {dayNames[schedule.dayOfWeek]}
                           </span>
-                        ) : (
-                          <span className="text-sm">مغلق</span>
-                        )}
-                      </div>
-                    ))}
+                          {schedule.isActive && firstShift ? (
+                            <span dir="ltr">
+                              {firstShift.startTime} - {firstShift.endTime}
+                            </span>
+                          ) : (
+                            <span className="text-sm">مغلق</span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-center py-6">

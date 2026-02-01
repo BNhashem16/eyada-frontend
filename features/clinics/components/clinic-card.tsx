@@ -28,12 +28,12 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
   };
   // Get working days from schedules
   const workingDays = clinic.schedules
-    ?.filter((s) => s.isAvailable)
+    ?.filter((s) => s.isActive)
     .map((s) => dayNames[s.dayOfWeek])
     .slice(0, 3);
 
   // Get price from first service
-  const consultationPrice = clinic.services?.find(
+  const consultationPrice = clinic.serviceTypes?.find(
     (s) => s.serviceType === 'CONSULTATION'
   )?.price;
 
