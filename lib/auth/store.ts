@@ -238,6 +238,16 @@ if (typeof window !== 'undefined') {
       isAuthenticated: false,
     });
   });
+
+  // Register doctor profile incomplete callback
+  // This is called when a 403 DOCTOR_PROFILE_INCOMPLETE error is received
+  tokenStorage.onDoctorProfileIncomplete(() => {
+    const currentPath = window.location.pathname;
+    // Only redirect if not already on the profile page
+    if (!currentPath.includes('/doctor/profile')) {
+      window.location.href = '/doctor/profile';
+    }
+  });
 }
 
 // Selector hooks for better performance

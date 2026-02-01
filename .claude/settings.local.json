@@ -14,7 +14,8 @@
       "Bash(cmd.exe /c \"cd C:\\\\Nest\\\\eyada\\\\react\\\\eyada && npm install\")",
       "Bash(powershell.exe -Command \"cd ''C:\\\\Nest\\\\eyada\\\\react\\\\eyada''; npm install 2>&1\")",
       "Bash(ls:*)",
-      "Bash(npm i:*)"
+      "Bash(npm i:*)",
+      "Bash(find:*)"
     ]
   }
 }

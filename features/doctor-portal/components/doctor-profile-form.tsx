@@ -91,8 +91,9 @@ export function DoctorProfileForm() {
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [loadingSpecialties, setLoadingSpecialties] = useState(false);
 
-  // Determine if this is a new profile (error with 404) or existing profile
-  const isNewProfile = error && !profile;
+  // Determine if this is a new profile (profile is null/undefined or error occurred)
+  // The backend returns null when profile doesn't exist, not a 404 error
+  const isNewProfile = !isLoading && (!profile || error);
 
   // Use appropriate schema based on mode
   const {

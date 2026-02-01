@@ -18,6 +18,9 @@ const REFRESH_TOKEN_KEY = 'eyada_refresh_token';
 // Callback for when session is invalidated (refresh token fails)
 let onSessionInvalidated: (() => void) | null = null;
 
+// Callback for when doctor profile is incomplete
+let onDoctorProfileIncomplete: (() => void) | null = null;
+
 // Token management functions
 export const tokenStorage = {
   getAccessToken: (): string | null => {
@@ -45,6 +48,11 @@ export const tokenStorage = {
   // Register callback for when session is invalidated
   onSessionInvalidated: (callback: () => void): void => {
     onSessionInvalidated = callback;
+  },
+
+  // Register callback for when doctor profile is incomplete
+  onDoctorProfileIncomplete: (callback: () => void): void => {
+    onDoctorProfileIncomplete = callback;
   },
 };
 
@@ -84,7 +92,7 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-// Response interceptor - Handle token refresh
+// Response interceptor - Handle token refresh and special errors
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiError>) => {
@@ -93,6 +101,19 @@ apiClient.interceptors.response.use(
     // If no config or no response, reject
     if (!originalRequest || !error.response) {
       return Promise.reject(error);
+    }
+
+    // Check for DOCTOR_PROFILE_INCOMPLETE error (403)
+    if (error.response.status === 403) {
+      const errorData = error.response.data as any;
+      const errorCode = errorData?.error || errorData?.errorCode;
+
+      if (errorCode === 'DOCTOR_PROFILE_INCOMPLETE') {
+        if (onDoctorProfileIncomplete) {
+          onDoctorProfileIncomplete();
+        }
+        return Promise.reject(error);
+      }
     }
 
     // If 401 and not a refresh request and not already retried
