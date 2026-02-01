@@ -185,7 +185,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-primary-600" />
+          <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
           جدول مواعيد العمل
         </CardTitle>
         {hasChanges && (
@@ -210,7 +210,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
             <div
               key={schedule.dayOfWeek}
               className={`flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-lg transition-colors ${
-                schedule.isAvailable ? 'bg-gray-50' : 'bg-gray-100'
+                schedule.isAvailable ? 'bg-muted' : 'bg-muted/50'
               }`}
             >
               {/* Day Toggle */}
@@ -220,12 +220,12 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                   id={`day-${schedule.dayOfWeek}`}
                   checked={schedule.isAvailable}
                   onChange={() => handleToggleDay(index)}
-                  className="h-5 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  className="h-5 w-5 rounded border-border text-primary-600 focus:ring-primary-500"
                 />
                 <Label
                   htmlFor={`day-${schedule.dayOfWeek}`}
                   className={`cursor-pointer font-medium ${
-                    schedule.isAvailable ? 'text-gray-900' : 'text-gray-400'
+                    schedule.isAvailable ? 'text-foreground' : 'text-muted-foreground'
                   }`}
                 >
                   {dayNames[schedule.dayOfWeek]}
@@ -236,7 +236,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
               {schedule.isAvailable && (
                 <div className="flex flex-wrap items-center gap-4 flex-1">
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-gray-500 whitespace-nowrap">من</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">من</Label>
                     <Input
                       type="time"
                       value={schedule.startTime}
@@ -248,7 +248,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-gray-500 whitespace-nowrap">إلى</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">إلى</Label>
                     <Input
                       type="time"
                       value={schedule.endTime}
@@ -260,7 +260,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-gray-500 whitespace-nowrap">
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
                       مدة الموعد
                     </Label>
                     <select
@@ -268,7 +268,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                       onChange={(e) =>
                         handleSlotDurationChange(index, Number(e.target.value))
                       }
-                      className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+                      className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                     >
                       <option value={15}>15 دقيقة</option>
                       <option value={20}>20 دقيقة</option>
@@ -281,13 +281,13 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
               )}
 
               {!schedule.isAvailable && (
-                <span className="text-sm text-gray-400">مغلق</span>
+                <span className="text-sm text-muted-foreground">مغلق</span>
               )}
             </div>
           ))}
         </div>
 
-        <p className="mt-4 text-sm text-gray-500">
+        <p className="mt-4 text-sm text-muted-foreground">
           * يمكنك تفعيل أو تعطيل أيام العمل وتحديد أوقات البداية والنهاية ومدة كل موعد
         </p>
       </CardContent>

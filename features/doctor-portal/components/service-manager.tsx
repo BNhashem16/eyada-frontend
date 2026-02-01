@@ -195,7 +195,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-primary-600" />
+            <DollarSign className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             الخدمات والأسعار
           </CardTitle>
           <Button size="sm" onClick={openAddDialog}>
@@ -210,12 +210,12 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 <div
                   key={service.id}
                   className={`flex items-center gap-4 p-4 rounded-lg ${
-                    service.isActive ? 'bg-gray-50' : 'bg-gray-100 opacity-60'
+                    service.isActive ? 'bg-muted' : 'bg-muted/50 opacity-60'
                   }`}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-gray-900">
+                      <h4 className="font-semibold text-foreground">
                         {service.nameAr}
                       </h4>
                       <Badge variant="secondary" size="sm">
@@ -228,11 +228,11 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                       )}
                     </div>
                     {service.description && (
-                      <p className="text-sm text-gray-500 mb-2">
+                      <p className="text-sm text-muted-foreground mb-2">
                         {service.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         {service.durationMinutes} دقيقة
@@ -240,7 +240,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                     </div>
                   </div>
                   <div className="text-end">
-                    <p className="text-lg font-bold text-primary-600">
+                    <p className="text-lg font-bold text-primary-600 dark:text-primary-400">
                       {service.price} ج.م
                     </p>
                   </div>
@@ -255,7 +255,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-error-600 hover:bg-error-50"
+                      className="text-error-600 hover:bg-error-50 dark:hover:bg-error-900/30"
                       onClick={() => handleDelete(service.id)}
                       disabled={deletingId === service.id}
                     >
@@ -271,8 +271,8 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             </div>
           ) : (
             <div className="text-center py-8">
-              <DollarSign className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-600">لم تقم بإضافة خدمات بعد</p>
+              <DollarSign className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">لم تقم بإضافة خدمات بعد</p>
               <Button className="mt-4" onClick={openAddDialog}>
                 <Plus className="h-4 w-4 ms-2" />
                 إضافة أول خدمة
@@ -373,7 +373,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 id="description"
                 {...register('description')}
                 rows={2}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
                 placeholder="وصف مختصر للخدمة..."
               />
             </div>
@@ -384,7 +384,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 type="checkbox"
                 id="isActive"
                 {...register('isActive')}
-                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
               />
               <Label htmlFor="isActive" className="cursor-pointer">
                 الخدمة نشطة (متاحة للحجز)

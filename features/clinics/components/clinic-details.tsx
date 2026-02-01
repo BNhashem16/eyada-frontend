@@ -57,9 +57,9 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
 
   if (isError || !clinic) {
     return (
-      <Card className="border-error-200 bg-error-50">
+      <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600">
+          <p className="text-error-600 dark:text-error-400">
             حدث خطأ أثناء تحميل بيانات العيادة. يرجى المحاولة مرة أخرى.
           </p>
           <Button asChild variant="outline" className="mt-4">
@@ -83,14 +83,14 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
-              <div className="h-20 w-20 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center flex-shrink-0">
-                <Building2 className="h-10 w-10 text-primary-600" />
+              <div className="h-20 w-20 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/30 dark:to-primary-800/30 flex items-center justify-center flex-shrink-0">
+                <Building2 className="h-10 w-10 text-primary-600 dark:text-primary-400" />
               </div>
 
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{clinic.name}</h1>
+                    <h1 className="text-2xl font-bold text-foreground">{clinic.name}</h1>
                     {clinic.isActive && (
                       <Badge variant="success" className="mt-2">متاحة للحجز</Badge>
                     )}
@@ -110,8 +110,8 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                 )}
 
                 {/* Location */}
-                <div className="flex items-start gap-2 mt-4 text-gray-600">
-                  <MapPin className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 mt-4 text-muted-foreground">
+                  <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                   <div>
                     <p>{clinic.addressLine1}</p>
                     {clinic.addressLine2 && <p>{clinic.addressLine2}</p>}
@@ -123,8 +123,8 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
 
                 {/* Phone */}
                 {clinic.phone && (
-                  <div className="flex items-center gap-2 mt-3 text-gray-600">
-                    <Phone className="h-5 w-5 text-gray-400" />
+                  <div className="flex items-center gap-2 mt-3 text-muted-foreground">
+                    <Phone className="h-5 w-5 text-muted-foreground" />
                     <a href={`tel:${clinic.phone}`} dir="ltr" className="hover:text-primary-600">
                       {clinic.phone}
                     </a>
@@ -153,7 +153,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary-600" />
+                  <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                   مواعيد العمل الأسبوعية
                 </CardTitle>
               </CardHeader>
@@ -165,8 +165,8 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                         key={schedule.id}
                         className={`flex items-center justify-between p-3 rounded-lg ${
                           schedule.isAvailable
-                            ? 'bg-gray-50'
-                            : 'bg-gray-100 text-gray-400'
+                            ? 'bg-muted'
+                            : 'bg-muted/50 text-muted-foreground'
                         }`}
                       >
                         <span className="font-medium">
@@ -183,7 +183,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-6">
+                  <p className="text-muted-foreground text-center py-6">
                     لم يتم تحديد مواعيد العمل بعد
                   </p>
                 )}
@@ -196,7 +196,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-primary-600" />
+                  <DollarSign className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                   الخدمات والأسعار
                 </CardTitle>
               </CardHeader>
@@ -206,23 +206,23 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                     {services.map((service) => (
                       <div
                         key={service.id}
-                        className="flex items-center justify-between p-4 rounded-lg bg-gray-50"
+                        className="flex items-center justify-between p-4 rounded-lg bg-muted"
                       >
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-foreground">
                             {service.nameAr || service.nameEn}
                           </p>
                           {service.description && (
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-muted-foreground mt-1">
                               {service.description}
                             </p>
                           )}
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-muted-foreground mt-1">
                             المدة: {service.durationMinutes} دقيقة
                           </p>
                         </div>
                         <div className="text-end">
-                          <span className="text-lg font-bold text-primary-600">
+                          <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
                             {service.price} ج.م
                           </span>
                         </div>
@@ -230,7 +230,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-6">
+                  <p className="text-muted-foreground text-center py-6">
                     لم يتم إضافة خدمات بعد
                   </p>
                 )}
@@ -243,15 +243,15 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
       {/* Sidebar - Quick Booking */}
       <div className="lg:col-span-1">
         <div className="sticky top-24">
-          <Card className="border-primary-200 bg-primary-50/50">
+          <Card className="border-primary-200 dark:border-primary-800 bg-primary-50/50 dark:bg-primary-900/20">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary-600" />
+                <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 حجز سريع
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 اختر التاريخ والوقت المناسب لك من تبويب &quot;احجز موعد&quot;
               </p>
               <Button

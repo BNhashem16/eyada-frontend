@@ -40,7 +40,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
       <main className="flex-1">
         {/* Results Count */}
         {!isLoading && !isError && (
-          <div className="mb-4 text-sm text-gray-600">
+          <div className="mb-4 text-sm text-muted-foreground">
             عرض {doctors.length} من {totalItems} طبيب
           </div>
         )}
@@ -75,12 +75,12 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
 
         {/* Error State */}
         {isError && (
-          <Card className="border-error-200 bg-error-50">
+          <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
             <CardContent className="py-10 text-center">
-              <p className="text-error-600">
+              <p className="text-error-600 dark:text-error-400">
                 حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.
               </p>
-              <p className="text-sm text-error-500 mt-2">
+              <p className="text-sm text-error-500 dark:text-error-400 mt-2">
                 {error instanceof Error ? error.message : 'Unknown error'}
               </p>
             </CardContent>
@@ -91,11 +91,11 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
         {!isLoading && !isError && doctors.length === 0 && (
           <Card>
             <CardContent className="py-16 text-center">
-              <Frown className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <Frown className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 لم يتم العثور على أطباء
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 جرب تغيير معايير البحث أو مسح الفلاتر
               </p>
               <Button variant="outline" onClick={() => handleFiltersChange({})}>

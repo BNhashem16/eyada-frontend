@@ -27,16 +27,16 @@ export default function EditClinicPage({ params }: EditClinicPageProps) {
   return (
     <div className="max-w-2xl space-y-6">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-500">
-        <Link href="/doctor/clinics" className="hover:text-primary-600">
+      <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Link href="/doctor/clinics" className="hover:text-primary-600 dark:hover:text-primary-400">
           العيادات
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <Link href={`/doctor/clinics/${id}`} className="hover:text-primary-600">
+        <Link href={`/doctor/clinics/${id}`} className="hover:text-primary-600 dark:hover:text-primary-400">
           {clinic?.name}
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-gray-900">تعديل</span>
+        <span className="text-foreground">تعديل</span>
       </nav>
 
       <ClinicForm clinicId={id} />

@@ -14,21 +14,21 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         {hasIcon && iconPosition === 'start' && (
-          <div className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <div className="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground">
             {icon}
           </div>
         )}
         <input
           type={type}
           className={cn(
-            'flex h-10 w-full rounded-lg border bg-white px-3 py-2 text-sm text-gray-900 transition-colors',
+            'flex h-10 w-full rounded-lg border bg-background px-3 py-2 text-sm text-foreground transition-colors',
             'file:border-0 file:bg-transparent file:text-sm file:font-medium',
-            'placeholder:text-gray-400',
+            'placeholder:text-muted-foreground',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-0',
             'disabled:cursor-not-allowed disabled:opacity-50',
             error
               ? 'border-error-500 focus-visible:ring-error-500'
-              : 'border-gray-300 hover:border-gray-400',
+              : 'border-border hover:border-muted-foreground/50',
             hasIcon && iconPosition === 'start' && 'ps-10',
             hasIcon && iconPosition === 'end' && 'pe-10',
             className
@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {hasIcon && iconPosition === 'end' && (
-          <div className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <div className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground">
             {icon}
           </div>
         )}

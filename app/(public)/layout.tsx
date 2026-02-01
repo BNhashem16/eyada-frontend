@@ -241,7 +241,7 @@ export default function PublicLayout({
                 </div>
                 <span className="text-xl font-bold">عيادة</span>
               </div>
-              <p className="text-gray-400 max-w-md">
+              <p className="text-gray-400 dark:text-gray-500 max-w-md">
                 منصة حجز المواعيد الطبية الأولى في مصر. احجز موعدك مع أفضل الأطباء بكل سهولة.
               </p>
             </div>
@@ -249,7 +249,7 @@ export default function PublicLayout({
             {/* Quick Links */}
             <div>
               <h4 className="font-bold mb-4">روابط سريعة</h4>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-gray-400 dark:text-gray-500">
                 <li>
                   <Link href="/doctors" className="hover:text-white transition-colors">
                     ابحث عن طبيب
@@ -271,7 +271,7 @@ export default function PublicLayout({
             {/* Contact */}
             <div>
               <h4 className="font-bold mb-4">تواصل معنا</h4>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-gray-400 dark:text-gray-500">
                 <li dir="ltr">+20 123 456 7890</li>
                 <li>support@eyada.com</li>
                 <li>القاهرة، مصر</li>
@@ -279,7 +279,7 @@ export default function PublicLayout({
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+          <div className="mt-8 pt-8 border-t border-gray-800 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 text-sm">
             <p>© {new Date().getFullYear()} عيادة. جميع الحقوق محفوظة.</p>
           </div>
         </div>

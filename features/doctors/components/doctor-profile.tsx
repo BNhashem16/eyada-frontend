@@ -40,9 +40,9 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
 
   if (isError || !doctor) {
     return (
-      <Card className="border-error-200 bg-error-50">
+      <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600">
+          <p className="text-error-600 dark:text-error-400">
             حدث خطأ أثناء تحميل بيانات الطبيب. يرجى المحاولة مرة أخرى.
           </p>
           <Button asChild variant="outline" className="mt-4">
@@ -64,12 +64,12 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
         <CardContent className="relative pb-6">
           {/* Avatar */}
           <div className="absolute -top-16 start-6">
-            <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+            <Avatar className="h-32 w-32 border-4 border-card shadow-lg">
               <AvatarImage
                 src={doctor.user?.profilePicture || undefined}
                 alt={doctor.user?.name}
               />
-              <AvatarFallback className="text-3xl bg-primary-100 text-primary-700">
+              <AvatarFallback className="text-3xl bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400">
                 {getInitials(doctor.user?.name || '')}
               </AvatarFallback>
             </Avatar>
@@ -80,14 +80,14 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-foreground">
                     د. {doctor.user?.name}
                   </h1>
                   {doctor.isVerified && (
                     <Badge variant="success">موثق</Badge>
                   )}
                 </div>
-                <p className="text-gray-600 mt-1">
+                <p className="text-muted-foreground mt-1">
                   {doctor.specialty?.nameAr || doctor.specialty?.nameEn}
                 </p>
 
@@ -100,13 +100,13 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                         className={`h-5 w-5 ${
                           i < Math.round(averageRating)
                             ? 'fill-warning-400 text-warning-400'
-                            : 'text-gray-300'
+                            : 'text-muted-foreground/30'
                         }`}
                       />
                     ))}
                   </div>
                   <span className="font-semibold">{averageRating.toFixed(1)}</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     ({totalRatings} تقييم)
                   </span>
                 </div>
@@ -116,17 +116,17 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <div className="flex gap-6 text-center">
                 {doctor.yearsOfExperience && (
                   <div>
-                    <div className="text-2xl font-bold text-primary-600">
+                    <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {doctor.yearsOfExperience}+
                     </div>
-                    <div className="text-sm text-gray-500">سنة خبرة</div>
+                    <div className="text-sm text-muted-foreground">سنة خبرة</div>
                   </div>
                 )}
                 <div>
-                  <div className="text-2xl font-bold text-primary-600">
+                  <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                     {doctor.clinics?.length || 0}
                   </div>
-                  <div className="text-sm text-gray-500">عيادة</div>
+                  <div className="text-sm text-muted-foreground">عيادة</div>
                 </div>
               </div>
             </div>
@@ -151,7 +151,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                 <CardTitle className="text-lg">نبذة عن الطبيب</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 whitespace-pre-line">{doctor.bio}</p>
+                <p className="text-foreground whitespace-pre-line">{doctor.bio}</p>
               </CardContent>
             </Card>
           )}
@@ -163,14 +163,14 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-primary-600" />
+                    <GraduationCap className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                     المؤهلات العلمية
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
                     {doctor.qualifications.map((q: string, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-700">
+                      <li key={i} className="flex items-start gap-2 text-foreground">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
                         {q}
                       </li>
@@ -185,14 +185,14 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Award className="h-5 w-5 text-primary-600" />
+                    <Award className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                     الشهادات
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
                     {doctor.certifications.map((c: string, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-700">
+                      <li key={i} className="flex items-start gap-2 text-foreground">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
                         {c}
                       </li>
@@ -208,12 +208,12 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-primary-600" />
+                  <Phone className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                   معلومات التواصل
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700" dir="ltr">
+                <p className="text-foreground" dir="ltr">
                   {doctor.user.phone}
                 </p>
               </CardContent>
@@ -232,8 +232,8 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
           ) : (
             <Card>
               <CardContent className="py-10 text-center">
-                <Building2 className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-600">لا توجد عيادات مسجلة</p>
+                <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                <p className="text-muted-foreground">لا توجد عيادات مسجلة</p>
               </CardContent>
             </Card>
           )}

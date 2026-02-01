@@ -44,8 +44,8 @@ export function RatingsList({ doctorId }: RatingsListProps) {
 
   if (isError) {
     return (
-      <Card className="border-error-200 bg-error-50">
-        <CardContent className="py-6 text-center text-error-600">
+      <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
+        <CardContent className="py-6 text-center text-error-600 dark:text-error-400">
           حدث خطأ أثناء تحميل التقييمات
         </CardContent>
       </Card>
@@ -56,8 +56,8 @@ export function RatingsList({ doctorId }: RatingsListProps) {
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <MessageSquare className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-600">لا توجد تقييمات حتى الآن</p>
+          <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+          <p className="text-muted-foreground">لا توجد تقييمات حتى الآن</p>
         </CardContent>
       </Card>
     );
@@ -66,7 +66,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
   return (
     <div className="space-y-4">
       {/* Count */}
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-muted-foreground">
         {totalItems} تقييم
       </p>
 
@@ -88,7 +88,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-foreground">
                       {rating.patient?.user?.name || 'مريض'}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
@@ -99,20 +99,20 @@ export function RatingsList({ doctorId }: RatingsListProps) {
                             className={`h-4 w-4 ${
                               i < rating.rating
                                 ? 'fill-warning-400 text-warning-400'
-                                : 'text-gray-300'
+                                : 'text-muted-foreground/30'
                             }`}
                           />
                         ))}
                       </div>
                     </div>
                   </div>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     {formatRelativeDate(rating.createdAt)}
                   </span>
                 </div>
 
                 {rating.comment && (
-                  <p className="mt-3 text-gray-700">{rating.comment}</p>
+                  <p className="mt-3 text-foreground">{rating.comment}</p>
                 )}
               </div>
             </div>
@@ -132,7 +132,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
             <ChevronRight className="h-4 w-4" />
             السابق
           </Button>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-muted-foreground">
             صفحة {page} من {totalPages}
           </span>
           <Button

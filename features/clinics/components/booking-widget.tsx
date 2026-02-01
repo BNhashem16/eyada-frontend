@@ -169,14 +169,14 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          <CalendarIcon className="h-5 w-5 text-primary-600" />
+          <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
           اختر موعدك
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Service Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             اختر الخدمة
           </label>
           {servicesLoading ? (
@@ -195,14 +195,14 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               </SelectContent>
             </Select>
           ) : (
-            <p className="text-sm text-gray-500">لا توجد خدمات متاحة</p>
+            <p className="text-sm text-muted-foreground">لا توجد خدمات متاحة</p>
           )}
         </div>
 
         {/* Date Selection */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <label className="text-sm font-medium text-gray-700">اختر اليوم</label>
+            <label className="text-sm font-medium text-foreground">اختر اليوم</label>
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
@@ -212,7 +212,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-muted-foreground">
                 {formatDate(weekStart, 'MMM yyyy')}
               </span>
               <Button variant="ghost" size="sm" onClick={goToNextWeek}>
@@ -234,7 +234,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                   disabled={isPast}
                   className={`
                     flex flex-col items-center justify-center p-2 rounded-lg text-center transition-all
-                    ${isPast ? 'opacity-40 cursor-not-allowed' : 'hover:bg-primary-50 cursor-pointer'}
+                    ${isPast ? 'opacity-40 cursor-not-allowed' : 'hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer'}
                     ${isSelected ? 'bg-primary-500 text-white hover:bg-primary-600' : ''}
                     ${today && !isSelected ? 'border-2 border-primary-500' : ''}
                   `}
@@ -254,7 +254,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         {/* Time Slots */}
         {selectedDate && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-medium text-foreground mb-3">
               اختر الوقت
             </label>
 
@@ -267,7 +267,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             )}
 
             {slotsError && (
-              <div className="flex items-center gap-2 text-error-600 p-3 bg-error-50 rounded-lg">
+              <div className="flex items-center gap-2 text-error-600 dark:text-error-400 p-3 bg-error-50 dark:bg-error-900/20 rounded-lg">
                 <AlertCircle className="h-5 w-5" />
                 <span className="text-sm">حدث خطأ أثناء تحميل المواعيد</span>
               </div>
@@ -292,7 +292,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                               ${
                                 isSelected
                                   ? 'bg-primary-500 text-white'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-700'
+                                  : 'bg-muted text-foreground hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-700 dark:hover:text-primary-400'
                               }
                             `}
                           >
@@ -303,9 +303,9 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                       })}
                   </div>
                 ) : (
-                  <div className="text-center py-6 bg-gray-50 rounded-lg">
-                    <Clock className="h-8 w-8 mx-auto text-gray-300 mb-2" />
-                    <p className="text-gray-500">لا توجد مواعيد متاحة في هذا اليوم</p>
+                  <div className="text-center py-6 bg-muted rounded-lg">
+                    <Clock className="h-8 w-8 mx-auto text-muted-foreground/30 mb-2" />
+                    <p className="text-muted-foreground">لا توجد مواعيد متاحة في هذا اليوم</p>
                   </div>
                 )}
               </>
@@ -316,30 +316,30 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         {/* Summary & Book Button */}
         {selectedDate && selectedSlot && selectedServiceId && (
           <div className="border-t pt-4 space-y-4">
-            <div className="bg-primary-50 rounded-lg p-4">
-              <h4 className="font-semibold text-gray-900 mb-2">ملخص الحجز</h4>
+            <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
+              <h4 className="font-semibold text-foreground mb-2">ملخص الحجز</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">الخدمة:</span>
+                  <span className="text-muted-foreground">الخدمة:</span>
                   <span className="font-medium">
                     {selectedService?.nameAr || selectedService?.nameEn}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">التاريخ:</span>
+                  <span className="text-muted-foreground">التاريخ:</span>
                   <span className="font-medium">
                     {formatDate(selectedDate, 'EEEE, d MMMM yyyy')}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">الوقت:</span>
+                  <span className="text-muted-foreground">الوقت:</span>
                   <span className="font-medium" dir="ltr">
                     {formatTime(selectedSlot.startTime)}
                   </span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-primary-100">
-                  <span className="text-gray-600">السعر:</span>
-                  <span className="font-bold text-primary-600">
+                <div className="flex justify-between pt-2 border-t border-primary-100 dark:border-primary-800">
+                  <span className="text-muted-foreground">السعر:</span>
+                  <span className="font-bold text-primary-600 dark:text-primary-400">
                     {selectedService?.price} ج.م
                   </span>
                 </div>

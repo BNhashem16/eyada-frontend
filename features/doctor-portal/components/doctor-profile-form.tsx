@@ -264,7 +264,7 @@ export function DoctorProfileForm() {
             {/* Info */}
             <div className="flex-1 text-center sm:text-start">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-foreground">
                   د. {profile?.user?.fullName || user?.fullName}
                 </h2>
                 {isNewProfile ? (
@@ -276,34 +276,34 @@ export function DoctorProfileForm() {
                 )}
               </div>
               {isNewProfile ? (
-                <p className="text-gray-600 mb-1">أكمل بياناتك لإنشاء ملفك الشخصي</p>
+                <p className="text-muted-foreground mb-1">أكمل بياناتك لإنشاء ملفك الشخصي</p>
               ) : (
-                <p className="text-gray-600 mb-1">
+                <p className="text-muted-foreground mb-1">
                   {profile?.specialty?.name?.ar || profile?.specialty?.name?.en}
                 </p>
               )}
-              <p className="text-sm text-gray-500">{profile?.user?.email || user?.email}</p>
+              <p className="text-sm text-muted-foreground">{profile?.user?.email || user?.email}</p>
 
               {/* Stats - only show for existing profiles */}
               {!isNewProfile && (
                 <div className="flex flex-wrap justify-center sm:justify-start gap-4 mt-4">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-primary-600">
+                    <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {profile?.averageRating?.toFixed(1) || '0.0'}
                     </p>
-                    <p className="text-xs text-gray-500">التقييم</p>
+                    <p className="text-xs text-muted-foreground">التقييم</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-primary-600">
+                    <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {profile?.totalRatings || 0}
                     </p>
-                    <p className="text-xs text-gray-500">المراجعات</p>
+                    <p className="text-xs text-muted-foreground">المراجعات</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-primary-600">
+                    <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {profile?.totalAppointments || 0}
                     </p>
-                    <p className="text-xs text-gray-500">المواعيد</p>
+                    <p className="text-xs text-muted-foreground">المواعيد</p>
                   </div>
                 </div>
               )}
@@ -317,7 +317,7 @@ export function DoctorProfileForm() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Stethoscope className="h-5 w-5 text-primary-600" />
+              <Stethoscope className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               التخصص الطبي
             </CardTitle>
           </CardHeader>
@@ -329,7 +329,7 @@ export function DoctorProfileForm() {
                 onValueChange={(value) => setValue('specialtyId', value, { shouldValidate: true, shouldDirty: true })}
                 disabled={loadingSpecialties}
               >
-                <SelectTrigger className="bg-white">
+                <SelectTrigger className="bg-background">
                   <SelectValue placeholder={loadingSpecialties ? 'جاري التحميل...' : 'اختر تخصصك الطبي'} />
                 </SelectTrigger>
                 <SelectContent>
@@ -352,7 +352,7 @@ export function DoctorProfileForm() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Award className="h-5 w-5 text-primary-600" />
+            <Award className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             المعلومات المهنية
           </CardTitle>
         </CardHeader>
@@ -392,7 +392,7 @@ export function DoctorProfileForm() {
               id="qualificationsAr"
               rows={2}
               placeholder="بكالوريوس الطب والجراحة، ماجستير..."
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('qualificationsAr')}
             />
           </div>
@@ -403,7 +403,7 @@ export function DoctorProfileForm() {
               id="qualificationsEn"
               rows={2}
               placeholder="Bachelor of Medicine, Master's..."
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('qualificationsEn')}
             />
           </div>
@@ -414,7 +414,7 @@ export function DoctorProfileForm() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <FileText className="h-5 w-5 text-primary-600" />
+            <FileText className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             السيرة الذاتية
           </CardTitle>
         </CardHeader>
@@ -425,7 +425,7 @@ export function DoctorProfileForm() {
               id="bioAr"
               rows={3}
               placeholder="اكتب نبذة مختصرة عن خبرتك وتخصصك..."
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('bioAr')}
             />
             {errors.bioAr && (
@@ -439,7 +439,7 @@ export function DoctorProfileForm() {
               id="bioEn"
               rows={3}
               placeholder="Write a brief description about your experience..."
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('bioEn')}
             />
             {errors.bioEn && (
@@ -453,25 +453,25 @@ export function DoctorProfileForm() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Phone className="h-5 w-5 text-primary-600" />
+            <Phone className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             التواصل والخصوصية
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Phone Display Settings */}
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div className="flex items-center gap-3">
-              <Phone className="h-5 w-5 text-gray-500" />
+              <Phone className="h-5 w-5 text-muted-foreground" />
               <div>
-                <p className="font-medium text-gray-900">عرض رقم الهاتف</p>
-                <p className="text-sm text-gray-500">السماح للمرضى برؤية رقم هاتفك</p>
+                <p className="font-medium text-foreground">عرض رقم الهاتف</p>
+                <p className="text-sm text-muted-foreground">السماح للمرضى برؤية رقم هاتفك</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setValue('showPhoneNumber', !showPhoneNumber, { shouldDirty: true })}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showPhoneNumber ? 'bg-primary-600' : 'bg-gray-300'
+                showPhoneNumber ? 'bg-primary-600' : 'bg-muted-foreground/30'
               }`}
             >
               <span
@@ -483,19 +483,19 @@ export function DoctorProfileForm() {
           </div>
 
           {/* WhatsApp Settings */}
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div className="flex items-center gap-3">
-              <MessageCircle className="h-5 w-5 text-gray-500" />
+              <MessageCircle className="h-5 w-5 text-muted-foreground" />
               <div>
-                <p className="font-medium text-gray-900">عرض رقم الواتساب</p>
-                <p className="text-sm text-gray-500">السماح للمرضى بالتواصل عبر واتساب</p>
+                <p className="font-medium text-foreground">عرض رقم الواتساب</p>
+                <p className="text-sm text-muted-foreground">السماح للمرضى بالتواصل عبر واتساب</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setValue('showWhatsappNumber', !showWhatsappNumber, { shouldDirty: true })}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showWhatsappNumber ? 'bg-primary-600' : 'bg-gray-300'
+                showWhatsappNumber ? 'bg-primary-600' : 'bg-muted-foreground/30'
               }`}
             >
               <span
@@ -508,7 +508,7 @@ export function DoctorProfileForm() {
 
           {/* WhatsApp Numbers */}
           {showWhatsappNumber && (
-            <div className="space-y-3 p-3 border border-gray-200 rounded-lg">
+            <div className="space-y-3 p-3 border border-border rounded-lg">
               <Label>أرقام الواتساب</Label>
 
               {/* Existing Numbers */}

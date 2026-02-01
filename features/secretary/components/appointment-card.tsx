@@ -38,45 +38,45 @@ const statusConfig: Record<
 > = {
   [AppointmentStatus.PENDING]: {
     label: 'في الانتظار',
-    color: 'bg-yellow-100 text-yellow-800',
+    color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
     icon: <AlertCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CONFIRMED]: {
     label: 'مؤكد',
-    color: 'bg-blue-100 text-blue-800',
+    color: 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CHECKED_IN]: {
     label: 'حضر',
-    color: 'bg-green-100 text-green-800',
+    color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.IN_PROGRESS]: {
     label: 'جاري الكشف',
-    color: 'bg-purple-100 text-purple-800',
+    color: 'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400',
     icon: <Clock className="h-4 w-4" />,
   },
   [AppointmentStatus.COMPLETED]: {
     label: 'مكتمل',
-    color: 'bg-gray-100 text-gray-800',
+    color: 'bg-muted text-muted-foreground',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CANCELLED]: {
     label: 'ملغي',
-    color: 'bg-red-100 text-red-800',
+    color: 'bg-error-100 text-error-800 dark:bg-error-900/30 dark:text-error-400',
     icon: <XCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.NO_SHOW]: {
     label: 'لم يحضر',
-    color: 'bg-gray-100 text-gray-600',
+    color: 'bg-muted text-muted-foreground',
     icon: <XCircle className="h-4 w-4" />,
   },
 };
 
 const paymentStatusConfig: Record<PaymentStatus, { label: string; color: string }> = {
-  [PaymentStatus.PENDING]: { label: 'غير مدفوع', color: 'bg-yellow-100 text-yellow-800' },
-  [PaymentStatus.PAID]: { label: 'مدفوع', color: 'bg-green-100 text-green-800' },
-  [PaymentStatus.REFUNDED]: { label: 'مسترد', color: 'bg-gray-100 text-gray-800' },
+  [PaymentStatus.PENDING]: { label: 'غير مدفوع', color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400' },
+  [PaymentStatus.PAID]: { label: 'مدفوع', color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' },
+  [PaymentStatus.REFUNDED]: { label: 'مسترد', color: 'bg-muted text-muted-foreground' },
 };
 
 export function AppointmentCard({ appointment }: AppointmentCardProps) {
@@ -119,7 +119,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
           {/* Patient Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-lg font-bold text-primary-600">
+              <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
                 {appointment.queueNumber ? `#${appointment.queueNumber}` : '--'}
               </span>
               <Badge className={status.color}>
@@ -129,11 +129,11 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
               <Badge className={paymentStatus.color}>{paymentStatus.label}</Badge>
             </div>
 
-            <h3 className="font-semibold text-gray-900 mb-1 truncate">
+            <h3 className="font-semibold text-foreground mb-1 truncate">
               {appointment.patientName}
             </h3>
 
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
                 {appointment.appointmentTime}
@@ -149,7 +149,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
             </div>
 
             {appointment.patientNotes && (
-              <p className="mt-2 text-sm text-gray-600 line-clamp-1">
+              <p className="mt-2 text-sm text-muted-foreground line-clamp-1">
                 {appointment.patientNotes}
               </p>
             )}

@@ -15,10 +15,10 @@ export default function ForgotPasswordPage() {
     <>
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-2xl font-bold text-gray-900">
+        <h1 className="mb-2 text-2xl font-bold text-foreground">
           نسيت كلمة المرور؟
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور
         </p>
       </div>
@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
 
         <Link
           href="/login"
-          className="flex items-center justify-center gap-2 text-primary-600 hover:underline"
+          className="flex items-center justify-center gap-2 text-primary-600 dark:text-primary-400 hover:underline"
         >
           <ArrowRight className="h-4 w-4" />
           العودة لتسجيل الدخول

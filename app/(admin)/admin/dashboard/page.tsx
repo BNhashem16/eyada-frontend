@@ -13,12 +13,12 @@ export default function AdminDashboardPage() {
       {/* Page Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="h-12 w-12 rounded-xl bg-primary-100 flex items-center justify-center">
-            <LayoutDashboard className="h-6 w-6 text-primary-600" />
+          <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+            <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
-            <p className="text-gray-500">مرحباً بك في لوحة إدارة النظام</p>
+            <h1 className="text-2xl font-bold text-foreground">لوحة التحكم</h1>
+            <p className="text-muted-foreground">مرحباً بك في لوحة إدارة النظام</p>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@ export default function AdminDashboardPage() {
 
       {/* Pending Doctors */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-foreground mb-4">
           طلبات التسجيل المعلقة
         </h2>
         <PendingDoctorsList />

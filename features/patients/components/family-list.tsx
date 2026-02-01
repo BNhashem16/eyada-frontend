@@ -130,7 +130,7 @@ export function FamilyList() {
         </CardHeader>
         <CardContent className="space-y-4">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+            <div key={i} className="flex items-center gap-4 p-4 bg-muted rounded-lg">
               <Skeleton className="h-12 w-12 rounded-full" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-5 w-32" />
@@ -148,7 +148,7 @@ export function FamilyList() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary-600" />
+            <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             أفراد العائلة
           </CardTitle>
           <Button size="sm" onClick={() => setShowAddDialog(true)}>
@@ -162,18 +162,18 @@ export function FamilyList() {
               {family.map((member) => (
                 <div
                   key={member.id}
-                  className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                  className="flex items-center gap-4 p-4 bg-muted rounded-lg"
                 >
                   <Avatar className="h-12 w-12">
                     <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-900">{member.name}</p>
+                    <p className="font-semibold text-foreground">{member.name}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant="secondary" size="sm">
                         {relationshipLabels[member.relationship]}
                       </Badge>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-muted-foreground">
                         {member.gender === Gender.MALE ? 'ذكر' : 'أنثى'}
                       </span>
                     </div>
@@ -196,9 +196,9 @@ export function FamilyList() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <Users className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-600">لم تقم بإضافة أفراد عائلة بعد</p>
-              <p className="text-sm text-gray-500 mt-1">
+              <Users className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">لم تقم بإضافة أفراد عائلة بعد</p>
+              <p className="text-sm text-muted-foreground mt-1">
                 يمكنك إضافة أفراد عائلتك لحجز مواعيد لهم
               </p>
             </div>

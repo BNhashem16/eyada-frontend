@@ -273,7 +273,7 @@ export default function HomePage() {
           <Link href="/register?role=doctor">
             <Button
               size="lg"
-              className="bg-white text-primary-600 hover:bg-gray-100"
+              className="bg-white text-primary-600 hover:bg-white/90"
             >
               {t('home.registerAsDoctor')}
             </Button>

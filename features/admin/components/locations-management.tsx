@@ -214,8 +214,8 @@ export function LocationsManagement() {
 
           {!states || states.length === 0 ? (
             <div className="text-center py-10">
-              <MapPin className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500">لا توجد محافظات</p>
+              <MapPin className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+              <p className="text-muted-foreground">لا توجد محافظات</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -233,7 +233,7 @@ export function LocationsManagement() {
                     >
                       <div className="border rounded-lg">
                         <CollapsibleTrigger asChild>
-                          <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50">
+                          <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted">
                             <div className="flex items-center gap-3">
                               {isExpanded ? (
                                 <ChevronDown className="h-4 w-4" />
@@ -241,10 +241,10 @@ export function LocationsManagement() {
                                 <ChevronRight className="h-4 w-4" />
                               )}
                               <span className="font-medium">{state.name.ar}</span>
-                              <span className="text-gray-500 text-sm">
+                              <span className="text-muted-foreground text-sm">
                                 ({state.name.en})
                               </span>
-                              <span className="text-xs text-gray-400">
+                              <span className="text-xs text-muted-foreground/70">
                                 {stateCities.length} مدينة
                               </span>
                             </div>
@@ -280,9 +280,9 @@ export function LocationsManagement() {
                         </CollapsibleTrigger>
 
                         <CollapsibleContent>
-                          <div className="border-t bg-gray-50 p-4">
+                          <div className="border-t bg-muted p-4">
                             <div className="flex justify-between items-center mb-3">
-                              <span className="text-sm font-medium text-gray-600">
+                              <span className="text-sm font-medium text-muted-foreground">
                                 المدن
                               </span>
                               <Button
@@ -296,7 +296,7 @@ export function LocationsManagement() {
                             </div>
 
                             {stateCities.length === 0 ? (
-                              <p className="text-sm text-gray-500 text-center py-4">
+                              <p className="text-sm text-muted-foreground text-center py-4">
                                 لا توجد مدن
                               </p>
                             ) : (
@@ -306,13 +306,13 @@ export function LocationsManagement() {
                                   .map((city) => (
                                     <div
                                       key={city.id}
-                                      className="flex items-center justify-between bg-white rounded p-3"
+                                      className="flex items-center justify-between bg-card rounded p-3"
                                     >
                                       <div>
                                         <span className="font-medium">
                                           {city.name.ar}
                                         </span>
-                                        <span className="text-gray-500 text-sm ms-2">
+                                        <span className="text-muted-foreground text-sm ms-2">
                                           ({city.name.en})
                                         </span>
                                       </div>

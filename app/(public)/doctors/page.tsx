@@ -13,12 +13,12 @@ export default function DoctorsPage() {
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="h-12 w-12 rounded-xl bg-primary-100 flex items-center justify-center">
-            <Stethoscope className="h-6 w-6 text-primary-600" />
+          <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+            <Stethoscope className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">ابحث عن طبيب</h1>
+          <h1 className="text-2xl font-bold text-foreground">ابحث عن طبيب</h1>
         </div>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           اعثر على أفضل الأطباء المتخصصين واحجز موعدك بسهولة
         </p>
       </div>

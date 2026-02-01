@@ -100,7 +100,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           onChange={(e) => handleFilterChange('search', e.target.value)}
           icon={<Search className="h-5 w-5" />}
           iconPosition="start"
-          className="bg-white"
+          className="bg-background"
         />
       </div>
 
@@ -109,7 +109,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         value={filters.specialtyId || 'all'}
         onValueChange={(value) => handleFilterChange('specialtyId', value === 'all' ? undefined : value)}
       >
-        <SelectTrigger className="bg-white">
+        <SelectTrigger className="bg-background">
           <SelectValue placeholder="التخصص" />
         </SelectTrigger>
         <SelectContent>
@@ -127,7 +127,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         value={filters.stateId || 'all'}
         onValueChange={(value) => handleFilterChange('stateId', value === 'all' ? undefined : value)}
       >
-        <SelectTrigger className="bg-white">
+        <SelectTrigger className="bg-background">
           <SelectValue placeholder="المحافظة" />
         </SelectTrigger>
         <SelectContent>
@@ -146,7 +146,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         onValueChange={(value) => handleFilterChange('cityId', value === 'all' ? undefined : value)}
         disabled={!filters.stateId}
       >
-        <SelectTrigger className="bg-white">
+        <SelectTrigger className="bg-background">
           <SelectValue placeholder="المدينة" />
         </SelectTrigger>
         <SelectContent>
@@ -164,7 +164,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         value={filters.minRating?.toString() || 'all'}
         onValueChange={(value) => handleFilterChange('minRating', value === 'all' ? undefined : Number(value))}
       >
-        <SelectTrigger className="bg-white">
+        <SelectTrigger className="bg-background">
           <SelectValue placeholder="التقييم" />
         </SelectTrigger>
         <SelectContent>
@@ -180,7 +180,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         value={filters.sortBy || 'all'}
         onValueChange={(value) => handleFilterChange('sortBy', value === 'all' ? undefined : value)}
       >
-        <SelectTrigger className="bg-white">
+        <SelectTrigger className="bg-background">
           <SelectValue placeholder="ترتيب حسب" />
         </SelectTrigger>
         <SelectContent>
@@ -209,8 +209,8 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
     <>
       {/* Desktop Filters */}
       <div className="hidden lg:block">
-        <div className="sticky top-24 rounded-xl border border-gray-200 bg-gray-50 p-5">
-          <h3 className="mb-4 font-bold text-gray-900">تصفية النتائج</h3>
+        <div className="sticky top-24 rounded-xl border border-border bg-muted p-5">
+          <h3 className="mb-4 font-bold text-foreground">تصفية النتائج</h3>
           <FiltersContent />
         </div>
       </div>
@@ -242,9 +242,9 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowMobileFilters(false)}
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white p-5 animate-slide-up">
+          <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-card p-5 animate-slide-up">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-gray-900">تصفية النتائج</h3>
+              <h3 className="font-bold text-foreground">تصفية النتائج</h3>
               <Button
                 variant="ghost"
                 size="sm"

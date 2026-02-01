@@ -30,9 +30,9 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
 
   if (!clinic) {
     return (
-      <Card className="border-error-200 bg-error-50">
+      <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600">العيادة غير موجودة</p>
+          <p className="text-error-600 dark:text-error-400">العيادة غير موجودة</p>
           <Button asChild variant="outline" className="mt-4">
             <Link href="/doctor/clinics">العودة للعيادات</Link>
           </Button>
@@ -44,23 +44,23 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-500">
-        <Link href="/doctor/clinics" className="hover:text-primary-600">
+      <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Link href="/doctor/clinics" className="hover:text-primary-600 dark:hover:text-primary-400">
           العيادات
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-gray-900">{clinic.name}</span>
+        <span className="text-foreground">{clinic.name}</span>
       </nav>
 
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-xl bg-primary-100 flex items-center justify-center">
-            <Building2 className="h-6 w-6 text-primary-600" />
+          <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+            <Building2 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{clinic.name}</h1>
-            <p className="text-gray-600">إدارة مواعيد العمل والخدمات</p>
+            <h1 className="text-2xl font-bold text-foreground">{clinic.name}</h1>
+            <p className="text-muted-foreground">إدارة مواعيد العمل والخدمات</p>
           </div>
         </div>
         <Button asChild variant="outline">

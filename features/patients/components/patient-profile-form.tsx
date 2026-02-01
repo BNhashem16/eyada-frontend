@@ -112,7 +112,7 @@ export function PatientProfileForm() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-primary-600" />
+            <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             البيانات الشخصية
           </CardTitle>
         </CardHeader>
@@ -155,7 +155,7 @@ export function PatientProfileForm() {
               icon={<Mail className="h-5 w-5" />}
               iconPosition="start"
             />
-            <p className="text-xs text-gray-500">لا يمكن تغيير البريد الإلكتروني</p>
+            <p className="text-xs text-muted-foreground">لا يمكن تغيير البريد الإلكتروني</p>
           </div>
 
           {/* Date of Birth */}

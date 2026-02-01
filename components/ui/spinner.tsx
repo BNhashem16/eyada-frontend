@@ -47,10 +47,10 @@ export function PageLoader() {
 
 export function FullPageLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="flex flex-col items-center gap-4">
         <Spinner size="xl" />
-        <p className="text-gray-500">جاري التحميل...</p>
+        <p className="text-muted-foreground">جاري التحميل...</p>
       </div>
     </div>
   );

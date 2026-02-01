@@ -52,9 +52,9 @@ const statusColors: Record<AppointmentStatus, string> = {
   [AppointmentStatus.PENDING]: 'bg-warning-100 text-warning-700',
   [AppointmentStatus.CONFIRMED]: 'bg-success-100 text-success-700',
   [AppointmentStatus.CHECKED_IN]: 'bg-primary-100 text-primary-700',
-  [AppointmentStatus.COMPLETED]: 'bg-gray-100 text-gray-700',
+  [AppointmentStatus.COMPLETED]: 'bg-muted text-muted-foreground',
   [AppointmentStatus.CANCELLED]: 'bg-error-100 text-error-700',
-  [AppointmentStatus.NO_SHOW]: 'bg-gray-200 text-gray-600',
+  [AppointmentStatus.NO_SHOW]: 'bg-muted/70 text-muted-foreground',
 };
 
 export function AppointmentQueue() {
@@ -183,8 +183,8 @@ export function AppointmentQueue() {
 
       {/* Date Header */}
       <div className="flex items-center gap-3">
-        <Calendar className="h-6 w-6 text-primary-600" />
-        <h2 className="text-xl font-bold text-gray-900">
+        <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+        <h2 className="text-xl font-bold text-foreground">
           {formatDate(new Date(selectedDate), 'EEEE, d MMMM yyyy')}
         </h2>
         <Badge variant="outline">{appointments.length} موعد</Badge>
@@ -214,11 +214,11 @@ export function AppointmentQueue() {
       {!isLoading && appointments.length === 0 && (
         <Card>
           <CardContent className="py-16 text-center">
-            <Calendar className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <Calendar className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               لا توجد مواعيد
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               لا توجد مواعيد في هذا اليوم
             </p>
           </CardContent>
@@ -239,7 +239,7 @@ export function AppointmentQueue() {
                   key={appointment.id}
                   className={
                     appointment.status === AppointmentStatus.CHECKED_IN
-                      ? 'border-primary-300 bg-primary-50/30'
+                      ? 'border-primary-300 dark:border-primary-700 bg-primary-50/30 dark:bg-primary-900/20'
                       : ''
                   }
                 >
@@ -247,7 +247,7 @@ export function AppointmentQueue() {
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                       {/* Time */}
                       <div className="flex items-center gap-3 sm:w-24">
-                        <Clock className="h-5 w-5 text-gray-400" />
+                        <Clock className="h-5 w-5 text-muted-foreground" />
                         <span className="font-mono font-semibold" dir="ltr">
                           {formatTime(appointment.startTime)}
                         </span>
@@ -264,16 +264,16 @@ export function AppointmentQueue() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
-                          <p className="font-semibold text-gray-900 truncate">
+                          <p className="font-semibold text-foreground truncate">
                             {appointment.patient?.user?.name}
                           </p>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>
                               {appointment.service?.nameAr || appointment.service?.nameEn}
                             </span>
                             {appointment.patient?.user?.phone && (
                               <>
-                                <span className="text-gray-300">|</span>
+                                <span className="text-muted-foreground/50">|</span>
                                 <a
                                   href={`tel:${appointment.patient.user.phone}`}
                                   className="flex items-center gap-1 hover:text-primary-600"

@@ -64,7 +64,7 @@ export function DashboardStats() {
       label: t('secretary.completed'),
       value: stats.completed,
       icon: CheckCircle,
-      color: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+      color: 'bg-muted text-muted-foreground',
     },
     {
       label: t('secretary.revenue'),

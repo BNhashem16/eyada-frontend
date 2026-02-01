@@ -56,9 +56,9 @@ export function ClinicManagement() {
 
   if (isError) {
     return (
-      <Card className="border-error-200 bg-error-50">
+      <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600">
+          <p className="text-error-600 dark:text-error-400">
             حدث خطأ أثناء تحميل العيادات. يرجى المحاولة مرة أخرى.
           </p>
         </CardContent>
@@ -98,15 +98,15 @@ export function ClinicManagement() {
                 <CardContent className="p-5">
                   <div className="flex flex-col sm:flex-row gap-4">
                     {/* Icon */}
-                    <div className="flex-shrink-0 h-16 w-16 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center">
-                      <Building2 className="h-8 w-8 text-primary-600" />
+                    <div className="flex-shrink-0 h-16 w-16 rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/30 dark:to-primary-800/30 flex items-center justify-center">
+                      <Building2 className="h-8 w-8 text-primary-600 dark:text-primary-400" />
                     </div>
 
                     {/* Info */}
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div>
-                          <h3 className="text-lg font-bold text-gray-900">
+                          <h3 className="text-lg font-bold text-foreground">
                             {clinic.name}
                           </h3>
                           {clinic.isActive ? (
@@ -121,8 +121,8 @@ export function ClinicManagement() {
                         </div>
                         {consultationPrice && (
                           <div className="text-end">
-                            <span className="text-sm text-gray-500">الكشف</span>
-                            <div className="font-bold text-primary-600">
+                            <span className="text-sm text-muted-foreground">الكشف</span>
+                            <div className="font-bold text-primary-600 dark:text-primary-400">
                               {consultationPrice} ج.م
                             </div>
                           </div>
@@ -130,8 +130,8 @@ export function ClinicManagement() {
                       </div>
 
                       {/* Location */}
-                      <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                        <MapPin className="h-4 w-4 text-gray-400" />
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                        <MapPin className="h-4 w-4 text-muted-foreground/70" />
                         <span>
                           {clinic.addressLine1}
                           {clinic.city && `, ${clinic.city.nameAr}`}
@@ -140,26 +140,26 @@ export function ClinicManagement() {
 
                       {/* Phone */}
                       {clinic.phone && (
-                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                          <Phone className="h-4 w-4 text-gray-400" />
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <Phone className="h-4 w-4 text-muted-foreground/70" />
                           <span dir="ltr">{clinic.phone}</span>
                         </div>
                       )}
 
                       {/* Working Days */}
                       {workingDays && workingDays.length > 0 && (
-                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                          <Clock className="h-4 w-4 text-gray-400" />
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                          <Clock className="h-4 w-4 text-muted-foreground/70" />
                           <span>{workingDays.join('، ')}</span>
                         </div>
                       )}
 
                       {/* Services Count */}
                       <div className="flex items-center gap-4 text-sm">
-                        <span className="text-gray-500">
+                        <span className="text-muted-foreground">
                           {clinic.services?.length || 0} خدمة
                         </span>
-                        <span className="text-gray-500">
+                        <span className="text-muted-foreground">
                           {clinic.schedules?.filter((s) => s.isAvailable).length || 0} يوم عمل
                         </span>
                       </div>
@@ -189,11 +189,11 @@ export function ClinicManagement() {
       ) : (
         <Card>
           <CardContent className="py-16 text-center">
-            <Building2 className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <Building2 className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               لا توجد عيادات
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               قم بإضافة عيادتك الأولى لبدء استقبال الحجوزات
             </p>
             <Button asChild>
