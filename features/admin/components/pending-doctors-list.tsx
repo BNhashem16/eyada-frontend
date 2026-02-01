@@ -100,7 +100,9 @@ export function PendingDoctorsList() {
     );
   }
 
-  if (!doctors || doctors.length === 0) {
+  const doctorsList = doctors?.data || [];
+
+  if (!doctorsList || doctorsList.length === 0) {
     return (
       <Card>
         <CardContent className="py-16 text-center">
@@ -119,7 +121,7 @@ export function PendingDoctorsList() {
   return (
     <>
       <div className="space-y-4">
-        {doctors.map((doctor) => (
+        {doctorsList.map((doctor) => (
           <Card key={doctor.id} className="hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row md:items-start gap-4">

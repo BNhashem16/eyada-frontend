@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { Users } from 'lucide-react';
-import { PendingDoctorsList } from '@/features/admin';
+import { AdminDoctorsList } from '@/features/admin';
 
 export const metadata: Metadata = {
   title: 'إدارة الأطباء - الإدارة',
-  description: 'مراجعة طلبات تسجيل الأطباء',
+  description: 'إدارة جميع الأطباء في المنصة',
 };
 
 export default function AdminDoctorsPage() {
@@ -18,13 +18,13 @@ export default function AdminDoctorsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">إدارة الأطباء</h1>
-            <p className="text-muted-foreground">مراجعة طلبات التسجيل والموافقة عليها</p>
+            <p className="text-muted-foreground">عرض وإدارة جميع الأطباء المسجلين في المنصة</p>
           </div>
         </div>
       </div>
 
-      {/* Pending Doctors List */}
-      <PendingDoctorsList />
+      {/* All Doctors List with Filters */}
+      <AdminDoctorsList />
     </div>
   );
 }

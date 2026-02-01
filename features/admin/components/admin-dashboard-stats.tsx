@@ -25,7 +25,7 @@ export function AdminDashboardStats() {
   const stats = [
     {
       label: t('admin.pendingDoctors'),
-      value: pendingDoctors?.length || 0,
+      value: pendingDoctors?.meta?.total || 0,
       icon: Users,
       color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400',
       href: '/admin/doctors',

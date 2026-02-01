@@ -106,7 +106,8 @@ export const SECRETARY_ENDPOINTS = {
 // Admin endpoints (requires ADMIN role)
 export const ADMIN_ENDPOINTS = {
   // Doctors management
-  PENDING_DOCTORS: '/admin/doctors/pending',
+  DOCTORS: '/admin/doctors',
+  DOCTOR: (id: string) => `/admin/doctors/${id}`,
   APPROVE_DOCTOR: (id: string) => `/admin/doctors/${id}/approve`,
   REJECT_DOCTOR: (id: string) => `/admin/doctors/${id}/reject`,
   SUSPEND_DOCTOR: (id: string) => `/admin/doctors/${id}/suspend`,
