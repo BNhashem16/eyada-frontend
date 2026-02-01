@@ -73,10 +73,11 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: refreshToken || '',
           });
 
-          // Add name alias for fullName
+          // Add name alias for fullName and normalize role to uppercase
           const user = response.user ? {
             ...response.user,
             name: response.user.fullName || (response.user as any).full_name || (response.user as any).name || '',
+            role: ((response.user.role || '') as string).toUpperCase() as any,
           } : null;
 
           set({
@@ -115,10 +116,11 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: refreshToken || '',
           });
 
-          // Add name alias for fullName
+          // Add name alias for fullName and normalize role to uppercase
           const user = response.user ? {
             ...response.user,
             name: response.user.fullName || (response.user as any).full_name || (response.user as any).name || '',
+            role: ((response.user.role || '') as string).toUpperCase() as any,
           } : null;
 
           set({
@@ -175,10 +177,11 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           const response = await apiClient.get<User>(AUTH_ENDPOINTS.ME);
-          // Add name alias for fullName
+          // Add name alias for fullName and normalize role to uppercase
           const user = {
             ...response.data,
             name: response.data.fullName,
+            role: ((response.data.role || '') as string).toUpperCase() as any,
           };
           set({
             user,
@@ -211,8 +214,14 @@ export const useAuthStore = create<AuthState>()(
       }),
       onRehydrateStorage: () => (state) => {
         // Add name alias if missing (for backwards compatibility)
-        if (state?.user && !state.user.name && state.user.fullName) {
-          state.user.name = state.user.fullName;
+        if (state?.user) {
+          if (!state.user.name && state.user.fullName) {
+            state.user.name = state.user.fullName;
+          }
+          // Normalize role to uppercase
+          if (state.user.role) {
+            state.user.role = (state.user.role as string).toUpperCase() as any;
+          }
         }
         state?.setHydrated();
       },

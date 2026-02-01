@@ -44,10 +44,20 @@ export function useRegister() {
       }
     },
     onError: (error: AxiosError<ApiError>) => {
-      const message =
-        error.response?.data?.message ||
-        'فشل إنشاء الحساب. حاول مرة أخرى.';
-      toastError('خطأ', message);
+      let message: string;
+
+      if (!error.response) {
+        // Network error or server is down
+        message = 'لا يمكن الاتصال بالخادم. تأكد من اتصالك بالإنترنت.';
+      } else if (error.response.status === 409) {
+        message = 'هذا البريد الإلكتروني مسجل بالفعل.';
+      } else if (error.response.status === 429) {
+        message = 'محاولات كثيرة. حاول مرة أخرى لاحقاً.';
+      } else {
+        message = error.response.data?.message || 'فشل إنشاء الحساب. حاول مرة أخرى.';
+      }
+
+      toastError('خطأ في إنشاء الحساب', message);
     },
   });
 }

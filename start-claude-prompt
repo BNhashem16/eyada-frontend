@@ -1,0 +1,26 @@
+This session works on two separate repositories located at:
+
+1) Backend (NestJS):
+   Path: C:\Nest\eyada
+   This is the API and business logic.
+
+2) Frontend (React):
+   Path: C:\React\eyada-frontend
+   This is the UI that consumes the API.
+
+Rules and workflow:
+- The backend is the single source of truth for API contracts, DTOs, and response shapes.
+- Any change in the backend (controllers, DTOs, validation, endpoints) MUST be reflected in the frontend:
+  - API service functions
+  - TypeScript types/interfaces
+  - Forms, UI logic, and error handling
+- If a frontend requirement changes, update the backend accordingly:
+  - Add or modify controllers
+  - Update DTOs and validation
+  - Ensure consistency between request/response on both sides
+- Always analyze both repositories before making changes.
+- Do not break existing functionality.
+- Follow clean code, NestJS best practices, and modern React patterns.
+
+Goal:
+Keep backend and frontend fully synchronized at all times.

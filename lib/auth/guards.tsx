@@ -43,9 +43,11 @@ export function ProtectedRoute({
       user &&
       !allowedRoles.includes(user.role)
     ) {
-      // Redirect based on role
+      // Redirect based on role (but avoid infinite loop by checking current path)
       const dashboardPath = getRoleDashboard(user.role);
-      router.replace(dashboardPath);
+      if (pathname !== dashboardPath && !pathname.startsWith(dashboardPath)) {
+        router.replace(dashboardPath);
+      }
     }
   }, [isHydrated, isAuthenticated, isLoading, user, allowedRoles, router, pathname, fallbackPath]);
 

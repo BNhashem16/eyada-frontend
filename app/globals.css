@@ -370,6 +370,54 @@ html[lang="en"] {
   50% { opacity: 0.5; }
 }
 
+/* Toast Animations (Radix UI) */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: var(--enter-translate, translateY(0)) scale(var(--enter-scale, 1));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: var(--exit-translate, translateY(0)) scale(var(--exit-scale, 1));
+  }
+}
+
+.animate-in {
+  animation: enter 0.2s ease-out;
+}
+
+.animate-out {
+  animation: exit 0.2s ease-in forwards;
+}
+
+.slide-in-from-top-full {
+  --enter-translate: translateY(-100%);
+}
+
+.slide-in-from-bottom-full {
+  --enter-translate: translateY(100%);
+}
+
+.slide-out-to-right-full {
+  --exit-translate: translateX(100%);
+}
+
+.fade-out-80 {
+  --exit-scale: 1;
+  opacity: 0.8;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }

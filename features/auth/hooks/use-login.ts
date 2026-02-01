@@ -48,10 +48,20 @@ export function useLogin() {
       }
     },
     onError: (error: AxiosError<ApiError>) => {
-      const message =
-        error.response?.data?.message ||
-        'فشل تسجيل الدخول. تأكد من البريد الإلكتروني وكلمة المرور.';
-      toastError('خطأ', message);
+      let message: string;
+
+      if (!error.response) {
+        // Network error or server is down
+        message = 'لا يمكن الاتصال بالخادم. تأكد من اتصالك بالإنترنت.';
+      } else if (error.response.status === 401) {
+        message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+      } else if (error.response.status === 429) {
+        message = 'محاولات كثيرة. حاول مرة أخرى لاحقاً.';
+      } else {
+        message = error.response.data?.message || 'فشل تسجيل الدخول. حاول مرة أخرى.';
+      }
+
+      toastError('خطأ في تسجيل الدخول', message);
     },
   });
 }
