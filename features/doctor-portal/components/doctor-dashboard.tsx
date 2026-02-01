@@ -49,7 +49,7 @@ export function DoctorDashboard() {
       (a) =>
         a.status === AppointmentStatus.CONFIRMED || a.status === AppointmentStatus.CHECKED_IN
     )
-    .sort((a, b) => a.startTime.localeCompare(b.startTime));
+    .sort((a, b) => a.appointmentTime.localeCompare(b.appointmentTime));
 
   const getStatusLabel = (status: AppointmentStatus) => {
     const statusMap: Record<AppointmentStatus, string> = {
@@ -166,7 +166,7 @@ export function DoctorDashboard() {
             <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             {t('appointments.waitingList')}
           </CardTitle>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" className="text-xs">
             <Link href="/doctor/appointments">
               {t('common.viewAll')}
               <ChevronLeft className="h-4 w-4" />
@@ -205,26 +205,26 @@ export function DoctorDashboard() {
                   </div>
                   <Avatar className="h-10 w-10">
                     <AvatarImage
-                      src={appointment.patient?.user?.profilePicture || undefined}
+                      src={appointment.patientProfile?.user?.profilePicture || undefined}
                     />
                     <AvatarFallback>
-                      {getInitials(appointment.patient?.user?.name || '')}
+                      {getInitials(appointment.patientName || '')}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-foreground truncate">
-                      {appointment.patient?.user?.name}
+                      {appointment.patientName}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      <span dir="ltr">{formatTime(appointment.startTime)}</span>
+                      <span dir="ltr">{formatTime(appointment.appointmentTime)}</span>
                       {' - '}
-                      {appointment.service?.nameAr || appointment.service?.nameEn}
+                      {appointment.serviceName?.ar || appointment.serviceName?.en}
                     </p>
                   </div>
                   <Badge
                     variant={
                       appointment.status === AppointmentStatus.CHECKED_IN
-                        ? 'primary'
+                        ? 'default'
                         : 'success'
                     }
                   >

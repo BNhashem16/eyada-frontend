@@ -74,7 +74,7 @@ export function AppointmentList() {
       toast({
         title: t('toast.error'),
         description: t('errors.somethingWentWrong'),
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setCancelingId(null);
@@ -167,7 +167,7 @@ export function AppointmentList() {
         <div className="flex items-center justify-center gap-4">
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
@@ -179,7 +179,7 @@ export function AppointmentList() {
           </span>
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >

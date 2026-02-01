@@ -32,9 +32,9 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
     .map((s) => dayNames[s.dayOfWeek])
     .slice(0, 3);
 
-  // Get price from first service
+  // Get price from first active service or FIRST_VISIT
   const consultationPrice = clinic.serviceTypes?.find(
-    (s) => s.serviceType === 'CONSULTATION'
+    (s) => s.isActive
   )?.price;
 
   return (
@@ -54,10 +54,10 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
                   href={`/clinics/${clinic.id}`}
                   className="text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                 >
-                  {clinic.name}
+                  {clinic.name?.ar || clinic.name?.en}
                 </Link>
                 {clinic.isActive && (
-                  <Badge variant="success" size="sm" className="ms-2">
+                  <Badge variant="success" className="ms-2 text-xs">
                     {t('clinics.available')}
                   </Badge>
                 )}
@@ -74,9 +74,9 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
             <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
               <span>
-                {clinic.addressLine1}
-                {clinic.city && `, ${clinic.city.nameAr}`}
-                {clinic.state && `, ${clinic.state.nameAr}`}
+                {clinic.address?.ar || clinic.address?.en}
+                {clinic.city && `, ${clinic.city.name?.ar || clinic.city.name?.en}`}
+                {clinic.city?.state && `, ${clinic.city.state.name?.ar || clinic.city.state.name?.en}`}
               </span>
             </div>
 
@@ -92,24 +92,24 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
             )}
 
             {/* Phone */}
-            {clinic.phone && (
+            {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
               <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />
-                <span dir="ltr">{clinic.phone}</span>
+                <span dir="ltr">{clinic.phoneNumbers[0]}</span>
               </div>
             )}
 
             {/* Services */}
-            {clinic.services && clinic.services.length > 0 && (
+            {clinic.serviceTypes && clinic.serviceTypes.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
-                {clinic.services.slice(0, 4).map((service) => (
-                  <Badge key={service.id} variant="secondary" size="sm">
-                    {service.nameAr || service.nameEn}
+                {clinic.serviceTypes.slice(0, 4).map((service) => (
+                  <Badge key={service.id} variant="secondary" className="text-xs">
+                    {service.name?.ar || service.name?.en || service.serviceType}
                   </Badge>
                 ))}
-                {clinic.services.length > 4 && (
-                  <Badge variant="outline" size="sm">
-                    +{clinic.services.length - 4}
+                {clinic.serviceTypes.length > 4 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{clinic.serviceTypes.length - 4}
                   </Badge>
                 )}
               </div>

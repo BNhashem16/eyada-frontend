@@ -23,7 +23,7 @@ export const registerSchema = z.object({
     .min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل')
     .max(50, 'كلمة المرور لا يجب أن تتجاوز 50 حرف'),
   confirmPassword: z.string().min(1, 'تأكيد كلمة المرور مطلوب'),
-  role: z.enum(['PATIENT', 'DOCTOR']).default('PATIENT'),
+  role: z.enum(['PATIENT', 'DOCTOR']),
   agreeTerms: z.boolean().refine((val) => val === true, {
     message: 'يجب الموافقة على الشروط والأحكام',
   }),

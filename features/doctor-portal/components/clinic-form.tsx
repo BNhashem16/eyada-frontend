@@ -36,7 +36,7 @@ const clinicSchema = z.object({
   cityId: z.string().min(1, 'يجب اختيار المدينة'),
   latitude: z.coerce.number().min(-90).max(90).optional().or(z.literal('')),
   longitude: z.coerce.number().min(-180).max(180).optional().or(z.literal('')),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 type ClinicFormData = z.infer<typeof clinicSchema>;
@@ -179,7 +179,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
         description: typeof errorMessage === 'object'
           ? (errorMessage.ar || errorMessage.en || t('doctor.clinicSaveFailed'))
           : (errorMessage || t('doctor.clinicSaveFailed')),
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };
@@ -275,7 +275,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 <SelectContent>
                   {states.map((state) => (
                     <SelectItem key={state.id} value={state.id}>
-                      {state.name?.ar || state.nameAr || state.name?.en || state.nameEn}
+                      {state.name?.ar || state.name?.en}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -298,7 +298,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 <SelectContent>
                   {cities.map((city) => (
                     <SelectItem key={city.id} value={city.id}>
-                      {city.name?.ar || city.nameAr || city.name?.en || city.nameEn}
+                      {city.name?.ar || city.name?.en}
                     </SelectItem>
                   ))}
                 </SelectContent>

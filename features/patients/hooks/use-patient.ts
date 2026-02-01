@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
 import { PATIENT_ENDPOINTS } from '@/lib/api/endpoints';
 import { PatientProfile, Appointment, FamilyMember, PaginatedResponse } from '@/types';
-import { AppointmentStatus } from '@/types/enums';
+import { AppointmentStatus, PaymentStatus, Gender, RelationshipType } from '@/types/enums';
 
 // Profile hooks
 export function usePatientProfile() {
@@ -14,6 +14,29 @@ export function usePatientProfile() {
       return apiGet<PatientProfile>(PATIENT_ENDPOINTS.PROFILE);
     },
     staleTime: 1000 * 60 * 5,
+  });
+}
+
+// Create patient profile (for new patients)
+export interface CreatePatientProfileData {
+  dateOfBirth?: string;
+  age?: number;
+  gender?: Gender;
+  whatsappNumber?: string;
+  usePhoneAsWhatsapp?: boolean;
+  bloodType?: string;
+}
+
+export function useCreatePatientProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreatePatientProfileData) => {
+      return apiPost<PatientProfile>(PATIENT_ENDPOINTS.CREATE_PROFILE, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-profile'] });
+    },
   });
 }
 
@@ -34,7 +57,7 @@ export function usePatientMedicalData() {
   return useQuery({
     queryKey: ['patient-medical-data'],
     queryFn: async () => {
-      return apiGet<PatientProfile['medicalData']>(PATIENT_ENDPOINTS.MEDICAL_DATA);
+      return apiGet(PATIENT_ENDPOINTS.MEDICAL);
     },
     staleTime: 1000 * 60 * 5,
   });
@@ -44,8 +67,8 @@ export function useUpdatePatientMedicalData() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Partial<PatientProfile['medicalData']>) => {
-      return apiPatch(PATIENT_ENDPOINTS.MEDICAL_DATA, data);
+    mutationFn: async (data: Record<string, unknown>) => {
+      return apiPatch(PATIENT_ENDPOINTS.MEDICAL, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['patient-medical-data'] });
@@ -54,23 +77,44 @@ export function useUpdatePatientMedicalData() {
   });
 }
 
-// Appointments hooks
-interface UsePatientAppointmentsOptions {
+// Appointments hooks - extended filters matching Swagger spec
+export interface UsePatientAppointmentsOptions {
   status?: AppointmentStatus;
+  paymentStatus?: PaymentStatus;
+  dateFrom?: string;
+  dateTo?: string;
+  clinicId?: string;
+  doctorId?: string;
+  upcoming?: boolean;
+  forFamilyMember?: boolean;
   page?: number;
   limit?: number;
 }
 
 export function usePatientAppointments({
   status,
+  paymentStatus,
+  dateFrom,
+  dateTo,
+  clinicId,
+  doctorId,
+  upcoming,
+  forFamilyMember,
   page = 1,
   limit = 10,
 }: UsePatientAppointmentsOptions = {}) {
   return useQuery({
-    queryKey: ['patient-appointments', status, page, limit],
+    queryKey: ['patient-appointments', { status, paymentStatus, dateFrom, dateTo, clinicId, doctorId, upcoming, forFamilyMember, page, limit }],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (status) params.append('status', status);
+      if (paymentStatus) params.append('paymentStatus', paymentStatus);
+      if (dateFrom) params.append('dateFrom', dateFrom);
+      if (dateTo) params.append('dateTo', dateTo);
+      if (clinicId) params.append('clinicId', clinicId);
+      if (doctorId) params.append('doctorId', doctorId);
+      if (upcoming !== undefined) params.append('upcoming', upcoming.toString());
+      if (forFamilyMember !== undefined) params.append('forFamilyMember', forFamilyMember.toString());
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 
@@ -86,9 +130,32 @@ export function usePatientAppointment(appointmentId: string) {
   return useQuery({
     queryKey: ['patient-appointment', appointmentId],
     queryFn: async () => {
-      return apiGet<Appointment>(`${PATIENT_ENDPOINTS.APPOINTMENTS}/${appointmentId}`);
+      return apiGet<Appointment>(PATIENT_ENDPOINTS.APPOINTMENT(appointmentId));
     },
     enabled: !!appointmentId,
+  });
+}
+
+// Book appointment
+export interface BookAppointmentData {
+  clinicId: string;
+  serviceTypeId: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  patientProfileId?: string; // For booking for family members
+  notes?: string;
+}
+
+export function useBookAppointment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: BookAppointmentData) => {
+      return apiPost<Appointment>(PATIENT_ENDPOINTS.APPOINTMENTS, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+    },
   });
 }
 
@@ -97,11 +164,29 @@ export function useCancelAppointment() {
 
   return useMutation({
     mutationFn: async (appointmentId: string) => {
-      return apiPatch(`${PATIENT_ENDPOINTS.APPOINTMENTS}/${appointmentId}/cancel`, {});
+      return apiPatch(PATIENT_ENDPOINTS.CANCEL_APPOINTMENT(appointmentId), {});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
     },
+  });
+}
+
+// Get medical notes for an appointment
+export interface MedicalNotes {
+  diagnosis?: string;
+  prescription?: string;
+  notes?: string;
+}
+
+export function useAppointmentMedicalNotes(appointmentId: string) {
+  return useQuery({
+    queryKey: ['patient-appointment-medical-notes', appointmentId],
+    queryFn: async () => {
+      return apiGet<MedicalNotes>(PATIENT_ENDPOINTS.APPOINTMENT_MEDICAL_NOTES(appointmentId));
+    },
+    enabled: !!appointmentId,
+    staleTime: 1000 * 60 * 5,
   });
 }
 
@@ -142,16 +227,18 @@ export function useDeleteFamilyMember() {
   });
 }
 
-// Ratings hooks
+// Ratings hooks - matching Swagger CreateRatingDto
+export interface CreateRatingData {
+  appointmentId: string;
+  rating: number; // 1-5
+  review?: string; // max 1000 chars
+}
+
 export function useSubmitRating() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: {
-      appointmentId: string;
-      rating: number;
-      comment?: string;
-    }) => {
+    mutationFn: async (data: CreateRatingData) => {
       return apiPost(PATIENT_ENDPOINTS.RATINGS, data);
     },
     onSuccess: () => {

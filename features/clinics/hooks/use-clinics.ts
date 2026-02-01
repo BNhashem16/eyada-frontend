@@ -4,7 +4,20 @@ import { useQuery } from '@tanstack/react-query';
 import { apiGet } from '@/lib/api';
 import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
 import { Clinic, ClinicSchedule, ClinicServiceType, PaginatedResponse } from '@/types';
-import { ClinicFilters } from '../components/clinic-filters';
+
+// Extended clinic filters matching Swagger spec
+export interface ClinicFilters {
+  search?: string;
+  specialtyId?: string;
+  stateId?: string;
+  cityId?: string;
+  priceMin?: number;
+  priceMax?: number;
+  minRating?: number;
+  latitude?: number;
+  longitude?: number;
+  radiusKm?: number;
+}
 
 interface UseClinicsOptions {
   filters?: ClinicFilters;
@@ -22,9 +35,12 @@ export function useClinics({ filters = {}, page = 1, limit = 10 }: UseClinicsOpt
       if (filters.specialtyId) params.append('specialtyId', filters.specialtyId);
       if (filters.stateId) params.append('stateId', filters.stateId);
       if (filters.cityId) params.append('cityId', filters.cityId);
-      if (filters.hasAvailableSlots !== undefined) {
-        params.append('hasAvailableSlots', filters.hasAvailableSlots.toString());
-      }
+      if (filters.priceMin !== undefined) params.append('priceMin', filters.priceMin.toString());
+      if (filters.priceMax !== undefined) params.append('priceMax', filters.priceMax.toString());
+      if (filters.minRating !== undefined) params.append('minRating', filters.minRating.toString());
+      if (filters.latitude !== undefined) params.append('latitude', filters.latitude.toString());
+      if (filters.longitude !== undefined) params.append('longitude', filters.longitude.toString());
+      if (filters.radiusKm !== undefined) params.append('radiusKm', filters.radiusKm.toString());
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 

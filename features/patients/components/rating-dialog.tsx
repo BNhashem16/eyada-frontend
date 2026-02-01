@@ -51,7 +51,7 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
       toast({
         title: t('common.error'),
         description: t('errors.somethingWentWrong'),
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };

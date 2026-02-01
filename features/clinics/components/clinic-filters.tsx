@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Search, Filter, X, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -16,13 +17,9 @@ import { Specialty, State, City } from '@/types';
 import { apiGet } from '@/lib/api';
 import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
 
-export interface ClinicFilters {
-  search?: string;
-  specialtyId?: string;
-  stateId?: string;
-  cityId?: string;
-  hasAvailableSlots?: boolean;
-}
+// Import and re-export from hook for consistency
+import type { ClinicFilters } from '../hooks/use-clinics';
+export type { ClinicFilters };
 
 interface ClinicFiltersProps {
   filters: ClinicFilters;
@@ -72,7 +69,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
     }
   }, [filters.stateId]);
 
-  const handleFilterChange = (key: keyof ClinicFilters, value: string | boolean | undefined) => {
+  const handleFilterChange = (key: keyof ClinicFilters, value: string | boolean | number | undefined) => {
     const newFilters = { ...filters, [key]: value };
 
     if (key === 'stateId') {
@@ -114,7 +111,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
           <SelectItem value="all">كل التخصصات</SelectItem>
           {specialties.map((specialty) => (
             <SelectItem key={specialty.id} value={specialty.id}>
-              {specialty.nameAr || specialty.nameEn}
+              {specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn}
             </SelectItem>
           ))}
         </SelectContent>
@@ -132,7 +129,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
           <SelectItem value="all">كل المحافظات</SelectItem>
           {states.map((state) => (
             <SelectItem key={state.id} value={state.id}>
-              {state.nameAr || state.nameEn}
+              {state.name?.ar || state.name?.en || (state as any).nameAr || (state as any).nameEn}
             </SelectItem>
           ))}
         </SelectContent>
@@ -151,25 +148,48 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
           <SelectItem value="all">كل المدن</SelectItem>
           {cities.map((city) => (
             <SelectItem key={city.id} value={city.id}>
-              {city.nameAr || city.nameEn}
+              {city.name?.ar || city.name?.en || (city as any).nameAr || (city as any).nameEn}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
 
-      {/* Available Slots */}
+      {/* Rating */}
       <Select
-        value={filters.hasAvailableSlots === true ? 'true' : filters.hasAvailableSlots === false ? 'false' : 'all'}
-        onValueChange={(value) => handleFilterChange('hasAvailableSlots', value === 'true' ? true : value === 'false' ? false : undefined)}
+        value={filters.minRating?.toString() || 'all'}
+        onValueChange={(value) => handleFilterChange('minRating', value === 'all' ? undefined : Number(value))}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="التوفر" />
+          <SelectValue placeholder="التقييم" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">الكل</SelectItem>
-          <SelectItem value="true">متاحة الآن</SelectItem>
+          <SelectItem value="all">كل التقييمات</SelectItem>
+          <SelectItem value="4">4+ نجوم</SelectItem>
+          <SelectItem value="3">3+ نجوم</SelectItem>
+          <SelectItem value="2">2+ نجوم</SelectItem>
         </SelectContent>
       </Select>
+
+      {/* Price Range */}
+      <div className="space-y-2">
+        <Label className="text-sm text-muted-foreground">نطاق السعر (ج.م)</Label>
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            placeholder="من"
+            value={filters.priceMin || ''}
+            onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
+            className="bg-background"
+          />
+          <Input
+            type="number"
+            placeholder="إلى"
+            value={filters.priceMax || ''}
+            onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
+            className="bg-background"
+          />
+        </div>
+      </div>
 
       {/* Clear Filters */}
       {activeFiltersCount > 0 && (
@@ -206,7 +226,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
             <Filter className="h-4 w-4" />
             <span>الفلاتر</span>
             {activeFiltersCount > 0 && (
-              <Badge variant="primary" size="sm">
+              <Badge variant="default" className="text-xs">
                 {activeFiltersCount}
               </Badge>
             )}
@@ -227,7 +247,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
               <h3 className="font-bold text-foreground">تصفية النتائج</h3>
               <Button
                 variant="ghost"
-                size="sm"
+                className="text-xs"
                 onClick={() => setShowMobileFilters(false)}
               >
                 <X className="h-5 w-5" />

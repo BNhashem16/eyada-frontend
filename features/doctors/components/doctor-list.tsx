@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Frown } from 'lucide-react';
 import { DoctorCard } from './doctor-card';
 import { DoctorFiltersComponent, DoctorFilters } from './doctor-filters';
@@ -16,6 +16,13 @@ interface DoctorListProps {
 export function DoctorList({ initialFilters = {} }: DoctorListProps) {
   const [filters, setFilters] = useState<DoctorFilters>(initialFilters);
   const [page, setPage] = useState(1);
+
+  // Sync filters when initialFilters change (e.g., from URL params after hydration)
+  useEffect(() => {
+    if (Object.keys(initialFilters).length > 0) {
+      setFilters(initialFilters);
+    }
+  }, [JSON.stringify(initialFilters)]);
   const limit = 10;
 
   const { data, isLoading, isError, error } = useDoctors({ filters, page, limit });
@@ -119,7 +126,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
           <div className="mt-8 flex items-center justify-center gap-2">
             <Button
               variant="outline"
-              size="sm"
+              className="text-xs"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
@@ -144,7 +151,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
                   <Button
                     key={pageNum}
                     variant={page === pageNum ? 'default' : 'ghost'}
-                    size="sm"
+                    className="text-xs"
                     className="w-9"
                     onClick={() => setPage(pageNum)}
                   >
@@ -156,7 +163,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
 
             <Button
               variant="outline"
-              size="sm"
+              className="text-xs"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >

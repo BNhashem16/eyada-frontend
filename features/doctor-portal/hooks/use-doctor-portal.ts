@@ -114,6 +114,19 @@ export function useToggleClinicActive() {
   });
 }
 
+export function useDeleteClinic() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (clinicId: string) => {
+      return apiDelete(DOCTOR_ENDPOINTS.DELETE_CLINIC(clinicId));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['doctor-clinics'] });
+    },
+  });
+}
+
 // Schedules hooks
 export function useClinicSchedules(clinicId: string) {
   return useQuery({
@@ -260,29 +273,47 @@ export function useToggleServiceActive() {
   });
 }
 
-// Appointments hooks
-interface UseDoctorAppointmentsOptions {
+// Appointments hooks - extended filters matching Swagger spec
+export interface UseDoctorAppointmentsOptions {
   status?: AppointmentStatus;
-  date?: string;
+  paymentStatus?: PaymentStatus;
+  date?: string; // Single date filter
+  dateFrom?: string; // Date range start
+  dateTo?: string; // Date range end
   clinicId?: string;
+  search?: string; // Search by patient name or booking number
+  serviceTypeId?: string;
+  upcoming?: boolean; // Only show upcoming appointments
   page?: number;
   limit?: number;
 }
 
 export function useDoctorAppointments({
   status,
+  paymentStatus,
   date,
+  dateFrom,
+  dateTo,
   clinicId,
+  search,
+  serviceTypeId,
+  upcoming,
   page = 1,
   limit = 20,
 }: UseDoctorAppointmentsOptions = {}) {
   return useQuery({
-    queryKey: ['doctor-appointments', status, date, clinicId, page, limit],
+    queryKey: ['doctor-appointments', { status, paymentStatus, date, dateFrom, dateTo, clinicId, search, serviceTypeId, upcoming, page, limit }],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (status) params.append('status', status);
+      if (paymentStatus) params.append('paymentStatus', paymentStatus);
       if (date) params.append('date', date);
+      if (dateFrom) params.append('dateFrom', dateFrom);
+      if (dateTo) params.append('dateTo', dateTo);
       if (clinicId) params.append('clinicId', clinicId);
+      if (search) params.append('search', search);
+      if (serviceTypeId) params.append('serviceTypeId', serviceTypeId);
+      if (upcoming !== undefined) params.append('upcoming', upcoming.toString());
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 
@@ -291,6 +322,18 @@ export function useDoctorAppointments({
       );
     },
     staleTime: 1000 * 30, // 30 seconds for appointments
+  });
+}
+
+// Get single appointment
+export function useDoctorAppointment(appointmentId: string) {
+  return useQuery({
+    queryKey: ['doctor-appointment', appointmentId],
+    queryFn: async () => {
+      return apiGet<Appointment>(DOCTOR_ENDPOINTS.APPOINTMENT(appointmentId));
+    },
+    enabled: !!appointmentId,
+    staleTime: 1000 * 30,
   });
 }
 
@@ -337,29 +380,41 @@ export function useUpdateAppointmentPayment() {
   });
 }
 
+// Medical notes interface matching Swagger UpdateMedicalNotesDto
+export interface MedicalNotesData {
+  diagnosis?: string;
+  prescription?: string;
+  notes?: string;
+}
+
+// Get medical notes for an appointment
+export function useGetMedicalNotes(appointmentId: string) {
+  return useQuery({
+    queryKey: ['doctor-appointment-medical-notes', appointmentId],
+    queryFn: async () => {
+      return apiGet<MedicalNotesData>(DOCTOR_ENDPOINTS.APPOINTMENT_MEDICAL_NOTES(appointmentId));
+    },
+    enabled: !!appointmentId,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
 export function useAddMedicalNotes() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
       appointmentId,
-      diagnosis,
-      prescription,
-      notes,
+      ...data
     }: {
       appointmentId: string;
-      diagnosis?: string;
-      prescription?: string;
-      notes?: string;
-    }) => {
-      return apiPatch(`${DOCTOR_ENDPOINTS.APPOINTMENTS}/${appointmentId}/medical-notes`, {
-        diagnosis,
-        prescription,
-        notes,
-      });
+    } & MedicalNotesData) => {
+      return apiPatch(DOCTOR_ENDPOINTS.APPOINTMENT_MEDICAL_NOTES(appointmentId), data);
     },
-    onSuccess: () => {
+    onSuccess: (_, { appointmentId }) => {
       queryClient.invalidateQueries({ queryKey: ['doctor-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['doctor-appointment', appointmentId] });
+      queryClient.invalidateQueries({ queryKey: ['doctor-appointment-medical-notes', appointmentId] });
     },
   });
 }

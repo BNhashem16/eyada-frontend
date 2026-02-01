@@ -86,7 +86,7 @@ export function PatientProfileForm() {
       toast({
         title: 'فشل الحفظ',
         description: 'حدث خطأ أثناء حفظ البيانات',
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };

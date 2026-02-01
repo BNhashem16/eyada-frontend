@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProtectedRoute } from '@/lib/auth/guards';
 import { useAuthStore } from '@/lib/auth/store';
+import { Role } from '@/types';
 import { getInitials } from '@/lib/utils';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
@@ -202,7 +203,7 @@ export default function PatientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute allowedRoles={['PATIENT']}>
+    <ProtectedRoute allowedRoles={[Role.PATIENT]}>
       <PatientLayoutContent>{children}</PatientLayoutContent>
     </ProtectedRoute>
   );

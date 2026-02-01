@@ -118,7 +118,7 @@ export function PatientDashboard() {
                   </p>
                 </div>
               </div>
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline" className="text-xs">
                 <Link href="/patient/appointments">
                   {t('common.viewAll')}
                   <ChevronLeft className="h-4 w-4" />
@@ -136,7 +136,7 @@ export function PatientDashboard() {
             <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             {t('appointments.upcomingAppointments')}
           </CardTitle>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" className="text-xs">
             <Link href="/patient/appointments">
               {t('common.viewAll')}
               <ChevronLeft className="h-4 w-4" />

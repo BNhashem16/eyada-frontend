@@ -137,7 +137,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span>{t('appointments.service')}:</span>
                     <span>{appointment.service.nameAr || appointment.service.nameEn}</span>
-                    <Badge variant="outline" size="sm">
+                    <Badge variant="outline" className="text-xs">
                       {appointment.service.price} {t('common.currency')}
                     </Badge>
                   </div>
@@ -155,7 +155,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                   <div className="relative">
                     <Button
                       variant="ghost"
-                      size="sm"
+                      className="text-xs"
                       onClick={() => setShowMenu(!showMenu)}
                     >
                       <MoreVertical className="h-4 w-4" />

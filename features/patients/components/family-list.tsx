@@ -97,7 +97,7 @@ export function FamilyList() {
       toast({
         title: 'فشلت الإضافة',
         description: 'حدث خطأ أثناء إضافة فرد العائلة',
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };
@@ -115,7 +115,7 @@ export function FamilyList() {
       toast({
         title: 'فشل الحذف',
         description: 'حدث خطأ أثناء حذف فرد العائلة',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setDeletingId(null);
@@ -151,7 +151,7 @@ export function FamilyList() {
             <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             أفراد العائلة
           </CardTitle>
-          <Button size="sm" onClick={() => setShowAddDialog(true)}>
+          <Button className="text-xs" onClick={() => setShowAddDialog(true)}>
             <Plus className="h-4 w-4 ms-2" />
             إضافة فرد
           </Button>
@@ -170,7 +170,7 @@ export function FamilyList() {
                   <div className="flex-1">
                     <p className="font-semibold text-foreground">{member.name}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="secondary" size="sm">
+                      <Badge variant="secondary" className="text-xs">
                         {relationshipLabels[member.relationship]}
                       </Badge>
                       <span className="text-sm text-muted-foreground">
@@ -180,7 +180,7 @@ export function FamilyList() {
                   </div>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    className="text-xs"
                     className="text-error-600 hover:text-error-700 hover:bg-error-50"
                     onClick={() => handleDelete(member.id)}
                     disabled={deletingId === member.id}

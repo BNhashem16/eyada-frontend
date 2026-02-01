@@ -56,21 +56,10 @@ const createProfileSchema = z.object({
   showWhatsappNumber: z.boolean(),
 });
 
-// Schema for updating existing profile
-const updateProfileSchema = z.object({
-  licenseNumber: z.string().optional(),
-  yearsOfExperience: z.coerce.number().min(0).max(70).optional(),
-  qualificationsAr: z.string().optional(),
-  qualificationsEn: z.string().optional(),
-  bioAr: z.string().max(500, 'السيرة الذاتية يجب أن تكون أقل من 500 حرف').optional(),
-  bioEn: z.string().max(500, 'Bio must be less than 500 characters').optional(),
-  showPhoneNumber: z.boolean(),
-  showWhatsappNumber: z.boolean(),
-});
+// Schema for updating existing profile (uses same schema as create)
+const updateProfileSchema = createProfileSchema;
 
-type CreateProfileFormData = z.infer<typeof createProfileSchema>;
-type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
-type ProfileFormData = CreateProfileFormData;
+type ProfileFormData = z.infer<typeof createProfileSchema>;
 
 const statusLabels: Record<DoctorStatus, { label: string; variant: 'success' | 'warning' | 'error' | 'secondary' }> = {
   [DoctorStatus.APPROVED]: { label: 'معتمد', variant: 'success' },
@@ -191,7 +180,7 @@ export function DoctorProfileForm() {
       toast({
         title: 'خطأ',
         description: isNewProfile ? 'فشل في إنشاء الملف الشخصي' : 'فشل في تحديث الملف الشخصي',
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };

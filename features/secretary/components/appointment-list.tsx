@@ -179,7 +179,7 @@ export function AppointmentList() {
         <div className="flex items-center justify-center gap-2 mt-6">
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
@@ -193,7 +193,7 @@ export function AppointmentList() {
 
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >

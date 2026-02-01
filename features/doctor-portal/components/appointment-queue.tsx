@@ -87,7 +87,7 @@ export function AppointmentQueue() {
       toast({
         title: 'فشل التحديث',
         description: 'حدث خطأ أثناء تحديث حالة الموعد',
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };
@@ -131,7 +131,7 @@ export function AppointmentQueue() {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Date Navigation */}
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={goToPreviousDay}>
+              <Button variant="outline" className="text-xs" onClick={goToPreviousDay}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
               <Input
@@ -140,7 +140,7 @@ export function AppointmentQueue() {
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="w-40"
               />
-              <Button variant="outline" size="sm" onClick={goToNextDay}>
+              <Button variant="outline" className="text-xs" onClick={goToNextDay}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
@@ -154,7 +154,7 @@ export function AppointmentQueue() {
                 <SelectItem value="all">كل العيادات</SelectItem>
                 {clinics?.map((clinic) => (
                   <SelectItem key={clinic.id} value={clinic.id}>
-                    {clinic.name}
+                    {clinic.name?.ar || clinic.name?.en}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -229,7 +229,7 @@ export function AppointmentQueue() {
       {!isLoading && appointments.length > 0 && (
         <div className="space-y-3">
           {appointments
-            .sort((a, b) => a.startTime.localeCompare(b.startTime))
+            .sort((a, b) => a.appointmentTime.localeCompare(b.appointmentTime))
             .map((appointment) => {
               const actions = getAvailableActions(appointment.status);
               const isUpdating = updateStatusMutation.isPending;
@@ -249,7 +249,7 @@ export function AppointmentQueue() {
                       <div className="flex items-center gap-3 sm:w-24">
                         <Clock className="h-5 w-5 text-muted-foreground" />
                         <span className="font-mono font-semibold" dir="ltr">
-                          {formatTime(appointment.startTime)}
+                          {formatTime(appointment.appointmentTime)}
                         </span>
                       </div>
 
@@ -257,29 +257,29 @@ export function AppointmentQueue() {
                       <div className="flex items-center gap-3 flex-1">
                         <Avatar className="h-10 w-10">
                           <AvatarImage
-                            src={appointment.patient?.user?.profilePicture || undefined}
+                            src={appointment.patientProfile?.user?.profilePicture || undefined}
                           />
                           <AvatarFallback>
-                            {getInitials(appointment.patient?.user?.name || '')}
+                            {getInitials(appointment.patientName || '')}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
                           <p className="font-semibold text-foreground truncate">
-                            {appointment.patient?.user?.name}
+                            {appointment.patientName}
                           </p>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>
-                              {appointment.service?.nameAr || appointment.service?.nameEn}
+                              {appointment.serviceName?.ar || appointment.serviceName?.en}
                             </span>
-                            {appointment.patient?.user?.phone && (
+                            {appointment.patientProfile?.user?.phoneNumber && (
                               <>
                                 <span className="text-muted-foreground/50">|</span>
                                 <a
-                                  href={`tel:${appointment.patient.user.phone}`}
+                                  href={`tel:${appointment.patientProfile.user.phoneNumber}`}
                                   className="flex items-center gap-1 hover:text-primary-600"
                                 >
                                   <Phone className="h-3 w-3" />
-                                  <span dir="ltr">{appointment.patient.user.phone}</span>
+                                  <span dir="ltr">{appointment.patientProfile.user.phoneNumber}</span>
                                 </a>
                               </>
                             )}
@@ -303,7 +303,7 @@ export function AppointmentQueue() {
                             <Button
                               key={action.status}
                               variant={action.color as any}
-                              size="sm"
+                              className="text-xs"
                               onClick={() =>
                                 handleStatusUpdate(appointment.id, action.status)
                               }

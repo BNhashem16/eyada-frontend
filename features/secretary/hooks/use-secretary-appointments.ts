@@ -6,28 +6,47 @@ import { SECRETARY_ENDPOINTS } from '@/lib/api/endpoints';
 import { Appointment, Clinic, PaginatedResponse } from '@/types';
 import { AppointmentStatus, PaymentStatus } from '@/types/enums';
 
-interface UseSecretaryAppointmentsOptions {
+// Extended filters matching Swagger spec
+export interface UseSecretaryAppointmentsOptions {
   clinicId?: string;
-  date?: string;
   status?: AppointmentStatus;
+  paymentStatus?: PaymentStatus;
+  date?: string; // Single date filter
+  dateFrom?: string; // Date range start
+  dateTo?: string; // Date range end
+  search?: string; // Search by patient name or booking number
+  serviceTypeId?: string;
+  upcoming?: boolean; // Only show upcoming appointments
   page?: number;
   limit?: number;
 }
 
 export function useSecretaryAppointments({
   clinicId,
-  date,
   status,
+  paymentStatus,
+  date,
+  dateFrom,
+  dateTo,
+  search,
+  serviceTypeId,
+  upcoming,
   page = 1,
   limit = 20,
 }: UseSecretaryAppointmentsOptions = {}) {
   return useQuery({
-    queryKey: ['secretary-appointments', clinicId, date, status, page, limit],
+    queryKey: ['secretary-appointments', { clinicId, status, paymentStatus, date, dateFrom, dateTo, search, serviceTypeId, upcoming, page, limit }],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (clinicId) params.append('clinicId', clinicId);
-      if (date) params.append('date', date);
       if (status) params.append('status', status);
+      if (paymentStatus) params.append('paymentStatus', paymentStatus);
+      if (date) params.append('date', date);
+      if (dateFrom) params.append('dateFrom', dateFrom);
+      if (dateTo) params.append('dateTo', dateTo);
+      if (search) params.append('search', search);
+      if (serviceTypeId) params.append('serviceTypeId', serviceTypeId);
+      if (upcoming !== undefined) params.append('upcoming', upcoming.toString());
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 
@@ -59,23 +78,22 @@ export function useSecretaryClinics() {
   });
 }
 
-interface BookAppointmentData {
+// Create appointment for patient - matching Swagger CreateSecretaryAppointmentDto
+export interface CreateSecretaryAppointmentData {
   clinicId: string;
   serviceTypeId: string;
-  patientProfileId?: string;
   appointmentDate: string;
   appointmentTime: string;
+  patientProfileId: string; // Required for secretary
   notes?: string;
   symptoms?: string;
-  patientName?: string;
-  patientPhone?: string;
 }
 
-export function useBookAppointment() {
+export function useCreateAppointment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: BookAppointmentData) => {
+    mutationFn: async (data: CreateSecretaryAppointmentData) => {
       return apiPost<Appointment>(SECRETARY_ENDPOINTS.APPOINTMENTS, data);
     },
     onSuccess: () => {
@@ -83,6 +101,9 @@ export function useBookAppointment() {
     },
   });
 }
+
+// Alias for backward compatibility
+export const useBookAppointment = useCreateAppointment;
 
 interface UpdateAppointmentStatusData {
   appointmentId: string;

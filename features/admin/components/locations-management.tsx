@@ -287,7 +287,7 @@ export function LocationsManagement() {
                               </span>
                               <Button
                                 variant="outline"
-                                size="sm"
+                                className="text-xs"
                                 onClick={() => handleOpenCreateCity(state.id)}
                               >
                                 <Plus className="h-3 w-3 me-1" />

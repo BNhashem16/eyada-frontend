@@ -88,7 +88,7 @@ export function ClinicManagement() {
               .map((s) => dayNames[s.dayOfWeek]);
 
             const consultationPrice = clinic.serviceTypes?.find(
-              (s) => s.serviceType === 'CONSULTATION'
+              (s) => s.isActive
             )?.price;
 
             const clinicName = clinic.name?.ar || clinic.name?.en || '';
@@ -116,11 +116,11 @@ export function ClinicManagement() {
                             {clinicName}
                           </h3>
                           {clinic.isActive ? (
-                            <Badge variant="success" size="sm">
+                            <Badge variant="success" className="text-xs">
                               نشطة
                             </Badge>
                           ) : (
-                            <Badge variant="secondary" size="sm">
+                            <Badge variant="secondary" className="text-xs">
                               غير نشطة
                             </Badge>
                           )}
@@ -173,13 +173,13 @@ export function ClinicManagement() {
 
                     {/* Actions */}
                     <div className="flex sm:flex-col gap-2">
-                      <Button asChild variant="outline" size="sm">
+                      <Button asChild variant="outline" className="text-xs">
                         <Link href={`/doctor/clinics/${clinic.id}`}>
                           <Settings className="h-4 w-4 ms-1" />
                           إدارة
                         </Link>
                       </Button>
-                      <Button asChild variant="ghost" size="sm">
+                      <Button asChild variant="ghost" className="text-xs">
                         <Link href={`/doctor/clinics/${clinic.id}/edit`}>
                           <Edit className="h-4 w-4 ms-1" />
                           تعديل

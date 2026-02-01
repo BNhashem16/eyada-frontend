@@ -161,7 +161,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
       toast({
         title: 'حدث خطأ',
         description: 'فشل في حفظ جدول المواعيد',
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };

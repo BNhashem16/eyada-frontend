@@ -125,7 +125,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
         <div className="flex items-center justify-center gap-4 pt-4">
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
@@ -137,7 +137,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
           </span>
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >

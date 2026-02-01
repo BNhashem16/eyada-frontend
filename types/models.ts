@@ -117,7 +117,19 @@ export interface PatientProfile extends Timestamps {
   familyHeadId?: string;
   relationshipToHead: RelationshipType;
   user: User;
-  familyMembers?: PatientProfile[];
+  familyMembers?: FamilyMember[];
+}
+
+// Family Member model (matching Swagger AddFamilyMemberDto)
+export interface FamilyMember extends Timestamps {
+  id: string;
+  patientId: string;
+  fullName: string;
+  dateOfBirth?: string;
+  age?: number;
+  gender?: Gender;
+  relationship: RelationshipType;
+  bloodType?: string;
 }
 
 // Clinic model

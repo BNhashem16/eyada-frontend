@@ -46,7 +46,7 @@ const fallbackIcon = { icon: Stethoscope, color: 'text-primary-500' };
 export default function HomePage() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { language } = useLanguage();
+  const { locale } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Auth state
@@ -113,7 +113,7 @@ export default function HomePage() {
 
   // Get specialty name based on language
   const getSpecialtyName = (specialty: { name: { ar: string; en: string } }) => {
-    return language === 'ar' ? specialty.name.ar : specialty.name.en;
+    return locale === 'ar' ? specialty.name.ar : specialty.name.en;
   };
 
   // Get icon for specialty

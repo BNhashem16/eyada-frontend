@@ -90,7 +90,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h1 className="text-2xl font-bold text-foreground">{clinic.name}</h1>
+                    <h1 className="text-2xl font-bold text-foreground">{clinic.name?.ar || clinic.name?.en}</h1>
                     {clinic.isActive && (
                       <Badge variant="success" className="mt-2">متاحة للحجز</Badge>
                     )}
@@ -98,13 +98,13 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                 </div>
 
                 {/* Doctor Info */}
-                {clinic.doctor && (
+                {clinic.doctorProfile && (
                   <Link
-                    href={`/doctors/${clinic.doctor.id}`}
+                    href={`/doctors/${clinic.doctorProfile.id}`}
                     className="flex items-center gap-2 mt-4 text-primary-600 hover:underline"
                   >
                     <User className="h-4 w-4" />
-                    <span>د. {clinic.doctor.user?.name}</span>
+                    <span>د. {clinic.doctorProfile.user?.fullName}</span>
                     <ChevronLeft className="h-4 w-4" />
                   </Link>
                 )}
@@ -113,20 +113,20 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                 <div className="flex items-start gap-2 mt-4 text-muted-foreground">
                   <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                   <div>
-                    <p>{clinic.addressLine1}</p>
-                    {clinic.addressLine2 && <p>{clinic.addressLine2}</p>}
+                    <p>{clinic.address?.ar || clinic.address?.en}</p>
                     <p>
-                      {clinic.city?.nameAr}, {clinic.state?.nameAr}
+                      {clinic.city?.name?.ar || clinic.city?.name?.en}
+                      {clinic.city?.state && `, ${clinic.city.state.name?.ar || clinic.city.state.name?.en}`}
                     </p>
                   </div>
                 </div>
 
                 {/* Phone */}
-                {clinic.phone && (
+                {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
                   <div className="flex items-center gap-2 mt-3 text-muted-foreground">
                     <Phone className="h-5 w-5 text-muted-foreground" />
-                    <a href={`tel:${clinic.phone}`} dir="ltr" className="hover:text-primary-600">
-                      {clinic.phone}
+                    <a href={`tel:${clinic.phoneNumbers[0]}`} dir="ltr" className="hover:text-primary-600">
+                      {clinic.phoneNumbers[0]}
                     </a>
                   </div>
                 )}
@@ -213,15 +213,10 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                       >
                         <div>
                           <p className="font-medium text-foreground">
-                            {service.nameAr || service.nameEn}
+                            {service.name?.ar || service.name?.en || service.serviceType}
                           </p>
-                          {service.description && (
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {service.description}
-                            </p>
-                          )}
                           <p className="text-sm text-muted-foreground mt-1">
-                            المدة: {service.durationMinutes} دقيقة
+                            المدة: {service.duration} دقيقة
                           </p>
                         </div>
                         <div className="text-end">
@@ -264,9 +259,9 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                 <Calendar className="h-4 w-4 ms-2" />
                 احجز الآن
               </Button>
-              {clinic.phone && (
+              {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
                 <Button variant="outline" className="w-full mt-3" asChild>
-                  <a href={`tel:${clinic.phone}`}>
+                  <a href={`tel:${clinic.phoneNumbers[0]}`}>
                     <Phone className="h-4 w-4 ms-2" />
                     اتصل بالعيادة
                   </a>

@@ -41,6 +41,7 @@ export const PUBLIC_ENDPOINTS = {
 export const PATIENT_ENDPOINTS = {
   // Profile
   PROFILE: '/patients/profile',
+  CREATE_PROFILE: '/patients/profile',
   MEDICAL: '/patients/profile/medical',
 
   // Family
@@ -61,11 +62,13 @@ export const PATIENT_ENDPOINTS = {
 export const DOCTOR_ENDPOINTS = {
   // Profile
   PROFILE: '/doctors/profile/me',
+  CREATE_PROFILE: '/doctors/profile',
   UPDATE_PROFILE: '/doctors/profile',
 
   // Clinics
   CLINICS: '/doctors/clinics',
   CLINIC: (id: string) => `/doctors/clinics/${id}`,
+  DELETE_CLINIC: (id: string) => `/doctors/clinics/${id}`,
   CLINIC_TOGGLE_ACTIVE: (id: string) => `/doctors/clinics/${id}/toggle-active`,
 
   // Schedules

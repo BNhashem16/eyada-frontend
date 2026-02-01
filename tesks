@@ -27,3 +27,62 @@ http://localhost:3001/admin/specialties
 بيخفي لي ال row بالكامل وأنا مش عاوز كده
 أنا بس عاوزه يخلي ال row موجود عادي بس اهم حاجه ال toggle يبقى معرفني هو حالته ايه
 --------------------
+التخصصات الشائعة
+في الهوم بيج مش مترجمه أنا عاوزك تترجمها لي
+=========================
+## Error Type
+Build Error
+
+## Error Message
+Export ClinicFilters doesn't exist in target module
+
+## Build Output
+./features/clinics/components/clinic-filters.tsx:21:1
+Export ClinicFilters doesn't exist in target module
+  19 |
+  20 | // Import and re-export from hook for consistency
+> 21 | import { ClinicFilters } from '../hooks/use-clinics';
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  22 | export { ClinicFilters };
+  23 |
+  24 | interface ClinicFiltersProps {
+
+The export ClinicFilters was not found in module [project]/features/clinics/hooks/use-clinics.ts [app-client] (ecmascript).
+Did you mean to import useClinicServices?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Server Component:
+    ./features/clinics/components/clinic-filters.tsx
+    ./features/clinics/components/index.ts
+    ./features/clinics/index.ts
+    ./app/(public)/clinics/page.tsx
+
+  Client Component Browser:
+    ./features/clinics/components/clinic-filters.tsx [Client Component Browser]
+    ./features/clinics/components/clinic-list.tsx [Client Component Browser]
+    ./features/clinics/components/clinic-list.tsx [Server Component]
+    ./features/clinics/components/index.ts [Server Component]
+    ./features/clinics/index.ts [Server Component]
+    ./app/(public)/clinics/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./features/clinics/components/clinic-filters.tsx [Client Component SSR]
+    ./features/clinics/components/clinic-list.tsx [Client Component SSR]
+    ./features/clinics/components/clinic-list.tsx [Server Component]
+    ./features/clinics/components/index.ts [Server Component]
+    ./features/clinics/index.ts [Server Component]
+    ./app/(public)/clinics/page.tsx [Server Component]
+
+Next.js version: 16.1.6 (Turbopack)
+
+===========================
+http://localhost:3001/doctor/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6
+الصفحه دي الريسبونسيف فيها مش ظابط كمان عاوزك تشوف الباك أند بيعمل ايه وتطابقه  بالظبط
+
+===================
+http://localhost:3001/doctor/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6/edit
+في الصفحه دي ال inputs اللي معتمده على بعض مش بتجيب لي الاختيارات السابقه اللي كنت مختارها 
+المحافظة والمدينه
+==================
+في صفحات كتير جدا جدا مش مترجمه أنا عاوزك تلف على المشروع كامل فايل فايل وأي كلمه مش مترجمه ترجمها

@@ -101,7 +101,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       toast({
         title: 'فشل الحجز',
         description: error.message || 'حدث خطأ أثناء الحجز. يرجى المحاولة مرة أخرى.',
-        variant: 'destructive',
+        variant: 'error',
       });
     },
   });
@@ -151,7 +151,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       toast({
         title: 'غير مسموح',
         description: 'يجب أن تكون مريضاً لحجز موعد',
-        variant: 'destructive',
+        variant: 'error',
       });
       return;
     }
@@ -189,7 +189,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               <SelectContent>
                 {services.map((service) => (
                   <SelectItem key={service.id} value={service.id}>
-                    {service.nameAr || service.nameEn} - {service.price} ج.م
+                    {service.name?.ar || service.name?.en || service.serviceType} - {service.price} ج.م
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -206,7 +206,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
-                size="sm"
+                className="text-xs"
                 onClick={goToPreviousWeek}
                 disabled={!canGoPrevious}
               >
@@ -215,7 +215,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               <span className="text-sm text-muted-foreground">
                 {formatDate(weekStart, 'MMM yyyy')}
               </span>
-              <Button variant="ghost" size="sm" onClick={goToNextWeek}>
+              <Button variant="ghost" className="text-xs" onClick={goToNextWeek}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
@@ -322,7 +322,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">الخدمة:</span>
                   <span className="font-medium">
-                    {selectedService?.nameAr || selectedService?.nameEn}
+                    {selectedService?.name?.ar || selectedService?.name?.en || selectedService?.serviceType}
                   </span>
                 </div>
                 <div className="flex justify-between">

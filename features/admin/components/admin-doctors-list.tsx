@@ -384,7 +384,7 @@ export function AdminDoctorsList() {
         <div className="flex items-center justify-center gap-2 mt-6">
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             disabled={!meta.hasPreviousPage}
             onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) - 1 }))}
           >
@@ -396,7 +396,7 @@ export function AdminDoctorsList() {
           </span>
           <Button
             variant="outline"
-            size="sm"
+            className="text-xs"
             disabled={!meta.hasNextPage}
             onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) + 1 }))}
           >

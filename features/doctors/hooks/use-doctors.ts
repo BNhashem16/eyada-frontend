@@ -4,7 +4,17 @@ import { useQuery } from '@tanstack/react-query';
 import { apiGet } from '@/lib/api';
 import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
 import { DoctorProfile, PaginatedResponse } from '@/types';
-import { DoctorFilters } from '../components/doctor-filters';
+
+// Extended doctor filters matching Swagger spec
+export interface DoctorFilters {
+  search?: string;
+  specialtyId?: string;
+  stateId?: string;
+  cityId?: string;
+  minRating?: number;
+  priceMin?: number;
+  priceMax?: number;
+}
 
 interface UseDoctorsOptions {
   filters?: DoctorFilters;
@@ -22,8 +32,9 @@ export function useDoctors({ filters = {}, page = 1, limit = 10 }: UseDoctorsOpt
       if (filters.specialtyId) params.append('specialtyId', filters.specialtyId);
       if (filters.stateId) params.append('stateId', filters.stateId);
       if (filters.cityId) params.append('cityId', filters.cityId);
-      if (filters.minRating) params.append('minRating', filters.minRating.toString());
-      if (filters.sortBy) params.append('sortBy', filters.sortBy);
+      if (filters.minRating !== undefined) params.append('minRating', filters.minRating.toString());
+      if (filters.priceMin !== undefined) params.append('priceMin', filters.priceMin.toString());
+      if (filters.priceMax !== undefined) params.append('priceMax', filters.priceMax.toString());
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 
@@ -45,29 +56,30 @@ export function useDoctor(doctorId: string) {
   });
 }
 
-export function useDoctorRatings(doctorId: string, page = 1, limit = 10) {
+// Swagger uses limit/offset instead of page/limit for ratings
+export function useDoctorRatings(doctorId: string, limit = 10, offset = 0) {
   return useQuery({
-    queryKey: ['doctor-ratings', doctorId, page, limit],
+    queryKey: ['doctor-ratings', doctorId, limit, offset],
     queryFn: async () => {
       const params = new URLSearchParams({
-        page: page.toString(),
         limit: limit.toString(),
+        offset: offset.toString(),
       });
-      return apiGet<PaginatedResponse<Rating>>(`${PUBLIC_ENDPOINTS.DOCTORS}/${doctorId}/ratings?${params}`);
+      return apiGet<Rating[]>(PUBLIC_ENDPOINTS.DOCTOR_RATINGS(doctorId) + `?${params}`);
     },
     enabled: !!doctorId,
     staleTime: 1000 * 60 * 5,
   });
 }
 
-interface Rating {
+export interface Rating {
   id: string;
   rating: number;
-  comment?: string;
+  review?: string;
   createdAt: string;
-  patient: {
+  patientProfile?: {
     user: {
-      name: string;
+      fullName: string;
       profilePicture?: string;
     };
   };

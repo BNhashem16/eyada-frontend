@@ -148,7 +148,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       toast({
         title: 'حدث خطأ',
         description: 'فشل في حفظ الخدمة',
-        variant: 'destructive',
+        variant: 'error',
       });
     }
   };
@@ -166,7 +166,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       toast({
         title: 'حدث خطأ',
         description: 'فشل في حذف الخدمة',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setDeletingId(null);
@@ -198,7 +198,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             <DollarSign className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             الخدمات والأسعار
           </CardTitle>
-          <Button size="sm" onClick={openAddDialog}>
+          <Button className="text-xs" onClick={openAddDialog}>
             <Plus className="h-4 w-4 ms-2" />
             إضافة خدمة
           </Button>
@@ -218,11 +218,11 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                       <h4 className="font-semibold text-foreground">
                         {service.nameAr}
                       </h4>
-                      <Badge variant="secondary" size="sm">
+                      <Badge variant="secondary" className="text-xs">
                         {serviceTypeLabels[service.serviceType]}
                       </Badge>
                       {!service.isActive && (
-                        <Badge variant="outline" size="sm">
+                        <Badge variant="outline" className="text-xs">
                           غير نشطة
                         </Badge>
                       )}
@@ -247,14 +247,14 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                   <div className="flex gap-2">
                     <Button
                       variant="ghost"
-                      size="sm"
+                      className="text-xs"
                       onClick={() => openEditDialog(service)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
-                      size="sm"
+                      className="text-xs"
                       className="text-error-600 hover:bg-error-50 dark:hover:bg-error-900/30"
                       onClick={() => handleDelete(service.id)}
                       disabled={deletingId === service.id}

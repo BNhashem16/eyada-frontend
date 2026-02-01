@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Search, Filter, X, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -15,15 +16,11 @@ import { Badge } from '@/components/ui/badge';
 import { Specialty, State, City } from '@/types';
 import { apiGet } from '@/lib/api';
 import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
+import { useTranslation } from '@/lib/i18n';
 
-export interface DoctorFilters {
-  search?: string;
-  specialtyId?: string;
-  stateId?: string;
-  cityId?: string;
-  minRating?: number;
-  sortBy?: 'rating' | 'experience' | 'price';
-}
+// Import and re-export from hook for backward compatibility
+import type { DoctorFilters } from '../hooks/use-doctors';
+export type { DoctorFilters };
 
 interface DoctorFiltersProps {
   filters: DoctorFilters;
@@ -175,21 +172,26 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         </SelectContent>
       </Select>
 
-      {/* Sort */}
-      <Select
-        value={filters.sortBy || 'all'}
-        onValueChange={(value) => handleFilterChange('sortBy', value === 'all' ? undefined : value)}
-      >
-        <SelectTrigger className="bg-background">
-          <SelectValue placeholder="ترتيب حسب" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">الأكثر صلة</SelectItem>
-          <SelectItem value="rating">الأعلى تقييماً</SelectItem>
-          <SelectItem value="experience">الأكثر خبرة</SelectItem>
-          <SelectItem value="price">السعر (الأقل)</SelectItem>
-        </SelectContent>
-      </Select>
+      {/* Price Range */}
+      <div className="space-y-2">
+        <Label className="text-sm text-muted-foreground">نطاق السعر (ج.م)</Label>
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            placeholder="من"
+            value={filters.priceMin || ''}
+            onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
+            className="bg-background"
+          />
+          <Input
+            type="number"
+            placeholder="إلى"
+            value={filters.priceMax || ''}
+            onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
+            className="bg-background"
+          />
+        </div>
+      </div>
 
       {/* Clear Filters */}
       {activeFiltersCount > 0 && (
@@ -226,7 +228,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
             <Filter className="h-4 w-4" />
             <span>الفلاتر</span>
             {activeFiltersCount > 0 && (
-              <Badge variant="primary" size="sm">
+              <Badge variant="primary" className="text-xs">
                 {activeFiltersCount}
               </Badge>
             )}
@@ -247,7 +249,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
               <h3 className="font-bold text-foreground">تصفية النتائج</h3>
               <Button
                 variant="ghost"
-                size="sm"
+                className="text-xs"
                 onClick={() => setShowMobileFilters(false)}
               >
                 <X className="h-5 w-5" />
