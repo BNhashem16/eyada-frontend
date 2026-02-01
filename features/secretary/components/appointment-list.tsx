@@ -55,10 +55,10 @@ export function AppointmentList() {
       {/* Filters */}
       <Card>
         <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4">
             {/* Clinic Filter */}
             <Select value={selectedClinic} onValueChange={setSelectedClinic}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="اختر العيادة" />
               </SelectTrigger>
               <SelectContent>
@@ -74,7 +74,7 @@ export function AppointmentList() {
             {/* Date Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className={cn('w-[200px] justify-start')}>
+                <Button variant="outline" className={cn('w-full sm:w-[200px] justify-start')}>
                   <CalendarIcon className="me-2 h-4 w-4" />
                   {format(selectedDate, 'dd MMMM yyyy', { locale: ar })}
                 </Button>
@@ -94,7 +94,7 @@ export function AppointmentList() {
               value={selectedStatus}
               onValueChange={(v) => setSelectedStatus(v as AppointmentStatus | '')}
             >
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="حالة الموعد" />
               </SelectTrigger>
               <SelectContent>

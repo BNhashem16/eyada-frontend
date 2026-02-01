@@ -15,13 +15,14 @@ import {
 import { AppointmentStatus, PaymentStatus } from '@/types/enums';
 
 // Profile hooks
-export function useDoctorProfile() {
+export function useDoctorProfile(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['doctor-profile'],
     queryFn: async () => {
       return apiGet<DoctorProfile>(DOCTOR_ENDPOINTS.PROFILE);
     },
     staleTime: 1000 * 60 * 5,
+    enabled: options?.enabled ?? true,
   });
 }
 

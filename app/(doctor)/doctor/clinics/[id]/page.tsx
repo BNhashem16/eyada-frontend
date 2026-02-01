@@ -53,17 +53,17 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
       </nav>
 
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-            <Building2 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center shrink-0">
+            <Building2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary-600 dark:text-primary-400" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">{clinic.name?.ar || clinic.name?.en}</h1>
-            <p className="text-muted-foreground">إدارة مواعيد العمل والخدمات</p>
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">{clinic.name?.ar || clinic.name?.en}</h1>
+            <p className="text-sm text-muted-foreground">إدارة مواعيد العمل والخدمات</p>
           </div>
         </div>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="w-full sm:w-auto">
           <Link href={`/doctor/clinics/${id}/edit`}>
             <Settings className="h-4 w-4 ms-2" />
             تعديل البيانات

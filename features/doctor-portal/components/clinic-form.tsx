@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Building2, MapPin, Loader2, Navigation } from 'lucide-react';
+import { Building2, MapPin, Loader2, Navigation, Phone, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,8 +34,10 @@ const clinicSchema = z.object({
   addressEn: z.string().min(2, 'Address in English is required').max(200),
   stateId: z.string().min(1, 'يجب اختيار المحافظة'),
   cityId: z.string().min(1, 'يجب اختيار المدينة'),
+  phoneNumber: z.string().max(20).optional().or(z.literal('')),
   latitude: z.coerce.number().min(-90).max(90).optional().or(z.literal('')),
   longitude: z.coerce.number().min(-180).max(180).optional().or(z.literal('')),
+  slotDurationMinutes: z.coerce.number().min(1).max(60).optional(),
   isActive: z.boolean(),
 });
 
@@ -75,6 +77,8 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
       addressEn: '',
       stateId: '',
       cityId: '',
+      phoneNumber: '',
+      slotDurationMinutes: 15,
       isActive: true,
     },
   });
@@ -117,22 +121,41 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
 
   // Populate form when clinic data loads
   useEffect(() => {
-    if (clinic && isEditing) {
-      // Get state ID from city
-      const stateId = clinic.city?.state?.id || clinic.city?.stateId || '';
+    const populateForm = async () => {
+      if (clinic && isEditing) {
+        // Get state ID from city
+        const stateId = clinic.city?.state?.id || clinic.city?.stateId || '';
 
-      reset({
-        nameAr: clinic.name?.ar || '',
-        nameEn: clinic.name?.en || '',
-        addressAr: clinic.address?.ar || '',
-        addressEn: clinic.address?.en || '',
-        stateId: stateId,
-        cityId: clinic.cityId || '',
-        latitude: clinic.latitude || '',
-        longitude: clinic.longitude || '',
-        isActive: clinic.isActive ?? true,
-      });
-    }
+        // Fetch cities for this state first if we have a stateId
+        if (stateId) {
+          try {
+            const citiesData = await apiGet<City[]>(
+              `${PUBLIC_ENDPOINTS.CITIES}?stateId=${stateId}`
+            );
+            setCities(citiesData);
+          } catch (error) {
+            console.error('Failed to fetch cities:', error);
+          }
+        }
+
+        // Now reset the form with all values including cityId
+        reset({
+          nameAr: clinic.name?.ar || '',
+          nameEn: clinic.name?.en || '',
+          addressAr: clinic.address?.ar || '',
+          addressEn: clinic.address?.en || '',
+          stateId: stateId,
+          cityId: clinic.cityId || '',
+          phoneNumber: (clinic as any).phoneNumber || '',
+          latitude: clinic.latitude || '',
+          longitude: clinic.longitude || '',
+          slotDurationMinutes: (clinic as any).slotDurationMinutes || 15,
+          isActive: clinic.isActive ?? true,
+        });
+      }
+    };
+
+    populateForm();
   }, [clinic, isEditing, reset]);
 
   const onSubmit = async (data: ClinicFormData) => {
@@ -148,8 +171,10 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           en: data.addressEn,
         },
         cityId: data.cityId,
+        phoneNumber: data.phoneNumber || undefined,
         latitude: data.latitude ? Number(data.latitude) : undefined,
         longitude: data.longitude ? Number(data.longitude) : undefined,
+        slotDurationMinutes: data.slotDurationMinutes || undefined,
         isActive: data.isActive,
       };
 
@@ -385,6 +410,48 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 <p className="text-sm text-error-600 dark:text-error-400">{errors.longitude.message}</p>
               )}
             </div>
+          </div>
+
+          {/* Phone Number */}
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">
+              <span className="flex items-center gap-1">
+                <Phone className="h-4 w-4" />
+                رقم هاتف العيادة
+              </span>
+            </Label>
+            <Input
+              id="phoneNumber"
+              {...register('phoneNumber')}
+              placeholder="01xxxxxxxxx"
+              dir="ltr"
+              className="bg-background text-foreground"
+            />
+            {errors.phoneNumber && (
+              <p className="text-sm text-error-600 dark:text-error-400">{errors.phoneNumber.message}</p>
+            )}
+          </div>
+
+          {/* Slot Duration */}
+          <div className="space-y-2">
+            <Label htmlFor="slotDurationMinutes">
+              <span className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                مدة الموعد الافتراضية (بالدقائق)
+              </span>
+            </Label>
+            <select
+              id="slotDurationMinutes"
+              {...register('slotDurationMinutes', { valueAsNumber: true })}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+            >
+              <option value={10}>10 دقائق</option>
+              <option value={15}>15 دقيقة</option>
+              <option value={20}>20 دقيقة</option>
+              <option value={30}>30 دقيقة</option>
+              <option value={45}>45 دقيقة</option>
+              <option value={60}>60 دقيقة</option>
+            </select>
           </div>
         </CardContent>
       </Card>

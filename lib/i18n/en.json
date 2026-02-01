@@ -474,5 +474,114 @@
     "deleted": "Deleted",
     "error": "Error occurred",
     "success": "Success"
+  },
+  "pages": {
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "Enter your email and we'll send you a password reset link",
+      "sendResetLink": "Send Reset Link",
+      "backToLogin": "Back to Login"
+    },
+    "doctors": {
+      "title": "Find a Doctor",
+      "subtitle": "Find the best specialized doctors and book your appointment easily",
+      "searchPlaceholder": "Search for a doctor..."
+    },
+    "clinics": {
+      "title": "Find a Clinic",
+      "subtitle": "Find the nearest clinic and book your appointment easily"
+    },
+    "specialties": {
+      "title": "Medical Specialties",
+      "subtitle": "Choose the right specialty to find the best doctors"
+    }
+  },
+  "admin": {
+    "doctors": {
+      "title": "Manage Doctors",
+      "subtitle": "View and manage all registered doctors on the platform",
+      "searchPlaceholder": "Search by name, email, or phone...",
+      "allStatuses": "All Statuses",
+      "underReview": "Under Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "suspended": "Suspended",
+      "totalResults": "Total Results:",
+      "pageOf": "Page {current} of {total}",
+      "noDoctorsFound": "No doctors found",
+      "noDoctorsMatchFilters": "No doctors match the selected filters",
+      "license": "License:",
+      "reactivate": "Reactivate",
+      "confirmSuspend": "Confirm Suspension",
+      "suspendMessage": "The doctor's account will be temporarily suspended and won't appear in search results.",
+      "approveMessage": "The doctor's account will be activated and they can manage their clinic and receive bookings.",
+      "rejectConfirmMessage": "The doctor's request will be rejected and they won't be able to use the platform."
+    },
+    "locations": {
+      "title": "Manage Locations",
+      "subtitle": "Manage states and cities in the system",
+      "statesAndCities": "States and Cities",
+      "noStates": "No states found",
+      "noCities": "No cities found",
+      "addNewState": "Add New State",
+      "addNewCity": "Add New City",
+      "nameArRequired": "Name (Arabic) *",
+      "nameEnRequired": "Name (English) *",
+      "code": "Code",
+      "deleteState": "Delete State",
+      "deleteStateConfirm": "All cities in this state will be deleted. Are you sure?",
+      "deleteCity": "Delete City",
+      "deleteCityConfirm": "Are you sure you want to delete this city?",
+      "cityCount": "city"
+    },
+    "specialtiesPage": {
+      "title": "Manage Specialties",
+      "subtitle": "Add, edit, and delete medical specialties"
+    }
+  },
+  "doctor": {
+    "appointmentsPage": {
+      "title": "Appointments",
+      "subtitle": "Manage patient appointments and waiting list"
+    },
+    "clinicsPage": {
+      "title": "Clinics",
+      "subtitle": "Manage clinics, appointments, and services",
+      "addNew": "Add New Clinic",
+      "noClinics": "No clinics found",
+      "noClinicsCta": "Add your first clinic to start receiving bookings",
+      "loadError": "Error loading clinics. Please try again.",
+      "serviceCount": "service",
+      "workDayCount": "work day"
+    },
+    "profilePage": {
+      "title": "Profile",
+      "subtitle": "Update your information and qualifications"
+    }
+  },
+  "patient": {
+    "appointmentsPage": {
+      "title": "My Appointments",
+      "subtitle": "Manage and track your medical appointments"
+    },
+    "profilePage": {
+      "title": "Profile",
+      "subtitle": "Update your personal information"
+    },
+    "familyPage": {
+      "title": "Family Members",
+      "subtitle": "Add and manage family members to book appointments for them"
+    }
+  },
+  "secretary": {
+    "dashboardPage": {
+      "title": "Dashboard",
+      "subtitle": "Welcome to the secretary dashboard",
+      "todayAppointments": "Today's Appointments"
+    },
+    "appointmentsPage": {
+      "title": "Manage Appointments",
+      "subtitle": "View and manage all clinic appointments"
+    }
   }
 }

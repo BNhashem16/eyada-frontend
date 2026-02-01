@@ -9,7 +9,8 @@ export function useAdminSpecialties() {
   return useQuery({
     queryKey: ['admin-specialties'],
     queryFn: async () => {
-      return apiGet<Specialty[]>(PUBLIC_ENDPOINTS.SPECIALTIES);
+      // Include all specialties (active and inactive) for admin view
+      return apiGet<Specialty[]>(`${PUBLIC_ENDPOINTS.SPECIALTIES}?includeInactive=true`);
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });

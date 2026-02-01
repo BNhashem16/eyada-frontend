@@ -474,5 +474,114 @@
     "deleted": "تم الحذف",
     "error": "حدث خطأ",
     "success": "تم بنجاح"
+  },
+  "pages": {
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور؟",
+      "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور",
+      "sendResetLink": "إرسال رابط إعادة التعيين",
+      "backToLogin": "العودة لتسجيل الدخول"
+    },
+    "doctors": {
+      "title": "ابحث عن طبيب",
+      "subtitle": "اعثر على أفضل الأطباء المتخصصين واحجز موعدك بسهولة",
+      "searchPlaceholder": "ابحث عن طبيب..."
+    },
+    "clinics": {
+      "title": "ابحث عن عيادة",
+      "subtitle": "اعثر على أقرب عيادة إليك واحجز موعدك بسهولة"
+    },
+    "specialties": {
+      "title": "التخصصات الطبية",
+      "subtitle": "اختر التخصص المناسب للعثور على أفضل الأطباء"
+    }
+  },
+  "admin": {
+    "doctors": {
+      "title": "إدارة الأطباء",
+      "subtitle": "عرض وإدارة جميع الأطباء المسجلين في المنصة",
+      "searchPlaceholder": "بحث بالاسم، الإيميل، أو الهاتف...",
+      "allStatuses": "كل الحالات",
+      "underReview": "قيد المراجعة",
+      "approved": "معتمد",
+      "rejected": "مرفوض",
+      "suspended": "موقوف",
+      "totalResults": "إجمالي النتائج:",
+      "pageOf": "صفحة {current} من {total}",
+      "noDoctorsFound": "لا يوجد أطباء",
+      "noDoctorsMatchFilters": "لم يتم العثور على أطباء بالفلاتر المحددة",
+      "license": "رخصة:",
+      "reactivate": "إعادة تفعيل",
+      "confirmSuspend": "تأكيد الإيقاف",
+      "suspendMessage": "سيتم إيقاف حساب الطبيب مؤقتاً ولن يظهر في نتائج البحث.",
+      "approveMessage": "سيتم تفعيل حساب الطبيب وسيتمكن من إدارة عيادته واستقبال الحجوزات.",
+      "rejectConfirmMessage": "سيتم رفض طلب الطبيب ولن يتمكن من استخدام المنصة."
+    },
+    "locations": {
+      "title": "إدارة المواقع",
+      "subtitle": "إدارة المحافظات والمدن في النظام",
+      "statesAndCities": "المحافظات والمدن",
+      "noStates": "لا توجد محافظات",
+      "noCities": "لا توجد مدن",
+      "addNewState": "إضافة محافظة جديدة",
+      "addNewCity": "إضافة مدينة جديدة",
+      "nameArRequired": "الاسم بالعربية *",
+      "nameEnRequired": "الاسم بالإنجليزية *",
+      "code": "الكود",
+      "deleteState": "حذف المحافظة",
+      "deleteStateConfirm": "سيتم حذف جميع المدن التابعة لهذه المحافظة. هل أنت متأكد؟",
+      "deleteCity": "حذف المدينة",
+      "deleteCityConfirm": "هل أنت متأكد من حذف هذه المدينة؟",
+      "cityCount": "مدينة"
+    },
+    "specialtiesPage": {
+      "title": "إدارة التخصصات",
+      "subtitle": "إضافة وتعديل وحذف التخصصات الطبية"
+    }
+  },
+  "doctor": {
+    "appointmentsPage": {
+      "title": "المواعيد",
+      "subtitle": "إدارة مواعيد المرضى وقائمة الانتظار"
+    },
+    "clinicsPage": {
+      "title": "العيادات",
+      "subtitle": "إدارة العيادات والمواعيد والخدمات",
+      "addNew": "إضافة عيادة جديدة",
+      "noClinics": "لا توجد عيادات",
+      "noClinicsCta": "قم بإضافة عيادتك الأولى لبدء استقبال الحجوزات",
+      "loadError": "حدث خطأ أثناء تحميل العيادات. يرجى المحاولة مرة أخرى.",
+      "serviceCount": "خدمة",
+      "workDayCount": "يوم عمل"
+    },
+    "profilePage": {
+      "title": "الملف الشخصي",
+      "subtitle": "تحديث بياناتك ومؤهلاتك"
+    }
+  },
+  "patient": {
+    "appointmentsPage": {
+      "title": "مواعيدي",
+      "subtitle": "إدارة ومتابعة مواعيدك الطبية"
+    },
+    "profilePage": {
+      "title": "الملف الشخصي",
+      "subtitle": "تحديث بياناتك الشخصية"
+    },
+    "familyPage": {
+      "title": "أفراد العائلة",
+      "subtitle": "إضافة وإدارة أفراد عائلتك لحجز مواعيد لهم"
+    }
+  },
+  "secretary": {
+    "dashboardPage": {
+      "title": "لوحة التحكم",
+      "subtitle": "مرحباً بك في لوحة تحكم السكرتير",
+      "todayAppointments": "مواعيد اليوم"
+    },
+    "appointmentsPage": {
+      "title": "إدارة المواعيد",
+      "subtitle": "عرض وإدارة جميع مواعيد العيادة"
+    }
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Users, Plus, Trash2, User, Phone, Calendar, Loader2 } from 'lucide-react';
+import { Users, Plus, Trash2, User, Calendar, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -32,6 +32,7 @@ import { Gender, RelationshipType } from '@/types/enums';
 import { getInitials } from '@/lib/utils';
 
 const relationshipLabels: Record<RelationshipType, string> = {
+  [RelationshipType.SELF]: 'المريض نفسه',
   [RelationshipType.SPOUSE]: 'زوج/زوجة',
   [RelationshipType.CHILD]: 'ابن/ابنة',
   [RelationshipType.PARENT]: 'أب/أم',
@@ -39,16 +40,14 @@ const relationshipLabels: Record<RelationshipType, string> = {
   [RelationshipType.OTHER]: 'آخر',
 };
 
+// Schema matching backend AddFamilyMemberDto
 const familyMemberSchema = z.object({
-  name: z.string().min(3, 'الاسم يجب أن يكون 3 أحرف على الأقل'),
-  phone: z
-    .string()
-    .regex(/^01[0125][0-9]{8}$/, 'رقم الهاتف غير صحيح')
-    .optional()
-    .or(z.literal('')),
+  fullName: z.string().min(2, 'الاسم يجب أن يكون حرفين على الأقل').max(100),
   dateOfBirth: z.string().optional(),
-  gender: z.nativeEnum(Gender),
+  age: z.number().min(1).max(120).optional(),
+  gender: z.nativeEnum(Gender).optional(),
   relationship: z.nativeEnum(RelationshipType),
+  bloodType: z.string().optional(),
 });
 
 type FamilyMemberFormData = z.infer<typeof familyMemberSchema>;
@@ -72,6 +71,7 @@ export function FamilyList() {
   } = useForm<FamilyMemberFormData>({
     resolver: zodResolver(familyMemberSchema),
     defaultValues: {
+      fullName: '',
       gender: Gender.MALE,
       relationship: RelationshipType.CHILD,
     },
@@ -80,11 +80,12 @@ export function FamilyList() {
   const onSubmit = async (data: FamilyMemberFormData) => {
     try {
       await addMutation.mutateAsync({
-        name: data.name,
-        phone: data.phone || undefined,
+        fullName: data.fullName,
         dateOfBirth: data.dateOfBirth || undefined,
+        age: data.age || undefined,
         gender: data.gender,
         relationship: data.relationship,
+        bloodType: data.bloodType || undefined,
       });
       toast({
         title: 'تمت الإضافة',
@@ -165,10 +166,10 @@ export function FamilyList() {
                   className="flex items-center gap-4 p-4 bg-muted rounded-lg"
                 >
                   <Avatar className="h-12 w-12">
-                    <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
+                    <AvatarFallback>{getInitials(member.fullName)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="font-semibold text-foreground">{member.name}</p>
+                    <p className="font-semibold text-foreground">{member.fullName}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant="secondary" className="text-xs">
                         {relationshipLabels[member.relationship]}
@@ -180,8 +181,7 @@ export function FamilyList() {
                   </div>
                   <Button
                     variant="ghost"
-                    className="text-xs"
-                    className="text-error-600 hover:text-error-700 hover:bg-error-50"
+                    className="text-xs text-error-600 hover:text-error-700 hover:bg-error-50"
                     onClick={() => handleDelete(member.id)}
                     disabled={deletingId === member.id}
                   >
@@ -219,11 +219,14 @@ export function FamilyList() {
               <Label htmlFor="member-name" required>الاسم</Label>
               <Input
                 id="member-name"
-                {...register('name')}
+                {...register('fullName')}
                 icon={<User className="h-5 w-5" />}
                 iconPosition="start"
-                error={errors.name?.message}
+                error={!!errors.fullName}
               />
+              {errors.fullName && (
+                <p className="text-sm text-error-600">{errors.fullName.message}</p>
+              )}
             </div>
 
             {/* Relationship */}
@@ -275,19 +278,41 @@ export function FamilyList() {
               />
             </div>
 
-            {/* Phone */}
+            {/* Age */}
             <div className="space-y-2">
-              <Label htmlFor="member-phone">رقم الهاتف</Label>
+              <Label htmlFor="member-age">العمر</Label>
               <Input
-                id="member-phone"
-                type="tel"
-                dir="ltr"
-                {...register('phone')}
-                icon={<Phone className="h-5 w-5" />}
-                iconPosition="start"
-                placeholder="01xxxxxxxxx"
-                error={errors.phone?.message}
+                id="member-age"
+                type="number"
+                {...register('age', { valueAsNumber: true })}
+                placeholder="30"
+                min={1}
+                max={120}
               />
+            </div>
+
+            {/* Blood Type */}
+            <div className="space-y-2">
+              <Label>فصيلة الدم</Label>
+              <Select
+                value={watch('bloodType') || ''}
+                onValueChange={(value) => setValue('bloodType', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر فصيلة الدم" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">غير محدد</SelectItem>
+                  <SelectItem value="A+">A+</SelectItem>
+                  <SelectItem value="A-">A-</SelectItem>
+                  <SelectItem value="B+">B+</SelectItem>
+                  <SelectItem value="B-">B-</SelectItem>
+                  <SelectItem value="AB+">AB+</SelectItem>
+                  <SelectItem value="AB-">AB-</SelectItem>
+                  <SelectItem value="O+">O+</SelectItem>
+                  <SelectItem value="O-">O-</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0">

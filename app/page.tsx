@@ -148,25 +148,25 @@ export default function HomePage() {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <LanguageToggle />
             <ThemeToggle />
             {!isHydrated ? (
-              <Skeleton className="h-9 w-20" />
+              <Skeleton className="h-9 w-16 sm:w-20" />
             ) : isAuthenticated && user ? (
               <Link href={getDashboardPath()}>
-                <Button>
-                  <LayoutDashboard className="h-4 w-4 ms-2" />
-                  {t('nav.dashboard')}
+                <Button size="sm" className="sm:size-default">
+                  <LayoutDashboard className="h-4 w-4 sm:ms-2" />
+                  <span className="hidden sm:inline">{t('nav.dashboard')}</span>
                 </Button>
               </Link>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost">{t('nav.login')}</Button>
+                  <Button variant="ghost" size="sm" className="sm:size-default">{t('nav.login')}</Button>
                 </Link>
-                <Link href="/register">
-                  <Button>{t('nav.register')}</Button>
+                <Link href="/register" className="hidden sm:block">
+                  <Button size="sm" className="sm:size-default">{t('nav.register')}</Button>
                 </Link>
               </>
             )}
@@ -381,54 +381,54 @@ export default function HomePage() {
         </section>
       ) : isAuthenticated && user ? (
         // Logged in user - Show quick actions
-        <section className="bg-gradient-medical py-20 text-white">
+        <section className="bg-gradient-medical py-12 sm:py-20 text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="mb-4 text-3xl font-bold">{t('home.welcomeBack')}, {user.name || user.fullName}!</h2>
-            <p className="mb-8 text-lg text-white/90">
+            <h2 className="mb-3 sm:mb-4 text-xl sm:text-3xl font-bold">{t('home.welcomeBack')}, {user.name || user.fullName}!</h2>
+            <p className="mb-6 sm:mb-8 text-sm sm:text-lg text-white/90">
               {t('home.welcomeBackDesc')}
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link href={getDashboardPath()}>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 sm:gap-4">
+              <Link href={getDashboardPath()} className="w-full sm:w-auto">
                 <Button
-                  size="lg"
-                  className="bg-white text-primary-600 hover:bg-white/90"
+                  size="default"
+                  className="w-full sm:w-auto bg-white text-primary-600 hover:bg-white/90"
                 >
-                  <LayoutDashboard className="h-5 w-5 ms-2" />
+                  <LayoutDashboard className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
                   {t('nav.dashboard')}
                 </Button>
               </Link>
               {user.role === 'PATIENT' && (
                 <>
-                  <Link href="/doctors">
+                  <Link href="/doctors" className="w-full sm:w-auto">
                     <Button
-                      size="lg"
+                      size="default"
                       variant="outline"
-                      className="border-white text-white hover:bg-white/10"
+                      className="w-full sm:w-auto border-white text-white hover:bg-white/10"
                     >
-                      <Search className="h-5 w-5 ms-2" />
+                      <Search className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
                       {t('nav.findDoctor')}
                     </Button>
                   </Link>
-                  <Link href="/patient/appointments">
+                  <Link href="/patient/appointments" className="w-full sm:w-auto">
                     <Button
-                      size="lg"
+                      size="default"
                       variant="outline"
-                      className="border-white text-white hover:bg-white/10"
+                      className="w-full sm:w-auto border-white text-white hover:bg-white/10"
                     >
-                      <CalendarCheck className="h-5 w-5 ms-2" />
+                      <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
                       {t('nav.myAppointments')}
                     </Button>
                   </Link>
                 </>
               )}
               {user.role === 'DOCTOR' && (
-                <Link href="/doctor/appointments">
+                <Link href="/doctor/appointments" className="w-full sm:w-auto">
                   <Button
-                    size="lg"
+                    size="default"
                     variant="outline"
-                    className="border-white text-white hover:bg-white/10"
+                    className="w-full sm:w-auto border-white text-white hover:bg-white/10"
                   >
-                    <CalendarCheck className="h-5 w-5 ms-2" />
+                    <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
                     {t('nav.myAppointments')}
                   </Button>
                 </Link>

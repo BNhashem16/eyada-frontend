@@ -32,6 +32,23 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [searchInput, setSearchInput] = useState(filters.search || '');
+  const { t } = useTranslation();
+
+  // Sync searchInput with filters.search when it changes externally
+  useEffect(() => {
+    setSearchInput(filters.search || '');
+  }, [filters.search]);
+
+  const handleSearch = () => {
+    handleFilterChange('search', searchInput || undefined);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   // Fetch specialties and states on mount
   useEffect(() => {
@@ -90,15 +107,19 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
   const FiltersContent = () => (
     <div className="space-y-4">
       {/* Search */}
-      <div className="relative">
+      <div className="flex gap-2">
         <Input
-          placeholder="ابحث عن طبيب..."
-          value={filters.search || ''}
-          onChange={(e) => handleFilterChange('search', e.target.value)}
+          placeholder={t('doctors.searchPlaceholder')}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
           icon={<Search className="h-5 w-5" />}
           iconPosition="start"
-          className="bg-background"
+          className="bg-background flex-1"
         />
+        <Button onClick={handleSearch} variant="default" size="icon">
+          <Search className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Specialty */}
@@ -228,7 +249,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
             <Filter className="h-4 w-4" />
             <span>الفلاتر</span>
             {activeFiltersCount > 0 && (
-              <Badge variant="primary" className="text-xs">
+              <Badge variant="default" className="text-xs">
                 {activeFiltersCount}
               </Badge>
             )}

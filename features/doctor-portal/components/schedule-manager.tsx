@@ -45,6 +45,7 @@ interface DaySchedule {
   isActive: boolean;
   startTime: string;
   endTime: string;
+  breakTime?: string;
   slotDuration: number;
   id?: string;
 }
@@ -71,6 +72,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
           isActive: existing?.isActive ?? false,
           startTime: firstShift?.startTime ?? '09:00',
           endTime: firstShift?.endTime ?? '17:00',
+          breakTime: firstShift?.breakTime,
           slotDuration: existing?.slotDuration ?? 30,
           id: existing?.id,
         };
@@ -93,14 +95,14 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
 
   const handleTimeChange = (
     dayIndex: number,
-    field: 'startTime' | 'endTime',
+    field: 'startTime' | 'endTime' | 'breakTime',
     value: string
   ) => {
     setLocalSchedules((prev) => {
       const updated = [...prev];
       updated[dayIndex] = {
         ...updated[dayIndex],
-        [field]: value,
+        [field]: value || undefined,
       };
       return updated;
     });
@@ -122,8 +124,12 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
   const handleSave = async () => {
     try {
       const promises = localSchedules.map(async (schedule) => {
-        // Convert to shifts array format
-        const shifts = [{ startTime: schedule.startTime, endTime: schedule.endTime }];
+        // Convert to shifts array format (matching backend ShiftDto)
+        const shifts = [{
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
+          breakTime: schedule.breakTime || undefined,
+        }];
 
         if (schedule.id) {
           // Update existing schedule
@@ -260,6 +266,19 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                       }
                       className="w-32"
                       dir="ltr"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">استراحة</Label>
+                    <Input
+                      type="time"
+                      value={schedule.breakTime || ''}
+                      onChange={(e) =>
+                        handleTimeChange(index, 'breakTime', e.target.value)
+                      }
+                      className="w-32"
+                      dir="ltr"
+                      placeholder="--:--"
                     />
                   </div>
                   <div className="flex items-center gap-2">

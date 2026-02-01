@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Phone, Mail, MapPin, Calendar, Loader2 } from 'lucide-react';
+import { User, Phone, Mail, Calendar, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { usePatientProfile, useUpdatePatientProfile } from '../hooks/use-patient';
+import { usePatientProfile, useUpdatePatientProfile, useCreatePatientProfile } from '../hooks/use-patient';
+import { useAuthStore } from '@/lib/auth/store';
 import { useToast } from '@/hooks/use-toast';
 import { Gender } from '@/types/enums';
 
@@ -28,16 +29,21 @@ const profileSchema = z.object({
     .regex(/^01[0125][0-9]{8}$/, 'رقم الهاتف غير صحيح'),
   dateOfBirth: z.string().optional(),
   gender: z.nativeEnum(Gender).optional(),
-  addressLine1: z.string().optional(),
-  addressLine2: z.string().optional(),
+  whatsappNumber: z.string().optional(),
+  bloodType: z.string().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export function PatientProfileForm() {
   const { toast } = useToast();
-  const { data: profile, isLoading } = usePatientProfile();
+  const { data: profile, isLoading, error } = usePatientProfile();
   const updateMutation = useUpdatePatientProfile();
+  const createMutation = useCreatePatientProfile();
+  const user = useAuthStore((state) => state.user);
+
+  // Determine if this is a new profile (profile doesn't exist)
+  const isNewProfile = !isLoading && (!profile || error);
 
   const {
     register,
@@ -48,40 +54,63 @@ export function PatientProfileForm() {
     reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: user?.fullName || user?.name || '',
+      phone: user?.phone || '',
+    },
   });
 
   // Populate form when profile loads
   useEffect(() => {
     if (profile) {
       reset({
-        name: profile.user?.name || '',
-        phone: profile.user?.phone || '',
+        name: profile.user?.fullName || profile.user?.name || user?.fullName || user?.name || '',
+        phone: profile.user?.phone || user?.phone || '',
         dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
         gender: profile.gender,
-        addressLine1: profile.addressLine1 || '',
-        addressLine2: profile.addressLine2 || '',
+        whatsappNumber: profile.whatsappNumber || '',
+        bloodType: profile.bloodType || '',
+      });
+    } else if (user) {
+      // Set defaults from user data for new profile
+      reset({
+        name: user.fullName || user.name || '',
+        phone: user.phone || '',
+        dateOfBirth: '',
+        gender: undefined,
+        whatsappNumber: '',
+        bloodType: '',
       });
     }
-  }, [profile, reset]);
+  }, [profile, user, reset]);
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      await updateMutation.mutateAsync({
-        user: {
-          name: data.name,
-          phone: data.phone,
-        },
+      // Only send fields that the backend expects
+      const payload = {
         dateOfBirth: data.dateOfBirth || undefined,
         gender: data.gender,
-        addressLine1: data.addressLine1,
-        addressLine2: data.addressLine2,
-      } as any);
+        whatsappNumber: data.whatsappNumber || undefined,
+        bloodType: data.bloodType || undefined,
+      };
 
-      toast({
-        title: 'تم الحفظ',
-        description: 'تم تحديث بياناتك بنجاح',
-        variant: 'success',
-      });
+      if (isNewProfile) {
+        // Create new profile
+        await createMutation.mutateAsync(payload);
+        toast({
+          title: 'تم الإنشاء',
+          description: 'تم إنشاء ملفك الشخصي بنجاح',
+          variant: 'success',
+        });
+      } else {
+        // Update existing profile
+        await updateMutation.mutateAsync(payload as any);
+        toast({
+          title: 'تم الحفظ',
+          description: 'تم تحديث بياناتك بنجاح',
+          variant: 'success',
+        });
+      }
     } catch (error) {
       toast({
         title: 'فشل الحفظ',
@@ -90,6 +119,8 @@ export function PatientProfileForm() {
       });
     }
   };
+
+  const isPending = createMutation.isPending || updateMutation.isPending;
 
   if (isLoading) {
     return (
@@ -109,6 +140,13 @@ export function PatientProfileForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {isNewProfile && (
+        <div className="mb-4 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg">
+          <p className="text-primary-700 dark:text-primary-300 font-medium">
+            مرحباً! أكمل بياناتك الشخصية للاستفادة من جميع خدمات المنصة.
+          </p>
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -187,35 +225,53 @@ export function PatientProfileForm() {
             </Select>
           </div>
 
-          {/* Address */}
+          {/* WhatsApp Number */}
           <div className="space-y-2">
-            <Label htmlFor="addressLine1">العنوان</Label>
+            <Label htmlFor="whatsappNumber">رقم الواتساب</Label>
             <Input
-              id="addressLine1"
-              {...register('addressLine1')}
-              icon={<MapPin className="h-5 w-5" />}
+              id="whatsappNumber"
+              type="tel"
+              dir="ltr"
+              {...register('whatsappNumber')}
+              icon={<Phone className="h-5 w-5" />}
               iconPosition="start"
-              placeholder="الشارع / المنطقة"
+              placeholder="01xxxxxxxxx"
             />
           </div>
 
+          {/* Blood Type */}
           <div className="space-y-2">
-            <Label htmlFor="addressLine2">تفاصيل إضافية</Label>
-            <Input
-              id="addressLine2"
-              {...register('addressLine2')}
-              placeholder="رقم المبنى / الشقة"
-            />
+            <Label>فصيلة الدم</Label>
+            <Select
+              value={watch('bloodType') || ''}
+              onValueChange={(value) => setValue('bloodType', value, { shouldDirty: true })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="اختر فصيلة الدم" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="A+">A+</SelectItem>
+                <SelectItem value="A-">A-</SelectItem>
+                <SelectItem value="B+">B+</SelectItem>
+                <SelectItem value="B-">B-</SelectItem>
+                <SelectItem value="AB+">AB+</SelectItem>
+                <SelectItem value="AB-">AB-</SelectItem>
+                <SelectItem value="O+">O+</SelectItem>
+                <SelectItem value="O-">O-</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Submit */}
           <div className="flex justify-end pt-4">
-            <Button type="submit" disabled={!isDirty || updateMutation.isPending}>
-              {updateMutation.isPending ? (
+            <Button type="submit" disabled={(!isDirty && !isNewProfile) || isPending}>
+              {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin ms-2" />
                   جاري الحفظ...
                 </>
+              ) : isNewProfile ? (
+                'إنشاء الملف الشخصي'
               ) : (
                 'حفظ التغييرات'
               )}

@@ -22,6 +22,7 @@ import { Role } from '@/types';
 import { getInitials } from '@/lib/utils';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
+import { ProfileCompletionGuard } from '@/components/common/profile-completion-guard';
 
 const menuItems = [
   { href: '/doctor/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
@@ -195,7 +196,9 @@ export default function DoctorLayout({
 }) {
   return (
     <ProtectedRoute allowedRoles={[Role.DOCTOR]}>
-      <DoctorLayoutContent>{children}</DoctorLayoutContent>
+      <ProfileCompletionGuard role={Role.DOCTOR}>
+        <DoctorLayoutContent>{children}</DoctorLayoutContent>
+      </ProfileCompletionGuard>
     </ProtectedRoute>
   );
 }

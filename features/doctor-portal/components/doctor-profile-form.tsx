@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -457,19 +458,10 @@ export function DoctorProfileForm() {
                 <p className="text-sm text-muted-foreground">السماح للمرضى برؤية رقم هاتفك</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setValue('showPhoneNumber', !showPhoneNumber, { shouldDirty: true })}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showPhoneNumber ? 'bg-primary-600' : 'bg-muted-foreground/30'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  showPhoneNumber ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
+            <Switch
+              checked={showPhoneNumber}
+              onCheckedChange={(checked) => setValue('showPhoneNumber', checked, { shouldDirty: true })}
+            />
           </div>
 
           {/* WhatsApp Settings */}
@@ -481,19 +473,10 @@ export function DoctorProfileForm() {
                 <p className="text-sm text-muted-foreground">السماح للمرضى بالتواصل عبر واتساب</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setValue('showWhatsappNumber', !showWhatsappNumber, { shouldDirty: true })}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showWhatsappNumber ? 'bg-primary-600' : 'bg-muted-foreground/30'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  showWhatsappNumber ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
+            <Switch
+              checked={showWhatsappNumber}
+              onCheckedChange={(checked) => setValue('showWhatsappNumber', checked, { shouldDirty: true })}
+            />
           </div>
 
           {/* WhatsApp Numbers */}

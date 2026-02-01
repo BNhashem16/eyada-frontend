@@ -7,13 +7,14 @@ import { PatientProfile, Appointment, FamilyMember, PaginatedResponse } from '@/
 import { AppointmentStatus, PaymentStatus, Gender, RelationshipType } from '@/types/enums';
 
 // Profile hooks
-export function usePatientProfile() {
+export function usePatientProfile(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['patient-profile'],
     queryFn: async () => {
       return apiGet<PatientProfile>(PATIENT_ENDPOINTS.PROFILE);
     },
     staleTime: 1000 * 60 * 5,
+    enabled: options?.enabled ?? true,
   });
 }
 

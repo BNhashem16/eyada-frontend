@@ -151,8 +151,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
                   <Button
                     key={pageNum}
                     variant={page === pageNum ? 'default' : 'ghost'}
-                    className="text-xs"
-                    className="w-9"
+                    className="w-9 text-xs"
                     onClick={() => setPage(pageNum)}
                   >
                     {pageNum}

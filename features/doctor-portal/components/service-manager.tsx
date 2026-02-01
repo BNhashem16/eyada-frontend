@@ -12,6 +12,7 @@ import {
   Loader2,
   Clock,
   FileText,
+  Calendar,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,6 +62,7 @@ const serviceSchema = z.object({
   serviceType: z.nativeEnum(ServiceType),
   price: z.number().min(1, 'السعر مطلوب'),
   durationMinutes: z.number().min(5, 'المدة يجب أن تكون 5 دقائق على الأقل'),
+  reVisitValidityDays: z.number().min(1).optional(),
   isActive: z.boolean(),
 });
 
@@ -102,6 +104,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       serviceType: ServiceType.FIRST_VISIT,
       price: 0,
       durationMinutes: 30,
+      reVisitValidityDays: undefined,
       isActive: true,
     });
     setShowDialog(true);
@@ -116,6 +119,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       serviceType: service.serviceType,
       price: service.price,
       durationMinutes: service.duration,
+      reVisitValidityDays: service.reVisitValidityDays || undefined,
       isActive: service.isActive,
     });
     setShowDialog(true);
@@ -123,11 +127,25 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
 
   const onSubmit = async (data: ServiceFormData) => {
     try {
+      // Transform form data to match backend DTO
+      const payload = {
+        name: {
+          ar: data.nameAr,
+          en: data.nameEn || data.nameAr,
+        },
+        description: data.description ? { ar: data.description, en: data.description } : undefined,
+        serviceType: data.serviceType,
+        price: data.price,
+        duration: data.durationMinutes,
+        reVisitValidityDays: data.reVisitValidityDays || undefined,
+        isActive: data.isActive,
+      };
+
       if (editingService) {
         await updateMutation.mutateAsync({
           clinicId,
           serviceId: editingService.id,
-          data,
+          data: payload,
         });
         toast({
           title: 'تم التحديث',
@@ -135,7 +153,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
           variant: 'success',
         });
       } else {
-        await createMutation.mutateAsync({ clinicId, data });
+        await createMutation.mutateAsync({ clinicId, data: payload });
         toast({
           title: 'تمت الإضافة',
           description: 'تم إضافة الخدمة بنجاح',
@@ -209,20 +227,20 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
               {services.map((service) => (
                 <div
                   key={service.id}
-                  className={`flex items-center gap-4 p-4 rounded-lg ${
+                  className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 rounded-lg ${
                     service.isActive ? 'bg-muted' : 'bg-muted/50 opacity-60'
                   }`}
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-foreground">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h4 className="font-semibold text-foreground truncate">
                         {service.name?.ar || service.name?.en || service.serviceType}
                       </h4>
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs shrink-0">
                         {serviceTypeLabels[service.serviceType]}
                       </Badge>
                       {!service.isActive && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs shrink-0">
                           غير نشطة
                         </Badge>
                       )}
@@ -234,32 +252,32 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                       </span>
                     </div>
                   </div>
-                  <div className="text-end">
-                    <p className="text-lg font-bold text-primary-600 dark:text-primary-400">
+                  <div className="flex items-center justify-between sm:justify-end gap-4">
+                    <p className="text-lg font-bold text-primary-600 dark:text-primary-400 whitespace-nowrap">
                       {service.price} ج.م
                     </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openEditDialog(service)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-error-600 hover:bg-error-50 dark:hover:bg-error-900/30"
-                      onClick={() => handleDelete(service.id)}
-                      disabled={deletingId === service.id}
-                    >
-                      {deletingId === service.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </Button>
+                    <div className="flex gap-1 sm:gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openEditDialog(service)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-error-600 hover:bg-error-50 dark:hover:bg-error-900/30"
+                        onClick={() => handleDelete(service.id)}
+                        disabled={deletingId === service.id}
+                      >
+                        {deletingId === service.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -360,6 +378,27 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 />
               </div>
             </div>
+
+            {/* Re-visit validity - only show for RE_VISIT type */}
+            {watch('serviceType') === ServiceType.RE_VISIT && (
+              <div className="space-y-2">
+                <Label htmlFor="reVisitValidityDays">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    صلاحية إعادة الكشف (بالأيام)
+                  </span>
+                </Label>
+                <Input
+                  id="reVisitValidityDays"
+                  type="number"
+                  {...register('reVisitValidityDays', { valueAsNumber: true })}
+                  placeholder="14"
+                />
+                <p className="text-xs text-muted-foreground">
+                  عدد الأيام التي يمكن للمريض خلالها حجز إعادة كشف بنفس السعر
+                </p>
+              </div>
+            )}
 
             {/* Description */}
             <div className="space-y-2">
