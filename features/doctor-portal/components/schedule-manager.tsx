@@ -122,6 +122,9 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
   const handleSave = async () => {
     try {
       const promises = localSchedules.map(async (schedule) => {
+        // Convert to shifts array format
+        const shifts = [{ startTime: schedule.startTime, endTime: schedule.endTime }];
+
         if (schedule.id) {
           // Update existing schedule
           return updateMutation.mutateAsync({
@@ -129,8 +132,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
             scheduleId: schedule.id,
             data: {
               isActive: schedule.isActive,
-              startTime: schedule.startTime,
-              endTime: schedule.endTime,
+              shifts,
               slotDuration: schedule.slotDuration,
             },
           });
@@ -141,8 +143,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
             data: {
               dayOfWeek: schedule.dayOfWeek,
               isActive: schedule.isActive,
-              startTime: schedule.startTime,
-              endTime: schedule.endTime,
+              shifts,
               slotDuration: schedule.slotDuration,
             },
           });

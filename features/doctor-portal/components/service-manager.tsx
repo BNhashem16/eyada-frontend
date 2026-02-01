@@ -48,10 +48,10 @@ interface ServiceManagerProps {
 }
 
 const serviceTypeLabels: Record<ServiceType, string> = {
-  [ServiceType.CONSULTATION]: 'كشف',
-  [ServiceType.FOLLOW_UP]: 'متابعة',
-  [ServiceType.PROCEDURE]: 'إجراء',
-  [ServiceType.OTHER]: 'أخرى',
+  [ServiceType.FIRST_VISIT]: 'كشف أول',
+  [ServiceType.RE_VISIT]: 'إعادة كشف',
+  [ServiceType.CONSULTATION_PHONE]: 'استشارة هاتفية',
+  [ServiceType.CONSULTATION_VIDEO]: 'استشارة فيديو',
 };
 
 const serviceSchema = z.object({
@@ -61,7 +61,7 @@ const serviceSchema = z.object({
   serviceType: z.nativeEnum(ServiceType),
   price: z.number().min(1, 'السعر مطلوب'),
   durationMinutes: z.number().min(5, 'المدة يجب أن تكون 5 دقائق على الأقل'),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 type ServiceFormData = z.infer<typeof serviceSchema>;
@@ -87,7 +87,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
   } = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
-      serviceType: ServiceType.CONSULTATION,
+      serviceType: ServiceType.FIRST_VISIT,
       durationMinutes: 30,
       isActive: true,
     },
@@ -99,7 +99,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       nameAr: '',
       nameEn: '',
       description: '',
-      serviceType: ServiceType.CONSULTATION,
+      serviceType: ServiceType.FIRST_VISIT,
       price: 0,
       durationMinutes: 30,
       isActive: true,
@@ -110,12 +110,12 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
   const openEditDialog = (service: ClinicServiceType) => {
     setEditingService(service);
     reset({
-      nameAr: service.nameAr,
-      nameEn: service.nameEn || '',
-      description: service.description || '',
+      nameAr: service.name?.ar || '',
+      nameEn: service.name?.en || '',
+      description: '',
       serviceType: service.serviceType,
       price: service.price,
-      durationMinutes: service.durationMinutes,
+      durationMinutes: service.duration,
       isActive: service.isActive,
     });
     setShowDialog(true);
@@ -216,7 +216,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-semibold text-foreground">
-                        {service.nameAr}
+                        {service.name?.ar || service.name?.en || service.serviceType}
                       </h4>
                       <Badge variant="secondary" className="text-xs">
                         {serviceTypeLabels[service.serviceType]}
@@ -227,15 +227,10 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                         </Badge>
                       )}
                     </div>
-                    {service.description && (
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {service.description}
-                      </p>
-                    )}
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
-                        {service.durationMinutes} دقيقة
+                        {service.duration} دقيقة
                       </span>
                     </div>
                   </div>
@@ -247,14 +242,14 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                   <div className="flex gap-2">
                     <Button
                       variant="ghost"
-                      className="text-xs"
+                      size="sm"
                       onClick={() => openEditDialog(service)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
-                      className="text-xs"
+                      size="sm"
                       className="text-error-600 hover:bg-error-50 dark:hover:bg-error-900/30"
                       onClick={() => handleDelete(service.id)}
                       disabled={deletingId === service.id}
@@ -301,7 +296,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 id="nameAr"
                 {...register('nameAr')}
                 placeholder="مثال: كشف طبي"
-                error={errors.nameAr?.message}
+                error={!!errors.nameAr}
               />
             </div>
 
@@ -349,7 +344,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                   type="number"
                   {...register('price', { valueAsNumber: true })}
                   placeholder="0"
-                  error={errors.price?.message}
+                  error={!!errors.price}
                 />
               </div>
               <div className="space-y-2">
@@ -361,7 +356,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                   type="number"
                   {...register('durationMinutes', { valueAsNumber: true })}
                   placeholder="30"
-                  error={errors.durationMinutes?.message}
+                  error={!!errors.durationMinutes}
                 />
               </div>
             </div>

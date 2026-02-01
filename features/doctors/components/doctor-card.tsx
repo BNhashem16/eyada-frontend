@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DoctorProfile } from '@/types';
+import { DoctorStatus } from '@/types/enums';
 import { getInitials } from '@/lib/utils';
 
 interface DoctorCardProps {
@@ -26,14 +27,14 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
             <Avatar className="h-full w-full rounded-none">
               <AvatarImage
                 src={doctor.user?.profilePicture || undefined}
-                alt={doctor.user?.name}
+                alt={doctor.user?.fullName}
                 className="object-cover"
               />
               <AvatarFallback className="rounded-none text-4xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/50 dark:to-primary-800/50 text-primary-700 dark:text-primary-300">
-                {getInitials(doctor.user?.name || '')}
+                {getInitials(doctor.user?.fullName || '')}
               </AvatarFallback>
             </Avatar>
-            {doctor.isVerified && (
+            {doctor.status === DoctorStatus.APPROVED && (
               <Badge
                 variant="success"
                 className="absolute top-3 start-3 shadow-md"
@@ -50,10 +51,10 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
                 href={`/doctors/${doctor.id}`}
                 className="inline-block text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
-                د. {doctor.user?.name}
+                د. {doctor.user?.fullName}
               </Link>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {doctor.specialty?.nameAr || doctor.specialty?.nameEn}
+                {doctor.specialty?.name?.ar || doctor.specialty?.name?.en}
               </p>
             </div>
 
@@ -76,7 +77,7 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
                   <span>
-                    {doctor.clinics[0].city?.nameAr}, {doctor.clinics[0].state?.nameAr}
+                    {doctor.clinics[0].city?.name?.ar}, {doctor.clinics[0].city?.state?.name?.ar}
                   </span>
                 </div>
               )}
@@ -91,11 +92,11 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
             {/* Price & Book Button */}
             <div className="flex items-center justify-between gap-4 pt-3 border-t border-border">
               <div>
-                {doctor.clinics && doctor.clinics[0]?.services?.[0]?.price && (
+                {doctor.clinics && doctor.clinics[0]?.serviceTypes?.[0]?.price && (
                   <div className="text-sm">
                     <span className="text-muted-foreground">الكشف: </span>
                     <span className="font-bold text-primary-600 dark:text-primary-400">
-                      {doctor.clinics[0].services[0].price} ج.م
+                      {doctor.clinics[0].serviceTypes[0].price} ج.م
                     </span>
                   </div>
                 )}
