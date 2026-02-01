@@ -15,6 +15,9 @@ export const apiClient = axios.create({
 const ACCESS_TOKEN_KEY = 'eyada_access_token';
 const REFRESH_TOKEN_KEY = 'eyada_refresh_token';
 
+// Callback for when session is invalidated (refresh token fails)
+let onSessionInvalidated: (() => void) | null = null;
+
 // Token management functions
 export const tokenStorage = {
   getAccessToken: (): string | null => {
@@ -37,6 +40,11 @@ export const tokenStorage = {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+  },
+
+  // Register callback for when session is invalidated
+  onSessionInvalidated: (callback: () => void): void => {
+    onSessionInvalidated = callback;
   },
 };
 
@@ -71,39 +79,52 @@ apiClient.interceptors.request.use(
   }
 );
 
+// Extended config type for retry flag
+interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
 // Response interceptor - Handle token refresh
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiError>) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as ExtendedAxiosRequestConfig;
 
     // If no config or no response, reject
     if (!originalRequest || !error.response) {
       return Promise.reject(error);
     }
 
-    // If 401 and not a refresh request
+    // If 401 and not a refresh request and not already retried
     if (
       error.response.status === 401 &&
       !originalRequest.url?.includes(AUTH_ENDPOINTS.REFRESH) &&
-      !originalRequest.url?.includes(AUTH_ENDPOINTS.LOGIN)
+      !originalRequest.url?.includes(AUTH_ENDPOINTS.LOGIN) &&
+      !originalRequest._retry
     ) {
       const refreshToken = tokenStorage.getRefreshToken();
 
+      // If no refresh token, just reject - let the app handle it
+      // Don't redirect here to avoid infinite loops
       if (!refreshToken) {
-        tokenStorage.clearTokens();
-        window.location.href = '/login';
         return Promise.reject(error);
       }
 
+      // Mark this request as retried to prevent infinite loops
+      originalRequest._retry = true;
+
       if (isRefreshing) {
         // Wait for the refresh to complete
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           subscribeTokenRefresh((token: string) => {
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
+            if (token) {
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
+              resolve(apiClient(originalRequest));
+            } else {
+              reject(error);
             }
-            resolve(apiClient(originalRequest));
           });
         });
       }
@@ -133,8 +154,13 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         isRefreshing = false;
+        // Clear tokens and notify the app
         tokenStorage.clearTokens();
-        window.location.href = '/login';
+        onTokenRefreshed('');
+        // Notify auth store that session is invalidated
+        if (onSessionInvalidated) {
+          onSessionInvalidated();
+        }
         return Promise.reject(refreshError);
       }
     }

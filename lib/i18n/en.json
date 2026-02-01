@@ -64,7 +64,8 @@
     "contactUs": "Contact Us",
     "email": "Email",
     "phone": "Phone",
-    "findDoctor": "Find a Doctor"
+    "findDoctor": "Find a Doctor",
+    "myAppointments": "My Appointments"
   },
   "auth": {
     "login": "Login",
@@ -130,6 +131,8 @@
     "doctorCta": "Are you a doctor?",
     "doctorCtaDesc": "Join our platform and start receiving patients online",
     "registerAsDoctor": "Register as Doctor",
+    "welcomeBack": "Welcome back",
+    "welcomeBackDesc": "What would you like to do today?",
     "topDoctors": "Top Doctors",
     "viewAllDoctors": "View All Doctors",
     "stats": {

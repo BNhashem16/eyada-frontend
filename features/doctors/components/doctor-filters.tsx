@@ -116,7 +116,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           <SelectItem value="all">كل التخصصات</SelectItem>
           {specialties.map((specialty) => (
             <SelectItem key={specialty.id} value={specialty.id}>
-              {specialty.nameAr || specialty.nameEn}
+              {specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn}
             </SelectItem>
           ))}
         </SelectContent>
@@ -134,7 +134,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           <SelectItem value="all">كل المحافظات</SelectItem>
           {states.map((state) => (
             <SelectItem key={state.id} value={state.id}>
-              {state.nameAr || state.nameEn}
+              {state.name?.ar || state.name?.en || (state as any).nameAr || (state as any).nameEn}
             </SelectItem>
           ))}
         </SelectContent>
@@ -153,7 +153,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           <SelectItem value="all">كل المدن</SelectItem>
           {cities.map((city) => (
             <SelectItem key={city.id} value={city.id}>
-              {city.nameAr || city.nameEn}
+              {city.name?.ar || city.name?.en || (city as any).nameAr || (city as any).nameEn}
             </SelectItem>
           ))}
         </SelectContent>

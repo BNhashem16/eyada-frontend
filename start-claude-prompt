@@ -8,19 +8,27 @@ This session works on two separate repositories located at:
    Path: C:\React\eyada-frontend
    This is the UI that consumes the API.
 
+API Contract:
+- The backend Swagger / OpenAPI documentation is available at:
+  http://localhost:3000/api
+- Swagger is the SINGLE source of truth for all API contracts:
+  - Endpoints
+  - Request/response schemas
+  - DTOs and validation rules
+
 Rules and workflow:
-- The backend is the single source of truth for API contracts, DTOs, and response shapes.
-- Any change in the backend (controllers, DTOs, validation, endpoints) MUST be reflected in the frontend:
+- Always read and rely on the Swagger specification before making changes.
+- Any change in backend controllers, DTOs, or Swagger definitions MUST be reflected in the frontend:
   - API service functions
   - TypeScript types/interfaces
   - Forms, UI logic, and error handling
-- If a frontend requirement changes, update the backend accordingly:
-  - Add or modify controllers
-  - Update DTOs and validation
-  - Ensure consistency between request/response on both sides
+- If a frontend requirement changes:
+  - Update backend controllers and DTOs
+  - Update Swagger accordingly
+  - Then sync the frontend with the updated contract
 - Always analyze both repositories before making changes.
 - Do not break existing functionality.
 - Follow clean code, NestJS best practices, and modern React patterns.
 
 Goal:
-Keep backend and frontend fully synchronized at all times.
+Keep backend and frontend fully synchronized at all times using Swagger as the contract reference.

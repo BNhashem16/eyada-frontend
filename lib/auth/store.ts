@@ -229,6 +229,17 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
+// Register session invalidation callback
+// This is called when the refresh token fails, to clear the store
+if (typeof window !== 'undefined') {
+  tokenStorage.onSessionInvalidated(() => {
+    useAuthStore.setState({
+      user: null,
+      isAuthenticated: false,
+    });
+  });
+}
+
 // Selector hooks for better performance
 export const useUser = () => useAuthStore((state) => state.user);
 export const useIsAuthenticated = () => useAuthStore((state) => state.isAuthenticated);

@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import {
   Calendar,
   Search,
@@ -14,24 +16,45 @@ import {
   Eye,
   Bone,
   Baby,
+  LayoutDashboard,
+  CalendarCheck,
+  User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
 import { useTranslation } from '@/lib/i18n';
+import { useSpecialties } from '@/features/specialties';
+import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
+import { useLanguage } from '@/components/providers';
 
-const specialtyIcons = [
-  { key: 'internalMedicine', icon: Heart, color: 'text-red-500' },
-  { key: 'pediatrics', icon: Baby, color: 'text-pink-500' },
-  { key: 'ophthalmology', icon: Eye, color: 'text-blue-500' },
-  { key: 'orthopedics', icon: Bone, color: 'text-amber-500' },
-  { key: 'neurology', icon: Brain, color: 'text-purple-500' },
-  { key: 'generalMedicine', icon: Stethoscope, color: 'text-teal-500' },
-];
+// Default icons for specialties
+const defaultSpecialtyIcons: Record<string, { icon: typeof Heart; color: string }> = {
+  'internal-medicine': { icon: Heart, color: 'text-red-500' },
+  'pediatrics': { icon: Baby, color: 'text-pink-500' },
+  'ophthalmology': { icon: Eye, color: 'text-blue-500' },
+  'orthopedics': { icon: Bone, color: 'text-amber-500' },
+  'neurology': { icon: Brain, color: 'text-purple-500' },
+  'general-medicine': { icon: Stethoscope, color: 'text-teal-500' },
+};
+
+// Fallback icon
+const fallbackIcon = { icon: Stethoscope, color: 'text-primary-500' };
 
 export default function HomePage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const { language } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Auth state
+  const { isAuthenticated, user } = useAuthStore();
+  const isHydrated = useIsHydrated();
+
+  // Fetch specialties from backend
+  const { data: specialties, isLoading: specialtiesLoading } = useSpecialties();
 
   const features = [
     {
@@ -57,6 +80,49 @@ export default function HomePage() {
     { value: '10,000+', label: t('home.stats.appointments') },
     { value: '4.8', label: t('home.stats.rating') },
   ];
+
+  // Handle search
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/doctors?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push('/doctors');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Get dashboard path based on role
+  const getDashboardPath = () => {
+    switch (user?.role) {
+      case 'ADMIN':
+        return '/admin/dashboard';
+      case 'DOCTOR':
+        return '/doctor/dashboard';
+      case 'SECRETARY':
+        return '/secretary/dashboard';
+      case 'PATIENT':
+      default:
+        return '/patient/dashboard';
+    }
+  };
+
+  // Get specialty name based on language
+  const getSpecialtyName = (specialty: { name: { ar: string; en: string } }) => {
+    return language === 'ar' ? specialty.name.ar : specialty.name.en;
+  };
+
+  // Get icon for specialty
+  const getSpecialtyIcon = (specialtyIcon?: string) => {
+    if (specialtyIcon && defaultSpecialtyIcons[specialtyIcon]) {
+      return defaultSpecialtyIcons[specialtyIcon];
+    }
+    return fallbackIcon;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -85,12 +151,25 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             <LanguageToggle />
             <ThemeToggle />
-            <Link href="/login">
-              <Button variant="ghost">{t('nav.login')}</Button>
-            </Link>
-            <Link href="/register">
-              <Button>{t('nav.register')}</Button>
-            </Link>
+            {!isHydrated ? (
+              <Skeleton className="h-9 w-20" />
+            ) : isAuthenticated && user ? (
+              <Link href={getDashboardPath()}>
+                <Button>
+                  <LayoutDashboard className="h-4 w-4 ms-2" />
+                  {t('nav.dashboard')}
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost">{t('nav.login')}</Button>
+                </Link>
+                <Link href="/register">
+                  <Button>{t('nav.register')}</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -115,10 +194,13 @@ export default function HomePage() {
                   <input
                     type="text"
                     placeholder={t('home.searchPlaceholder')}
-                    className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
                   />
                 </div>
-                <Button size="lg" className="md:px-8">
+                <Button size="lg" className="md:px-8" onClick={handleSearch}>
                   {t('home.searchButton')}
                 </Button>
               </div>
@@ -156,18 +238,42 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            {specialtyIcons.map((specialty, index) => (
-              <Card key={index} hover className="text-center">
-                <CardContent className="p-6">
-                  <div
-                    className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-muted ${specialty.color}`}
-                  >
-                    <specialty.icon className="h-7 w-7" />
-                  </div>
-                  <h3 className="font-medium text-foreground">{t(`specialties.${specialty.key}`)}</h3>
-                </CardContent>
-              </Card>
-            ))}
+            {specialtiesLoading ? (
+              // Skeleton loading state
+              Array.from({ length: 6 }).map((_, index) => (
+                <Card key={index} className="text-center">
+                  <CardContent className="p-6">
+                    <Skeleton className="mx-auto mb-4 h-14 w-14 rounded-xl" />
+                    <Skeleton className="mx-auto h-4 w-20" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : specialties && specialties.length > 0 ? (
+              // Dynamic specialties from backend
+              specialties.slice(0, 6).map((specialty) => {
+                const iconConfig = getSpecialtyIcon(specialty.icon);
+                const Icon = iconConfig.icon;
+                return (
+                  <Link key={specialty.id} href={`/doctors?specialty=${specialty.id}`}>
+                    <Card hover className="text-center h-full">
+                      <CardContent className="p-6">
+                        <div
+                          className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-muted ${iconConfig.color}`}
+                        >
+                          <Icon className="h-7 w-7" />
+                        </div>
+                        <h3 className="font-medium text-foreground">{getSpecialtyName(specialty)}</h3>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })
+            ) : (
+              // Fallback static content when no data
+              <div className="col-span-full text-center text-muted-foreground py-8">
+                {t('common.noData')}
+              </div>
+            )}
           </div>
 
           <div className="mt-8 text-center">
@@ -263,23 +369,92 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-gradient-medical py-20 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="mb-4 text-3xl font-bold">{t('home.doctorCta')}</h2>
-          <p className="mb-8 text-lg text-white/90">
-            {t('home.doctorCtaDesc')}
-          </p>
-          <Link href="/register?role=doctor">
-            <Button
-              size="lg"
-              className="bg-white text-primary-600 hover:bg-white/90"
-            >
-              {t('home.registerAsDoctor')}
-            </Button>
-          </Link>
-        </div>
-      </section>
+      {/* CTA Section - Different content based on auth state */}
+      {!isHydrated ? (
+        // Loading skeleton
+        <section className="bg-gradient-medical py-20 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <Skeleton className="mx-auto mb-4 h-10 w-64 bg-white/20" />
+            <Skeleton className="mx-auto mb-8 h-6 w-96 bg-white/20" />
+            <Skeleton className="mx-auto h-12 w-40 bg-white/20" />
+          </div>
+        </section>
+      ) : isAuthenticated && user ? (
+        // Logged in user - Show quick actions
+        <section className="bg-gradient-medical py-20 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="mb-4 text-3xl font-bold">{t('home.welcomeBack')}, {user.name || user.fullName}!</h2>
+            <p className="mb-8 text-lg text-white/90">
+              {t('home.welcomeBackDesc')}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href={getDashboardPath()}>
+                <Button
+                  size="lg"
+                  className="bg-white text-primary-600 hover:bg-white/90"
+                >
+                  <LayoutDashboard className="h-5 w-5 ms-2" />
+                  {t('nav.dashboard')}
+                </Button>
+              </Link>
+              {user.role === 'PATIENT' && (
+                <>
+                  <Link href="/doctors">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-white text-white hover:bg-white/10"
+                    >
+                      <Search className="h-5 w-5 ms-2" />
+                      {t('nav.findDoctor')}
+                    </Button>
+                  </Link>
+                  <Link href="/patient/appointments">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-white text-white hover:bg-white/10"
+                    >
+                      <CalendarCheck className="h-5 w-5 ms-2" />
+                      {t('nav.myAppointments')}
+                    </Button>
+                  </Link>
+                </>
+              )}
+              {user.role === 'DOCTOR' && (
+                <Link href="/doctor/appointments">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white/10"
+                  >
+                    <CalendarCheck className="h-5 w-5 ms-2" />
+                    {t('nav.myAppointments')}
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      ) : (
+        // Not logged in - Show doctor registration CTA
+        <section className="bg-gradient-medical py-20 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="mb-4 text-3xl font-bold">{t('home.doctorCta')}</h2>
+            <p className="mb-8 text-lg text-white/90">
+              {t('home.doctorCtaDesc')}
+            </p>
+            <Link href="/register?role=doctor">
+              <Button
+                size="lg"
+                className="bg-white text-primary-600 hover:bg-white/90"
+              >
+                {t('home.registerAsDoctor')}
+              </Button>
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="border-t border-border bg-muted py-12">

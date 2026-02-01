@@ -3,9 +3,6 @@ import { z } from 'zod';
 // Egyptian phone number regex
 const egyptianPhoneRegex = /^01[0125][0-9]{8}$/;
 
-// Password requirements regex (at least one uppercase, one lowercase, one number or special char)
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).{8,}$/;
-
 export const registerSchema = z.object({
   fullName: z
     .string()
@@ -24,11 +21,7 @@ export const registerSchema = z.object({
     .string()
     .min(1, 'كلمة المرور مطلوبة')
     .min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل')
-    .max(50, 'كلمة المرور لا يجب أن تتجاوز 50 حرف')
-    .regex(
-      passwordRegex,
-      'كلمة المرور يجب أن تحتوي على حرف كبير وحرف صغير ورقم أو رمز'
-    ),
+    .max(50, 'كلمة المرور لا يجب أن تتجاوز 50 حرف'),
   confirmPassword: z.string().min(1, 'تأكيد كلمة المرور مطلوب'),
   role: z.enum(['PATIENT', 'DOCTOR']).default('PATIENT'),
   agreeTerms: z.boolean().refine((val) => val === true, {

@@ -64,7 +64,8 @@
     "contactUs": "تواصل معنا",
     "email": "البريد",
     "phone": "الهاتف",
-    "findDoctor": "ابحث عن طبيب"
+    "findDoctor": "ابحث عن طبيب",
+    "myAppointments": "مواعيدي"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -130,6 +131,8 @@
     "doctorCta": "هل أنت طبيب؟",
     "doctorCtaDesc": "انضم إلى منصتنا وابدأ في استقبال المرضى عبر الإنترنت",
     "registerAsDoctor": "سجل كطبيب",
+    "welcomeBack": "مرحباً بك مجدداً",
+    "welcomeBackDesc": "ماذا تريد أن تفعل اليوم؟",
     "topDoctors": "أفضل الأطباء",
     "viewAllDoctors": "عرض جميع الأطباء",
     "stats": {
