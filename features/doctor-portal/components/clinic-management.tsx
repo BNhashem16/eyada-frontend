@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDoctorClinics } from '../hooks/use-doctor-portal';
 import { DayOfWeek } from '@/types/enums';
+import { getLocalizedText } from '@/lib/utils/multilingual';
 
 const dayNames: Record<DayOfWeek, string> = {
   [DayOfWeek.SUNDAY]: 'الأحد',
@@ -83,12 +84,17 @@ export function ClinicManagement() {
         <div className="space-y-4">
           {clinics.map((clinic) => {
             const workingDays = clinic.schedules
-              ?.filter((s) => s.isAvailable)
+              ?.filter((s) => s.isActive)
               .map((s) => dayNames[s.dayOfWeek]);
 
-            const consultationPrice = clinic.services?.find(
+            const consultationPrice = clinic.serviceTypes?.find(
               (s) => s.serviceType === 'CONSULTATION'
             )?.price;
+
+            const clinicName = clinic.name?.ar || clinic.name?.en || '';
+            const clinicAddress = clinic.address?.ar || clinic.address?.en || '';
+            const cityName = clinic.city?.name?.ar || clinic.city?.name?.en || (clinic.city as any)?.nameAr || '';
+            const phoneNumber = clinic.phoneNumbers?.[0];
 
             return (
               <Card
@@ -107,7 +113,7 @@ export function ClinicManagement() {
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div>
                           <h3 className="text-lg font-bold text-foreground">
-                            {clinic.name}
+                            {clinicName}
                           </h3>
                           {clinic.isActive ? (
                             <Badge variant="success" size="sm">
@@ -133,16 +139,16 @@ export function ClinicManagement() {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                         <MapPin className="h-4 w-4 text-muted-foreground/70" />
                         <span>
-                          {clinic.addressLine1}
-                          {clinic.city && `, ${clinic.city.nameAr}`}
+                          {clinicAddress}
+                          {cityName && `, ${cityName}`}
                         </span>
                       </div>
 
                       {/* Phone */}
-                      {clinic.phone && (
+                      {phoneNumber && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                           <Phone className="h-4 w-4 text-muted-foreground/70" />
-                          <span dir="ltr">{clinic.phone}</span>
+                          <span dir="ltr">{phoneNumber}</span>
                         </div>
                       )}
 
@@ -157,10 +163,10 @@ export function ClinicManagement() {
                       {/* Services Count */}
                       <div className="flex items-center gap-4 text-sm">
                         <span className="text-muted-foreground">
-                          {clinic.services?.length || 0} خدمة
+                          {clinic.serviceTypes?.length || 0} خدمة
                         </span>
                         <span className="text-muted-foreground">
-                          {clinic.schedules?.filter((s) => s.isAvailable).length || 0} يوم عمل
+                          {clinic.schedules?.filter((s) => s.isActive).length || 0} يوم عمل
                         </span>
                       </div>
                     </div>

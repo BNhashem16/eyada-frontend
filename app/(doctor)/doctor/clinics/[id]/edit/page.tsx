@@ -33,7 +33,7 @@ export default function EditClinicPage({ params }: EditClinicPageProps) {
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link href={`/doctor/clinics/${id}`} className="hover:text-primary-600 dark:hover:text-primary-400">
-          {clinic?.name}
+          {clinic?.name?.ar || clinic?.name?.en}
         </Link>
         <ChevronRight className="h-4 w-4" />
         <span className="text-foreground">تعديل</span>

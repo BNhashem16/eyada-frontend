@@ -40,7 +40,22 @@ http://localhost:3000/admin/doctors
 لازم يجيب لي كل التكاتره أي كانت تخصصاتهم وخلي بالك ال api دي للأدمن فقط محدش تاني يقدر يدخل عليها
 
 ---------------------------
-الفورم دي محتاجه إعاده تهيئة
-http://localhost:3001/doctor/clinics/new
-ال inputs الكلام اللي فيها مش باين ظبطه في الوضعين الليلي والنهاري
-وكمان عاوزك تشوف الباك أند عامل الريكويست ازاي وتطابقه
+{statusCode: 400, timestamp: "2026-02-01T03:14:55.229Z",…}
+  error                                                                                                                            
+  :
+  "Bad Request"
+  message
+  :
+  ["property isAvailable should not exist"]
+  method
+  :
+  "POST"
+  path
+  :
+  "/doctors/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6/schedules"
+  statusCode
+  :
+  400
+  timestamp
+  :
+  "2026-02-01T03:14:55.229Z" http://localhost:3000/doctors/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6/schedules

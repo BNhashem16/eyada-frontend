@@ -49,7 +49,7 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
           العيادات
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-foreground">{clinic.name}</span>
+        <span className="text-foreground">{clinic.name?.ar || clinic.name?.en}</span>
       </nav>
 
       {/* Page Header */}
@@ -59,7 +59,7 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
             <Building2 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{clinic.name}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{clinic.name?.ar || clinic.name?.en}</h1>
             <p className="text-muted-foreground">إدارة مواعيد العمل والخدمات</p>
           </div>
         </div>
