@@ -7,23 +7,25 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Clinic } from '@/types';
 import { DayOfWeek } from '@/types/enums';
+import { useTranslation } from '@/lib/i18n';
 
 interface ClinicCardProps {
   clinic: Clinic;
   showBookButton?: boolean;
 }
 
-const dayNames: Record<DayOfWeek, string> = {
-  [DayOfWeek.SUNDAY]: 'الأحد',
-  [DayOfWeek.MONDAY]: 'الاثنين',
-  [DayOfWeek.TUESDAY]: 'الثلاثاء',
-  [DayOfWeek.WEDNESDAY]: 'الأربعاء',
-  [DayOfWeek.THURSDAY]: 'الخميس',
-  [DayOfWeek.FRIDAY]: 'الجمعة',
-  [DayOfWeek.SATURDAY]: 'السبت',
-};
-
 export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) {
+  const { t } = useTranslation();
+
+  const dayNames: Record<DayOfWeek, string> = {
+    [DayOfWeek.SUNDAY]: t('days.sunday'),
+    [DayOfWeek.MONDAY]: t('days.monday'),
+    [DayOfWeek.TUESDAY]: t('days.tuesday'),
+    [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
+    [DayOfWeek.THURSDAY]: t('days.thursday'),
+    [DayOfWeek.FRIDAY]: t('days.friday'),
+    [DayOfWeek.SATURDAY]: t('days.saturday'),
+  };
   // Get working days from schedules
   const workingDays = clinic.schedules
     ?.filter((s) => s.isAvailable)
@@ -56,14 +58,14 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
                 </Link>
                 {clinic.isActive && (
                   <Badge variant="success" size="sm" className="ms-2">
-                    متاحة
+                    {t('clinics.available')}
                   </Badge>
                 )}
               </div>
               {consultationPrice && (
                 <div className="text-end">
-                  <span className="text-sm text-muted-foreground">الكشف</span>
-                  <div className="font-bold text-primary-600 dark:text-primary-400">{consultationPrice} ج.م</div>
+                  <span className="text-sm text-muted-foreground">{t('clinics.consultation')}</span>
+                  <div className="font-bold text-primary-600 dark:text-primary-400">{consultationPrice} {t('common.currency')}</div>
                 </div>
               )}
             </div>
@@ -119,7 +121,7 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
                 <Button asChild size="sm" className="gap-1">
                   <Link href={`/clinics/${clinic.id}`}>
                     <Calendar className="h-4 w-4" />
-                    احجز موعد
+                    {t('doctors.bookAppointment')}
                     <ChevronLeft className="h-4 w-4" />
                   </Link>
                 </Button>

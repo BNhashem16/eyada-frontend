@@ -22,17 +22,10 @@ import { useAuthStore } from '@/lib/auth/store';
 import { AppointmentStatus } from '@/types/enums';
 import { formatDate, formatTime } from '@/lib/utils/date';
 import { getInitials } from '@/lib/utils';
-
-const statusLabels: Record<AppointmentStatus, string> = {
-  [AppointmentStatus.PENDING]: 'قيد الانتظار',
-  [AppointmentStatus.CONFIRMED]: 'مؤكد',
-  [AppointmentStatus.CHECKED_IN]: 'في العيادة',
-  [AppointmentStatus.COMPLETED]: 'مكتمل',
-  [AppointmentStatus.CANCELLED]: 'ملغي',
-  [AppointmentStatus.NO_SHOW]: 'لم يحضر',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export function DoctorDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { data: profile, isLoading: profileLoading } = useDoctorProfile();
   const { data: clinics, isLoading: clinicsLoading } = useDoctorClinics();
@@ -58,12 +51,24 @@ export function DoctorDashboard() {
     )
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
+  const getStatusLabel = (status: AppointmentStatus) => {
+    const statusMap: Record<AppointmentStatus, string> = {
+      [AppointmentStatus.PENDING]: t('status.pending'),
+      [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
+      [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+      [AppointmentStatus.COMPLETED]: t('status.completed'),
+      [AppointmentStatus.CANCELLED]: t('status.cancelled'),
+      [AppointmentStatus.NO_SHOW]: t('status.noShow'),
+    };
+    return statusMap[status];
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
         <h1 className="text-2xl font-bold mb-2">
-          مرحباً، د. {user?.name?.split(' ')[0]}
+          {t('doctor.greeting')} {user?.name?.split(' ')[0]}
         </h1>
         <p className="text-primary-100 mb-4">
           {formatDate(new Date(), 'EEEE, d MMMM yyyy')}
@@ -76,11 +81,11 @@ export function DoctorDashboard() {
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 fill-warning-300 text-warning-300" />
                 <span className="font-semibold">{profile?.averageRating?.toFixed(1) || '0'}</span>
-                <span className="text-primary-200">({profile?.totalRatings || 0} تقييم)</span>
+                <span className="text-primary-200">({profile?.totalRatings || 0} {t('doctors.reviews')})</span>
               </div>
               <div className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                <span>{clinics?.length || 0} عيادة</span>
+                <span>{clinics?.length || 0} {t('clinics.clinicCount')}</span>
               </div>
             </>
           )}
@@ -96,7 +101,7 @@ export function DoctorDashboard() {
                 <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">بانتظار التأكيد</p>
+                <p className="text-sm text-muted-foreground">{t('appointments.waitingForConfirmation')}</p>
                 <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : pendingCount}
                 </p>
@@ -112,7 +117,7 @@ export function DoctorDashboard() {
                 <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">في الانتظار</p>
+                <p className="text-sm text-muted-foreground">{t('appointments.inQueue')}</p>
                 <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : confirmedCount + checkedInCount}
                 </p>
@@ -128,7 +133,7 @@ export function DoctorDashboard() {
                 <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">مكتمل اليوم</p>
+                <p className="text-sm text-muted-foreground">{t('appointments.completedToday')}</p>
                 <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : completedCount}
                 </p>
@@ -144,7 +149,7 @@ export function DoctorDashboard() {
                 <TrendingUp className="h-6 w-6 text-secondary-600 dark:text-secondary-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي اليوم</p>
+                <p className="text-sm text-muted-foreground">{t('appointments.todayTotal')}</p>
                 <p className="text-2xl font-bold text-foreground">
                   {appointmentsLoading ? '-' : appointments.length}
                 </p>
@@ -159,11 +164,11 @@ export function DoctorDashboard() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            قائمة الانتظار
+            {t('appointments.waitingList')}
           </CardTitle>
           <Button asChild variant="ghost" size="sm">
             <Link href="/doctor/appointments">
-              عرض الكل
+              {t('common.viewAll')}
               <ChevronLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -223,7 +228,7 @@ export function DoctorDashboard() {
                         : 'success'
                     }
                   >
-                    {statusLabels[appointment.status]}
+                    {getStatusLabel(appointment.status)}
                   </Badge>
                 </div>
               ))}
@@ -231,7 +236,7 @@ export function DoctorDashboard() {
           ) : (
             <div className="text-center py-8">
               <Users className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">لا يوجد مرضى في قائمة الانتظار</p>
+              <p className="text-muted-foreground">{t('appointments.noPatientsInQueue')}</p>
             </div>
           )}
         </CardContent>
@@ -246,8 +251,8 @@ export function DoctorDashboard() {
                 <Calendar className="h-7 w-7 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">المواعيد</h3>
-                <p className="text-sm text-muted-foreground">إدارة مواعيد المرضى</p>
+                <h3 className="font-semibold text-foreground">{t('nav.appointments')}</h3>
+                <p className="text-sm text-muted-foreground">{t('doctor.managePatientAppointments')}</p>
               </div>
               <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
@@ -261,8 +266,8 @@ export function DoctorDashboard() {
                 <Building2 className="h-7 w-7 text-secondary-600 dark:text-secondary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">العيادات</h3>
-                <p className="text-sm text-muted-foreground">إدارة العيادات والمواعيد</p>
+                <h3 className="font-semibold text-foreground">{t('nav.clinics')}</h3>
+                <p className="text-sm text-muted-foreground">{t('doctor.manageClinicsAndSchedules')}</p>
               </div>
               <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
@@ -276,8 +281,8 @@ export function DoctorDashboard() {
                 <Star className="h-7 w-7 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">الملف الشخصي</h3>
-                <p className="text-sm text-muted-foreground">تحديث بياناتك والتقييمات</p>
+                <h3 className="font-semibold text-foreground">{t('doctor.profile')}</h3>
+                <p className="text-sm text-muted-foreground">{t('doctor.updateProfileAndRatings')}</p>
               </div>
               <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>

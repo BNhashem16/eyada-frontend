@@ -21,17 +21,10 @@ import { useAuthStore } from '@/lib/auth/store';
 import { AppointmentStatus } from '@/types/enums';
 import { formatDate, formatTime, isPast } from '@/lib/utils/date';
 import { getInitials } from '@/lib/utils';
-
-const statusLabels: Record<AppointmentStatus, string> = {
-  [AppointmentStatus.PENDING]: 'قيد الانتظار',
-  [AppointmentStatus.CONFIRMED]: 'مؤكد',
-  [AppointmentStatus.CHECKED_IN]: 'في العيادة',
-  [AppointmentStatus.COMPLETED]: 'مكتمل',
-  [AppointmentStatus.CANCELLED]: 'ملغي',
-  [AppointmentStatus.NO_SHOW]: 'لم يحضر',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export function PatientDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { data: appointmentsData, isLoading } = usePatientAppointments({ limit: 5 });
 
@@ -42,20 +35,32 @@ export function PatientDashboard() {
       a.status === AppointmentStatus.CONFIRMED
   );
 
+  const getStatusLabel = (status: AppointmentStatus) => {
+    const statusMap: Record<AppointmentStatus, string> = {
+      [AppointmentStatus.PENDING]: t('status.pending'),
+      [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
+      [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+      [AppointmentStatus.COMPLETED]: t('status.completed'),
+      [AppointmentStatus.CANCELLED]: t('status.cancelled'),
+      [AppointmentStatus.NO_SHOW]: t('status.noShow'),
+    };
+    return statusMap[status];
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
         <h1 className="text-2xl font-bold mb-2">
-          أهلاً، {user?.name?.split(' ')[0]}
+          {t('patient.greeting')}، {user?.name?.split(' ')[0]}
         </h1>
         <p className="text-primary-100 mb-4">
-          نتمنى لك يوماً سعيداً وصحة جيدة
+          {t('patient.greetingMessage')}
         </p>
         <Button asChild variant="secondary" className="bg-white text-primary-600 hover:bg-primary-50">
           <Link href="/doctors">
             <Stethoscope className="h-4 w-4 ms-2" />
-            احجز موعد جديد
+            {t('appointments.bookNew')}
           </Link>
         </Button>
       </div>
@@ -69,7 +74,7 @@ export function PatientDashboard() {
                 <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">المواعيد القادمة</p>
+                <p className="text-sm text-muted-foreground">{t('appointments.upcomingAppointments')}</p>
                 <p className="text-2xl font-bold text-foreground">
                   {isLoading ? '-' : upcomingAppointments.length}
                 </p>
@@ -85,7 +90,7 @@ export function PatientDashboard() {
                 <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">المواعيد المكتملة</p>
+                <p className="text-sm text-muted-foreground">{t('appointments.completed')}</p>
                 <p className="text-2xl font-bold text-foreground">
                   {isLoading
                     ? '-'
@@ -105,17 +110,17 @@ export function PatientDashboard() {
                   <AlertCircle className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">تنبيه</p>
+                  <p className="text-sm text-muted-foreground">{t('appointments.alert')}</p>
                   <p className="font-semibold text-foreground">
                     {upcomingAppointments.length > 0
-                      ? `لديك ${upcomingAppointments.length} موعد قادم`
-                      : 'لا توجد مواعيد قادمة'}
+                      ? t('appointments.hasUpcomingAppointments').replace('{count}', String(upcomingAppointments.length))
+                      : t('appointments.noUpcomingAppointments')}
                   </p>
                 </div>
               </div>
               <Button asChild variant="outline" size="sm">
                 <Link href="/patient/appointments">
-                  عرض الكل
+                  {t('common.viewAll')}
                   <ChevronLeft className="h-4 w-4" />
                 </Link>
               </Button>
@@ -129,11 +134,11 @@ export function PatientDashboard() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            المواعيد القادمة
+            {t('appointments.upcomingAppointments')}
           </CardTitle>
           <Button asChild variant="ghost" size="sm">
             <Link href="/patient/appointments">
-              عرض الكل
+              {t('common.viewAll')}
               <ChevronLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -172,7 +177,7 @@ export function PatientDashboard() {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-foreground truncate">
-                        د. {appointment.clinic?.doctor?.user?.name}
+                        {t('auth.doctor')}. {appointment.clinic?.doctor?.user?.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {formatDate(date, 'EEEE, d MMMM')} -{' '}
@@ -186,7 +191,7 @@ export function PatientDashboard() {
                           : 'warning'
                       }
                     >
-                      {statusLabels[appointment.status]}
+                      {getStatusLabel(appointment.status)}
                     </Badge>
                   </div>
                 );
@@ -195,9 +200,9 @@ export function PatientDashboard() {
           ) : (
             <div className="text-center py-8">
               <Calendar className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">لا توجد مواعيد قادمة</p>
+              <p className="text-muted-foreground">{t('appointments.noUpcomingAppointments')}</p>
               <Button asChild className="mt-4">
-                <Link href="/doctors">احجز موعد الآن</Link>
+                <Link href="/doctors">{t('appointments.bookNow')}</Link>
               </Button>
             </div>
           )}
@@ -213,8 +218,8 @@ export function PatientDashboard() {
                 <Stethoscope className="h-7 w-7 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">ابحث عن طبيب</h3>
-                <p className="text-sm text-muted-foreground">تصفح الأطباء واحجز موعد</p>
+                <h3 className="font-semibold text-foreground">{t('patient.findDoctor')}</h3>
+                <p className="text-sm text-muted-foreground">{t('patient.browseAndBook')}</p>
               </div>
               <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
@@ -228,8 +233,8 @@ export function PatientDashboard() {
                 <User className="h-7 w-7 text-secondary-600 dark:text-secondary-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">الملف الشخصي</h3>
-                <p className="text-sm text-muted-foreground">تحديث بياناتك الشخصية</p>
+                <h3 className="font-semibold text-foreground">{t('patient.profile')}</h3>
+                <p className="text-sm text-muted-foreground">{t('patient.updateProfile')}</p>
               </div>
               <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>
@@ -243,8 +248,8 @@ export function PatientDashboard() {
                 <Users className="h-7 w-7 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">أفراد العائلة</h3>
-                <p className="text-sm text-muted-foreground">إدارة أفراد عائلتك</p>
+                <h3 className="font-semibold text-foreground">{t('patient.family')}</h3>
+                <p className="text-sm text-muted-foreground">{t('patient.manageFamilyMembers')}</p>
               </div>
               <ChevronLeft className="h-5 w-5 text-muted-foreground ms-auto" />
             </CardContent>

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
   Calendar,
@@ -16,42 +18,46 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/common/theme-toggle';
+import { LanguageToggle } from '@/components/common/language-toggle';
+import { useTranslation } from '@/lib/i18n';
 
-const specialties = [
-  { name: 'طب الباطنة', icon: Heart, color: 'text-red-500' },
-  { name: 'طب الأطفال', icon: Baby, color: 'text-pink-500' },
-  { name: 'طب العيون', icon: Eye, color: 'text-blue-500' },
-  { name: 'جراحة العظام', icon: Bone, color: 'text-amber-500' },
-  { name: 'المخ والأعصاب', icon: Brain, color: 'text-purple-500' },
-  { name: 'طب عام', icon: Stethoscope, color: 'text-teal-500' },
-];
-
-const features = [
-  {
-    icon: Search,
-    title: 'ابحث عن طبيبك',
-    description: 'ابحث بالتخصص أو الاسم أو الموقع',
-  },
-  {
-    icon: Calendar,
-    title: 'احجز موعدك',
-    description: 'اختر الوقت المناسب من المواعيد المتاحة',
-  },
-  {
-    icon: UserCheck,
-    title: 'تأكيد فوري',
-    description: 'احصل على تأكيد موعدك فوراً',
-  },
-];
-
-const stats = [
-  { value: '500+', label: 'طبيب معتمد' },
-  { value: '50+', label: 'تخصص طبي' },
-  { value: '10,000+', label: 'موعد محجوز' },
-  { value: '4.8', label: 'تقييم المستخدمين' },
+const specialtyIcons = [
+  { key: 'internalMedicine', icon: Heart, color: 'text-red-500' },
+  { key: 'pediatrics', icon: Baby, color: 'text-pink-500' },
+  { key: 'ophthalmology', icon: Eye, color: 'text-blue-500' },
+  { key: 'orthopedics', icon: Bone, color: 'text-amber-500' },
+  { key: 'neurology', icon: Brain, color: 'text-purple-500' },
+  { key: 'generalMedicine', icon: Stethoscope, color: 'text-teal-500' },
 ];
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      icon: Search,
+      title: t('home.step1Title'),
+      description: t('home.step1Desc'),
+    },
+    {
+      icon: Calendar,
+      title: t('home.step2Title'),
+      description: t('home.step2Desc'),
+    },
+    {
+      icon: UserCheck,
+      title: t('home.step3Title'),
+      description: t('home.step3Desc'),
+    },
+  ];
+
+  const stats = [
+    { value: '500+', label: t('home.stats.doctors') },
+    { value: '50+', label: t('home.stats.specialties') },
+    { value: '10,000+', label: t('home.stats.appointments') },
+    { value: '4.8', label: t('home.stats.rating') },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -61,28 +67,29 @@ export default function HomePage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-medical">
               <Stethoscope className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-primary-700 dark:text-primary-400">عيادة</span>
+            <span className="text-xl font-bold text-primary-700 dark:text-primary-400">{t('app.name')}</span>
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
             <Link href="/doctors" className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400">
-              الأطباء
+              {t('nav.doctors')}
             </Link>
             <Link href="/clinics" className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400">
-              العيادات
+              {t('nav.clinics')}
             </Link>
             <Link href="/specialties" className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400">
-              التخصصات
+              {t('nav.specialties')}
             </Link>
           </nav>
 
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             <ThemeToggle />
             <Link href="/login">
-              <Button variant="ghost">تسجيل الدخول</Button>
+              <Button variant="ghost">{t('nav.login')}</Button>
             </Link>
             <Link href="/register">
-              <Button>إنشاء حساب</Button>
+              <Button>{t('nav.register')}</Button>
             </Link>
           </div>
         </div>
@@ -93,12 +100,11 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-4xl font-bold leading-tight text-foreground md:text-5xl lg:text-6xl">
-              احجز موعدك مع
-              <span className="text-primary-600 dark:text-primary-400"> أفضل الأطباء</span>
+              {t('home.heroTitle')}
+              <span className="text-primary-600 dark:text-primary-400"> {t('home.heroTitleHighlight')}</span>
             </h1>
             <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-              ابحث عن أطبائك المفضلين واحجز مواعيدك بسهولة وسرعة.
-              أكثر من 500 طبيب في مختلف التخصصات.
+              {t('home.heroSubtitle')}
             </p>
 
             {/* Search Box */}
@@ -108,12 +114,12 @@ export default function HomePage() {
                   <Search className="h-5 w-5 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="ابحث عن تخصص أو اسم طبيب..."
+                    placeholder={t('home.searchPlaceholder')}
                     className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground"
                   />
                 </div>
                 <Button size="lg" className="md:px-8">
-                  بحث
+                  {t('home.searchButton')}
                 </Button>
               </div>
             </div>
@@ -145,12 +151,12 @@ export default function HomePage() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground">التخصصات الشائعة</h2>
-            <p className="text-muted-foreground">اختر التخصص المناسب لك</p>
+            <h2 className="mb-4 text-3xl font-bold text-foreground">{t('home.popularSpecialties')}</h2>
+            <p className="text-muted-foreground">{t('home.selectSpecialty')}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            {specialties.map((specialty, index) => (
+            {specialtyIcons.map((specialty, index) => (
               <Card key={index} hover className="text-center">
                 <CardContent className="p-6">
                   <div
@@ -158,7 +164,7 @@ export default function HomePage() {
                   >
                     <specialty.icon className="h-7 w-7" />
                   </div>
-                  <h3 className="font-medium text-foreground">{specialty.name}</h3>
+                  <h3 className="font-medium text-foreground">{t(`specialties.${specialty.key}`)}</h3>
                 </CardContent>
               </Card>
             ))}
@@ -167,7 +173,7 @@ export default function HomePage() {
           <div className="mt-8 text-center">
             <Link href="/specialties">
               <Button variant="outline" size="lg">
-                عرض جميع التخصصات
+                {t('home.viewAllSpecialties')}
               </Button>
             </Link>
           </div>
@@ -178,8 +184,8 @@ export default function HomePage() {
       <section className="bg-muted py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground">كيف يعمل</h2>
-            <p className="text-muted-foreground">ثلاث خطوات بسيطة لحجز موعدك</p>
+            <h2 className="mb-4 text-3xl font-bold text-foreground">{t('home.howItWorks')}</h2>
+            <p className="text-muted-foreground">{t('home.howItWorksSubtitle')}</p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
@@ -207,7 +213,7 @@ export default function HomePage() {
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
               <h2 className="mb-6 text-3xl font-bold text-foreground">
-                لماذا تختار عيادة؟
+                {t('home.whyChooseUs')}
               </h2>
               <div className="space-y-6">
                 <div className="flex gap-4">
@@ -215,9 +221,9 @@ export default function HomePage() {
                     <Star className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold text-foreground">أطباء معتمدون</h3>
+                    <h3 className="mb-1 font-semibold text-foreground">{t('home.feature1Title')}</h3>
                     <p className="text-muted-foreground">
-                      جميع الأطباء مرخصون ومعتمدون من الجهات الرسمية
+                      {t('home.feature1Desc')}
                     </p>
                   </div>
                 </div>
@@ -226,9 +232,9 @@ export default function HomePage() {
                     <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold text-foreground">حجز فوري</h3>
+                    <h3 className="mb-1 font-semibold text-foreground">{t('home.feature2Title')}</h3>
                     <p className="text-muted-foreground">
-                      احجز موعدك في ثوانٍ واحصل على تأكيد فوري
+                      {t('home.feature2Desc')}
                     </p>
                   </div>
                 </div>
@@ -237,9 +243,9 @@ export default function HomePage() {
                     <Shield className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold text-foreground">خصوصية تامة</h3>
+                    <h3 className="mb-1 font-semibold text-foreground">{t('home.feature3Title')}</h3>
                     <p className="text-muted-foreground">
-                      بياناتك الطبية مشفرة ومحمية بأعلى معايير الأمان
+                      {t('home.feature3Desc')}
                     </p>
                   </div>
                 </div>
@@ -260,16 +266,16 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="bg-gradient-medical py-20 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="mb-4 text-3xl font-bold">هل أنت طبيب؟</h2>
+          <h2 className="mb-4 text-3xl font-bold">{t('home.doctorCta')}</h2>
           <p className="mb-8 text-lg text-white/90">
-            انضم إلى منصتنا وابدأ في استقبال المرضى عبر الإنترنت
+            {t('home.doctorCtaDesc')}
           </p>
           <Link href="/register?role=doctor">
             <Button
               size="lg"
               className="bg-white text-primary-600 hover:bg-gray-100"
             >
-              سجل كطبيب
+              {t('home.registerAsDoctor')}
             </Button>
           </Link>
         </div>
@@ -284,61 +290,61 @@ export default function HomePage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-medical">
                   <Stethoscope className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-xl font-bold text-primary-700 dark:text-primary-400">عيادة</span>
+                <span className="text-xl font-bold text-primary-700 dark:text-primary-400">{t('app.name')}</span>
               </div>
               <p className="text-muted-foreground">
-                منصة حجز المواعيد الطبية الأولى في مصر
+                {t('app.footerText')}
               </p>
             </div>
 
             <div>
-              <h4 className="mb-4 font-semibold text-foreground">روابط سريعة</h4>
+              <h4 className="mb-4 font-semibold text-foreground">{t('nav.quickLinks')}</h4>
               <ul className="space-y-2 text-muted-foreground">
                 <li>
                   <Link href="/doctors" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    ابحث عن طبيب
+                    {t('nav.findDoctor')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/clinics" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    العيادات
+                    {t('nav.clinics')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/specialties" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    التخصصات
+                    {t('nav.specialties')}
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="mb-4 font-semibold text-foreground">للأطباء</h4>
+              <h4 className="mb-4 font-semibold text-foreground">{t('nav.forDoctors')}</h4>
               <ul className="space-y-2 text-muted-foreground">
                 <li>
                   <Link href="/register?role=doctor" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    انضم كطبيب
+                    {t('nav.joinAsDoctor')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/login" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    تسجيل دخول الأطباء
+                    {t('nav.doctorLogin')}
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="mb-4 font-semibold text-foreground">تواصل معنا</h4>
+              <h4 className="mb-4 font-semibold text-foreground">{t('nav.contactUs')}</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li>البريد: support@eyada.com</li>
-                <li>الهاتف: 01000000000</li>
+                <li>{t('nav.email')}: support@eyada.com</li>
+                <li>{t('nav.phone')}: 01000000000</li>
               </ul>
             </div>
           </div>
 
           <div className="mt-8 border-t border-border pt-8 text-center text-muted-foreground">
-            <p>&copy; 2024 عيادة. جميع الحقوق محفوظة.</p>
+            <p>&copy; {new Date().getFullYear()} {t('app.name')}. {t('app.copyright')}</p>
           </div>
         </div>
       </footer>

@@ -21,21 +21,13 @@ import { AppointmentStatus } from '@/types/enums';
 import { formatDate, formatTime, isPast } from '@/lib/utils/date';
 import { getInitials } from '@/lib/utils';
 import { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 interface AppointmentCardProps {
   appointment: Appointment;
   onCancel?: (id: string) => void;
   onRate?: (appointment: Appointment) => void;
 }
-
-const statusLabels: Record<AppointmentStatus, string> = {
-  [AppointmentStatus.PENDING]: 'قيد الانتظار',
-  [AppointmentStatus.CONFIRMED]: 'مؤكد',
-  [AppointmentStatus.CHECKED_IN]: 'في العيادة',
-  [AppointmentStatus.COMPLETED]: 'مكتمل',
-  [AppointmentStatus.CANCELLED]: 'ملغي',
-  [AppointmentStatus.NO_SHOW]: 'لم يحضر',
-};
 
 const statusVariants: Record<AppointmentStatus, 'warning' | 'success' | 'primary' | 'default' | 'destructive' | 'secondary'> = {
   [AppointmentStatus.PENDING]: 'warning',
@@ -47,7 +39,20 @@ const statusVariants: Record<AppointmentStatus, 'warning' | 'success' | 'primary
 };
 
 export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCardProps) {
+  const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
+
+  const getStatusLabel = (status: AppointmentStatus) => {
+    const statusMap: Record<AppointmentStatus, string> = {
+      [AppointmentStatus.PENDING]: t('status.pending'),
+      [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
+      [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+      [AppointmentStatus.COMPLETED]: t('status.completed'),
+      [AppointmentStatus.CANCELLED]: t('status.cancelled'),
+      [AppointmentStatus.NO_SHOW]: t('status.noShow'),
+    };
+    return statusMap[status];
+  };
 
   const canCancel =
     appointment.status === AppointmentStatus.PENDING ||
@@ -130,10 +135,10 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                 {/* Service */}
                 {appointment.service && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>الخدمة:</span>
+                    <span>{t('appointments.service')}:</span>
                     <span>{appointment.service.nameAr || appointment.service.nameEn}</span>
                     <Badge variant="outline" size="sm">
-                      {appointment.service.price} ج.م
+                      {appointment.service.price} {t('common.currency')}
                     </Badge>
                   </div>
                 )}
@@ -142,7 +147,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
               {/* Status & Actions */}
               <div className="flex flex-col items-end gap-2">
                 <Badge variant={statusVariants[appointment.status]}>
-                  {statusLabels[appointment.status]}
+                  {getStatusLabel(appointment.status)}
                 </Badge>
 
                 {/* Actions Menu */}
@@ -172,7 +177,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                               className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
                             >
                               <X className="h-4 w-4" />
-                              إلغاء الموعد
+                              {t('appointments.cancel')}
                             </button>
                           )}
                           {canRate && (
@@ -184,7 +189,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                               className="flex items-center gap-2 w-full px-3 py-2 text-sm text-warning-600 dark:text-warning-400 hover:bg-warning-50 dark:hover:bg-warning-900/20"
                             >
                               <Star className="h-4 w-4" />
-                              تقييم الطبيب
+                              {t('patient.rateDoctor')}
                             </button>
                           )}
                         </div>
@@ -199,7 +204,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
             {appointment.rating && (
               <div className="mt-3 pt-3 border-t border-border">
                 <div className="flex items-center gap-1 text-sm">
-                  <span className="text-muted-foreground">تقييمك:</span>
+                  <span className="text-muted-foreground">{t('rating.yourRating')}:</span>
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}

@@ -12,8 +12,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { registerSchemaWithConfirm, type RegisterFormData } from '../schemas';
 import { useRegister } from '../hooks';
+import { useTranslation } from '@/lib/i18n';
 
 export function RegisterForm() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const roleParam = searchParams.get('role');
   const defaultRole = roleParam === 'doctor' ? 'DOCTOR' : 'PATIENT';
@@ -51,13 +53,13 @@ export function RegisterForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {/* Role Selection */}
       <div className="space-y-2">
-        <Label>نوع الحساب</Label>
+        <Label>{t('auth.accountType')}</Label>
         <div className="grid grid-cols-2 gap-3">
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
               selectedRole === 'PATIENT'
-                ? 'border-primary-500 bg-primary-50 text-primary-700'
-                : 'border-gray-200 hover:border-gray-300'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
+                : 'border-border hover:border-primary-300 dark:hover:border-primary-700'
             }`}
           >
             <input
@@ -67,13 +69,13 @@ export function RegisterForm() {
               className="sr-only"
             />
             <User className="h-5 w-5" />
-            <span className="font-medium">مريض</span>
+            <span className="font-medium">{t('auth.patient')}</span>
           </label>
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
               selectedRole === 'DOCTOR'
-                ? 'border-primary-500 bg-primary-50 text-primary-700'
-                : 'border-gray-200 hover:border-gray-300'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
+                : 'border-border hover:border-primary-300 dark:hover:border-primary-700'
             }`}
           >
             <input
@@ -83,7 +85,7 @@ export function RegisterForm() {
               className="sr-only"
             />
             <Stethoscope className="h-5 w-5" />
-            <span className="font-medium">طبيب</span>
+            <span className="font-medium">{t('auth.doctor')}</span>
           </label>
         </div>
       </div>
@@ -91,12 +93,12 @@ export function RegisterForm() {
       {/* Full Name */}
       <div className="space-y-2">
         <Label htmlFor="fullName" required>
-          الاسم الكامل
+          {t('auth.fullName')}
         </Label>
         <Input
           id="fullName"
           type="text"
-          placeholder="أحمد محمد"
+          placeholder={t('auth.fullNamePlaceholder')}
           icon={<User className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.fullName}
@@ -110,7 +112,7 @@ export function RegisterForm() {
       {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email" required>
-          البريد الإلكتروني
+          {t('auth.email')}
         </Label>
         <Input
           id="email"
@@ -129,7 +131,7 @@ export function RegisterForm() {
       {/* Phone Number */}
       <div className="space-y-2">
         <Label htmlFor="phoneNumber" required>
-          رقم الهاتف
+          {t('auth.phoneNumber')}
         </Label>
         <Input
           id="phoneNumber"
@@ -148,7 +150,7 @@ export function RegisterForm() {
       {/* Password */}
       <div className="space-y-2">
         <Label htmlFor="password" required>
-          كلمة المرور
+          {t('auth.password')}
         </Label>
         <div className="relative">
           <Input
@@ -164,7 +166,7 @@ export function RegisterForm() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -181,7 +183,7 @@ export function RegisterForm() {
       {/* Confirm Password */}
       <div className="space-y-2">
         <Label htmlFor="confirmPassword" required>
-          تأكيد كلمة المرور
+          {t('auth.confirmPassword')}
         </Label>
         <div className="relative">
           <Input
@@ -197,7 +199,7 @@ export function RegisterForm() {
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             {showConfirmPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -219,16 +221,16 @@ export function RegisterForm() {
           type="checkbox"
           id="agreeTerms"
           {...registerField('agreeTerms')}
-          className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+          className="mt-1 h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
         />
-        <label htmlFor="agreeTerms" className="text-sm text-gray-600">
-          أوافق على{' '}
-          <Link href="/terms" className="text-primary-600 hover:underline">
-            الشروط والأحكام
+        <label htmlFor="agreeTerms" className="text-sm text-muted-foreground">
+          {t('auth.agreeToTerms')}{' '}
+          <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:underline">
+            {t('auth.termsAndConditions')}
           </Link>{' '}
-          و{' '}
-          <Link href="/privacy" className="text-primary-600 hover:underline">
-            سياسة الخصوصية
+          {t('common.and')}{' '}
+          <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:underline">
+            {t('auth.privacyPolicy')}
           </Link>
         </label>
       </div>
@@ -238,14 +240,14 @@ export function RegisterForm() {
 
       {/* Submit Button */}
       <Button type="submit" className="w-full" size="lg" loading={isPending}>
-        إنشاء حساب
+        {t('auth.registerButton')}
       </Button>
 
       {/* Login Link */}
-      <p className="text-center text-gray-600">
-        لديك حساب بالفعل؟{' '}
-        <Link href="/login" className="text-primary-600 hover:underline">
-          تسجيل الدخول
+      <p className="text-center text-muted-foreground">
+        {t('auth.hasAccount')}{' '}
+        <Link href="/login" className="text-primary-600 dark:text-primary-400 hover:underline">
+          {t('auth.login')}
         </Link>
       </p>
     </form>

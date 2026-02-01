@@ -11,8 +11,10 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePendingDoctors, useAdminSpecialties, useAdminStates, useAdminCities } from '../hooks';
+import { useTranslation } from '@/lib/i18n';
 
 export function AdminDashboardStats() {
+  const { t } = useTranslation();
   const { data: pendingDoctors, isLoading: doctorsLoading } = usePendingDoctors();
   const { data: specialties, isLoading: specialtiesLoading } = useAdminSpecialties();
   const { data: states, isLoading: statesLoading } = useAdminStates();
@@ -22,31 +24,31 @@ export function AdminDashboardStats() {
 
   const stats = [
     {
-      label: 'أطباء في الانتظار',
+      label: t('admin.pendingDoctors'),
       value: pendingDoctors?.length || 0,
       icon: Users,
-      color: 'bg-yellow-100 text-yellow-600',
+      color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400',
       href: '/admin/doctors',
     },
     {
-      label: 'التخصصات',
+      label: t('admin.specialties'),
       value: specialties?.length || 0,
       icon: Grid3X3,
-      color: 'bg-blue-100 text-blue-600',
+      color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
       href: '/admin/specialties',
     },
     {
-      label: 'المحافظات',
+      label: t('admin.states'),
       value: states?.length || 0,
       icon: MapPin,
-      color: 'bg-green-100 text-green-600',
+      color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
       href: '/admin/locations',
     },
     {
-      label: 'المدن',
+      label: t('admin.cities'),
       value: cities?.length || 0,
       icon: Building2,
-      color: 'bg-purple-100 text-purple-600',
+      color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
       href: '/admin/locations',
     },
   ];
@@ -79,8 +81,8 @@ export function AdminDashboardStats() {
               >
                 <Icon className="h-5 w-5" />
               </div>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-500">{stat.label}</p>
+              <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+              <p className="text-sm text-muted-foreground">{stat.label}</p>
             </CardContent>
           </Card>
         );

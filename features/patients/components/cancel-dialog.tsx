@@ -10,6 +10,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n';
 
 interface CancelDialogProps {
   open: boolean;
@@ -19,6 +20,8 @@ interface CancelDialogProps {
 }
 
 export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: CancelDialogProps) {
+  const { t } = useTranslation();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -26,11 +29,11 @@ export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: Cance
           <div className="mx-auto h-14 w-14 rounded-full bg-error-100 flex items-center justify-center mb-4">
             <AlertTriangle className="h-7 w-7 text-error-600" />
           </div>
-          <DialogTitle className="text-center">إلغاء الموعد</DialogTitle>
+          <DialogTitle className="text-center">{t('appointments.cancel')}</DialogTitle>
           <DialogDescription className="text-center">
-            هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟
+            {t('appointments.confirmCancel')}
             <br />
-            لا يمكن التراجع عن هذا الإجراء.
+            {t('appointments.confirmCancelDesc')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:gap-0">
@@ -39,7 +42,7 @@ export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: Cance
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
-            تراجع
+            {t('common.back')}
           </Button>
           <Button
             variant="destructive"
@@ -49,10 +52,10 @@ export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: Cance
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                جاري الإلغاء...
+                {t('appointments.cancelling')}
               </>
             ) : (
-              'نعم، إلغاء الموعد'
+              t('appointments.yesCancel')
             )}
           </Button>
         </DialogFooter>

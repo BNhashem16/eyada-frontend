@@ -13,8 +13,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSecretaryAppointments } from '../hooks';
 import { AppointmentStatus, PaymentStatus } from '@/types/enums';
+import { useTranslation } from '@/lib/i18n';
 
 export function DashboardStats() {
+  const { t } = useTranslation();
   const today = format(new Date(), 'yyyy-MM-dd');
   const { data, isLoading } = useSecretaryAppointments({ date: today, limit: 100 });
 
@@ -35,40 +37,40 @@ export function DashboardStats() {
 
   const statCards = [
     {
-      label: 'إجمالي المواعيد',
+      label: t('secretary.totalAppointments'),
       value: stats.total,
       icon: Calendar,
-      color: 'bg-blue-100 text-blue-600',
+      color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
     },
     {
-      label: 'في الانتظار',
+      label: t('secretary.waiting'),
       value: stats.pending,
       icon: Clock,
-      color: 'bg-yellow-100 text-yellow-600',
+      color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400',
     },
     {
-      label: 'مؤكد',
+      label: t('secretary.confirmed'),
       value: stats.confirmed,
       icon: CheckCircle,
-      color: 'bg-green-100 text-green-600',
+      color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
     },
     {
-      label: 'حضر',
+      label: t('secretary.attended'),
       value: stats.checkedIn,
       icon: Users,
-      color: 'bg-purple-100 text-purple-600',
+      color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
     },
     {
-      label: 'مكتمل',
+      label: t('secretary.completed'),
       value: stats.completed,
       icon: CheckCircle,
-      color: 'bg-gray-100 text-gray-600',
+      color: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
     },
     {
-      label: 'الإيرادات',
-      value: `${stats.totalRevenue} ج.م`,
+      label: t('secretary.revenue'),
+      value: `${stats.totalRevenue} ${t('common.currency')}`,
       icon: CreditCard,
-      color: 'bg-emerald-100 text-emerald-600',
+      color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
     },
   ];
 
@@ -98,8 +100,8 @@ export function DashboardStats() {
               <div className={`h-10 w-10 rounded-lg ${stat.color} flex items-center justify-center mb-3`}>
                 <Icon className="h-5 w-5" />
               </div>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-500">{stat.label}</p>
+              <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+              <p className="text-sm text-muted-foreground">{stat.label}</p>
             </CardContent>
           </Card>
         );

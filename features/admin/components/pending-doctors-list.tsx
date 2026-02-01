@@ -29,8 +29,10 @@ import {
 import { usePendingDoctors, useApproveDoctor, useRejectDoctor } from '../hooks';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { getInitials } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 export function PendingDoctorsList() {
+  const { t } = useTranslation();
   const { data: doctors, isLoading, isError, error } = usePendingDoctors();
   const approveDoctor = useApproveDoctor();
   const rejectDoctor = useRejectDoctor();
@@ -85,12 +87,12 @@ export function PendingDoctorsList() {
 
   if (isError) {
     return (
-      <Card className="border-error-200 bg-error-50">
+      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600">
-            حدث خطأ أثناء تحميل البيانات
+          <p className="text-error-600 dark:text-error-400">
+            {t('admin.loadError')}
           </p>
-          <p className="text-sm text-error-500 mt-2">
+          <p className="text-sm text-error-500 dark:text-error-400 mt-2">
             {error instanceof Error ? error.message : 'Unknown error'}
           </p>
         </CardContent>
@@ -102,12 +104,12 @@ export function PendingDoctorsList() {
     return (
       <Card>
         <CardContent className="py-16 text-center">
-          <CheckCircle className="h-16 w-16 mx-auto text-green-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            لا يوجد طلبات معلقة
+          <CheckCircle className="h-16 w-16 mx-auto text-green-300 dark:text-green-700 mb-4" />
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            {t('admin.noPendingRequests')}
           </h3>
-          <p className="text-gray-600">
-            تم مراجعة جميع طلبات التسجيل
+          <p className="text-muted-foreground">
+            {t('admin.allRequestsReviewed')}
           </p>
         </CardContent>
       </Card>
@@ -132,15 +134,15 @@ export function PendingDoctorsList() {
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      د. {doctor.user.fullName}
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {t('auth.doctor')}. {doctor.user.fullName}
                     </h3>
                     <Badge variant="outline">
                       {getLocalizedText(doctor.specialty.name, 'ar')}
                     </Badge>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
                     <span className="flex items-center gap-2">
                       <Mail className="h-4 w-4" />
                       {doctor.user.email}
@@ -152,19 +154,19 @@ export function PendingDoctorsList() {
                     {doctor.licenseNumber && (
                       <span className="flex items-center gap-2">
                         <Award className="h-4 w-4" />
-                        رقم الترخيص: {doctor.licenseNumber}
+                        {t('doctors.licenseNumber')}: {doctor.licenseNumber}
                       </span>
                     )}
                     {doctor.yearsOfExperience && (
                       <span className="flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        {doctor.yearsOfExperience} سنة خبرة
+                        {doctor.yearsOfExperience} {t('doctors.yearsExp')}
                       </span>
                     )}
                   </div>
 
                   {doctor.bio && (
-                    <p className="mt-2 text-sm text-gray-500 line-clamp-2">
+                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
                       {getLocalizedText(doctor.bio, 'ar')}
                     </p>
                   )}
@@ -180,7 +182,7 @@ export function PendingDoctorsList() {
                     className="bg-green-600 hover:bg-green-700"
                   >
                     <CheckCircle className="h-4 w-4 me-2" />
-                    قبول
+                    {t('admin.approve')}
                   </Button>
                   <Button
                     variant="outline"
@@ -188,10 +190,10 @@ export function PendingDoctorsList() {
                       setSelectedDoctor(doctor.id);
                       setAction('reject');
                     }}
-                    className="text-error-600 border-error-300 hover:bg-error-50"
+                    className="text-error-600 border-error-300 hover:bg-error-50 dark:hover:bg-error-900/20"
                   >
                     <XCircle className="h-4 w-4 me-2" />
-                    رفض
+                    {t('admin.reject')}
                   </Button>
                 </div>
               </div>
@@ -211,16 +213,16 @@ export function PendingDoctorsList() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {action === 'approve' ? 'تأكيد قبول الطبيب' : 'تأكيد رفض الطبيب'}
+              {action === 'approve' ? t('admin.confirmApprove') : t('admin.confirmReject')}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {action === 'approve'
-                ? 'هل أنت متأكد من قبول هذا الطبيب؟ سيتمكن من إنشاء عيادات واستقبال مواعيد.'
-                : 'هل أنت متأكد من رفض هذا الطبيب؟ لن يتمكن من استخدام المنصة.'}
+                ? t('admin.approveMessage')
+                : t('admin.rejectMessage')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleAction}
               className={action === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-error-600 hover:bg-error-700'}
@@ -229,7 +231,7 @@ export function PendingDoctorsList() {
               {(approveDoctor.isPending || rejectDoctor.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {action === 'approve' ? 'قبول' : 'رفض'}
+              {action === 'approve' ? t('admin.approve') : t('admin.reject')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

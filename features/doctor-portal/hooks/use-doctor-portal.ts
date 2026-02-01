@@ -100,6 +100,20 @@ export function useUpdateClinic() {
   });
 }
 
+export function useToggleClinicActive() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (clinicId: string) => {
+      return apiPatch<Clinic>(DOCTOR_ENDPOINTS.CLINIC_TOGGLE_ACTIVE(clinicId), {});
+    },
+    onSuccess: (_, clinicId) => {
+      queryClient.invalidateQueries({ queryKey: ['doctor-clinics'] });
+      queryClient.invalidateQueries({ queryKey: ['doctor-clinic', clinicId] });
+    },
+  });
+}
+
 // Schedules hooks
 export function useClinicSchedules(clinicId: string) {
   return useQuery({
@@ -142,6 +156,19 @@ export function useUpdateSchedule() {
         `${DOCTOR_ENDPOINTS.CLINICS}/${clinicId}/schedules/${scheduleId}`,
         data
       );
+    },
+    onSuccess: (_, { clinicId }) => {
+      queryClient.invalidateQueries({ queryKey: ['doctor-clinic-schedules', clinicId] });
+    },
+  });
+}
+
+export function useDeleteSchedule() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ clinicId, scheduleId }: { clinicId: string; scheduleId: string }) => {
+      return apiDelete(`${DOCTOR_ENDPOINTS.CLINICS}/${clinicId}/schedules/${scheduleId}`);
     },
     onSuccess: (_, { clinicId }) => {
       queryClient.invalidateQueries({ queryKey: ['doctor-clinic-schedules', clinicId] });
@@ -210,6 +237,22 @@ export function useDeleteService() {
   return useMutation({
     mutationFn: async ({ clinicId, serviceId }: { clinicId: string; serviceId: string }) => {
       return apiDelete(`${DOCTOR_ENDPOINTS.CLINICS}/${clinicId}/services/${serviceId}`);
+    },
+    onSuccess: (_, { clinicId }) => {
+      queryClient.invalidateQueries({ queryKey: ['doctor-clinic-services', clinicId] });
+    },
+  });
+}
+
+export function useToggleServiceActive() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ clinicId, serviceId }: { clinicId: string; serviceId: string }) => {
+      return apiPatch<ClinicServiceType>(
+        DOCTOR_ENDPOINTS.CLINIC_SERVICE_TOGGLE_ACTIVE(clinicId, serviceId),
+        {}
+      );
     },
     onSuccess: (_, { clinicId }) => {
       queryClient.invalidateQueries({ queryKey: ['doctor-clinic-services', clinicId] });

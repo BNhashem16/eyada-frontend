@@ -23,32 +23,37 @@ import { useToast } from '@/hooks/use-toast';
 import { State, City } from '@/types';
 import { apiGet } from '@/lib/api';
 import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
+import { useTranslation } from '@/lib/i18n';
 
-const clinicSchema = z.object({
-  name: z.string().min(3, 'اسم العيادة يجب أن يكون 3 أحرف على الأقل'),
-  phone: z
-    .string()
-    .regex(/^01[0125][0-9]{8}$/, 'رقم الهاتف غير صحيح')
-    .optional()
-    .or(z.literal('')),
-  addressLine1: z.string().min(5, 'العنوان مطلوب'),
-  addressLine2: z.string().optional(),
-  stateId: z.string().min(1, 'المحافظة مطلوبة'),
-  cityId: z.string().min(1, 'المدينة مطلوبة'),
-  googleMapsUrl: z.string().url('رابط غير صحيح').optional().or(z.literal('')),
-  isActive: z.boolean().default(true),
-});
-
-type ClinicFormData = z.infer<typeof clinicSchema>;
+// Schema will be created dynamically with translations
+const createClinicSchema = (t: (key: string) => string) =>
+  z.object({
+    name: z.string().min(3, t('validation.clinicNameMinLength')),
+    phone: z
+      .string()
+      .regex(/^01[0125][0-9]{8}$/, t('validation.phoneInvalid'))
+      .optional()
+      .or(z.literal('')),
+    addressLine1: z.string().min(5, t('validation.addressRequired')),
+    addressLine2: z.string().optional(),
+    stateId: z.string().min(1, t('validation.stateRequired')),
+    cityId: z.string().min(1, t('validation.cityRequired')),
+    googleMapsUrl: z.string().url(t('validation.invalidUrl')).optional().or(z.literal('')),
+    isActive: z.boolean().default(true),
+  });
 
 interface ClinicFormProps {
   clinicId?: string;
 }
 
 export function ClinicForm({ clinicId }: ClinicFormProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { toast } = useToast();
   const isEditing = !!clinicId;
+
+  const clinicSchema = createClinicSchema(t);
+  type ClinicFormData = z.infer<typeof clinicSchema>;
 
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
@@ -141,8 +146,8 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           },
         });
         toast({
-          title: 'تم التحديث',
-          description: 'تم تحديث بيانات العيادة بنجاح',
+          title: t('toast.updated'),
+          description: t('doctor.clinicUpdated'),
           variant: 'success',
         });
       } else {
@@ -157,16 +162,16 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           isActive: data.isActive,
         });
         toast({
-          title: 'تمت الإضافة',
-          description: 'تم إضافة العيادة بنجاح',
+          title: t('toast.added'),
+          description: t('doctor.clinicAdded'),
           variant: 'success',
         });
       }
       router.push('/doctor/clinics');
     } catch (error) {
       toast({
-        title: 'حدث خطأ',
-        description: 'فشل في حفظ بيانات العيادة',
+        title: t('toast.error'),
+        description: t('doctor.clinicSaveFailed'),
         variant: 'destructive',
       });
     }
@@ -195,29 +200,29 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-primary-600" />
-            {isEditing ? 'تعديل العيادة' : 'إضافة عيادة جديدة'}
+            <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+            {isEditing ? t('doctor.editClinic') : t('doctor.addNewClinic')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" required>
-              اسم العيادة
+              {t('doctor.clinicName')}
             </Label>
             <Input
               id="name"
               {...register('name')}
               icon={<Building2 className="h-5 w-5" />}
               iconPosition="start"
-              placeholder="مثال: عيادة الدكتور أحمد"
+              placeholder={t('doctor.clinicName')}
               error={errors.name?.message}
             />
           </div>
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label htmlFor="phone">رقم الهاتف</Label>
+            <Label htmlFor="phone">{t('clinics.phone')}</Label>
             <Input
               id="phone"
               type="tel"
@@ -233,7 +238,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           {/* State & City */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label required>المحافظة</Label>
+              <Label required>{t('clinics.state')}</Label>
               <Select
                 value={watch('stateId') || ''}
                 onValueChange={(value) => {
@@ -243,7 +248,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 disabled={loadingLocations}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر المحافظة" />
+                  <SelectValue placeholder={t('clinics.selectState')} />
                 </SelectTrigger>
                 <SelectContent>
                   {states.map((state) => (
@@ -254,19 +259,19 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 </SelectContent>
               </Select>
               {errors.stateId && (
-                <p className="text-sm text-error-600">{errors.stateId.message}</p>
+                <p className="text-sm text-error-600 dark:text-error-400">{errors.stateId.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label required>المدينة</Label>
+              <Label required>{t('clinics.city')}</Label>
               <Select
                 value={watch('cityId') || ''}
                 onValueChange={(value) => setValue('cityId', value, { shouldDirty: true })}
                 disabled={!selectedStateId || cities.length === 0}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر المدينة" />
+                  <SelectValue placeholder={t('clinics.selectCity')} />
                 </SelectTrigger>
                 <SelectContent>
                   {cities.map((city) => (
@@ -277,7 +282,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 </SelectContent>
               </Select>
               {errors.cityId && (
-                <p className="text-sm text-error-600">{errors.cityId.message}</p>
+                <p className="text-sm text-error-600 dark:text-error-400">{errors.cityId.message}</p>
               )}
             </div>
           </div>
@@ -285,30 +290,30 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           {/* Address */}
           <div className="space-y-2">
             <Label htmlFor="addressLine1" required>
-              العنوان التفصيلي
+              {t('clinics.detailedAddress')}
             </Label>
             <Input
               id="addressLine1"
               {...register('addressLine1')}
               icon={<MapPin className="h-5 w-5" />}
               iconPosition="start"
-              placeholder="الشارع / المنطقة"
+              placeholder={t('clinics.address')}
               error={errors.addressLine1?.message}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="addressLine2">معلومات إضافية</Label>
+            <Label htmlFor="addressLine2">{t('clinics.additionalInfo')}</Label>
             <Input
               id="addressLine2"
               {...register('addressLine2')}
-              placeholder="رقم المبنى / الدور / رقم العيادة"
+              placeholder={t('clinics.buildingInfo')}
             />
           </div>
 
           {/* Google Maps URL */}
           <div className="space-y-2">
-            <Label htmlFor="googleMapsUrl">رابط خرائط جوجل</Label>
+            <Label htmlFor="googleMapsUrl">{t('clinics.googleMapsLink')}</Label>
             <Input
               id="googleMapsUrl"
               {...register('googleMapsUrl')}
@@ -326,32 +331,32 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               type="checkbox"
               id="isActive"
               {...register('isActive')}
-              className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
             />
             <Label htmlFor="isActive" className="cursor-pointer">
-              العيادة نشطة (متاحة للحجز)
+              {t('clinics.clinicActive')}
             </Label>
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.push('/doctor/clinics')}
             >
-              إلغاء
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isPending || (!isDirty && isEditing)}>
               {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                  جاري الحفظ...
+                  {t('common.saving')}
                 </>
               ) : isEditing ? (
-                'حفظ التغييرات'
+                t('common.saveChanges')
               ) : (
-                'إضافة العيادة'
+                t('doctor.addClinic')
               )}
             </Button>
           </div>

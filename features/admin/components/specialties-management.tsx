@@ -51,6 +51,7 @@ import {
 } from '../hooks';
 import { Specialty, Multilingual } from '@/types';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { useTranslation } from '@/lib/i18n';
 
 interface SpecialtyFormData {
   nameAr: string;
@@ -69,6 +70,7 @@ const initialFormData: SpecialtyFormData = {
 };
 
 export function SpecialtiesManagement() {
+  const { t } = useTranslation();
   const { data: specialties, isLoading, isError, error } = useAdminSpecialties();
   const createSpecialty = useCreateSpecialty();
   const updateSpecialty = useUpdateSpecialty();
@@ -171,9 +173,9 @@ export function SpecialtiesManagement() {
 
   if (isError) {
     return (
-      <Card className="border-error-200 bg-error-50">
+      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600">حدث خطأ أثناء تحميل البيانات</p>
+          <p className="text-error-600 dark:text-error-400">{t('errors.loadError')}</p>
         </CardContent>
       </Card>
     );
@@ -184,27 +186,27 @@ export function SpecialtiesManagement() {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold">التخصصات ({specialties?.length || 0})</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t('admin.specialties')} ({specialties?.length || 0})</h3>
             <Button onClick={handleOpenCreate}>
               <Plus className="h-4 w-4 me-2" />
-              إضافة تخصص
+              {t('admin.addSpecialty')}
             </Button>
           </div>
 
           {!specialties || specialties.length === 0 ? (
             <div className="text-center py-10">
-              <Frown className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500">لا توجد تخصصات</p>
+              <Frown className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+              <p className="text-muted-foreground">{t('admin.noSpecialties')}</p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>الاسم (عربي)</TableHead>
-                  <TableHead>الاسم (إنجليزي)</TableHead>
-                  <TableHead>الأيقونة</TableHead>
-                  <TableHead>الحالة</TableHead>
-                  <TableHead>الإجراءات</TableHead>
+                  <TableHead>{t('table.nameAr')}</TableHead>
+                  <TableHead>{t('table.nameEn')}</TableHead>
+                  <TableHead>{t('table.icon')}</TableHead>
+                  <TableHead>{t('table.status')}</TableHead>
+                  <TableHead>{t('table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -253,28 +255,28 @@ export function SpecialtiesManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingSpecialty ? 'تعديل تخصص' : 'إضافة تخصص جديد'}
+              {editingSpecialty ? t('admin.editSpecialty') : t('admin.addNewSpecialty')}
             </DialogTitle>
             <DialogDescription>
-              أدخل بيانات التخصص باللغتين العربية والإنجليزية
+              {t('admin.specialtyFormDesc')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="nameAr">الاسم بالعربية *</Label>
+                <Label htmlFor="nameAr">{t('admin.nameAr')} *</Label>
                 <Input
                   id="nameAr"
                   value={formData.nameAr}
                   onChange={(e) =>
                     setFormData((f) => ({ ...f, nameAr: e.target.value }))
                   }
-                  placeholder="طب الأسنان"
+                  placeholder={t('admin.nameArPlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="nameEn">الاسم بالإنجليزية *</Label>
+                <Label htmlFor="nameEn">{t('admin.nameEn')} *</Label>
                 <Input
                   id="nameEn"
                   value={formData.nameEn}
@@ -289,18 +291,18 @@ export function SpecialtiesManagement() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="descriptionAr">الوصف بالعربية</Label>
+                <Label htmlFor="descriptionAr">{t('admin.descriptionAr')}</Label>
                 <Input
                   id="descriptionAr"
                   value={formData.descriptionAr}
                   onChange={(e) =>
                     setFormData((f) => ({ ...f, descriptionAr: e.target.value }))
                   }
-                  placeholder="تخصص طب الأسنان"
+                  placeholder={t('admin.descriptionArPlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="descriptionEn">الوصف بالإنجليزية</Label>
+                <Label htmlFor="descriptionEn">{t('admin.descriptionEn')}</Label>
                 <Input
                   id="descriptionEn"
                   value={formData.descriptionEn}
@@ -314,7 +316,7 @@ export function SpecialtiesManagement() {
             </div>
 
             <div>
-              <Label htmlFor="icon">الأيقونة</Label>
+              <Label htmlFor="icon">{t('admin.icon')}</Label>
               <Input
                 id="icon"
                 value={formData.icon}
@@ -324,15 +326,15 @@ export function SpecialtiesManagement() {
                 placeholder="tooth"
                 dir="ltr"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                اسم الأيقونة: heart, brain, eye, bone, baby, stethoscope, tooth
+              <p className="text-xs text-muted-foreground mt-1">
+                {t('admin.iconHint')}
               </p>
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              إلغاء
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -346,7 +348,7 @@ export function SpecialtiesManagement() {
               {(createSpecialty.isPending || updateSpecialty.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {editingSpecialty ? 'تحديث' : 'إضافة'}
+              {editingSpecialty ? t('common.update') : t('common.add')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -356,13 +358,13 @@ export function SpecialtiesManagement() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>حذف التخصص</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.deleteSpecialty')}</AlertDialogTitle>
             <AlertDialogDescription>
-              هل أنت متأكد من حذف هذا التخصص؟ لا يمكن التراجع عن هذا الإجراء.
+              {t('admin.deleteSpecialtyConfirm')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-error-600 hover:bg-error-700"
@@ -371,7 +373,7 @@ export function SpecialtiesManagement() {
               {deleteSpecialty.isPending && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              حذف
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

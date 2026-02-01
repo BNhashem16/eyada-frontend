@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Stethoscope } from 'lucide-react';
 import { GuestRoute } from '@/lib/auth';
 import { ThemeToggle } from '@/components/common/theme-toggle';
+import { LanguageToggle } from '@/components/common/language-toggle';
 
 export default function AuthLayout({
   children,
@@ -19,7 +20,10 @@ export default function AuthLayout({
             </div>
             <span className="text-xl font-bold text-primary-700 dark:text-primary-400">عيادة</span>
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
         </header>
 
         {/* Main Content */}

@@ -16,6 +16,7 @@ import { Appointment } from '@/types';
 import { useSubmitRating } from '../hooks/use-patient';
 import { useToast } from '@/hooks/use-toast';
 import { getInitials } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface RatingDialogProps {
   appointment: Appointment | null;
@@ -23,6 +24,7 @@ interface RatingDialogProps {
 }
 
 export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -40,15 +42,15 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
         comment: comment.trim() || undefined,
       });
       toast({
-        title: 'شكراً لك',
-        description: 'تم إرسال تقييمك بنجاح',
+        title: t('common.success'),
+        description: t('toast.success'),
         variant: 'success',
       });
       handleClose();
     } catch (error) {
       toast({
-        title: 'فشل إرسال التقييم',
-        description: 'حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.',
+        title: t('common.error'),
+        description: t('errors.somethingWentWrong'),
         variant: 'destructive',
       });
     }
@@ -67,9 +69,9 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
     <Dialog open={!!appointment} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-center">قيّم تجربتك</DialogTitle>
+          <DialogTitle className="text-center">{t('rating.title')}</DialogTitle>
           <DialogDescription className="text-center">
-            كيف كانت تجربتك مع الطبيب؟
+            {t('rating.subtitle')}
           </DialogDescription>
         </DialogHeader>
 
@@ -86,8 +88,8 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold text-gray-900">د. {doctorName}</p>
-                <p className="text-sm text-gray-500">
+                <p className="font-semibold text-foreground">{t('auth.doctor')}. {doctorName}</p>
+                <p className="text-sm text-muted-foreground">
                   {appointment.clinic.doctor.specialty?.nameAr}
                 </p>
               </div>
@@ -109,7 +111,7 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
                   className={`h-10 w-10 transition-colors ${
                     star <= (hoveredRating || rating)
                       ? 'fill-warning-400 text-warning-400'
-                      : 'text-gray-300'
+                      : 'text-muted-foreground/30'
                   }`}
                 />
               </button>
@@ -117,37 +119,37 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
           </div>
 
           {/* Rating Label */}
-          <p className="text-center text-sm text-gray-600">
-            {rating === 0 && 'اختر تقييمك'}
-            {rating === 1 && 'سيء جداً'}
-            {rating === 2 && 'سيء'}
-            {rating === 3 && 'مقبول'}
-            {rating === 4 && 'جيد'}
-            {rating === 5 && 'ممتاز'}
+          <p className="text-center text-sm text-muted-foreground">
+            {rating === 0 && t('rating.selectRating')}
+            {rating === 1 && t('rating.veryBad')}
+            {rating === 2 && t('rating.bad')}
+            {rating === 3 && t('rating.okay')}
+            {rating === 4 && t('rating.good')}
+            {rating === 5 && t('rating.excellent')}
           </p>
 
           {/* Comment */}
           <div>
             <label
               htmlFor="comment"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-foreground mb-2"
             >
-              تعليق (اختياري)
+              {t('rating.commentOptional')}
             </label>
             <textarea
               id="comment"
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="شاركنا تجربتك مع الطبيب..."
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
+              placeholder={t('rating.commentPlaceholder')}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
             />
           </div>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={handleClose} disabled={submitMutation.isPending}>
-            إلغاء
+            {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -156,10 +158,10 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
             {submitMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                جاري الإرسال...
+                {t('common.submitting')}
               </>
             ) : (
-              'إرسال التقييم'
+              t('rating.submitRating')
             )}
           </Button>
         </DialogFooter>

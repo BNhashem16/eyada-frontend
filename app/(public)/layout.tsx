@@ -22,6 +22,7 @@ import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
 import { getInitials } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/common/theme-toggle';
+import { LanguageToggle } from '@/components/common/language-toggle';
 
 const navLinks = [
   { href: '/specialties', label: 'التخصصات', icon: Grid3X3 },
@@ -94,7 +95,8 @@ export default function PublicLayout({
 
             {/* Auth Buttons / User Menu */}
             <div className="flex items-center gap-2">
-              {/* Theme Toggle */}
+              {/* Language & Theme Toggle */}
+              <LanguageToggle />
               <ThemeToggle />
 
               {!isHydrated ? (

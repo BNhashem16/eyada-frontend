@@ -16,6 +16,7 @@ import { ProtectedRoute } from '@/lib/auth/guards';
 import { useAuthStore } from '@/lib/auth/store';
 import { getInitials } from '@/lib/utils';
 import { ThemeToggle } from '@/components/common/theme-toggle';
+import { LanguageToggle } from '@/components/common/language-toggle';
 
 const menuItems = [
   { href: '/secretary/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
@@ -50,6 +51,7 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
 
           {/* User Info */}
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             <ThemeToggle />
             <div className="flex items-center gap-2">
               <Avatar className="h-9 w-9">

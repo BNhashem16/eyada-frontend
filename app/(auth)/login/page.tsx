@@ -1,21 +1,20 @@
-import { Metadata } from 'next';
-import { LoginForm } from '@/features/auth/components';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'تسجيل الدخول',
-  description: 'سجل دخولك إلى حسابك في عيادة',
-};
+import { LoginForm } from '@/features/auth/components';
+import { useTranslation } from '@/lib/i18n';
 
 export default function LoginPage() {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-2xl font-bold text-gray-900">
-          تسجيل الدخول
+        <h1 className="mb-2 text-2xl font-bold text-foreground">
+          {t('auth.loginTitle')}
         </h1>
-        <p className="text-gray-600">
-          أدخل بياناتك للوصول إلى حسابك
+        <p className="text-muted-foreground">
+          {t('auth.loginSubtitle')}
         </p>
       </div>
 

@@ -14,10 +14,12 @@ import { Appointment } from '@/types';
 import { AppointmentStatus } from '@/types/enums';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n';
 
 type FilterTab = 'all' | 'upcoming' | 'completed' | 'cancelled';
 
 export function AppointmentList() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [page, setPage] = useState(1);
@@ -64,14 +66,14 @@ export function AppointmentList() {
     try {
       await cancelMutation.mutateAsync(cancelingId);
       toast({
-        title: 'تم إلغاء الموعد',
-        description: 'تم إلغاء موعدك بنجاح',
+        title: t('appointments.cancelSuccess'),
+        description: t('common.success'),
         variant: 'success',
       });
     } catch (error) {
       toast({
-        title: 'فشل إلغاء الموعد',
-        description: 'حدث خطأ أثناء إلغاء الموعد. يرجى المحاولة مرة أخرى.',
+        title: t('toast.error'),
+        description: t('errors.somethingWentWrong'),
         variant: 'destructive',
       });
     } finally {
@@ -84,10 +86,10 @@ export function AppointmentList() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList>
-          <TabsTrigger value="all">الكل</TabsTrigger>
-          <TabsTrigger value="upcoming">القادمة</TabsTrigger>
-          <TabsTrigger value="completed">المكتملة</TabsTrigger>
-          <TabsTrigger value="cancelled">الملغاة</TabsTrigger>
+          <TabsTrigger value="all">{t('common.all')}</TabsTrigger>
+          <TabsTrigger value="upcoming">{t('appointments.upcoming')}</TabsTrigger>
+          <TabsTrigger value="completed">{t('appointments.completed')}</TabsTrigger>
+          <TabsTrigger value="cancelled">{t('appointments.cancelled')}</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -119,10 +121,10 @@ export function AppointmentList() {
 
       {/* Error */}
       {isError && (
-        <Card className="border-error-200 bg-error-50">
+        <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
           <CardContent className="py-10 text-center">
-            <p className="text-error-600">
-              حدث خطأ أثناء تحميل المواعيد. يرجى المحاولة مرة أخرى.
+            <p className="text-error-600 dark:text-error-400">
+              {t('errors.loadError')}
             </p>
           </CardContent>
         </Card>
@@ -132,23 +134,15 @@ export function AppointmentList() {
       {!isLoading && !isError && appointments.length === 0 && (
         <Card>
           <CardContent className="py-16 text-center">
-            <Calendar className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              لا توجد مواعيد
+            <Calendar className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {t('common.noResults')}
             </h3>
-            <p className="text-gray-600 mb-4">
-              {activeTab === 'all'
-                ? 'لم تقم بحجز أي مواعيد بعد'
-                : `لا توجد مواعيد ${
-                    activeTab === 'upcoming'
-                      ? 'قادمة'
-                      : activeTab === 'completed'
-                      ? 'مكتملة'
-                      : 'ملغاة'
-                  }`}
+            <p className="text-muted-foreground mb-4">
+              {t('appointments.noUpcomingAppointments')}
             </p>
             <Button asChild>
-              <Link href="/doctors">احجز موعد الآن</Link>
+              <Link href="/doctors">{t('appointments.bookNow')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -178,10 +172,10 @@ export function AppointmentList() {
             disabled={page === 1}
           >
             <ChevronRight className="h-4 w-4" />
-            السابق
+            {t('common.previous')}
           </Button>
-          <span className="text-sm text-gray-600">
-            صفحة {page} من {totalPages}
+          <span className="text-sm text-muted-foreground">
+            {page} / {totalPages}
           </span>
           <Button
             variant="outline"
@@ -189,7 +183,7 @@ export function AppointmentList() {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >
-            التالي
+            {t('common.next')}
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>

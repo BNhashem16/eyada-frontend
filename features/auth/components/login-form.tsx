@@ -11,8 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginSchema, type LoginFormData } from '../schemas';
 import { useLogin } from '../hooks';
+import { useTranslation } from '@/lib/i18n';
 
 export function LoginForm() {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: login, isPending } = useLogin();
 
@@ -37,7 +39,7 @@ export function LoginForm() {
       {/* Email Field */}
       <div className="space-y-2">
         <Label htmlFor="email" required>
-          البريد الإلكتروني
+          {t('auth.email')}
         </Label>
         <Input
           id="email"
@@ -57,13 +59,13 @@ export function LoginForm() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="password" required>
-            كلمة المرور
+            {t('auth.password')}
           </Label>
           <Link
             href="/forgot-password"
             className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
           >
-            نسيت كلمة المرور؟
+            {t('auth.forgotPassword')}
           </Link>
         </div>
         <div className="relative">
@@ -96,14 +98,14 @@ export function LoginForm() {
 
       {/* Submit Button */}
       <Button type="submit" className="w-full" size="lg" loading={isPending}>
-        تسجيل الدخول
+        {t('auth.loginButton')}
       </Button>
 
       {/* Register Link */}
       <p className="text-center text-muted-foreground">
-        ليس لديك حساب؟{' '}
+        {t('auth.noAccount')}{' '}
         <Link href="/register" className="text-primary-600 dark:text-primary-400 hover:underline">
-          إنشاء حساب جديد
+          {t('auth.createNewAccount')}
         </Link>
       </p>
     </form>
