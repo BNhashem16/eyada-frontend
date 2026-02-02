@@ -51,6 +51,7 @@ import {
   useDeleteCity,
 } from '../hooks';
 import { State, City, Multilingual } from '@/types';
+import { useTranslation } from '@/lib/i18n';
 
 interface StateFormData {
   nameAr: string;
@@ -68,6 +69,7 @@ const initialStateForm: StateFormData = { nameAr: '', nameEn: '', code: '' };
 const initialCityForm: CityFormData = { stateId: '', nameAr: '', nameEn: '' };
 
 export function LocationsManagement() {
+  const { t } = useTranslation();
   const { data: states, isLoading: statesLoading } = useAdminStates();
   const { data: cities } = useAdminCities();
 
@@ -205,17 +207,17 @@ export function LocationsManagement() {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold">المحافظات والمدن</h3>
+            <h3 className="text-lg font-semibold">{t('admin.locations.statesAndCities')}</h3>
             <Button onClick={handleOpenCreateState}>
               <Plus className="h-4 w-4 me-2" />
-              إضافة محافظة
+              {t('admin.addState')}
             </Button>
           </div>
 
           {!states || states.length === 0 ? (
             <div className="text-center py-10">
               <MapPin className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">لا توجد محافظات</p>
+              <p className="text-muted-foreground">{t('admin.locations.noStates')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -245,7 +247,7 @@ export function LocationsManagement() {
                                 ({state.name.en})
                               </span>
                               <span className="text-xs text-muted-foreground/70">
-                                {stateCities.length} مدينة
+                                {stateCities.length} {t('admin.locations.cityCount')}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -283,7 +285,7 @@ export function LocationsManagement() {
                           <div className="border-t bg-muted p-4">
                             <div className="flex justify-between items-center mb-3">
                               <span className="text-sm font-medium text-muted-foreground">
-                                المدن
+                                {t('admin.cities')}
                               </span>
                               <Button
                                 variant="outline"
@@ -291,13 +293,13 @@ export function LocationsManagement() {
                                 onClick={() => handleOpenCreateCity(state.id)}
                               >
                                 <Plus className="h-3 w-3 me-1" />
-                                إضافة مدينة
+                                {t('admin.addCity')}
                               </Button>
                             </div>
 
                             {stateCities.length === 0 ? (
                               <p className="text-sm text-muted-foreground text-center py-4">
-                                لا توجد مدن
+                                {t('admin.locations.noCities')}
                               </p>
                             ) : (
                               <div className="space-y-2">
@@ -359,13 +361,13 @@ export function LocationsManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingState ? 'تعديل محافظة' : 'إضافة محافظة جديدة'}
+              {editingState ? t('admin.editState') : t('admin.locations.addNewState')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>الاسم بالعربية *</Label>
+                <Label>{t('admin.locations.nameArRequired')}</Label>
                 <Input
                   value={stateForm.nameAr}
                   onChange={(e) =>
@@ -375,7 +377,7 @@ export function LocationsManagement() {
                 />
               </div>
               <div>
-                <Label>الاسم بالإنجليزية *</Label>
+                <Label>{t('admin.locations.nameEnRequired')}</Label>
                 <Input
                   value={stateForm.nameEn}
                   onChange={(e) =>
@@ -387,7 +389,7 @@ export function LocationsManagement() {
               </div>
             </div>
             <div>
-              <Label>الكود</Label>
+              <Label>{t('admin.locations.code')}</Label>
               <Input
                 value={stateForm.code}
                 onChange={(e) =>
@@ -400,7 +402,7 @@ export function LocationsManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setStateDialogOpen(false)}>
-              إلغاء
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSubmitState}
@@ -414,7 +416,7 @@ export function LocationsManagement() {
               {(createState.isPending || updateState.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {editingState ? 'تحديث' : 'إضافة'}
+              {editingState ? t('common.update') : t('common.add')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -425,13 +427,13 @@ export function LocationsManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingCity ? 'تعديل مدينة' : 'إضافة مدينة جديدة'}
+              {editingCity ? t('admin.editCity') : t('admin.locations.addNewCity')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>الاسم بالعربية *</Label>
+                <Label>{t('admin.locations.nameArRequired')}</Label>
                 <Input
                   value={cityForm.nameAr}
                   onChange={(e) =>
@@ -441,7 +443,7 @@ export function LocationsManagement() {
                 />
               </div>
               <div>
-                <Label>الاسم بالإنجليزية *</Label>
+                <Label>{t('admin.locations.nameEnRequired')}</Label>
                 <Input
                   value={cityForm.nameEn}
                   onChange={(e) =>
@@ -455,7 +457,7 @@ export function LocationsManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCityDialogOpen(false)}>
-              إلغاء
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSubmitCity}
@@ -469,7 +471,7 @@ export function LocationsManagement() {
               {(createCity.isPending || updateCity.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {editingCity ? 'تحديث' : 'إضافة'}
+              {editingCity ? t('common.update') : t('common.add')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -479,18 +481,18 @@ export function LocationsManagement() {
       <AlertDialog open={!!deleteStateId} onOpenChange={() => setDeleteStateId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>حذف المحافظة</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.locations.deleteState')}</AlertDialogTitle>
             <AlertDialogDescription>
-              سيتم حذف جميع المدن التابعة لهذه المحافظة. هل أنت متأكد؟
+              {t('admin.locations.deleteStateConfirm')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteState}
               className="bg-error-600 hover:bg-error-700"
             >
-              حذف
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -500,18 +502,18 @@ export function LocationsManagement() {
       <AlertDialog open={!!deleteCityId} onOpenChange={() => setDeleteCityId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>حذف المدينة</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.locations.deleteCity')}</AlertDialogTitle>
             <AlertDialogDescription>
-              هل أنت متأكد من حذف هذه المدينة؟
+              {t('admin.locations.deleteCityConfirm')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteCity}
               className="bg-error-600 hover:bg-error-700"
             >
-              حذف
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

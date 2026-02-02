@@ -44,10 +44,6 @@ Fix the toggle on /admin/specialties so that toggling does NOT hide or remove th
 The row must remain visible at all times.
 The toggle should only reflect the active/inactive state clearly.
 Do not change backend logic.
-===========================
-http://localhost:3001/doctor/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6
-الصفحه دي الريسبونسيف فيها مش ظابط كمان عاوزك تشوف الباك أند بيعمل ايه وتطابقه  بالظبط
-
 ===================
 http://localhost:3001/doctor/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6/edit
 في الصفحه دي ال inputs اللي معتمده على بعض مش بتجيب لي الاختيارات السابقه اللي كنت مختارها 

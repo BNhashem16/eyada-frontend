@@ -31,24 +31,25 @@ import { useToast } from '@/hooks/use-toast';
 import { Gender, RelationshipType } from '@/types/enums';
 import { FamilyMember } from '@/types';
 import { getInitials } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
-const relationshipLabels: Record<RelationshipType, string> = {
-  [RelationshipType.SELF]: 'المريض نفسه',
-  [RelationshipType.SPOUSE]: 'زوج/زوجة',
-  [RelationshipType.CHILD]: 'ابن/ابنة',
-  [RelationshipType.PARENT]: 'أب/أم',
-  [RelationshipType.SIBLING]: 'أخ/أخت',
-  [RelationshipType.OTHER]: 'آخر',
-};
+const getRelationshipLabels = (t: (key: string) => string): Record<RelationshipType, string> => ({
+  [RelationshipType.SELF]: t('family.self'),
+  [RelationshipType.SPOUSE]: t('family.spouse'),
+  [RelationshipType.CHILD]: t('family.child'),
+  [RelationshipType.PARENT]: t('family.parent'),
+  [RelationshipType.SIBLING]: t('family.sibling'),
+  [RelationshipType.OTHER]: t('family.other'),
+});
 
-const genderLabels: Record<Gender, string> = {
-  [Gender.MALE]: 'ذكر',
-  [Gender.FEMALE]: 'أنثى',
-};
+const getGenderLabels = (t: (key: string) => string): Record<Gender, string> => ({
+  [Gender.MALE]: t('family.male'),
+  [Gender.FEMALE]: t('family.female'),
+});
 
 // Schema matching backend AddFamilyMemberDto / UpdateFamilyMemberDto
-const familyMemberSchema = z.object({
-  fullName: z.string().min(2, 'الاسم يجب أن يكون حرفين على الأقل').max(100),
+const getFamilyMemberSchema = (t: (key: string) => string) => z.object({
+  fullName: z.string().min(2, t('validation.fullNameMinLength')).max(100),
   dateOfBirth: z.string().optional(),
   age: z.coerce.number().min(1).max(120).optional().or(z.literal('')),
   gender: z.nativeEnum(Gender).optional(),
@@ -56,15 +57,20 @@ const familyMemberSchema = z.object({
   bloodType: z.string().optional(),
 });
 
-type FamilyMemberFormData = z.infer<typeof familyMemberSchema>;
+type FamilyMemberFormData = z.infer<ReturnType<typeof getFamilyMemberSchema>>;
 
 type DialogMode = 'add' | 'view' | 'edit';
 
 export function FamilyList() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [dialogMode, setDialogMode] = useState<DialogMode | null>(null);
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const relationshipLabels = getRelationshipLabels(t);
+  const genderLabels = getGenderLabels(t);
+  const familyMemberSchema = getFamilyMemberSchema(t);
 
   const { data: family, isLoading } = usePatientFamily();
   const addMutation = useAddFamilyMember();
@@ -138,8 +144,8 @@ export function FamilyList() {
       if (dialogMode === 'add') {
         await addMutation.mutateAsync(payload);
         toast({
-          title: 'تمت الإضافة',
-          description: 'تم إضافة فرد العائلة بنجاح',
+          title: t('toast.added'),
+          description: t('family.addedSuccess'),
           variant: 'success',
         });
       } else if (dialogMode === 'edit' && selectedMember) {
@@ -148,16 +154,16 @@ export function FamilyList() {
           data: payload,
         });
         toast({
-          title: 'تم التحديث',
-          description: 'تم تحديث بيانات فرد العائلة بنجاح',
+          title: t('toast.updated'),
+          description: t('family.updatedSuccess'),
           variant: 'success',
         });
       }
       closeDialog();
     } catch (error) {
       toast({
-        title: dialogMode === 'add' ? 'فشلت الإضافة' : 'فشل التحديث',
-        description: 'حدث خطأ، يرجى المحاولة مرة أخرى',
+        title: dialogMode === 'add' ? t('family.addFailed') : t('family.updateFailed'),
+        description: t('family.errorOccurred'),
         variant: 'error',
       });
     }
@@ -168,14 +174,14 @@ export function FamilyList() {
     try {
       await deleteMutation.mutateAsync(id);
       toast({
-        title: 'تم الحذف',
-        description: 'تم حذف فرد العائلة بنجاح',
+        title: t('toast.deleted'),
+        description: t('family.deletedSuccess'),
         variant: 'success',
       });
     } catch (error) {
       toast({
-        title: 'فشل الحذف',
-        description: 'حدث خطأ أثناء حذف فرد العائلة',
+        title: t('family.deleteFailed'),
+        description: t('family.deleteError'),
         variant: 'error',
       });
     } finally {
@@ -212,11 +218,11 @@ export function FamilyList() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            أفراد العائلة
+            {t('family.title')}
           </CardTitle>
           <Button className="text-xs" onClick={openAddDialog}>
             <Plus className="h-4 w-4 ms-2" />
-            إضافة فرد
+            {t('family.addMember')}
           </Button>
         </CardHeader>
         <CardContent>
@@ -244,7 +250,7 @@ export function FamilyList() {
                       )}
                       {member.age && (
                         <span className="text-sm text-muted-foreground">
-                          {member.age} سنة
+                          {member.age} {t('family.yearsOld')}
                         </span>
                       )}
                     </div>
@@ -284,9 +290,9 @@ export function FamilyList() {
           ) : (
             <div className="text-center py-8">
               <Users className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">لم تقم بإضافة أفراد عائلة بعد</p>
+              <p className="text-muted-foreground">{t('family.noMembers')}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                يمكنك إضافة أفراد عائلتك لحجز مواعيد لهم
+                {t('family.addForBooking')}
               </p>
             </div>
           )}
@@ -297,7 +303,7 @@ export function FamilyList() {
       <Dialog open={dialogMode === 'view'} onOpenChange={(open) => !open && closeDialog()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>بيانات فرد العائلة</DialogTitle>
+            <DialogTitle>{t('family.memberDetails')}</DialogTitle>
           </DialogHeader>
 
           {selectedMember && (
@@ -314,34 +320,34 @@ export function FamilyList() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-muted-foreground">الجنس</Label>
-                  <p className="font-medium">{selectedMember.gender ? genderLabels[selectedMember.gender] : 'غير محدد'}</p>
+                  <Label className="text-muted-foreground">{t('family.gender')}</Label>
+                  <p className="font-medium">{selectedMember.gender ? genderLabels[selectedMember.gender] : t('family.notSpecified')}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">العمر</Label>
-                  <p className="font-medium">{selectedMember.age ? `${selectedMember.age} سنة` : 'غير محدد'}</p>
+                  <Label className="text-muted-foreground">{t('family.age')}</Label>
+                  <p className="font-medium">{selectedMember.age ? `${selectedMember.age} ${t('family.yearsOld')}` : t('family.notSpecified')}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">تاريخ الميلاد</Label>
+                  <Label className="text-muted-foreground">{t('family.dateOfBirth')}</Label>
                   <p className="font-medium">
                     {selectedMember.dateOfBirth
                       ? new Date(selectedMember.dateOfBirth).toLocaleDateString('ar-EG')
-                      : 'غير محدد'}
+                      : t('family.notSpecified')}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">فصيلة الدم</Label>
-                  <p className="font-medium">{selectedMember.bloodType || 'غير محدد'}</p>
+                  <Label className="text-muted-foreground">{t('family.bloodType')}</Label>
+                  <p className="font-medium">{selectedMember.bloodType || t('family.notSpecified')}</p>
                 </div>
               </div>
 
               <DialogFooter className="gap-2 sm:gap-0">
                 <Button variant="outline" onClick={closeDialog}>
-                  إغلاق
+                  {t('common.close')}
                 </Button>
                 <Button onClick={() => openEditDialog(selectedMember)}>
                   <Edit className="h-4 w-4 ms-2" />
-                  تعديل
+                  {t('common.edit')}
                 </Button>
               </DialogFooter>
             </div>
@@ -354,14 +360,14 @@ export function FamilyList() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {dialogMode === 'add' ? 'إضافة فرد عائلة' : 'تعديل بيانات فرد العائلة'}
+              {dialogMode === 'add' ? t('family.addMemberTitle') : t('family.editMemberTitle')}
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Name */}
             <div className="space-y-2">
-              <Label htmlFor="member-name" required>الاسم</Label>
+              <Label htmlFor="member-name" required>{t('family.name')}</Label>
               <Input
                 id="member-name"
                 {...register('fullName')}
@@ -376,7 +382,7 @@ export function FamilyList() {
 
             {/* Relationship */}
             <div className="space-y-2">
-              <Label required>صلة القرابة</Label>
+              <Label required>{t('family.relationship')}</Label>
               <Select
                 value={watch('relationship')}
                 onValueChange={(value) => setValue('relationship', value as RelationshipType)}
@@ -398,24 +404,24 @@ export function FamilyList() {
 
             {/* Gender */}
             <div className="space-y-2">
-              <Label>الجنس</Label>
+              <Label>{t('family.gender')}</Label>
               <Select
                 value={watch('gender') || undefined}
                 onValueChange={(value) => setValue('gender', value as Gender)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر الجنس" />
+                  <SelectValue placeholder={t('family.selectGender')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={Gender.MALE}>ذكر</SelectItem>
-                  <SelectItem value={Gender.FEMALE}>أنثى</SelectItem>
+                  <SelectItem value={Gender.MALE}>{t('family.male')}</SelectItem>
+                  <SelectItem value={Gender.FEMALE}>{t('family.female')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Date of Birth */}
             <div className="space-y-2">
-              <Label htmlFor="member-dob">تاريخ الميلاد</Label>
+              <Label htmlFor="member-dob">{t('family.dateOfBirth')}</Label>
               <Input
                 id="member-dob"
                 type="date"
@@ -427,7 +433,7 @@ export function FamilyList() {
 
             {/* Age */}
             <div className="space-y-2">
-              <Label htmlFor="member-age">العمر</Label>
+              <Label htmlFor="member-age">{t('family.age')}</Label>
               <Input
                 id="member-age"
                 type="number"
@@ -440,13 +446,13 @@ export function FamilyList() {
 
             {/* Blood Type */}
             <div className="space-y-2">
-              <Label>فصيلة الدم</Label>
+              <Label>{t('family.bloodType')}</Label>
               <Select
                 value={watch('bloodType') || undefined}
                 onValueChange={(value) => setValue('bloodType', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر فصيلة الدم" />
+                  <SelectValue placeholder={t('family.selectBloodType')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="A+">A+</SelectItem>
@@ -463,18 +469,18 @@ export function FamilyList() {
 
             <DialogFooter className="gap-2 sm:gap-0">
               <Button type="button" variant="outline" onClick={closeDialog}>
-                إلغاء
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                    {dialogMode === 'add' ? 'جاري الإضافة...' : 'جاري الحفظ...'}
+                    {dialogMode === 'add' ? t('family.adding') : t('family.saving')}
                   </>
                 ) : dialogMode === 'add' ? (
-                  'إضافة'
+                  t('common.add')
                 ) : (
-                  'حفظ التغييرات'
+                  t('common.saveChanges')
                 )}
               </Button>
             </DialogFooter>

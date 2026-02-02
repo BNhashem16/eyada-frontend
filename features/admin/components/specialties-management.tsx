@@ -213,15 +213,27 @@ export function SpecialtiesManagement() {
                 {specialties
                   .sort((a, b) => a.sortOrder - b.sortOrder)
                   .map((specialty) => (
-                    <TableRow key={specialty.id}>
+                    <TableRow
+                      key={specialty.id}
+                      className={!specialty.isActive ? 'opacity-60 bg-muted/30' : ''}
+                    >
                       <TableCell className="font-medium">{specialty.name.ar}</TableCell>
                       <TableCell>{specialty.name.en}</TableCell>
                       <TableCell>{specialty.icon || '-'}</TableCell>
                       <TableCell>
-                        <Switch
-                          checked={specialty.isActive}
-                          onCheckedChange={() => handleToggleActive(specialty)}
-                        />
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={specialty.isActive}
+                            onCheckedChange={() => handleToggleActive(specialty)}
+                            disabled={updateSpecialty.isPending}
+                          />
+                          <Badge
+                            variant={specialty.isActive ? 'success' : 'secondary'}
+                            className="text-xs"
+                          >
+                            {specialty.isActive ? t('common.active') : t('common.inactive')}
+                          </Badge>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">

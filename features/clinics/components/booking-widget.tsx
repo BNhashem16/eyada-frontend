@@ -37,12 +37,14 @@ import {
   isBefore,
   formatTime,
 } from '@/lib/utils/date';
+import { useTranslation } from '@/lib/i18n';
 
 interface BookingWidgetProps {
   clinicId: string;
 }
 
 export function BookingWidget({ clinicId }: BookingWidgetProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -77,7 +79,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
   const bookingMutation = useMutation({
     mutationFn: async () => {
       if (!selectedDate || !selectedSlot || !selectedServiceId) {
-        throw new Error('يرجى اختيار جميع البيانات المطلوبة');
+        throw new Error(t('booking.selectAllRequired'));
       }
 
       return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, {
@@ -89,8 +91,8 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     },
     onSuccess: () => {
       toast({
-        title: 'تم الحجز بنجاح',
-        description: 'تم حجز موعدك بنجاح. يمكنك مراجعة مواعيدك من صفحة مواعيدي.',
+        title: t('booking.bookingSuccessTitle'),
+        description: t('booking.bookingSuccessDesc'),
         variant: 'success',
       });
       queryClient.invalidateQueries({ queryKey: ['clinic-available-slots', clinicId] });
@@ -99,8 +101,8 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     },
     onError: (error: Error) => {
       toast({
-        title: 'فشل الحجز',
-        description: error.message || 'حدث خطأ أثناء الحجز. يرجى المحاولة مرة أخرى.',
+        title: t('booking.bookingFailedTitle'),
+        description: error.message || t('booking.bookingFailedDesc'),
         variant: 'error',
       });
     },
@@ -149,8 +151,8 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
 
     if (user?.role !== 'PATIENT') {
       toast({
-        title: 'غير مسموح',
-        description: 'يجب أن تكون مريضاً لحجز موعد',
+        title: t('booking.notAllowed'),
+        description: t('booking.patientRequired'),
         variant: 'error',
       });
       return;
@@ -170,39 +172,39 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-          اختر موعدك
+          {t('booking.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Service Selection */}
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
-            اختر الخدمة
+            {t('booking.selectService')}
           </label>
           {servicesLoading ? (
             <Skeleton className="h-10 w-full" />
           ) : services && services.length > 0 ? (
             <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
               <SelectTrigger>
-                <SelectValue placeholder="اختر نوع الخدمة" />
+                <SelectValue placeholder={t('booking.selectServiceType')} />
               </SelectTrigger>
               <SelectContent>
                 {services.map((service) => (
                   <SelectItem key={service.id} value={service.id}>
-                    {service.name?.ar || service.name?.en || service.serviceType} - {service.price} ج.م
+                    {service.name?.ar || service.name?.en || service.serviceType} - {service.price} {t('common.egp')}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           ) : (
-            <p className="text-sm text-muted-foreground">لا توجد خدمات متاحة</p>
+            <p className="text-sm text-muted-foreground">{t('booking.noServicesAvailable')}</p>
           )}
         </div>
 
         {/* Date Selection */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <label className="text-sm font-medium text-foreground">اختر اليوم</label>
+            <label className="text-sm font-medium text-foreground">{t('booking.selectDay')}</label>
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
@@ -255,7 +257,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         {selectedDate && (
           <div>
             <label className="block text-sm font-medium text-foreground mb-3">
-              اختر الوقت
+              {t('booking.selectTime')}
             </label>
 
             {slotsLoading && (
@@ -269,7 +271,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             {slotsError && (
               <div className="flex items-center gap-2 text-error-600 dark:text-error-400 p-3 bg-error-50 dark:bg-error-900/20 rounded-lg">
                 <AlertCircle className="h-5 w-5" />
-                <span className="text-sm">حدث خطأ أثناء تحميل المواعيد</span>
+                <span className="text-sm">{t('booking.slotsLoadError')}</span>
               </div>
             )}
 
@@ -305,7 +307,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                 ) : (
                   <div className="text-center py-6 bg-muted rounded-lg">
                     <Clock className="h-8 w-8 mx-auto text-muted-foreground/30 mb-2" />
-                    <p className="text-muted-foreground">لا توجد مواعيد متاحة في هذا اليوم</p>
+                    <p className="text-muted-foreground">{t('booking.noSlotsAvailable')}</p>
                   </div>
                 )}
               </>
@@ -317,30 +319,30 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         {selectedDate && selectedSlot && selectedServiceId && (
           <div className="border-t pt-4 space-y-4">
             <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
-              <h4 className="font-semibold text-foreground mb-2">ملخص الحجز</h4>
+              <h4 className="font-semibold text-foreground mb-2">{t('booking.summary')}</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">الخدمة:</span>
+                  <span className="text-muted-foreground">{t('booking.serviceLabel')}</span>
                   <span className="font-medium">
                     {selectedService?.name?.ar || selectedService?.name?.en || selectedService?.serviceType}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">التاريخ:</span>
+                  <span className="text-muted-foreground">{t('booking.dateLabel')}</span>
                   <span className="font-medium">
                     {formatDate(selectedDate, 'EEEE, d MMMM yyyy')}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">الوقت:</span>
+                  <span className="text-muted-foreground">{t('booking.timeLabel')}</span>
                   <span className="font-medium" dir="ltr">
                     {formatTime(selectedSlot.time)}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-primary-100 dark:border-primary-800">
-                  <span className="text-muted-foreground">السعر:</span>
+                  <span className="text-muted-foreground">{t('booking.priceLabel')}</span>
                   <span className="font-bold text-primary-600 dark:text-primary-400">
-                    {selectedService?.price} ج.م
+                    {selectedService?.price} {t('common.egp')}
                   </span>
                 </div>
               </div>
@@ -355,12 +357,12 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               {bookingMutation.isPending ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin ms-2" />
-                  جاري الحجز...
+                  {t('booking.bookingInProgress')}
                 </>
               ) : (
                 <>
                   <Check className="h-5 w-5 ms-2" />
-                  {isAuthenticated ? 'تأكيد الحجز' : 'سجل دخول للحجز'}
+                  {isAuthenticated ? t('booking.confirmBooking') : t('booking.loginToBook')}
                 </>
               )}
             </Button>

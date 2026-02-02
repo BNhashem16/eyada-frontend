@@ -55,15 +55,16 @@ import { getInitials } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 import { DoctorStatus } from '@/types/enums';
 
-const statusConfig: Record<DoctorStatus, { label: string; variant: 'warning' | 'success' | 'error' | 'secondary'; icon: typeof Clock }> = {
-  [DoctorStatus.PENDING]: { label: 'قيد المراجعة', variant: 'warning', icon: Clock },
-  [DoctorStatus.APPROVED]: { label: 'معتمد', variant: 'success', icon: UserCheck },
-  [DoctorStatus.REJECTED]: { label: 'مرفوض', variant: 'error', icon: XCircle },
-  [DoctorStatus.SUSPENDED]: { label: 'موقوف', variant: 'error', icon: Ban },
-};
+const getStatusConfig = (t: (key: string) => string): Record<DoctorStatus, { label: string; variant: 'warning' | 'success' | 'error' | 'secondary'; icon: typeof Clock }> => ({
+  [DoctorStatus.PENDING]: { label: t('admin.doctors.underReview'), variant: 'warning', icon: Clock },
+  [DoctorStatus.APPROVED]: { label: t('admin.doctors.approved'), variant: 'success', icon: UserCheck },
+  [DoctorStatus.REJECTED]: { label: t('admin.doctors.rejected'), variant: 'error', icon: XCircle },
+  [DoctorStatus.SUSPENDED]: { label: t('admin.doctors.suspended'), variant: 'error', icon: Ban },
+});
 
 export function AdminDoctorsList() {
   const { t } = useTranslation();
+  const statusConfig = getStatusConfig(t);
 
   // Filters state
   const [filters, setFilters] = useState<AdminDoctorsFilters>({
@@ -179,7 +180,7 @@ export function AdminDoctorsList() {
             {/* Search */}
             <div className="flex-1 flex gap-2">
               <Input
-                placeholder="بحث بالاسم، الإيميل، أو الهاتف..."
+                placeholder={t('admin.doctors.searchPlaceholder')}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -196,14 +197,14 @@ export function AdminDoctorsList() {
               onValueChange={(value) => handleFilterChange('status', value)}
             >
               <SelectTrigger className="w-40">
-                <SelectValue placeholder="الحالة" />
+                <SelectValue placeholder={t('appointments.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل الحالات</SelectItem>
-                <SelectItem value={DoctorStatus.PENDING}>قيد المراجعة</SelectItem>
-                <SelectItem value={DoctorStatus.APPROVED}>معتمد</SelectItem>
-                <SelectItem value={DoctorStatus.REJECTED}>مرفوض</SelectItem>
-                <SelectItem value={DoctorStatus.SUSPENDED}>موقوف</SelectItem>
+                <SelectItem value="all">{t('admin.doctors.allStatuses')}</SelectItem>
+                <SelectItem value={DoctorStatus.PENDING}>{t('admin.doctors.underReview')}</SelectItem>
+                <SelectItem value={DoctorStatus.APPROVED}>{t('admin.doctors.approved')}</SelectItem>
+                <SelectItem value={DoctorStatus.REJECTED}>{t('admin.doctors.rejected')}</SelectItem>
+                <SelectItem value={DoctorStatus.SUSPENDED}>{t('admin.doctors.suspended')}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -213,10 +214,10 @@ export function AdminDoctorsList() {
               onValueChange={(value) => handleFilterChange('specialtyId', value)}
             >
               <SelectTrigger className="w-40">
-                <SelectValue placeholder="التخصص" />
+                <SelectValue placeholder={t('doctors.filterBySpecialty')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل التخصصات</SelectItem>
+                <SelectItem value="all">{t('doctors.allSpecialties')}</SelectItem>
                 {specialties?.map((specialty) => (
                   <SelectItem key={specialty.id} value={specialty.id}>
                     {getLocalizedText(specialty.name, 'ar')}
@@ -232,10 +233,10 @@ export function AdminDoctorsList() {
       {meta && (
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-muted-foreground">
-            إجمالي النتائج: <span className="font-semibold">{meta.total}</span>
+            {t('admin.doctors.totalResults')} <span className="font-semibold">{meta.total}</span>
           </p>
           <p className="text-sm text-muted-foreground">
-            صفحة {meta.page} من {meta.totalPages}
+            {t('admin.doctors.pageOf').replace('{current}', String(meta.page)).replace('{total}', String(meta.totalPages))}
           </p>
         </div>
       )}
@@ -245,8 +246,8 @@ export function AdminDoctorsList() {
         <Card>
           <CardContent className="py-16 text-center">
             <User className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">لا يوجد أطباء</h3>
-            <p className="text-muted-foreground">لم يتم العثور على أطباء بالفلاتر المحددة</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t('admin.doctors.noDoctorsFound')}</h3>
+            <p className="text-muted-foreground">{t('admin.doctors.noDoctorsMatchFilters')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -296,13 +297,13 @@ export function AdminDoctorsList() {
                         {doctor.licenseNumber && (
                           <span className="flex items-center gap-2">
                             <Award className="h-4 w-4" />
-                            رخصة: {doctor.licenseNumber}
+                            {t('admin.doctors.license')} {doctor.licenseNumber}
                           </span>
                         )}
                         {doctor.yearsOfExperience !== undefined && (
                           <span className="flex items-center gap-2">
                             <User className="h-4 w-4" />
-                            {doctor.yearsOfExperience} سنة خبرة
+                            {doctor.yearsOfExperience} {t('doctors.yearsExp')}
                           </span>
                         )}
                       </div>
@@ -327,7 +328,7 @@ export function AdminDoctorsList() {
                             className="bg-green-600 hover:bg-green-700"
                           >
                             <CheckCircle className="h-4 w-4 me-1" />
-                            موافقة
+                            {t('admin.approve')}
                           </Button>
                           <Button
                             size="sm"
@@ -339,7 +340,7 @@ export function AdminDoctorsList() {
                             className="text-error-600 border-error-300 hover:bg-error-50"
                           >
                             <XCircle className="h-4 w-4 me-1" />
-                            رفض
+                            {t('admin.reject')}
                           </Button>
                         </>
                       )}
@@ -354,7 +355,7 @@ export function AdminDoctorsList() {
                           className="text-warning-600 border-warning-300 hover:bg-warning-50"
                         >
                           <Ban className="h-4 w-4 me-1" />
-                          إيقاف
+                          {t('admin.suspend')}
                         </Button>
                       )}
                       {(doctor.status === DoctorStatus.REJECTED || doctor.status === DoctorStatus.SUSPENDED) && (
@@ -367,7 +368,7 @@ export function AdminDoctorsList() {
                           className="bg-green-600 hover:bg-green-700"
                         >
                           <CheckCircle className="h-4 w-4 me-1" />
-                          إعادة تفعيل
+                          {t('admin.doctors.reactivate')}
                         </Button>
                       )}
                     </div>
@@ -389,7 +390,7 @@ export function AdminDoctorsList() {
             onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) - 1 }))}
           >
             <ChevronRight className="h-4 w-4" />
-            السابق
+            {t('common.previous')}
           </Button>
           <span className="px-4 text-sm text-muted-foreground">
             {meta.page} / {meta.totalPages}
@@ -400,7 +401,7 @@ export function AdminDoctorsList() {
             disabled={!meta.hasNextPage}
             onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) + 1 }))}
           >
-            التالي
+            {t('common.next')}
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>
@@ -417,18 +418,18 @@ export function AdminDoctorsList() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {action === 'approve' && 'تأكيد الموافقة'}
-              {action === 'reject' && 'تأكيد الرفض'}
-              {action === 'suspend' && 'تأكيد الإيقاف'}
+              {action === 'approve' && t('admin.confirmApprove')}
+              {action === 'reject' && t('admin.confirmReject')}
+              {action === 'suspend' && t('admin.doctors.confirmSuspend')}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {action === 'approve' && 'سيتم تفعيل حساب الطبيب وسيتمكن من إدارة عيادته واستقبال الحجوزات.'}
-              {action === 'reject' && 'سيتم رفض طلب الطبيب ولن يتمكن من استخدام المنصة.'}
-              {action === 'suspend' && 'سيتم إيقاف حساب الطبيب مؤقتاً ولن يظهر في نتائج البحث.'}
+              {action === 'approve' && t('admin.doctors.approveMessage')}
+              {action === 'reject' && t('admin.doctors.rejectConfirmMessage')}
+              {action === 'suspend' && t('admin.doctors.suspendMessage')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleAction}
               className={
@@ -441,9 +442,9 @@ export function AdminDoctorsList() {
               disabled={isPending}
             >
               {isPending && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
-              {action === 'approve' && 'موافقة'}
-              {action === 'reject' && 'رفض'}
-              {action === 'suspend' && 'إيقاف'}
+              {action === 'approve' && t('admin.approve')}
+              {action === 'reject' && t('admin.reject')}
+              {action === 'suspend' && t('admin.suspend')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

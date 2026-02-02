@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import {
@@ -12,6 +13,7 @@ import {
   XCircle,
   AlertCircle,
   MoreVertical,
+  Eye,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,62 +29,67 @@ import { Appointment } from '@/types';
 import { AppointmentStatus, PaymentStatus } from '@/types/enums';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useUpdateAppointmentStatus, useUpdatePayment } from '../hooks';
+import { useTranslation } from '@/lib/i18n';
 
 interface AppointmentCardProps {
   appointment: Appointment;
 }
 
-const statusConfig: Record<
+const getStatusConfig = (t: (key: string) => string): Record<
   AppointmentStatus,
   { label: string; color: string; icon: React.ReactNode }
-> = {
+> => ({
   [AppointmentStatus.PENDING]: {
-    label: 'في الانتظار',
+    label: t('secretary.waiting'),
     color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
     icon: <AlertCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CONFIRMED]: {
-    label: 'مؤكد',
+    label: t('secretary.confirmed'),
     color: 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CHECKED_IN]: {
-    label: 'حضر',
+    label: t('secretary.attended'),
     color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.IN_PROGRESS]: {
-    label: 'جاري الكشف',
+    label: t('secretary.inProgress'),
     color: 'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400',
     icon: <Clock className="h-4 w-4" />,
   },
   [AppointmentStatus.COMPLETED]: {
-    label: 'مكتمل',
+    label: t('secretary.completed'),
     color: 'bg-muted text-muted-foreground',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CANCELLED]: {
-    label: 'ملغي',
+    label: t('secretary.cancelled'),
     color: 'bg-error-100 text-error-800 dark:bg-error-900/30 dark:text-error-400',
     icon: <XCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.NO_SHOW]: {
-    label: 'لم يحضر',
+    label: t('secretary.noShow'),
     color: 'bg-muted text-muted-foreground',
     icon: <XCircle className="h-4 w-4" />,
   },
-};
+});
 
-const paymentStatusConfig: Record<PaymentStatus, { label: string; color: string }> = {
-  [PaymentStatus.PENDING]: { label: 'غير مدفوع', color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400' },
-  [PaymentStatus.PAID]: { label: 'مدفوع', color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' },
-  [PaymentStatus.REFUNDED]: { label: 'مسترد', color: 'bg-muted text-muted-foreground' },
-};
+const getPaymentStatusConfig = (t: (key: string) => string): Record<PaymentStatus, { label: string; color: string }> => ({
+  [PaymentStatus.PENDING]: { label: t('secretary.unpaid'), color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400' },
+  [PaymentStatus.PAID]: { label: t('secretary.paid'), color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' },
+  [PaymentStatus.REFUNDED]: { label: t('secretary.refunded'), color: 'bg-muted text-muted-foreground' },
+});
 
 export function AppointmentCard({ appointment }: AppointmentCardProps) {
+  const { t } = useTranslation();
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const updateStatus = useUpdateAppointmentStatus();
   const updatePayment = useUpdatePayment();
+
+  const statusConfig = getStatusConfig(t);
+  const paymentStatusConfig = getPaymentStatusConfig(t);
 
   const status = statusConfig[appointment.status];
   const paymentStatus = paymentStatusConfig[appointment.paymentStatus];
@@ -144,7 +151,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
               </span>
               <span className="flex items-center gap-1">
                 <CreditCard className="h-4 w-4" />
-                {appointment.price} ج.م
+                {appointment.price} {t('common.egp')}
               </span>
             </div>
 
@@ -163,12 +170,19 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link href={`/secretary/appointments/${appointment.id}`}>
+                  <Eye className="h-4 w-4 me-2" />
+                  {t('secretary.viewDetails')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               {canConfirm && (
                 <DropdownMenuItem
                   onClick={() => handleStatusChange(AppointmentStatus.CONFIRMED)}
                 >
                   <CheckCircle className="h-4 w-4 me-2 text-blue-600" />
-                  تأكيد الموعد
+                  {t('secretary.confirmAppointment')}
                 </DropdownMenuItem>
               )}
               {canCheckIn && (
@@ -176,7 +190,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                   onClick={() => handleStatusChange(AppointmentStatus.CHECKED_IN)}
                 >
                   <CheckCircle className="h-4 w-4 me-2 text-green-600" />
-                  تسجيل الحضور
+                  {t('secretary.checkIn')}
                 </DropdownMenuItem>
               )}
               {canCancel && (
@@ -185,7 +199,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                   className="text-error-600"
                 >
                   <XCircle className="h-4 w-4 me-2" />
-                  إلغاء الموعد
+                  {t('secretary.cancelAppointment')}
                 </DropdownMenuItem>
               )}
 
@@ -194,15 +208,15 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => handlePayment('CASH')}>
                     <CreditCard className="h-4 w-4 me-2" />
-                    دفع نقدي
+                    {t('secretary.cashPayment')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handlePayment('CARD')}>
                     <CreditCard className="h-4 w-4 me-2" />
-                    دفع بالبطاقة
+                    {t('secretary.cardPayment')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handlePayment('INSURANCE')}>
                     <CreditCard className="h-4 w-4 me-2" />
-                    تأمين
+                    {t('secretary.insurance')}
                   </DropdownMenuItem>
                 </>
               )}

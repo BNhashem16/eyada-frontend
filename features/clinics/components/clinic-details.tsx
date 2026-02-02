@@ -20,20 +20,21 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useClinic, useClinicSchedules, useClinicServices } from '../hooks/use-clinics';
 import { BookingWidget } from './booking-widget';
 import { DayOfWeek } from '@/types/enums';
+import { useTranslation } from '@/lib/i18n';
 
 interface ClinicDetailsProps {
   clinicId: string;
 }
 
-const dayNames: Record<DayOfWeek, string> = {
-  [DayOfWeek.SUNDAY]: 'الأحد',
-  [DayOfWeek.MONDAY]: 'الاثنين',
-  [DayOfWeek.TUESDAY]: 'الثلاثاء',
-  [DayOfWeek.WEDNESDAY]: 'الأربعاء',
-  [DayOfWeek.THURSDAY]: 'الخميس',
-  [DayOfWeek.FRIDAY]: 'الجمعة',
-  [DayOfWeek.SATURDAY]: 'السبت',
-};
+const getDayNames = (t: (key: string) => string): Record<DayOfWeek, string> => ({
+  [DayOfWeek.SUNDAY]: t('days.sunday'),
+  [DayOfWeek.MONDAY]: t('days.monday'),
+  [DayOfWeek.TUESDAY]: t('days.tuesday'),
+  [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
+  [DayOfWeek.THURSDAY]: t('days.thursday'),
+  [DayOfWeek.FRIDAY]: t('days.friday'),
+  [DayOfWeek.SATURDAY]: t('days.saturday'),
+});
 
 const dayOrder = [
   DayOfWeek.SATURDAY,
@@ -46,6 +47,8 @@ const dayOrder = [
 ];
 
 export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
+  const { t } = useTranslation();
+  const dayNames = getDayNames(t);
   const { data: clinic, isLoading, isError } = useClinic(clinicId);
   const { data: schedules } = useClinicSchedules(clinicId);
   const { data: services } = useClinicServices(clinicId);
@@ -60,10 +63,10 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
           <p className="text-error-600 dark:text-error-400">
-            حدث خطأ أثناء تحميل بيانات العيادة. يرجى المحاولة مرة أخرى.
+            {t('clinics.loadError')}
           </p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/clinics">العودة للبحث</Link>
+            <Link href="/clinics">{t('doctors.backToSearch')}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -92,7 +95,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                   <div>
                     <h1 className="text-2xl font-bold text-foreground">{clinic.name?.ar || clinic.name?.en}</h1>
                     {clinic.isActive && (
-                      <Badge variant="success" className="mt-2">متاحة للحجز</Badge>
+                      <Badge variant="success" className="mt-2">{t('clinics.availableForBooking')}</Badge>
                     )}
                   </div>
                 </div>
@@ -138,9 +141,9 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full justify-start overflow-x-auto">
-            <TabsTrigger value="booking">احجز موعد</TabsTrigger>
-            <TabsTrigger value="schedule">مواعيد العمل</TabsTrigger>
-            <TabsTrigger value="services">الخدمات</TabsTrigger>
+            <TabsTrigger value="booking">{t('clinics.bookAppointmentTab')}</TabsTrigger>
+            <TabsTrigger value="schedule">{t('clinics.scheduleTab')}</TabsTrigger>
+            <TabsTrigger value="services">{t('clinics.servicesTab')}</TabsTrigger>
           </TabsList>
 
           {/* Booking Tab */}
@@ -154,7 +157,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                  مواعيد العمل الأسبوعية
+                  {t('clinics.weeklyWorkingHours')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -179,7 +182,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                               {firstShift.startTime} - {firstShift.endTime}
                             </span>
                           ) : (
-                            <span className="text-sm">مغلق</span>
+                            <span className="text-sm">{t('common.closed')}</span>
                           )}
                         </div>
                       );
@@ -187,7 +190,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-center py-6">
-                    لم يتم تحديد مواعيد العمل بعد
+                    {t('clinics.noWorkingHours')}
                   </p>
                 )}
               </CardContent>
@@ -200,7 +203,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                  الخدمات والأسعار
+                  {t('clinics.servicesAndPrices')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -216,12 +219,12 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                             {service.name?.ar || service.name?.en || service.serviceType}
                           </p>
                           <p className="text-sm text-muted-foreground mt-1">
-                            المدة: {service.duration} دقيقة
+                            {t('clinics.durationMinutes').replace('{duration}', String(service.duration))}
                           </p>
                         </div>
                         <div className="text-end">
                           <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
-                            {service.price} ج.م
+                            {service.price} {t('common.egp')}
                           </span>
                         </div>
                       </div>
@@ -229,7 +232,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-center py-6">
-                    لم يتم إضافة خدمات بعد
+                    {t('clinics.noServicesYet')}
                   </p>
                 )}
               </CardContent>
@@ -245,25 +248,25 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                حجز سريع
+                {t('clinics.quickBooking')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                اختر التاريخ والوقت المناسب لك من تبويب &quot;احجز موعد&quot;
+                {t('clinics.bookingInstructions')}
               </p>
               <Button
                 className="w-full"
                 onClick={() => setActiveTab('booking')}
               >
                 <Calendar className="h-4 w-4 ms-2" />
-                احجز الآن
+                {t('clinics.bookNow')}
               </Button>
               {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
                 <Button variant="outline" className="w-full mt-3" asChild>
                   <a href={`tel:${clinic.phoneNumbers[0]}`}>
                     <Phone className="h-4 w-4 ms-2" />
-                    اتصل بالعيادة
+                    {t('clinics.callClinic')}
                   </a>
                 </Button>
               )}

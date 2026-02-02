@@ -4,6 +4,7 @@ import { Stethoscope } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { DoctorList } from '@/features/doctors';
 import { useMemo } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 export default function DoctorsPage() {
   const searchParams = useSearchParams();
