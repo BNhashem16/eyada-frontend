@@ -34,6 +34,35 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
   const [cities, setCities] = useState<City[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+  // Local state for inputs that should not trigger on every keystroke
+  const [searchInput, setSearchInput] = useState(filters.search || '');
+  const [priceMinInput, setPriceMinInput] = useState(filters.priceMin?.toString() || '');
+  const [priceMaxInput, setPriceMaxInput] = useState(filters.priceMax?.toString() || '');
+
+  // Sync local state with filters when they change externally
+  useEffect(() => {
+    setSearchInput(filters.search || '');
+    setPriceMinInput(filters.priceMin?.toString() || '');
+    setPriceMaxInput(filters.priceMax?.toString() || '');
+  }, [filters.search, filters.priceMin, filters.priceMax]);
+
+  const handleSearch = () => {
+    handleFilterChange('search', searchInput || undefined);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handlePriceBlur = () => {
+    const newFilters = { ...filters };
+    newFilters.priceMin = priceMinInput ? Number(priceMinInput) : undefined;
+    newFilters.priceMax = priceMaxInput ? Number(priceMaxInput) : undefined;
+    onFiltersChange(newFilters);
+  };
+
   // Fetch specialties and states on mount
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +111,9 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
   };
 
   const clearFilters = () => {
+    setSearchInput('');
+    setPriceMinInput('');
+    setPriceMaxInput('');
     onFiltersChange({});
   };
 
@@ -90,15 +122,20 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
   const FiltersContent = () => (
     <div className="space-y-4">
       {/* Search */}
-      <div className="relative">
+      <div className="flex gap-2">
         <Input
           placeholder={t('clinics.searchClinicPlaceholder')}
-          value={filters.search || ''}
-          onChange={(e) => handleFilterChange('search', e.target.value)}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
+          onBlur={handleSearch}
           icon={<Search className="h-5 w-5" />}
           iconPosition="start"
-          className="bg-background"
+          className="bg-background flex-1"
         />
+        <Button onClick={handleSearch} variant="default" size="icon">
+          <Search className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Specialty */}
@@ -179,15 +216,17 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
           <Input
             type="number"
             placeholder={t('common.from')}
-            value={filters.priceMin || ''}
-            onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
+            value={priceMinInput}
+            onChange={(e) => setPriceMinInput(e.target.value)}
+            onBlur={handlePriceBlur}
             className="bg-background"
           />
           <Input
             type="number"
             placeholder={t('common.to')}
-            value={filters.priceMax || ''}
-            onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
+            value={priceMaxInput}
+            onChange={(e) => setPriceMaxInput(e.target.value)}
+            onBlur={handlePriceBlur}
             className="bg-background"
           />
         </div>

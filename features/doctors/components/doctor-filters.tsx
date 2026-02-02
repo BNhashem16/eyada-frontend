@@ -33,12 +33,16 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
   const [cities, setCities] = useState<City[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchInput, setSearchInput] = useState(filters.search || '');
+  const [priceMinInput, setPriceMinInput] = useState(filters.priceMin?.toString() || '');
+  const [priceMaxInput, setPriceMaxInput] = useState(filters.priceMax?.toString() || '');
   const { t } = useTranslation();
 
-  // Sync searchInput with filters.search when it changes externally
+  // Sync local state with filters when they change externally
   useEffect(() => {
     setSearchInput(filters.search || '');
-  }, [filters.search]);
+    setPriceMinInput(filters.priceMin?.toString() || '');
+    setPriceMaxInput(filters.priceMax?.toString() || '');
+  }, [filters.search, filters.priceMin, filters.priceMax]);
 
   const handleSearch = () => {
     handleFilterChange('search', searchInput || undefined);
@@ -48,6 +52,13 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
     if (e.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  const handlePriceBlur = () => {
+    const newFilters = { ...filters };
+    newFilters.priceMin = priceMinInput ? Number(priceMinInput) : undefined;
+    newFilters.priceMax = priceMaxInput ? Number(priceMaxInput) : undefined;
+    onFiltersChange(newFilters);
   };
 
   // Fetch specialties and states on mount
@@ -99,6 +110,9 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
   };
 
   const clearFilters = () => {
+    setSearchInput('');
+    setPriceMinInput('');
+    setPriceMaxInput('');
     onFiltersChange({});
   };
 
@@ -113,6 +127,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleSearchKeyDown}
+          onBlur={handleSearch}
           icon={<Search className="h-5 w-5" />}
           iconPosition="start"
           className="bg-background flex-1"
@@ -200,15 +215,17 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           <Input
             type="number"
             placeholder={t('common.from')}
-            value={filters.priceMin || ''}
-            onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
+            value={priceMinInput}
+            onChange={(e) => setPriceMinInput(e.target.value)}
+            onBlur={handlePriceBlur}
             className="bg-background"
           />
           <Input
             type="number"
             placeholder={t('common.to')}
-            value={filters.priceMax || ''}
-            onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
+            value={priceMaxInput}
+            onChange={(e) => setPriceMaxInput(e.target.value)}
+            onBlur={handlePriceBlur}
             className="bg-background"
           />
         </div>

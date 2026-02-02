@@ -39,6 +39,10 @@ export interface RegisterDto {
   role?: 'PATIENT' | 'DOCTOR'; // default: PATIENT
 }
 
+export interface RefreshTokenDto {
+  refreshToken: string; // JWT refresh token, required
+}
+
 // ============================================
 // DOCTOR PROFILE DTOs
 // ============================================
@@ -223,4 +227,69 @@ export interface CreateRatingDto {
   appointmentId: string; // UUID, required
   rating: number; // 1-5, required
   review?: string; // maxLength: 1000
+}
+
+// ============================================
+// AUTH - CHANGE PASSWORD DTO
+// ============================================
+
+export interface ChangePasswordDto {
+  currentPassword: string; // required
+  newPassword: string; // minLength: 8, maxLength: 50, required
+}
+
+// ============================================
+// ADMIN - SPECIALTY DTOs
+// ============================================
+
+export interface CreateSpecialtyDto {
+  name: MultilingualDto; // required
+  description?: MultilingualDto;
+  icon?: string;
+  sortOrder?: number;
+  isActive?: boolean; // default: true
+}
+
+export interface UpdateSpecialtyDto {
+  name?: MultilingualDto;
+  description?: MultilingualDto;
+  icon?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+// ============================================
+// ADMIN - STATE DTOs
+// ============================================
+
+export interface CreateStateDto {
+  name: MultilingualDto; // required
+  code: string; // maxLength: 10, required
+  sortOrder?: number;
+  isActive?: boolean; // default: true
+}
+
+export interface UpdateStateDto {
+  name?: MultilingualDto;
+  code?: string; // maxLength: 10
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+// ============================================
+// ADMIN - CITY DTOs
+// ============================================
+
+export interface CreateCityDto {
+  stateId: string; // UUID, required
+  name: MultilingualDto; // required
+  sortOrder?: number;
+  isActive?: boolean; // default: true
+}
+
+export interface UpdateCityDto {
+  stateId?: string; // UUID
+  name?: MultilingualDto;
+  sortOrder?: number;
+  isActive?: boolean;
 }

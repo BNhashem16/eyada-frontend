@@ -83,9 +83,12 @@ export function useAdminCities(stateId?: string) {
   });
 }
 
+// Per Swagger CreateCityDto: stateId and name are REQUIRED
 interface CreateCityData {
-  stateId: string;
-  name: Multilingual;
+  stateId: string; // UUID, required
+  name: Multilingual; // required
+  sortOrder?: number;
+  isActive?: boolean; // default: true
 }
 
 export function useCreateCity() {
@@ -101,8 +104,10 @@ export function useCreateCity() {
   });
 }
 
+// Per Swagger UpdateCityDto
 interface UpdateCityData {
   id: string;
+  stateId?: string; // UUID, can change parent state
   name?: Multilingual;
   isActive?: boolean;
   sortOrder?: number;

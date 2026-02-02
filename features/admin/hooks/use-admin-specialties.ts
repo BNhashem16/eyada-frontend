@@ -31,10 +31,13 @@ export function useAdminSpecialties(options: UseAdminSpecialtiesOptions = {}) {
   });
 }
 
+// Per Swagger CreateSpecialtyDto: name is REQUIRED
 interface CreateSpecialtyData {
-  name: Multilingual;
+  name: Multilingual; // required
   description?: Multilingual;
   icon?: string;
+  sortOrder?: number;
+  isActive?: boolean; // default: true
 }
 
 export function useCreateSpecialty() {
