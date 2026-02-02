@@ -10,6 +10,7 @@ Task:
 Review the latest Swagger / OpenAPI documentation
 and apply ALL required changes to the frontend so it fully matches Swagger.
 
+Url: http://localhost:3000/api
 Scope:
 - Request payloads
 - Query parameters

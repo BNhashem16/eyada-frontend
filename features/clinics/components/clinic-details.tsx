@@ -107,7 +107,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                     className="flex items-center gap-2 mt-4 text-primary-600 hover:underline"
                   >
                     <User className="h-4 w-4" />
-                    <span>د. {clinic.doctorProfile.user?.fullName}</span>
+                    <span>{t('doctors.doctorPrefix')} {clinic.doctorProfile.user?.fullName}</span>
                     <ChevronLeft className="h-4 w-4" />
                   </Link>
                 )}

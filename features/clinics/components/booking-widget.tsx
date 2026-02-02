@@ -82,11 +82,11 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         throw new Error(t('booking.selectAllRequired'));
       }
 
+      // Per Swagger CreateAppointmentDto - only these fields are documented
       return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, {
         clinicId,
         serviceTypeId: selectedServiceId,
         appointmentDate: formatDate(selectedDate, 'yyyy-MM-dd'),
-        appointmentTime: selectedSlot.time,
       });
     },
     onSuccess: () => {

@@ -23,18 +23,21 @@ import { getInitials } from '@/lib/utils';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
 import { ProfileCompletionGuard } from '@/components/common/profile-completion-guard';
+import { useTranslation } from '@/lib/i18n';
 
-const menuItems = [
-  { href: '/doctor/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
-  { href: '/doctor/appointments', label: 'المواعيد', icon: Calendar },
-  { href: '/doctor/clinics', label: 'العيادات', icon: Building2 },
-  { href: '/doctor/profile', label: 'الملف الشخصي', icon: User },
+const getMenuItems = (t: (key: string) => string) => [
+  { href: '/doctor/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+  { href: '/doctor/appointments', label: t('nav.appointments'), icon: Calendar },
+  { href: '/doctor/clinics', label: t('nav.clinics'), icon: Building2 },
+  { href: '/doctor/profile', label: t('nav.profile'), icon: User },
 ];
 
 function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const menuItems = getMenuItems(t);
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,7 +56,7 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-foreground hidden sm:block">عيادة</span>
+              <span className="text-xl font-bold text-foreground hidden sm:block">{t('app.name')}</span>
             </Link>
           </div>
 
@@ -70,9 +73,9 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
               </Avatar>
               <div className="hidden md:block">
                 <p className="text-sm font-medium text-foreground max-w-[150px] truncate">
-                  د. {user?.name}
+                  {t('doctors.doctorPrefix')} {user?.name}
                 </p>
-                <p className="text-xs text-muted-foreground">طبيب</p>
+                <p className="text-xs text-muted-foreground">{t('app.doctorRole')}</p>
               </div>
             </div>
           </div>
@@ -112,7 +115,7 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
               className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors"
             >
               <LogOut className="h-5 w-5" />
-              تسجيل الخروج
+              {t('nav.logout')}
             </button>
           </nav>
         </aside>
@@ -132,8 +135,8 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
                     <AvatarFallback>{getInitials(user?.name || '')}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold text-foreground">د. {user?.name}</p>
-                    <p className="text-sm text-muted-foreground">طبيب</p>
+                    <p className="font-semibold text-foreground">{t('doctors.doctorPrefix')} {user?.name}</p>
+                    <p className="text-sm text-muted-foreground">{t('app.doctorRole')}</p>
                   </div>
                 </div>
                 <button onClick={() => setSidebarOpen(false)}>
@@ -175,7 +178,7 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
                   className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
                 >
                   <LogOut className="h-5 w-5" />
-                  تسجيل الخروج
+                  {t('nav.logout')}
                 </button>
               </nav>
             </aside>

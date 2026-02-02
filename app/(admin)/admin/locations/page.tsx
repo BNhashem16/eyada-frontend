@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { MapPin } from 'lucide-react';
 import { LocationsManagement } from '@/features/admin';
-
-export const metadata: Metadata = {
-  title: 'إدارة المواقع - الإدارة',
-  description: 'إدارة المحافظات والمدن',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function AdminLocationsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -17,8 +16,8 @@ export default function AdminLocationsPage() {
             <MapPin className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">إدارة المواقع</h1>
-            <p className="text-muted-foreground">إدارة المحافظات والمدن في النظام</p>
+            <h1 className="text-2xl font-bold text-foreground">{t('admin.locations.title')}</h1>
+            <p className="text-muted-foreground">{t('admin.locations.subtitle')}</p>
           </div>
         </div>
       </div>

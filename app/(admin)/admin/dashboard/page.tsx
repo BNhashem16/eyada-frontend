@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { LayoutDashboard } from 'lucide-react';
 import { AdminDashboardStats, PendingDoctorsList } from '@/features/admin';
-
-export const metadata: Metadata = {
-  title: 'لوحة التحكم - الإدارة',
-  description: 'لوحة تحكم مدير النظام',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function AdminDashboardPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -17,8 +16,8 @@ export default function AdminDashboardPage() {
             <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">لوحة التحكم</h1>
-            <p className="text-muted-foreground">مرحباً بك في لوحة إدارة النظام</p>
+            <h1 className="text-2xl font-bold text-foreground">{t('admin.dashboard')}</h1>
+            <p className="text-muted-foreground">{t('admin.dashboardSubtitle')}</p>
           </div>
         </div>
       </div>
@@ -29,7 +28,7 @@ export default function AdminDashboardPage() {
       {/* Pending Doctors */}
       <div>
         <h2 className="text-lg font-semibold text-foreground mb-4">
-          طلبات التسجيل المعلقة
+          {t('admin.pendingDoctors')}
         </h2>
         <PendingDoctorsList />
       </div>

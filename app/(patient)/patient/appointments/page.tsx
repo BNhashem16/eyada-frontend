@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { Calendar } from 'lucide-react';
 import { AppointmentList } from '@/features/patients';
-
-export const metadata: Metadata = {
-  title: 'مواعيدي - المريض',
-  description: 'إدارة مواعيد المريض',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function PatientAppointmentsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -16,8 +15,8 @@ export default function PatientAppointmentsPage() {
           <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">مواعيدي</h1>
-          <p className="text-muted-foreground">إدارة ومتابعة مواعيدك الطبية</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('patient.appointmentsPage.title')}</h1>
+          <p className="text-muted-foreground">{t('patient.appointmentsPage.subtitle')}</p>
         </div>
       </div>
 

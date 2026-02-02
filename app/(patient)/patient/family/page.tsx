@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { Users } from 'lucide-react';
 import { FamilyList } from '@/features/patients';
-
-export const metadata: Metadata = {
-  title: 'أفراد العائلة - المريض',
-  description: 'إدارة أفراد العائلة',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function PatientFamilyPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -16,8 +15,8 @@ export default function PatientFamilyPage() {
           <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">أفراد العائلة</h1>
-          <p className="text-muted-foreground">إضافة وإدارة أفراد عائلتك لحجز مواعيد لهم</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('patient.familyPage.title')}</h1>
+          <p className="text-muted-foreground">{t('patient.familyPage.subtitle')}</p>
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import { ScheduleManager, ServiceManager } from '@/features/doctor-portal';
 import { useDoctorClinic } from '@/features/doctor-portal/hooks/use-doctor-portal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 
 interface ClinicManagePageProps {
   params: Promise<{ id: string }>;
@@ -16,6 +17,7 @@ interface ClinicManagePageProps {
 
 export default function ClinicManagePage({ params }: ClinicManagePageProps) {
   const { id } = use(params);
+  const { t } = useTranslation();
   const { data: clinic, isLoading } = useDoctorClinic(id);
 
   if (isLoading) {
@@ -32,9 +34,9 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
     return (
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600 dark:text-error-400">العيادة غير موجودة</p>
+          <p className="text-error-600 dark:text-error-400">{t('app.clinicNotFound')}</p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/doctor/clinics">العودة للعيادات</Link>
+            <Link href="/doctor/clinics">{t('app.backToClinics')}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -46,7 +48,7 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/doctor/clinics" className="hover:text-primary-600 dark:hover:text-primary-400">
-          العيادات
+          {t('nav.clinics')}
         </Link>
         <ChevronRight className="h-4 w-4" />
         <span className="text-foreground">{clinic.name?.ar || clinic.name?.en}</span>
@@ -60,13 +62,13 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
           </div>
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">{clinic.name?.ar || clinic.name?.en}</h1>
-            <p className="text-sm text-muted-foreground">إدارة مواعيد العمل والخدمات</p>
+            <p className="text-sm text-muted-foreground">{t('app.manageScheduleServices')}</p>
           </div>
         </div>
         <Button asChild variant="outline" className="w-full sm:w-auto">
           <Link href={`/doctor/clinics/${id}/edit`}>
             <Settings className="h-4 w-4 ms-2" />
-            تعديل البيانات
+            {t('common.edit')}
           </Link>
         </Button>
       </div>
@@ -74,8 +76,8 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
       {/* Tabs */}
       <Tabs defaultValue="schedule">
         <TabsList>
-          <TabsTrigger value="schedule">مواعيد العمل</TabsTrigger>
-          <TabsTrigger value="services">الخدمات والأسعار</TabsTrigger>
+          <TabsTrigger value="schedule">{t('app.workScheduleTab')}</TabsTrigger>
+          <TabsTrigger value="services">{t('app.servicesAndPricesTab')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="schedule" className="mt-6">

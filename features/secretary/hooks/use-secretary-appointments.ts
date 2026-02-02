@@ -82,8 +82,7 @@ export function useSecretaryClinics() {
 export interface CreateSecretaryAppointmentData {
   clinicId: string;
   serviceTypeId: string;
-  appointmentDate: string;
-  appointmentTime: string;
+  appointmentDate: string; // YYYY-MM-DD format
   patientProfileId: string; // Required for secretary
   notes?: string;
   symptoms?: string;

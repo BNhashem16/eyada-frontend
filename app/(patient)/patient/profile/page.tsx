@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { User } from 'lucide-react';
 import { PatientProfileForm } from '@/features/patients';
-
-export const metadata: Metadata = {
-  title: 'الملف الشخصي - المريض',
-  description: 'تعديل الملف الشخصي للمريض',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function PatientProfilePage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -16,8 +15,8 @@ export default function PatientProfilePage() {
           <User className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">الملف الشخصي</h1>
-          <p className="text-muted-foreground">تحديث بياناتك الشخصية</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('patient.profilePage.title')}</h1>
+          <p className="text-muted-foreground">{t('patient.profilePage.subtitle')}</p>
         </div>
       </div>
 

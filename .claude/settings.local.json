@@ -18,7 +18,9 @@
       "Bash(find:*)",
       "WebFetch(domain:localhost)",
       "Bash(curl:*)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx @nestjs/cli new . --skip-git --package-manager npm)"
     ]
   }
 }

@@ -1,14 +1,19 @@
+'use client';
+
 import Link from 'next/link';
 import { Stethoscope } from 'lucide-react';
 import { GuestRoute } from '@/lib/auth';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
+import { useTranslation } from '@/lib/i18n';
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
+
   return (
     <GuestRoute>
       <div className="min-h-screen bg-background">
@@ -18,7 +23,7 @@ export default function AuthLayout({
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-medical">
               <Stethoscope className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-primary-700 dark:text-primary-400">عيادة</span>
+            <span className="text-xl font-bold text-primary-700 dark:text-primary-400">{t('app.name')}</span>
           </Link>
           <div className="flex items-center gap-2">
             <LanguageToggle />

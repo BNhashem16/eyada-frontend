@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { Building2 } from 'lucide-react';
 import { ClinicManagement } from '@/features/doctor-portal';
-
-export const metadata: Metadata = {
-  title: 'العيادات - الطبيب',
-  description: 'إدارة العيادات',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function DoctorClinicsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -16,8 +15,8 @@ export default function DoctorClinicsPage() {
           <Building2 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">العيادات</h1>
-          <p className="text-muted-foreground">إدارة العيادات والمواعيد والخدمات</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('doctor.clinicsPage.title')}</h1>
+          <p className="text-muted-foreground">{t('doctor.clinicsPage.subtitle')}</p>
         </div>
       </div>
 

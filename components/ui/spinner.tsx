@@ -1,4 +1,7 @@
+'use client';
+
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -46,11 +49,13 @@ export function PageLoader() {
 }
 
 export function FullPageLoader() {
+  const { t } = useTranslation();
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="flex flex-col items-center gap-4">
         <Spinner size="xl" />
-        <p className="text-muted-foreground">جاري التحميل...</p>
+        <p className="text-muted-foreground">{t('common.loading')}</p>
       </div>
     </div>
   );

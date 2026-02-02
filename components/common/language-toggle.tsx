@@ -9,17 +9,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useLanguage } from '@/components/providers/language-provider';
-import { localeNames, type Locale } from '@/lib/i18n';
+import { localeNames, type Locale, useTranslation } from '@/lib/i18n';
 
 export function LanguageToggle() {
   const { locale, setLocale } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Globe className="h-5 w-5" />
-          <span className="sr-only">تغيير اللغة</span>
+          <span className="sr-only">{t('app.toggleLanguage')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

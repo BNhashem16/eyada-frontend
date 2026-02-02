@@ -93,6 +93,9 @@ export function SecretaryAppointmentDetails({ appointmentId }: AppointmentDetail
   const updateStatusMutation = useUpdateAppointmentStatus();
   const updatePaymentMutation = useUpdatePayment();
 
+  const statusConfig = getStatusConfig(t);
+  const paymentStatusConfig = getPaymentStatusConfig(t);
+
   const handleStatusUpdate = async (newStatus: AppointmentStatus) => {
     try {
       await updateStatusMutation.mutateAsync({ appointmentId, status: newStatus });

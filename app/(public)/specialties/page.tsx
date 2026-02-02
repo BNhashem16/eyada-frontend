@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { Grid3X3 } from 'lucide-react';
 import { SpecialtyList } from '@/features/specialties';
-
-export const metadata: Metadata = {
-  title: 'التخصصات الطبية',
-  description: 'تصفح جميع التخصصات الطبية المتاحة واعثر على الطبيب المناسب',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function SpecialtiesPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Page Header */}
@@ -16,10 +15,10 @@ export default function SpecialtiesPage() {
           <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <Grid3X3 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">التخصصات الطبية</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('pages.specialties.title')}</h1>
         </div>
         <p className="text-muted-foreground">
-          اختر التخصص المناسب للعثور على أفضل الأطباء
+          {t('pages.specialties.subtitle')}
         </p>
       </div>
 

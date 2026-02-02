@@ -1,15 +1,12 @@
-import { Metadata } from 'next';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
+'use client';
+
 import { LayoutDashboard } from 'lucide-react';
 import { DashboardStats, AppointmentList } from '@/features/secretary';
-
-export const metadata: Metadata = {
-  title: 'لوحة التحكم - السكرتير',
-  description: 'لوحة تحكم السكرتير لإدارة المواعيد',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function SecretaryDashboardPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -19,8 +16,8 @@ export default function SecretaryDashboardPage() {
             <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">لوحة التحكم</h1>
-            <p className="text-muted-foreground">مرحباً بك في لوحة تحكم السكرتير</p>
+            <h1 className="text-2xl font-bold text-foreground">{t('secretary.dashboardPage.title')}</h1>
+            <p className="text-muted-foreground">{t('secretary.dashboardPage.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -30,7 +27,7 @@ export default function SecretaryDashboardPage() {
 
       {/* Today's Appointments */}
       <div>
-        <h2 className="text-lg font-semibold text-foreground mb-4">مواعيد اليوم</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">{t('secretary.dashboardPage.todayAppointments')}</h2>
         <AppointmentList />
       </div>
     </div>

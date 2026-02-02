@@ -23,18 +23,21 @@ import { getInitials } from '@/lib/utils';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
 import { ProfileCompletionGuard } from '@/components/common/profile-completion-guard';
+import { useTranslation } from '@/lib/i18n';
 
-const menuItems = [
-  { href: '/patient/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
-  { href: '/patient/appointments', label: 'مواعيدي', icon: Calendar },
-  { href: '/patient/profile', label: 'الملف الشخصي', icon: User },
-  { href: '/patient/family', label: 'أفراد العائلة', icon: Users },
+const getMenuItems = (t: (key: string) => string) => [
+  { href: '/patient/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+  { href: '/patient/appointments', label: t('nav.myAppointments'), icon: Calendar },
+  { href: '/patient/profile', label: t('nav.profile'), icon: User },
+  { href: '/patient/family', label: t('family.title'), icon: Users },
 ];
 
 function PatientLayoutContent({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const menuItems = getMenuItems(t);
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,7 +56,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-foreground hidden sm:block">عيادة</span>
+              <span className="text-xl font-bold text-foreground hidden sm:block">{t('app.name')}</span>
             </Link>
           </div>
 
@@ -64,7 +67,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
             <Button asChild variant="outline" size="sm" className="hidden sm:flex">
               <Link href="/doctors">
                 <Stethoscope className="h-4 w-4 ms-2" />
-                احجز موعد
+                {t('doctors.bookAppointment')}
               </Link>
             </Button>
             <div className="flex items-center gap-2">
@@ -113,7 +116,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
               className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors"
             >
               <LogOut className="h-5 w-5" />
-              تسجيل الخروج
+              {t('nav.logout')}
             </button>
           </nav>
         </aside>
@@ -134,7 +137,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
                   </Avatar>
                   <div>
                     <p className="font-semibold text-foreground">{user?.name}</p>
-                    <p className="text-sm text-muted-foreground">مريض</p>
+                    <p className="text-sm text-muted-foreground">{t('app.patientRole')}</p>
                   </div>
                 </div>
                 <button onClick={() => setSidebarOpen(false)}>
@@ -172,7 +175,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
                 >
                   <Stethoscope className="h-5 w-5" />
-                  احجز موعد جديد
+                  {t('appointments.bookNew')}
                   <ChevronLeft className="h-4 w-4 ms-auto" />
                 </Link>
 
@@ -184,7 +187,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
                   className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
                 >
                   <LogOut className="h-5 w-5" />
-                  تسجيل الخروج
+                  {t('nav.logout')}
                 </button>
               </nav>
             </aside>

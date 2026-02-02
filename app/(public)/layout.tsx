@@ -23,11 +23,12 @@ import { getInitials } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
+import { useTranslation } from '@/lib/i18n';
 
-const navLinks = [
-  { href: '/specialties', label: 'التخصصات', icon: Grid3X3 },
-  { href: '/doctors', label: 'الأطباء', icon: Stethoscope },
-  { href: '/clinics', label: 'العيادات', icon: Building2 },
+const getNavLinks = (t: (key: string) => string) => [
+  { href: '/specialties', label: t('nav.specialties'), icon: Grid3X3 },
+  { href: '/doctors', label: t('nav.doctors'), icon: Stethoscope },
+  { href: '/clinics', label: t('nav.clinics'), icon: Building2 },
 ];
 
 export default function PublicLayout({
@@ -35,11 +36,13 @@ export default function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuthStore();
   const isHydrated = useIsHydrated();
+  const navLinks = getNavLinks(t);
 
   const getDashboardLink = () => {
     switch (user?.role) {
@@ -67,7 +70,7 @@ export default function PublicLayout({
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-foreground">عيادة</span>
+              <span className="text-xl font-bold text-foreground">{t('app.name')}</span>
             </Link>
 
             {/* Desktop Nav */}
@@ -139,7 +142,7 @@ export default function PublicLayout({
                           className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-accent"
                         >
                           <LayoutDashboard className="h-4 w-4" />
-                          لوحة التحكم
+                          {t('nav.dashboard')}
                         </Link>
                         <button
                           onClick={() => {
@@ -149,7 +152,7 @@ export default function PublicLayout({
                           className="flex items-center gap-2 px-4 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 w-full"
                         >
                           <LogOut className="h-4 w-4" />
-                          تسجيل الخروج
+                          {t('nav.logout')}
                         </button>
                       </div>
                     </>
@@ -160,13 +163,13 @@ export default function PublicLayout({
                   <Button variant="ghost" asChild className="hidden sm:flex">
                     <Link href="/login">
                       <LogIn className="h-4 w-4 ms-2" />
-                      دخول
+                      {t('nav.login')}
                     </Link>
                   </Button>
                   <Button asChild>
                     <Link href="/register">
                       <UserPlus className="h-4 w-4 ms-2" />
-                      تسجيل
+                      {t('nav.register')}
                     </Link>
                   </Button>
                 </>
@@ -218,7 +221,7 @@ export default function PublicLayout({
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-accent"
                 >
                   <LogIn className="h-5 w-5" />
-                  تسجيل الدخول
+                  {t('nav.login')}
                 </Link>
               )}
             </nav>
@@ -239,30 +242,30 @@ export default function PublicLayout({
                 <div className="h-10 w-10 rounded-xl bg-primary-500 flex items-center justify-center">
                   <Stethoscope className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-xl font-bold">عيادة</span>
+                <span className="text-xl font-bold">{t('app.name')}</span>
               </div>
               <p className="text-gray-400 dark:text-gray-500 max-w-md">
-                منصة حجز المواعيد الطبية الأولى في مصر. احجز موعدك مع أفضل الأطباء بكل سهولة.
+                {t('app.footerText')}. {t('app.description')}
               </p>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-bold mb-4">روابط سريعة</h4>
+              <h4 className="font-bold mb-4">{t('nav.quickLinks')}</h4>
               <ul className="space-y-2 text-gray-400 dark:text-gray-500">
                 <li>
                   <Link href="/doctors" className="hover:text-white transition-colors">
-                    ابحث عن طبيب
+                    {t('nav.findDoctor')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/clinics" className="hover:text-white transition-colors">
-                    ابحث عن عيادة
+                    {t('nav.findClinic')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/register" className="hover:text-white transition-colors">
-                    انضم كطبيب
+                    {t('nav.joinAsDoctor')}
                   </Link>
                 </li>
               </ul>
@@ -270,17 +273,17 @@ export default function PublicLayout({
 
             {/* Contact */}
             <div>
-              <h4 className="font-bold mb-4">تواصل معنا</h4>
+              <h4 className="font-bold mb-4">{t('nav.contactUs')}</h4>
               <ul className="space-y-2 text-gray-400 dark:text-gray-500">
                 <li dir="ltr">+20 123 456 7890</li>
                 <li>support@eyada.com</li>
-                <li>القاهرة، مصر</li>
+                <li>{t('app.location')}</li>
               </ul>
             </div>
           </div>
 
           <div className="mt-8 pt-8 border-t border-gray-800 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 text-sm">
-            <p>© {new Date().getFullYear()} عيادة. جميع الحقوق محفوظة.</p>
+            <p>© {new Date().getFullYear()} {t('app.name')}. {t('app.copyright')}.</p>
           </div>
         </div>
       </footer>

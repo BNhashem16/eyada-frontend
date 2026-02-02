@@ -154,8 +154,7 @@ export interface UpdateServiceTypeDto extends Partial<CreateServiceTypeDto> {}
 export interface CreateAppointmentDto {
   clinicId: string; // UUID, required
   serviceTypeId: string; // UUID, required
-  appointmentDate: string; // ISO date string, required
-  appointmentTime: string; // HH:mm format, required
+  appointmentDate: string; // YYYY-MM-DD format, required
   patientProfileId?: string; // UUID, for booking for family members
   notes?: string; // maxLength: 500
 }
@@ -163,8 +162,7 @@ export interface CreateAppointmentDto {
 export interface CreateSecretaryAppointmentDto {
   clinicId: string; // UUID, required
   serviceTypeId: string; // UUID, required
-  appointmentDate: string; // ISO date string, required
-  appointmentTime: string; // HH:mm format, required
+  appointmentDate: string; // YYYY-MM-DD format, required
   patientProfileId: string; // UUID, required for secretary
   notes?: string; // maxLength: 500
   symptoms?: string; // maxLength: 500

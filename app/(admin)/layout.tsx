@@ -21,18 +21,21 @@ import { Role } from '@/types';
 import { getInitials } from '@/lib/utils';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { LanguageToggle } from '@/components/common/language-toggle';
+import { useTranslation } from '@/lib/i18n';
 
-const menuItems = [
-  { href: '/admin/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
-  { href: '/admin/doctors', label: 'الأطباء', icon: Users },
-  { href: '/admin/specialties', label: 'التخصصات', icon: Grid3X3 },
-  { href: '/admin/locations', label: 'المواقع', icon: MapPin },
+const getMenuItems = (t: (key: string) => string) => [
+  { href: '/admin/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+  { href: '/admin/doctors', label: t('nav.doctors'), icon: Users },
+  { href: '/admin/specialties', label: t('nav.specialties'), icon: Grid3X3 },
+  { href: '/admin/locations', label: t('admin.locations.title'), icon: MapPin },
 ];
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const menuItems = getMenuItems(t);
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,8 +55,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
               <div className="hidden sm:block">
-                <span className="text-xl font-bold">عيادة</span>
-                <span className="text-xs text-gray-400 block">لوحة الإدارة</span>
+                <span className="text-xl font-bold">{t('app.name')}</span>
+                <span className="text-xs text-gray-400 block">{t('app.adminPanel')}</span>
               </div>
             </Link>
           </div>
@@ -73,7 +76,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 <p className="text-sm font-medium max-w-[150px] truncate">
                   {user?.name}
                 </p>
-                <p className="text-xs text-gray-400">مدير النظام</p>
+                <p className="text-xs text-gray-400">{t('app.systemAdmin')}</p>
               </div>
             </div>
           </div>
@@ -113,7 +116,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               <LogOut className="h-5 w-5" />
-              تسجيل الخروج
+              {t('nav.logout')}
             </button>
           </nav>
         </aside>
@@ -136,7 +139,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   </Avatar>
                   <div>
                     <p className="font-semibold">{user?.name}</p>
-                    <p className="text-sm text-gray-400">مدير النظام</p>
+                    <p className="text-sm text-gray-400">{t('app.systemAdmin')}</p>
                   </div>
                 </div>
                 <button onClick={() => setSidebarOpen(false)}>
@@ -178,7 +181,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   <LogOut className="h-5 w-5" />
-                  تسجيل الخروج
+                  {t('nav.logout')}
                 </button>
               </nav>
             </aside>

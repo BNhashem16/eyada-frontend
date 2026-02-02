@@ -6,6 +6,7 @@ import { ChevronRight } from 'lucide-react';
 import { ClinicForm } from '@/features/doctor-portal';
 import { useDoctorClinic } from '@/features/doctor-portal/hooks/use-doctor-portal';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/lib/i18n';
 
 interface EditClinicPageProps {
   params: Promise<{ id: string }>;
@@ -13,6 +14,7 @@ interface EditClinicPageProps {
 
 export default function EditClinicPage({ params }: EditClinicPageProps) {
   const { id } = use(params);
+  const { t } = useTranslation();
   const { data: clinic, isLoading } = useDoctorClinic(id);
 
   if (isLoading) {
@@ -29,14 +31,14 @@ export default function EditClinicPage({ params }: EditClinicPageProps) {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/doctor/clinics" className="hover:text-primary-600 dark:hover:text-primary-400">
-          العيادات
+          {t('nav.clinics')}
         </Link>
         <ChevronRight className="h-4 w-4" />
         <Link href={`/doctor/clinics/${id}`} className="hover:text-primary-600 dark:hover:text-primary-400">
           {clinic?.name?.ar || clinic?.name?.en}
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-foreground">تعديل</span>
+        <span className="text-foreground">{t('common.edit')}</span>
       </nav>
 
       <ClinicForm clinicId={id} />

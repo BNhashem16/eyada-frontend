@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
+'use client';
+
 import { Calendar } from 'lucide-react';
 import { AppointmentList } from '@/features/secretary';
-
-export const metadata: Metadata = {
-  title: 'إدارة المواعيد - السكرتير',
-  description: 'إدارة مواعيد العيادة',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function SecretaryAppointmentsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -17,8 +16,8 @@ export default function SecretaryAppointmentsPage() {
             <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">إدارة المواعيد</h1>
-            <p className="text-muted-foreground">عرض وإدارة جميع مواعيد العيادة</p>
+            <h1 className="text-2xl font-bold text-foreground">{t('secretary.appointmentsPage.title')}</h1>
+            <p className="text-muted-foreground">{t('secretary.appointmentsPage.subtitle')}</p>
           </div>
         </div>
       </div>
