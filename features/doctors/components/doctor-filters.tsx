@@ -128,10 +128,10 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         onValueChange={(value) => handleFilterChange('specialtyId', value === 'all' ? undefined : value)}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="التخصص" />
+          <SelectValue placeholder={t('doctors.filterBySpecialty')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل التخصصات</SelectItem>
+          <SelectItem value="all">{t('doctors.allSpecialties')}</SelectItem>
           {specialties.map((specialty) => (
             <SelectItem key={specialty.id} value={specialty.id}>
               {specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn}
@@ -146,10 +146,10 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         onValueChange={(value) => handleFilterChange('stateId', value === 'all' ? undefined : value)}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="المحافظة" />
+          <SelectValue placeholder={t('doctors.filterByState')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل المحافظات</SelectItem>
+          <SelectItem value="all">{t('doctors.allStates')}</SelectItem>
           {states.map((state) => (
             <SelectItem key={state.id} value={state.id}>
               {state.name?.ar || state.name?.en || (state as any).nameAr || (state as any).nameEn}
@@ -165,10 +165,10 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         disabled={!filters.stateId}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="المدينة" />
+          <SelectValue placeholder={t('doctors.filterByCity')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل المدن</SelectItem>
+          <SelectItem value="all">{t('doctors.allCities')}</SelectItem>
           {cities.map((city) => (
             <SelectItem key={city.id} value={city.id}>
               {city.name?.ar || city.name?.en || (city as any).nameAr || (city as any).nameEn}
@@ -183,30 +183,30 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         onValueChange={(value) => handleFilterChange('minRating', value === 'all' ? undefined : Number(value))}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="التقييم" />
+          <SelectValue placeholder={t('doctors.filterByRating')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل التقييمات</SelectItem>
-          <SelectItem value="4">4+ نجوم</SelectItem>
-          <SelectItem value="3">3+ نجوم</SelectItem>
-          <SelectItem value="2">2+ نجوم</SelectItem>
+          <SelectItem value="all">{t('doctors.allRatings')}</SelectItem>
+          <SelectItem value="4">4+ {t('common.stars')}</SelectItem>
+          <SelectItem value="3">3+ {t('common.stars')}</SelectItem>
+          <SelectItem value="2">2+ {t('common.stars')}</SelectItem>
         </SelectContent>
       </Select>
 
       {/* Price Range */}
       <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">نطاق السعر (ج.م)</Label>
+        <Label className="text-sm text-muted-foreground">{t('common.priceRange')}</Label>
         <div className="flex gap-2">
           <Input
             type="number"
-            placeholder="من"
+            placeholder={t('common.from')}
             value={filters.priceMin || ''}
             onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
             className="bg-background"
           />
           <Input
             type="number"
-            placeholder="إلى"
+            placeholder={t('common.to')}
             value={filters.priceMax || ''}
             onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
             className="bg-background"
@@ -222,7 +222,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           onClick={clearFilters}
         >
           <X className="h-4 w-4 ms-2" />
-          مسح الفلاتر ({activeFiltersCount})
+          {t('common.clearFilters')} ({activeFiltersCount})
         </Button>
       )}
     </div>
@@ -233,7 +233,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       {/* Desktop Filters */}
       <div className="hidden lg:block">
         <div className="sticky top-24 rounded-xl border border-border bg-muted p-5">
-          <h3 className="mb-4 font-bold text-foreground">تصفية النتائج</h3>
+          <h3 className="mb-4 font-bold text-foreground">{t('common.filterResults')}</h3>
           <FiltersContent />
         </div>
       </div>
@@ -247,7 +247,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         >
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4" />
-            <span>الفلاتر</span>
+            <span>{t('common.filters')}</span>
             {activeFiltersCount > 0 && (
               <Badge variant="default" className="text-xs">
                 {activeFiltersCount}
@@ -267,7 +267,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           />
           <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-card p-5 animate-slide-up">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-foreground">تصفية النتائج</h3>
+              <h3 className="font-bold text-foreground">{t('common.filterResults')}</h3>
               <Button
                 variant="ghost"
                 className="text-xs"
@@ -282,7 +282,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
                 className="w-full"
                 onClick={() => setShowMobileFilters(false)}
               >
-                عرض النتائج
+                {t('common.viewResults')}
               </Button>
             </div>
           </div>

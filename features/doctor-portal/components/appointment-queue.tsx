@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   Clock,
   ChevronLeft,
@@ -14,6 +15,7 @@ import {
   Calendar,
   Filter,
   Loader2,
+  Eye,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,19 +36,20 @@ import {
   useUpdateAppointmentStatus,
 } from '../hooks/use-doctor-portal';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/lib/i18n';
 import { Appointment } from '@/types';
 import { AppointmentStatus } from '@/types/enums';
 import { formatDate, formatTime, addDays } from '@/lib/utils/date';
 import { getInitials } from '@/lib/utils';
 
-const statusLabels: Record<AppointmentStatus, string> = {
-  [AppointmentStatus.PENDING]: 'قيد الانتظار',
-  [AppointmentStatus.CONFIRMED]: 'مؤكد',
-  [AppointmentStatus.CHECKED_IN]: 'في العيادة',
-  [AppointmentStatus.COMPLETED]: 'مكتمل',
-  [AppointmentStatus.CANCELLED]: 'ملغي',
-  [AppointmentStatus.NO_SHOW]: 'لم يحضر',
-};
+const getStatusLabels = (t: (key: string) => string): Record<AppointmentStatus, string> => ({
+  [AppointmentStatus.PENDING]: t('status.pending'),
+  [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
+  [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+  [AppointmentStatus.COMPLETED]: t('status.completed'),
+  [AppointmentStatus.CANCELLED]: t('status.cancelled'),
+  [AppointmentStatus.NO_SHOW]: t('status.noShow'),
+});
 
 const statusColors: Record<AppointmentStatus, string> = {
   [AppointmentStatus.PENDING]: 'bg-warning-100 text-warning-700',
@@ -58,10 +61,13 @@ const statusColors: Record<AppointmentStatus, string> = {
 };
 
 export function AppointmentQueue() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date(), 'yyyy-MM-dd'));
   const [selectedClinic, setSelectedClinic] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<AppointmentStatus | ''>('');
+
+  const statusLabels = getStatusLabels(t);
 
   const { data: clinics } = useDoctorClinics();
   const { data: appointmentsData, isLoading } = useDoctorAppointments({
@@ -79,14 +85,14 @@ export function AppointmentQueue() {
     try {
       await updateStatusMutation.mutateAsync({ appointmentId, status: newStatus });
       toast({
-        title: 'تم التحديث',
-        description: 'تم تحديث حالة الموعد بنجاح',
+        title: t('toast.updated'),
+        description: t('appointments.statusUpdated'),
         variant: 'success',
       });
     } catch (error) {
       toast({
-        title: 'فشل التحديث',
-        description: 'حدث خطأ أثناء تحديث حالة الموعد',
+        title: t('appointments.updateFailed'),
+        description: t('appointments.statusUpdateFailed'),
         variant: 'error',
       });
     }
@@ -106,17 +112,17 @@ export function AppointmentQueue() {
     switch (status) {
       case AppointmentStatus.PENDING:
         return [
-          { status: AppointmentStatus.CONFIRMED, label: 'تأكيد', icon: CheckCircle, color: 'success' },
-          { status: AppointmentStatus.CANCELLED, label: 'إلغاء', icon: XCircle, color: 'destructive' },
+          { status: AppointmentStatus.CONFIRMED, label: t('appointments.actionConfirm'), icon: CheckCircle, color: 'success' },
+          { status: AppointmentStatus.CANCELLED, label: t('appointments.actionCancel'), icon: XCircle, color: 'destructive' },
         ];
       case AppointmentStatus.CONFIRMED:
         return [
-          { status: AppointmentStatus.CHECKED_IN, label: 'وصل', icon: UserCheck, color: 'primary' },
-          { status: AppointmentStatus.NO_SHOW, label: 'لم يحضر', icon: XCircle, color: 'secondary' },
+          { status: AppointmentStatus.CHECKED_IN, label: t('appointments.actionArrived'), icon: UserCheck, color: 'primary' },
+          { status: AppointmentStatus.NO_SHOW, label: t('appointments.actionNoShow'), icon: XCircle, color: 'secondary' },
         ];
       case AppointmentStatus.CHECKED_IN:
         return [
-          { status: AppointmentStatus.COMPLETED, label: 'إنهاء', icon: CheckCircle, color: 'success' },
+          { status: AppointmentStatus.COMPLETED, label: t('appointments.actionComplete'), icon: CheckCircle, color: 'success' },
         ];
       default:
         return [];
@@ -148,10 +154,10 @@ export function AppointmentQueue() {
             {/* Clinic Filter */}
             <Select value={selectedClinic || 'all'} onValueChange={(v) => setSelectedClinic(v === 'all' ? '' : v)}>
               <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="كل العيادات" />
+                <SelectValue placeholder={t('appointments.allClinics')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل العيادات</SelectItem>
+                <SelectItem value="all">{t('appointments.allClinics')}</SelectItem>
                 {clinics?.map((clinic) => (
                   <SelectItem key={clinic.id} value={clinic.id}>
                     {clinic.name?.ar || clinic.name?.en}
@@ -166,10 +172,10 @@ export function AppointmentQueue() {
               onValueChange={(v) => setStatusFilter(v === 'all' ? '' : v as AppointmentStatus)}
             >
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="كل الحالات" />
+                <SelectValue placeholder={t('appointments.allStatuses')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل الحالات</SelectItem>
+                <SelectItem value="all">{t('appointments.allStatuses')}</SelectItem>
                 {Object.entries(statusLabels).map(([status, label]) => (
                   <SelectItem key={status} value={status}>
                     {label}
@@ -187,7 +193,7 @@ export function AppointmentQueue() {
         <h2 className="text-xl font-bold text-foreground">
           {formatDate(new Date(selectedDate), 'EEEE, d MMMM yyyy')}
         </h2>
-        <Badge variant="outline">{appointments.length} موعد</Badge>
+        <Badge variant="outline">{appointments.length} {t('appointments.appointmentCount')}</Badge>
       </div>
 
       {/* Loading */}
@@ -216,10 +222,10 @@ export function AppointmentQueue() {
           <CardContent className="py-16 text-center">
             <Calendar className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              لا توجد مواعيد
+              {t('appointments.noAppointments')}
             </h3>
             <p className="text-muted-foreground">
-              لا توجد مواعيد في هذا اليوم
+              {t('appointments.noAppointmentsToday')}
             </p>
           </CardContent>
         </Card>
@@ -296,6 +302,17 @@ export function AppointmentQueue() {
                         >
                           {statusLabels[appointment.status]}
                         </span>
+
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="text-xs"
+                        >
+                          <Link href={`/doctor/appointments/${appointment.id}`}>
+                            <Eye className="h-4 w-4 ms-1" />
+                            {t('common.viewDetails')}
+                          </Link>
+                        </Button>
 
                         {actions.map((action) => {
                           const Icon = action.icon;

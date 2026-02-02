@@ -85,9 +85,7 @@ export function useClinicServices(clinicId: string) {
 }
 
 export interface AvailableSlot {
-  date: string;
-  startTime: string;
-  endTime: string;
+  time: string;
   isAvailable: boolean;
 }
 

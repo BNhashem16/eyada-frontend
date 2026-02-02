@@ -20,27 +20,31 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { usePatientProfile, useUpdatePatientProfile, useCreatePatientProfile } from '../hooks/use-patient';
 import { useAuthStore } from '@/lib/auth/store';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/lib/i18n';
 import { Gender } from '@/types/enums';
 
-const profileSchema = z.object({
-  name: z.string().min(3, 'الاسم يجب أن يكون 3 أحرف على الأقل'),
+const getProfileSchema = (t: (key: string) => string) => z.object({
+  name: z.string().min(3, t('validation.fullNameMinLength')),
   phone: z
     .string()
-    .regex(/^01[0125][0-9]{8}$/, 'رقم الهاتف غير صحيح'),
+    .regex(/^01[0125][0-9]{8}$/, t('validation.phoneInvalid')),
   dateOfBirth: z.string().optional(),
   gender: z.nativeEnum(Gender).optional(),
   whatsappNumber: z.string().optional(),
   bloodType: z.string().optional(),
 });
 
-type ProfileFormData = z.infer<typeof profileSchema>;
+type ProfileFormData = z.infer<ReturnType<typeof getProfileSchema>>;
 
 export function PatientProfileForm() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { data: profile, isLoading, error } = usePatientProfile();
   const updateMutation = useUpdatePatientProfile();
   const createMutation = useCreatePatientProfile();
   const user = useAuthStore((state) => state.user);
+
+  const profileSchema = getProfileSchema(t);
 
   // Determine if this is a new profile (profile doesn't exist)
   const isNewProfile = !isLoading && (!profile || error);
@@ -98,23 +102,23 @@ export function PatientProfileForm() {
         // Create new profile
         await createMutation.mutateAsync(payload);
         toast({
-          title: 'تم الإنشاء',
-          description: 'تم إنشاء ملفك الشخصي بنجاح',
+          title: t('toast.created'),
+          description: t('patient.createdSuccess'),
           variant: 'success',
         });
       } else {
         // Update existing profile
         await updateMutation.mutateAsync(payload as any);
         toast({
-          title: 'تم الحفظ',
-          description: 'تم تحديث بياناتك بنجاح',
+          title: t('toast.saved'),
+          description: t('patient.updatedSuccess'),
           variant: 'success',
         });
       }
     } catch (error) {
       toast({
-        title: 'فشل الحفظ',
-        description: 'حدث خطأ أثناء حفظ البيانات',
+        title: t('toast.saveFailed'),
+        description: t('patient.saveError'),
         variant: 'error',
       });
     }
@@ -143,7 +147,7 @@ export function PatientProfileForm() {
       {isNewProfile && (
         <div className="mb-4 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg">
           <p className="text-primary-700 dark:text-primary-300 font-medium">
-            مرحباً! أكمل بياناتك الشخصية للاستفادة من جميع خدمات المنصة.
+            {t('patient.completeDataMessage')}
           </p>
         </div>
       )}
@@ -151,13 +155,13 @@ export function PatientProfileForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            البيانات الشخصية
+            {t('patient.personalData')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" required>الاسم الكامل</Label>
+            <Label htmlFor="name" required>{t('patient.fullName')}</Label>
             <Input
               id="name"
               {...register('name')}
@@ -169,7 +173,7 @@ export function PatientProfileForm() {
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label htmlFor="phone" required>رقم الهاتف</Label>
+            <Label htmlFor="phone" required>{t('patient.phoneNumber')}</Label>
             <Input
               id="phone"
               type="tel"
@@ -184,7 +188,7 @@ export function PatientProfileForm() {
 
           {/* Email (read-only) */}
           <div className="space-y-2">
-            <Label htmlFor="email">البريد الإلكتروني</Label>
+            <Label htmlFor="email">{t('patient.email')}</Label>
             <Input
               id="email"
               type="email"
@@ -193,12 +197,12 @@ export function PatientProfileForm() {
               icon={<Mail className="h-5 w-5" />}
               iconPosition="start"
             />
-            <p className="text-xs text-muted-foreground">لا يمكن تغيير البريد الإلكتروني</p>
+            <p className="text-xs text-muted-foreground">{t('patient.emailCannotChange')}</p>
           </div>
 
           {/* Date of Birth */}
           <div className="space-y-2">
-            <Label htmlFor="dateOfBirth">تاريخ الميلاد</Label>
+            <Label htmlFor="dateOfBirth">{t('patient.dateOfBirth')}</Label>
             <Input
               id="dateOfBirth"
               type="date"
@@ -210,24 +214,24 @@ export function PatientProfileForm() {
 
           {/* Gender */}
           <div className="space-y-2">
-            <Label>الجنس</Label>
+            <Label>{t('patient.gender')}</Label>
             <Select
               value={watch('gender') || ''}
               onValueChange={(value) => setValue('gender', value as Gender, { shouldDirty: true })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر الجنس" />
+                <SelectValue placeholder={t('patient.selectGender')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={Gender.MALE}>ذكر</SelectItem>
-                <SelectItem value={Gender.FEMALE}>أنثى</SelectItem>
+                <SelectItem value={Gender.MALE}>{t('patient.male')}</SelectItem>
+                <SelectItem value={Gender.FEMALE}>{t('patient.female')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* WhatsApp Number */}
           <div className="space-y-2">
-            <Label htmlFor="whatsappNumber">رقم الواتساب</Label>
+            <Label htmlFor="whatsappNumber">{t('patient.whatsappNumber')}</Label>
             <Input
               id="whatsappNumber"
               type="tel"
@@ -241,13 +245,13 @@ export function PatientProfileForm() {
 
           {/* Blood Type */}
           <div className="space-y-2">
-            <Label>فصيلة الدم</Label>
+            <Label>{t('patient.bloodType')}</Label>
             <Select
               value={watch('bloodType') || ''}
               onValueChange={(value) => setValue('bloodType', value, { shouldDirty: true })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر فصيلة الدم" />
+                <SelectValue placeholder={t('patient.selectBloodType')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="A+">A+</SelectItem>
@@ -268,12 +272,12 @@ export function PatientProfileForm() {
               {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                  جاري الحفظ...
+                  {t('common.saving')}
                 </>
               ) : isNewProfile ? (
-                'إنشاء الملف الشخصي'
+                t('patient.createProfile')
               ) : (
-                'حفظ التغييرات'
+                t('common.saveChanges')
               )}
             </Button>
           </div>

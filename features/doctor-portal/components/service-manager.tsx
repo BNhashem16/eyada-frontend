@@ -11,7 +11,6 @@ import {
   Trash2,
   Loader2,
   Clock,
-  FileText,
   Calendar,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,6 +40,7 @@ import {
   useDeleteService,
 } from '../hooks/use-doctor-portal';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/lib/i18n';
 import { ServiceType } from '@/types/enums';
 import { ClinicServiceType } from '@/types';
 
@@ -48,27 +48,27 @@ interface ServiceManagerProps {
   clinicId: string;
 }
 
-const serviceTypeLabels: Record<ServiceType, string> = {
-  [ServiceType.FIRST_VISIT]: 'كشف أول',
-  [ServiceType.RE_VISIT]: 'إعادة كشف',
-  [ServiceType.CONSULTATION_PHONE]: 'استشارة هاتفية',
-  [ServiceType.CONSULTATION_VIDEO]: 'استشارة فيديو',
-};
+const getServiceTypeLabels = (t: (key: string) => string): Record<ServiceType, string> => ({
+  [ServiceType.FIRST_VISIT]: t('services.firstVisit'),
+  [ServiceType.RE_VISIT]: t('services.reVisit'),
+  [ServiceType.CONSULTATION_PHONE]: t('services.phoneConsultation'),
+  [ServiceType.CONSULTATION_VIDEO]: t('services.videoConsultation'),
+});
 
-const serviceSchema = z.object({
-  nameAr: z.string().min(3, 'اسم الخدمة بالعربية مطلوب'),
+const getServiceSchema = (t: (key: string) => string) => z.object({
+  nameAr: z.string().min(3, t('validation.serviceNameArRequired')),
   nameEn: z.string().optional(),
-  description: z.string().optional(),
   serviceType: z.nativeEnum(ServiceType),
-  price: z.number().min(1, 'السعر مطلوب'),
-  durationMinutes: z.number().min(5, 'المدة يجب أن تكون 5 دقائق على الأقل'),
+  price: z.number().min(1, t('validation.priceRequired')),
+  durationMinutes: z.number().min(5, t('validation.durationMin')),
   reVisitValidityDays: z.number().min(1).optional(),
   isActive: z.boolean(),
 });
 
-type ServiceFormData = z.infer<typeof serviceSchema>;
+type ServiceFormData = z.infer<ReturnType<typeof getServiceSchema>>;
 
 export function ServiceManager({ clinicId }: ServiceManagerProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [showDialog, setShowDialog] = useState(false);
   const [editingService, setEditingService] = useState<ClinicServiceType | null>(null);
@@ -78,6 +78,9 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
   const createMutation = useCreateService();
   const updateMutation = useUpdateService();
   const deleteMutation = useDeleteService();
+
+  const serviceTypeLabels = getServiceTypeLabels(t);
+  const serviceSchema = getServiceSchema(t);
 
   const {
     register,
@@ -100,7 +103,6 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
     reset({
       nameAr: '',
       nameEn: '',
-      description: '',
       serviceType: ServiceType.FIRST_VISIT,
       price: 0,
       durationMinutes: 30,
@@ -115,7 +117,6 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
     reset({
       nameAr: service.name?.ar || '',
       nameEn: service.name?.en || '',
-      description: '',
       serviceType: service.serviceType,
       price: service.price,
       durationMinutes: service.duration,
@@ -133,7 +134,6 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
           ar: data.nameAr,
           en: data.nameEn || data.nameAr,
         },
-        description: data.description ? { ar: data.description, en: data.description } : undefined,
         serviceType: data.serviceType,
         price: data.price,
         duration: data.durationMinutes,
@@ -148,15 +148,15 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
           data: payload,
         });
         toast({
-          title: 'تم التحديث',
-          description: 'تم تحديث الخدمة بنجاح',
+          title: t('toast.updated'),
+          description: t('services.serviceUpdated'),
           variant: 'success',
         });
       } else {
         await createMutation.mutateAsync({ clinicId, data: payload });
         toast({
-          title: 'تمت الإضافة',
-          description: 'تم إضافة الخدمة بنجاح',
+          title: t('toast.added'),
+          description: t('services.serviceAdded'),
           variant: 'success',
         });
       }
@@ -164,8 +164,8 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       reset();
     } catch (error) {
       toast({
-        title: 'حدث خطأ',
-        description: 'فشل في حفظ الخدمة',
+        title: t('toast.error'),
+        description: t('services.serviceSaveFailed'),
         variant: 'error',
       });
     }
@@ -176,14 +176,14 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
     try {
       await deleteMutation.mutateAsync({ clinicId, serviceId });
       toast({
-        title: 'تم الحذف',
-        description: 'تم حذف الخدمة بنجاح',
+        title: t('toast.deleted'),
+        description: t('services.serviceDeleted'),
         variant: 'success',
       });
     } catch (error) {
       toast({
-        title: 'حدث خطأ',
-        description: 'فشل في حذف الخدمة',
+        title: t('toast.error'),
+        description: t('services.serviceDeleteFailed'),
         variant: 'error',
       });
     } finally {
@@ -214,11 +214,11 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            الخدمات والأسعار
+            {t('services.title')}
           </CardTitle>
           <Button className="text-xs" onClick={openAddDialog}>
             <Plus className="h-4 w-4 ms-2" />
-            إضافة خدمة
+            {t('services.addService')}
           </Button>
         </CardHeader>
         <CardContent>
@@ -241,20 +241,20 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                       </Badge>
                       {!service.isActive && (
                         <Badge variant="outline" className="text-xs shrink-0">
-                          غير نشطة
+                          {t('common.inactive')}
                         </Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
-                        {service.duration} دقيقة
+                        {service.duration} {t('services.minute')}
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between sm:justify-end gap-4">
                     <p className="text-lg font-bold text-primary-600 dark:text-primary-400 whitespace-nowrap">
-                      {service.price} ج.م
+                      {service.price} {t('common.currency')}
                     </p>
                     <div className="flex gap-1 sm:gap-2">
                       <Button
@@ -285,10 +285,10 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
           ) : (
             <div className="text-center py-8">
               <DollarSign className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">لم تقم بإضافة خدمات بعد</p>
+              <p className="text-muted-foreground">{t('services.noServices')}</p>
               <Button className="mt-4" onClick={openAddDialog}>
                 <Plus className="h-4 w-4 ms-2" />
-                إضافة أول خدمة
+                {t('services.addFirstService')}
               </Button>
             </div>
           )}
@@ -300,7 +300,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingService ? 'تعديل الخدمة' : 'إضافة خدمة جديدة'}
+              {editingService ? t('services.editService') : t('services.addNewService')}
             </DialogTitle>
           </DialogHeader>
 
@@ -308,30 +308,30 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             {/* Name Arabic */}
             <div className="space-y-2">
               <Label htmlFor="nameAr" required>
-                اسم الخدمة (عربي)
+                {t('services.serviceNameAr')}
               </Label>
               <Input
                 id="nameAr"
                 {...register('nameAr')}
-                placeholder="مثال: كشف طبي"
+                placeholder={t('services.serviceNameArPlaceholder')}
                 error={!!errors.nameAr}
               />
             </div>
 
             {/* Name English */}
             <div className="space-y-2">
-              <Label htmlFor="nameEn">اسم الخدمة (إنجليزي)</Label>
+              <Label htmlFor="nameEn">{t('services.serviceNameEn')}</Label>
               <Input
                 id="nameEn"
                 {...register('nameEn')}
-                placeholder="e.g. Medical Consultation"
+                placeholder={t('services.serviceNameEnPlaceholder')}
                 dir="ltr"
               />
             </div>
 
             {/* Service Type */}
             <div className="space-y-2">
-              <Label required>نوع الخدمة</Label>
+              <Label required>{t('services.serviceType')}</Label>
               <Select
                 value={watch('serviceType')}
                 onValueChange={(value) =>
@@ -355,7 +355,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="price" required>
-                  السعر (ج.م)
+                  {t('services.servicePrice')}
                 </Label>
                 <Input
                   id="price"
@@ -367,7 +367,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="durationMinutes" required>
-                  المدة (دقيقة)
+                  {t('services.serviceDuration')}
                 </Label>
                 <Input
                   id="durationMinutes"
@@ -385,7 +385,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 <Label htmlFor="reVisitValidityDays">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    صلاحية إعادة الكشف (بالأيام)
+                    {t('services.reVisitValidity')}
                   </span>
                 </Label>
                 <Input
@@ -395,22 +395,10 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                   placeholder="14"
                 />
                 <p className="text-xs text-muted-foreground">
-                  عدد الأيام التي يمكن للمريض خلالها حجز إعادة كشف بنفس السعر
+                  {t('services.reVisitValidityHint')}
                 </p>
               </div>
             )}
-
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">وصف الخدمة</Label>
-              <textarea
-                id="description"
-                {...register('description')}
-                rows={2}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
-                placeholder="وصف مختصر للخدمة..."
-              />
-            </div>
 
             {/* Active Status */}
             <div className="flex items-center gap-3">
@@ -421,7 +409,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
               />
               <Label htmlFor="isActive" className="cursor-pointer">
-                الخدمة نشطة (متاحة للحجز)
+                {t('services.serviceActive')}
               </Label>
             </div>
 
@@ -431,18 +419,18 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 variant="outline"
                 onClick={() => setShowDialog(false)}
               >
-                إلغاء
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                    جاري الحفظ...
+                    {t('common.saving')}
                   </>
                 ) : editingService ? (
-                  'حفظ التغييرات'
+                  t('common.saveChanges')
                 ) : (
-                  'إضافة الخدمة'
+                  t('services.addService')
                 )}
               </Button>
             </DialogFooter>

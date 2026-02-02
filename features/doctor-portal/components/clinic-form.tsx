@@ -27,13 +27,13 @@ import { useTranslation } from '@/lib/i18n';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 
 // Schema matching backend CreateClinicDto
-const clinicSchema = z.object({
-  nameAr: z.string().min(2, 'اسم العيادة بالعربي مطلوب (٢ حروف على الأقل)').max(200),
-  nameEn: z.string().min(2, 'Clinic name in English is required (min 2 characters)').max(200),
-  addressAr: z.string().min(2, 'العنوان بالعربي مطلوب').max(200),
-  addressEn: z.string().min(2, 'Address in English is required').max(200),
-  stateId: z.string().min(1, 'يجب اختيار المحافظة'),
-  cityId: z.string().min(1, 'يجب اختيار المدينة'),
+const getClinicSchema = (t: (key: string) => string) => z.object({
+  nameAr: z.string().min(2, t('validation.clinicNameArRequired')).max(200),
+  nameEn: z.string().min(2, t('validation.clinicNameEnRequired')).max(200),
+  addressAr: z.string().min(2, t('validation.addressArRequired')).max(200),
+  addressEn: z.string().min(2, t('validation.addressEnRequired')).max(200),
+  stateId: z.string().min(1, t('validation.stateRequired')),
+  cityId: z.string().min(1, t('validation.cityRequired')),
   phoneNumber: z.string().max(20).optional().or(z.literal('')),
   latitude: z.coerce.number().min(-90).max(90).optional().or(z.literal('')),
   longitude: z.coerce.number().min(-180).max(180).optional().or(z.literal('')),
@@ -41,7 +41,7 @@ const clinicSchema = z.object({
   isActive: z.boolean(),
 });
 
-type ClinicFormData = z.infer<typeof clinicSchema>;
+type ClinicFormData = z.infer<ReturnType<typeof getClinicSchema>>;
 
 interface ClinicFormProps {
   clinicId?: string;
@@ -60,6 +60,8 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
   const { data: clinic, isLoading: clinicLoading } = useDoctorClinic(clinicId || '');
   const createMutation = useCreateClinic();
   const updateMutation = useUpdateClinic();
+
+  const clinicSchema = getClinicSchema(t);
 
   const {
     register,
@@ -241,12 +243,12 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           {/* Name Arabic */}
           <div className="space-y-2">
             <Label htmlFor="nameAr" required>
-              اسم العيادة (عربي)
+              {t('clinics.nameAr')}
             </Label>
             <Input
               id="nameAr"
               {...register('nameAr')}
-              placeholder="مثال: عيادة الشفاء"
+              placeholder={t('clinics.nameArPlaceholder')}
               className="bg-background text-foreground"
             />
             {errors.nameAr && (
@@ -257,12 +259,12 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           {/* Name English */}
           <div className="space-y-2">
             <Label htmlFor="nameEn" required>
-              Clinic Name (English)
+              {t('clinics.nameEn')}
             </Label>
             <Input
               id="nameEn"
               {...register('nameEn')}
-              placeholder="e.g., Al-Shifa Clinic"
+              placeholder={t('clinics.nameEnPlaceholder')}
               dir="ltr"
               className="bg-background text-foreground"
             />
@@ -278,14 +280,14 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <MapPin className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            الموقع والعنوان
+            {t('clinics.locationAndAddress')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* State & City */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label required>المحافظة</Label>
+              <Label required>{t('clinics.state')}</Label>
               <Select
                 value={watch('stateId') || ''}
                 onValueChange={(value) => {
@@ -295,7 +297,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 disabled={loadingLocations}
               >
                 <SelectTrigger className="bg-background text-foreground">
-                  <SelectValue placeholder="اختر المحافظة" />
+                  <SelectValue placeholder={t('clinics.selectState')} />
                 </SelectTrigger>
                 <SelectContent>
                   {states.map((state) => (
@@ -311,14 +313,14 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label required>المدينة</Label>
+              <Label required>{t('clinics.city')}</Label>
               <Select
                 value={watch('cityId') || ''}
                 onValueChange={(value) => setValue('cityId', value, { shouldDirty: true, shouldValidate: true })}
                 disabled={!selectedStateId || cities.length === 0}
               >
                 <SelectTrigger className="bg-background text-foreground">
-                  <SelectValue placeholder={!selectedStateId ? 'اختر المحافظة أولاً' : 'اختر المدينة'} />
+                  <SelectValue placeholder={!selectedStateId ? t('clinics.selectStateFirst') : t('clinics.selectCity')} />
                 </SelectTrigger>
                 <SelectContent>
                   {cities.map((city) => (
@@ -337,12 +339,12 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           {/* Address Arabic */}
           <div className="space-y-2">
             <Label htmlFor="addressAr" required>
-              العنوان التفصيلي (عربي)
+              {t('clinics.detailedAddressAr')}
             </Label>
             <Input
               id="addressAr"
               {...register('addressAr')}
-              placeholder="مثال: شارع التحرير، برج النيل، الدور الخامس"
+              placeholder={t('clinics.detailedAddressArPlaceholder')}
               className="bg-background text-foreground"
             />
             {errors.addressAr && (
@@ -353,12 +355,12 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           {/* Address English */}
           <div className="space-y-2">
             <Label htmlFor="addressEn" required>
-              Detailed Address (English)
+              {t('clinics.detailedAddressEn')}
             </Label>
             <Input
               id="addressEn"
               {...register('addressEn')}
-              placeholder="e.g., Tahrir St., Nile Tower, 5th Floor"
+              placeholder={t('clinics.detailedAddressEnPlaceholder')}
               dir="ltr"
               className="bg-background text-foreground"
             />
@@ -373,7 +375,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               <Label htmlFor="latitude">
                 <span className="flex items-center gap-1">
                   <Navigation className="h-4 w-4" />
-                  خط العرض (Latitude)
+                  {t('clinics.latitude')}
                 </span>
               </Label>
               <Input
@@ -394,7 +396,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               <Label htmlFor="longitude">
                 <span className="flex items-center gap-1">
                   <Navigation className="h-4 w-4" />
-                  خط الطول (Longitude)
+                  {t('clinics.longitude')}
                 </span>
               </Label>
               <Input
@@ -417,13 +419,13 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             <Label htmlFor="phoneNumber">
               <span className="flex items-center gap-1">
                 <Phone className="h-4 w-4" />
-                رقم هاتف العيادة
+                {t('clinics.clinicPhone')}
               </span>
             </Label>
             <Input
               id="phoneNumber"
               {...register('phoneNumber')}
-              placeholder="01xxxxxxxxx"
+              placeholder={t('clinics.phonePlaceholder')}
               dir="ltr"
               className="bg-background text-foreground"
             />
@@ -437,7 +439,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             <Label htmlFor="slotDurationMinutes">
               <span className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
-                مدة الموعد الافتراضية (بالدقائق)
+                {t('clinics.defaultSlotDuration')}
               </span>
             </Label>
             <select
@@ -445,12 +447,12 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               {...register('slotDurationMinutes', { valueAsNumber: true })}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
             >
-              <option value={10}>10 دقائق</option>
-              <option value={15}>15 دقيقة</option>
-              <option value={20}>20 دقيقة</option>
-              <option value={30}>30 دقيقة</option>
-              <option value={45}>45 دقيقة</option>
-              <option value={60}>60 دقيقة</option>
+              <option value={10}>{t('common.duration10')}</option>
+              <option value={15}>{t('common.duration15')}</option>
+              <option value={20}>{t('common.duration20')}</option>
+              <option value={30}>{t('common.duration30')}</option>
+              <option value={45}>{t('common.duration45')}</option>
+              <option value={60}>{t('common.duration60')}</option>
             </select>
           </div>
         </CardContent>
@@ -468,7 +470,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500 bg-background"
             />
             <Label htmlFor="isActive" className="cursor-pointer">
-              العيادة نشطة (تظهر في نتائج البحث)
+              {t('clinics.clinicActiveSearch')}
             </Label>
           </div>
         </CardContent>

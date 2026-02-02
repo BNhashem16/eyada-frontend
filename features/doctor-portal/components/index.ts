@@ -1,5 +1,6 @@
 export * from './doctor-dashboard';
 export * from './appointment-queue';
+export * from './appointment-details';
 export * from './clinic-management';
 export * from './clinic-form';
 export * from './schedule-manager';

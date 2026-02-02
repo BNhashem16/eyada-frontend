@@ -20,6 +20,7 @@ import { Appointment } from '@/types';
 import { AppointmentStatus } from '@/types/enums';
 import { formatDate, formatTime, isPast } from '@/lib/utils/date';
 import { getInitials } from '@/lib/utils';
+import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useState } from 'react';
 import { useTranslation } from '@/lib/i18n';
 
@@ -86,25 +87,25 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 {/* Doctor Info */}
-                {appointment.clinic?.doctor && (
+                {appointment.clinic?.doctorProfile && (
                   <Link
-                    href={`/doctors/${appointment.clinic.doctor.id}`}
+                    href={`/doctors/${appointment.clinic.doctorProfile.id}`}
                     className="flex items-center gap-3 mb-3 group"
                   >
                     <Avatar className="h-10 w-10">
                       <AvatarImage
-                        src={appointment.clinic.doctor.user?.profilePicture || undefined}
+                        src={appointment.clinic.doctorProfile.user?.profilePicture || undefined}
                       />
                       <AvatarFallback>
-                        {getInitials(appointment.clinic.doctor.user?.name || '')}
+                        {getInitials(appointment.clinic.doctorProfile.user?.name || '')}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="font-semibold text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                        د. {appointment.clinic.doctor.user?.name}
+                        د. {appointment.clinic.doctorProfile.user?.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {appointment.clinic.doctor.specialty?.nameAr}
+                        {getLocalizedText(appointment.clinic.doctorProfile.specialty?.name, 'ar')}
                       </p>
                     </div>
                   </Link>
@@ -113,7 +114,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                 {/* Time */}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <Clock className="h-4 w-4" />
-                  <span dir="ltr">{formatTime(appointment.startTime)}</span>
+                  <span dir="ltr">{formatTime(appointment.appointmentTime)}</span>
                   <span className="text-border">|</span>
                   <span>{formatDate(appointmentDate, 'EEEE')}</span>
                 </div>
@@ -122,23 +123,23 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                 {appointment.clinic && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <MapPin className="h-4 w-4" />
-                    <span>{appointment.clinic.name}</span>
+                    <span>{getLocalizedText(appointment.clinic.name, 'ar')}</span>
                     {appointment.clinic.city && (
                       <>
                         <span className="text-border">-</span>
-                        <span>{appointment.clinic.city.nameAr}</span>
+                        <span>{getLocalizedText(appointment.clinic.city.name, 'ar')}</span>
                       </>
                     )}
                   </div>
                 )}
 
                 {/* Service */}
-                {appointment.service && (
+                {appointment.serviceName && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span>{t('appointments.service')}:</span>
-                    <span>{appointment.service.nameAr || appointment.service.nameEn}</span>
+                    <span>{getLocalizedText(appointment.serviceName, 'ar')}</span>
                     <Badge variant="outline" className="text-xs">
-                      {appointment.service.price} {t('common.currency')}
+                      {appointment.price} {t('common.currency')}
                     </Badge>
                   </div>
                 )}
@@ -218,6 +219,17 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                 </div>
               </div>
             )}
+
+            {/* View Details Link */}
+            <div className="mt-3 pt-3 border-t border-border">
+              <Link
+                href={`/patient/appointments/${appointment.id}`}
+                className="flex items-center gap-1 text-sm text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                {t('common.viewDetails')}
+                <ChevronLeft className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </CardContent>

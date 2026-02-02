@@ -82,9 +82,9 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
 
       return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, {
         clinicId,
-        serviceId: selectedServiceId,
+        serviceTypeId: selectedServiceId,
         appointmentDate: formatDate(selectedDate, 'yyyy-MM-dd'),
-        startTime: selectedSlot.startTime,
+        appointmentTime: selectedSlot.time,
       });
     },
     onSuccess: () => {
@@ -281,7 +281,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                       .filter((s) => s.isAvailable)
                       .map((slot, idx) => {
                         const isSelected =
-                          selectedSlot?.startTime === slot.startTime;
+                          selectedSlot?.time === slot.time;
 
                         return (
                           <button
@@ -297,7 +297,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                             `}
                           >
                             <Clock className="h-3.5 w-3.5" />
-                            <span dir="ltr">{formatTime(slot.startTime)}</span>
+                            <span dir="ltr">{formatTime(slot.time)}</span>
                           </button>
                         );
                       })}
@@ -334,7 +334,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">الوقت:</span>
                   <span className="font-medium" dir="ltr">
-                    {formatTime(selectedSlot.startTime)}
+                    {formatTime(selectedSlot.time)}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-primary-100 dark:border-primary-800">

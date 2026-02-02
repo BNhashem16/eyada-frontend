@@ -7,7 +7,6 @@ import {
   MapPin,
   Clock,
   GraduationCap,
-  Award,
   Phone,
   Calendar,
   ChevronLeft,
@@ -25,12 +24,15 @@ import { useDoctor, useDoctorRatings } from '../hooks/use-doctors';
 import { ClinicCard } from '@/features/clinics/components/clinic-card';
 import { RatingsList } from './ratings-list';
 import { getInitials } from '@/lib/utils';
+import { getLocalizedText } from '@/lib/utils/multilingual';
+import { useTranslation } from '@/lib/i18n';
 
 interface DoctorProfileProps {
   doctorId: string;
 }
 
 export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
+  const { t } = useTranslation();
   const { data: doctor, isLoading, isError } = useDoctor(doctorId);
   const [activeTab, setActiveTab] = useState('about');
 
@@ -43,10 +45,10 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
           <p className="text-error-600 dark:text-error-400">
-            حدث خطأ أثناء تحميل بيانات الطبيب. يرجى المحاولة مرة أخرى.
+            {t('doctors.loadError')}
           </p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/doctors">العودة للبحث</Link>
+            <Link href="/doctors">{t('doctors.backToSearch')}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -81,14 +83,11 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-2xl font-bold text-foreground">
-                    د. {doctor.user?.name}
+                    د. {doctor.user?.fullName || doctor.user?.name}
                   </h1>
-                  {doctor.isVerified && (
-                    <Badge variant="success">موثق</Badge>
-                  )}
                 </div>
                 <p className="text-muted-foreground mt-1">
-                  {doctor.specialty?.nameAr || doctor.specialty?.nameEn}
+                  {getLocalizedText(doctor.specialty?.name, 'ar')}
                 </p>
 
                 {/* Rating */}
@@ -107,7 +106,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                   </div>
                   <span className="font-semibold">{averageRating.toFixed(1)}</span>
                   <span className="text-sm text-muted-foreground">
-                    ({totalRatings} تقييم)
+                    ({totalRatings} {t('doctors.reviews')})
                   </span>
                 </div>
               </div>
@@ -119,14 +118,14 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                     <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {doctor.yearsOfExperience}+
                     </div>
-                    <div className="text-sm text-muted-foreground">سنة خبرة</div>
+                    <div className="text-sm text-muted-foreground">{t('doctors.yearsExp')}</div>
                   </div>
                 )}
                 <div>
                   <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                     {doctor.clinics?.length || 0}
                   </div>
-                  <div className="text-sm text-muted-foreground">عيادة</div>
+                  <div className="text-sm text-muted-foreground">{t('clinics.clinicCount')}</div>
                 </div>
               </div>
             </div>
@@ -137,9 +136,9 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start overflow-x-auto">
-          <TabsTrigger value="about">نبذة</TabsTrigger>
-          <TabsTrigger value="clinics">العيادات</TabsTrigger>
-          <TabsTrigger value="ratings">التقييمات</TabsTrigger>
+          <TabsTrigger value="about">{t('doctors.about')}</TabsTrigger>
+          <TabsTrigger value="clinics">{t('clinics.title')}</TabsTrigger>
+          <TabsTrigger value="ratings">{t('doctors.ratings')}</TabsTrigger>
         </TabsList>
 
         {/* About Tab */}
@@ -148,73 +147,45 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
           {doctor.bio && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">نبذة عن الطبيب</CardTitle>
+                <CardTitle className="text-lg">{t('doctors.aboutDoctor')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-foreground whitespace-pre-line">{doctor.bio}</p>
+                <p className="text-foreground whitespace-pre-line">
+                  {getLocalizedText(doctor.bio, 'ar')}
+                </p>
               </CardContent>
             </Card>
           )}
 
-          {/* Qualifications & Certifications */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Qualifications */}
-            {doctor.qualifications && doctor.qualifications.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                    المؤهلات العلمية
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {doctor.qualifications.map((q: string, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-foreground">
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
-                        {q}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Certifications */}
-            {doctor.certifications && doctor.certifications.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Award className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                    الشهادات
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {doctor.certifications.map((c: string, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-foreground">
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 flex-shrink-0" />
-                        {c}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          {/* Qualifications */}
+          {doctor.qualifications && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                  {t('doctors.qualifications')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-foreground whitespace-pre-line">
+                  {getLocalizedText(doctor.qualifications, 'ar')}
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Contact Info */}
-          {doctor.user?.phone && (
+          {(doctor.user?.phoneNumber || doctor.showPhoneNumber) && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Phone className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                  معلومات التواصل
+                  {t('doctors.contactInfo')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-foreground" dir="ltr">
-                  {doctor.user.phone}
+                  {doctor.user?.phoneNumber}
                 </p>
               </CardContent>
             </Card>
@@ -233,7 +204,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
             <Card>
               <CardContent className="py-10 text-center">
                 <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                <p className="text-muted-foreground">لا توجد عيادات مسجلة</p>
+                <p className="text-muted-foreground">{t('clinics.noClinicsRegistered')}</p>
               </CardContent>
             </Card>
           )}

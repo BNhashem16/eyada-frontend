@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Specialty, State, City } from '@/types';
 import { apiGet } from '@/lib/api';
 import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
+import { useTranslation } from '@/lib/i18n';
 
 // Import and re-export from hook for consistency
 import type { ClinicFilters } from '../hooks/use-clinics';
@@ -27,6 +28,7 @@ interface ClinicFiltersProps {
 }
 
 export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFiltersProps) {
+  const { t } = useTranslation();
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
@@ -90,7 +92,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
       {/* Search */}
       <div className="relative">
         <Input
-          placeholder="ابحث عن عيادة..."
+          placeholder={t('clinics.searchClinicPlaceholder')}
           value={filters.search || ''}
           onChange={(e) => handleFilterChange('search', e.target.value)}
           icon={<Search className="h-5 w-5" />}
@@ -105,10 +107,10 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
         onValueChange={(value) => handleFilterChange('specialtyId', value === 'all' ? undefined : value)}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="التخصص" />
+          <SelectValue placeholder={t('doctors.filterBySpecialty')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل التخصصات</SelectItem>
+          <SelectItem value="all">{t('doctors.allSpecialties')}</SelectItem>
           {specialties.map((specialty) => (
             <SelectItem key={specialty.id} value={specialty.id}>
               {specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn}
@@ -123,10 +125,10 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
         onValueChange={(value) => handleFilterChange('stateId', value === 'all' ? undefined : value)}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="المحافظة" />
+          <SelectValue placeholder={t('doctors.filterByState')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل المحافظات</SelectItem>
+          <SelectItem value="all">{t('doctors.allStates')}</SelectItem>
           {states.map((state) => (
             <SelectItem key={state.id} value={state.id}>
               {state.name?.ar || state.name?.en || (state as any).nameAr || (state as any).nameEn}
@@ -142,10 +144,10 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
         disabled={!filters.stateId}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="المدينة" />
+          <SelectValue placeholder={t('doctors.filterByCity')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل المدن</SelectItem>
+          <SelectItem value="all">{t('doctors.allCities')}</SelectItem>
           {cities.map((city) => (
             <SelectItem key={city.id} value={city.id}>
               {city.name?.ar || city.name?.en || (city as any).nameAr || (city as any).nameEn}
@@ -160,30 +162,30 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
         onValueChange={(value) => handleFilterChange('minRating', value === 'all' ? undefined : Number(value))}
       >
         <SelectTrigger className="bg-background">
-          <SelectValue placeholder="التقييم" />
+          <SelectValue placeholder={t('doctors.filterByRating')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">كل التقييمات</SelectItem>
-          <SelectItem value="4">4+ نجوم</SelectItem>
-          <SelectItem value="3">3+ نجوم</SelectItem>
-          <SelectItem value="2">2+ نجوم</SelectItem>
+          <SelectItem value="all">{t('doctors.allRatings')}</SelectItem>
+          <SelectItem value="4">4+ {t('common.stars')}</SelectItem>
+          <SelectItem value="3">3+ {t('common.stars')}</SelectItem>
+          <SelectItem value="2">2+ {t('common.stars')}</SelectItem>
         </SelectContent>
       </Select>
 
       {/* Price Range */}
       <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">نطاق السعر (ج.م)</Label>
+        <Label className="text-sm text-muted-foreground">{t('common.priceRange')}</Label>
         <div className="flex gap-2">
           <Input
             type="number"
-            placeholder="من"
+            placeholder={t('common.from')}
             value={filters.priceMin || ''}
             onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
             className="bg-background"
           />
           <Input
             type="number"
-            placeholder="إلى"
+            placeholder={t('common.to')}
             value={filters.priceMax || ''}
             onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
             className="bg-background"
@@ -199,7 +201,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
           onClick={clearFilters}
         >
           <X className="h-4 w-4 ms-2" />
-          مسح الفلاتر ({activeFiltersCount})
+          {t('common.clearFilters')} ({activeFiltersCount})
         </Button>
       )}
     </div>
@@ -210,7 +212,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
       {/* Desktop Filters */}
       <div className="hidden lg:block">
         <div className="sticky top-24 rounded-xl border border-border bg-muted p-5">
-          <h3 className="mb-4 font-bold text-foreground">تصفية النتائج</h3>
+          <h3 className="mb-4 font-bold text-foreground">{t('common.filterResults')}</h3>
           <FiltersContent />
         </div>
       </div>
@@ -224,7 +226,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
         >
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4" />
-            <span>الفلاتر</span>
+            <span>{t('common.filters')}</span>
             {activeFiltersCount > 0 && (
               <Badge variant="default" className="text-xs">
                 {activeFiltersCount}
@@ -244,7 +246,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
           />
           <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-card p-5 animate-slide-up">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-foreground">تصفية النتائج</h3>
+              <h3 className="font-bold text-foreground">{t('common.filterResults')}</h3>
               <Button
                 variant="ghost"
                 className="text-xs"
@@ -259,7 +261,7 @@ export function ClinicFiltersComponent({ filters, onFiltersChange }: ClinicFilte
                 className="w-full"
                 onClick={() => setShowMobileFilters(false)}
               >
-                عرض النتائج
+                {t('common.viewResults')}
               </Button>
             </div>
           </div>

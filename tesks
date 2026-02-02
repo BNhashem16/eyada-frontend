@@ -1,11 +1,49 @@
-في صفحة البحث أنا مش عاوزك تطلب ال api مع كل حرف يكتبه اليوزر أنا عاوز اليوزر يكتب براحته عادي ويكون في button 
-أول ما يدوس بحث يبحث
+Task:
+Audit and fix the responsive design across the ENTIRE project.
+Do NOT skip any page or component.
 
+Focus Areas:
+- Mobile-first layout (priority)
+- Proper usage of breakpoints
+- Fix overflow issues (horizontal scrolling)
+- Ensure text readability on small screens
+- Make buttons and inputs touch-friendly
+- Fix broken grids, cards, tables, and forms on mobile
+- Ensure images and media are responsive
+- Fix navbar, sidebar, and footer behavior on mobile
+- Handle long text and edge cases gracefully
+
+Requirements:
+- Use mobile-first approach
+- Use flexible units (%, rem, vw, vh) where appropriate
+- Avoid fixed widths unless absolutely necessary
+- Use CSS Grid / Flexbox properly
+- Ensure consistency across all pages
+
+Constraints:
+- Do NOT change business logic
+- Do NOT remove existing features
+- Do NOT redesign UI unless required for responsiveness
+- Keep visual style consistent with the current design
+
+Validation:
+- Test on common breakpoints:
+  - 320px (small mobile)
+  - 375px (mobile)
+  - 768px (tablet)
+  - 1024px+ (desktop)
+- No horizontal scroll on mobile
+- All pages must be usable on mobile
+
+Output:
+- List all updated files with paths
+- Explain major responsive fixes briefly
+- Mention any page that required special handling
 -----------------
-لما بدوس على ال toggle اللي في الصفحه دي
-http://localhost:3001/admin/specialties
-بيخفي لي ال row بالكامل وأنا مش عاوز كده
-أنا بس عاوزه يخلي ال row موجود عادي بس اهم حاجه ال toggle يبقى معرفني هو حالته ايه
+Fix the toggle on /admin/specialties so that toggling does NOT hide or remove the row.
+The row must remain visible at all times.
+The toggle should only reflect the active/inactive state clearly.
+Do not change backend logic.
 ===========================
 http://localhost:3001/doctor/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6
 الصفحه دي الريسبونسيف فيها مش ظابط كمان عاوزك تشوف الباك أند بيعمل ايه وتطابقه  بالظبط
@@ -22,54 +60,9 @@ http://localhost:3001/doctor/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6/edit
 ====================
 http://localhost:3001/doctor/profile
 ال toogle في البيج دي مش ظابط 
-====================
-راجع ال swagger تاني
 
-{statusCode: 400, timestamp: "2026-02-01T06:17:34.962Z",…}
-error
-: 
-"Bad Request"
-message
-: 
-["property nameAr should not exist", "property nameEn should not exist",…]
-method
-: 
-"POST"
-path
-: 
-"/doctors/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6/services"
-statusCode
-: 
-400
-timestamp
-: 
-"2026-02-01T06:17:34.962Z"
-http://localhost:3001/doctor/clinics/178c4ae9-76b0-447c-beb0-45121e6a60a6
-كمان الريسبونسف هنا مش ظابط أنا عاوزك تتشك عليه في كل اللغات
-===================================
-http://localhost:3001/patient/profile
-error
-: 
-"Bad Request"
-message
-: 
-["property user should not exist", "property addressLine1 should not exist",…]
-method
-: 
-"PATCH"
-path
-: 
-"/patients/profile"
-statusCode
-: 
-400
-timestamp
-: 
-"2026-02-01T06:22:23.261Z"
-من فضلك ارجع تاني ل swager وشوف هو بيهندلها ازاي
-وكمان متنساش أنه لما أجي أعمل أي حاجه ولسه الأكونت بتاعي البروفايل بتاعه ناقص يوجهني على تعديل البروفايل أتوماتيك
-====================
 
 الريسبونسيف بايظ جدا في وضع الموبيل و وضع الموبيل أهم عندي من المقاسات التانيه
 لذلك أنا عاوزك تلف على page page في المشروع وتجرب ال resposive في وضع الموبيل وغير وضع الموبيل واللي محتاج يتصلح صلحه
 وال responsive يكون واضح مع الوضع الداكن والوضع النهاري وكمان بال rtl وال ltr
+====================

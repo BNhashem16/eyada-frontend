@@ -13,6 +13,7 @@ import {
   useUpdateSchedule,
 } from '../hooks/use-doctor-portal';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/lib/i18n';
 import { DayOfWeek } from '@/types/enums';
 import { ClinicSchedule } from '@/types';
 
@@ -30,15 +31,15 @@ const dayOrder: DayOfWeek[] = [
   DayOfWeek.FRIDAY,
 ];
 
-const dayNames: Record<DayOfWeek, string> = {
-  [DayOfWeek.SUNDAY]: 'الأحد',
-  [DayOfWeek.MONDAY]: 'الاثنين',
-  [DayOfWeek.TUESDAY]: 'الثلاثاء',
-  [DayOfWeek.WEDNESDAY]: 'الأربعاء',
-  [DayOfWeek.THURSDAY]: 'الخميس',
-  [DayOfWeek.FRIDAY]: 'الجمعة',
-  [DayOfWeek.SATURDAY]: 'السبت',
-};
+const getDayNames = (t: (key: string) => string): Record<DayOfWeek, string> => ({
+  [DayOfWeek.SUNDAY]: t('days.sunday'),
+  [DayOfWeek.MONDAY]: t('days.monday'),
+  [DayOfWeek.TUESDAY]: t('days.tuesday'),
+  [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
+  [DayOfWeek.THURSDAY]: t('days.thursday'),
+  [DayOfWeek.FRIDAY]: t('days.friday'),
+  [DayOfWeek.SATURDAY]: t('days.saturday'),
+});
 
 interface DaySchedule {
   dayOfWeek: DayOfWeek;
@@ -51,11 +52,13 @@ interface DaySchedule {
 }
 
 export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { data: schedules, isLoading } = useClinicSchedules(clinicId);
   const createMutation = useCreateSchedule();
   const updateMutation = useUpdateSchedule();
 
+  const dayNames = getDayNames(t);
   const [localSchedules, setLocalSchedules] = useState<DaySchedule[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -159,15 +162,15 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
       await Promise.all(promises);
 
       toast({
-        title: 'تم الحفظ',
-        description: 'تم حفظ جدول المواعيد بنجاح',
+        title: t('toast.updated'),
+        description: t('clinics.scheduleSaved'),
         variant: 'success',
       });
       setHasChanges(false);
     } catch (error) {
       toast({
-        title: 'حدث خطأ',
-        description: 'فشل في حفظ جدول المواعيد',
+        title: t('toast.error'),
+        description: t('clinics.scheduleSaveFailed'),
         variant: 'error',
       });
     }
@@ -195,19 +198,19 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-          جدول مواعيد العمل
+          {t('clinics.scheduleTitle')}
         </CardTitle>
         {hasChanges && (
           <Button onClick={handleSave} disabled={isPending}>
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                جاري الحفظ...
+                {t('common.saving')}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4 ms-2" />
-                حفظ التغييرات
+                {t('common.saveChanges')}
               </>
             )}
           </Button>
@@ -245,7 +248,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
               {schedule.isActive && (
                 <div className="flex flex-wrap items-center gap-4 flex-1">
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">من</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('common.from')}</Label>
                     <Input
                       type="time"
                       value={schedule.startTime}
@@ -257,7 +260,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">إلى</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('common.to')}</Label>
                     <Input
                       type="time"
                       value={schedule.endTime}
@@ -269,7 +272,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">استراحة</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('common.break')}</Label>
                     <Input
                       type="time"
                       value={schedule.breakTime || ''}
@@ -283,7 +286,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                   </div>
                   <div className="flex items-center gap-2">
                     <Label className="text-sm text-muted-foreground whitespace-nowrap">
-                      مدة الموعد
+                      {t('clinics.slotDuration')}
                     </Label>
                     <select
                       value={schedule.slotDuration}
@@ -292,25 +295,25 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                       }
                       className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                     >
-                      <option value={15}>15 دقيقة</option>
-                      <option value={20}>20 دقيقة</option>
-                      <option value={30}>30 دقيقة</option>
-                      <option value={45}>45 دقيقة</option>
-                      <option value={60}>60 دقيقة</option>
+                      <option value={15}>{t('common.duration15')}</option>
+                      <option value={20}>{t('common.duration20')}</option>
+                      <option value={30}>{t('common.duration30')}</option>
+                      <option value={45}>{t('common.duration45')}</option>
+                      <option value={60}>{t('common.duration60')}</option>
                     </select>
                   </div>
                 </div>
               )}
 
               {!schedule.isActive && (
-                <span className="text-sm text-muted-foreground">مغلق</span>
+                <span className="text-sm text-muted-foreground">{t('common.closed')}</span>
               )}
             </div>
           ))}
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          * يمكنك تفعيل أو تعطيل أيام العمل وتحديد أوقات البداية والنهاية ومدة كل موعد
+          * {t('clinics.scheduleHint')}
         </p>
       </CardContent>
     </Card>

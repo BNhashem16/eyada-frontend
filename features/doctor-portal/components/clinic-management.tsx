@@ -18,21 +18,25 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDoctorClinics } from '../hooks/use-doctor-portal';
+import { useTranslation } from '@/lib/i18n';
 import { DayOfWeek } from '@/types/enums';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 
-const dayNames: Record<DayOfWeek, string> = {
-  [DayOfWeek.SUNDAY]: 'الأحد',
-  [DayOfWeek.MONDAY]: 'الاثنين',
-  [DayOfWeek.TUESDAY]: 'الثلاثاء',
-  [DayOfWeek.WEDNESDAY]: 'الأربعاء',
-  [DayOfWeek.THURSDAY]: 'الخميس',
-  [DayOfWeek.FRIDAY]: 'الجمعة',
-  [DayOfWeek.SATURDAY]: 'السبت',
-};
+const getDayNames = (t: (key: string) => string): Record<DayOfWeek, string> => ({
+  [DayOfWeek.SUNDAY]: t('days.sunday'),
+  [DayOfWeek.MONDAY]: t('days.monday'),
+  [DayOfWeek.TUESDAY]: t('days.tuesday'),
+  [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
+  [DayOfWeek.THURSDAY]: t('days.thursday'),
+  [DayOfWeek.FRIDAY]: t('days.friday'),
+  [DayOfWeek.SATURDAY]: t('days.saturday'),
+});
 
 export function ClinicManagement() {
+  const { t } = useTranslation();
   const { data: clinics, isLoading, isError } = useDoctorClinics();
+
+  const dayNames = getDayNames(t);
 
   if (isLoading) {
     return (
@@ -60,7 +64,7 @@ export function ClinicManagement() {
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
           <p className="text-error-600 dark:text-error-400">
-            حدث خطأ أثناء تحميل العيادات. يرجى المحاولة مرة أخرى.
+            {t('clinics.loadError')}
           </p>
         </CardContent>
       </Card>
@@ -74,7 +78,7 @@ export function ClinicManagement() {
         <Button asChild>
           <Link href="/doctor/clinics/new">
             <Plus className="h-4 w-4 ms-2" />
-            إضافة عيادة جديدة
+            {t('doctor.addNewClinic')}
           </Link>
         </Button>
       </div>
@@ -117,19 +121,19 @@ export function ClinicManagement() {
                           </h3>
                           {clinic.isActive ? (
                             <Badge variant="success" className="text-xs">
-                              نشطة
+                              {t('common.active')}
                             </Badge>
                           ) : (
                             <Badge variant="secondary" className="text-xs">
-                              غير نشطة
+                              {t('common.inactive')}
                             </Badge>
                           )}
                         </div>
                         {consultationPrice && (
                           <div className="text-end">
-                            <span className="text-sm text-muted-foreground">الكشف</span>
+                            <span className="text-sm text-muted-foreground">{t('clinics.consultation')}</span>
                             <div className="font-bold text-primary-600 dark:text-primary-400">
-                              {consultationPrice} ج.م
+                              {consultationPrice} {t('common.currency')}
                             </div>
                           </div>
                         )}
@@ -163,10 +167,10 @@ export function ClinicManagement() {
                       {/* Services Count */}
                       <div className="flex items-center gap-4 text-sm">
                         <span className="text-muted-foreground">
-                          {clinic.serviceTypes?.length || 0} خدمة
+                          {clinic.serviceTypes?.length || 0} {t('clinics.serviceCount')}
                         </span>
                         <span className="text-muted-foreground">
-                          {clinic.schedules?.filter((s) => s.isActive).length || 0} يوم عمل
+                          {clinic.schedules?.filter((s) => s.isActive).length || 0} {t('clinics.workDayCount')}
                         </span>
                       </div>
                     </div>
@@ -176,13 +180,13 @@ export function ClinicManagement() {
                       <Button asChild variant="outline" className="text-xs">
                         <Link href={`/doctor/clinics/${clinic.id}`}>
                           <Settings className="h-4 w-4 ms-1" />
-                          إدارة
+                          {t('clinics.manage')}
                         </Link>
                       </Button>
                       <Button asChild variant="ghost" className="text-xs">
                         <Link href={`/doctor/clinics/${clinic.id}/edit`}>
                           <Edit className="h-4 w-4 ms-1" />
-                          تعديل
+                          {t('common.edit')}
                         </Link>
                       </Button>
                     </div>
@@ -197,15 +201,15 @@ export function ClinicManagement() {
           <CardContent className="py-16 text-center">
             <Building2 className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              لا توجد عيادات
+              {t('clinics.noClinics')}
             </h3>
             <p className="text-muted-foreground mb-4">
-              قم بإضافة عيادتك الأولى لبدء استقبال الحجوزات
+              {t('clinics.noClinicsCta')}
             </p>
             <Button asChild>
               <Link href="/doctor/clinics/new">
                 <Plus className="h-4 w-4 ms-2" />
-                إضافة عيادة جديدة
+                {t('doctor.addNewClinic')}
               </Link>
             </Button>
           </CardContent>
