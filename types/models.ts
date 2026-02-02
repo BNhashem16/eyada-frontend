@@ -176,13 +176,14 @@ export interface ScheduleShift {
 }
 
 // Clinic Service Type model
+// Note: API returns price as string (e.g., "50") despite Swagger specifying number
 export interface ClinicServiceType extends Timestamps {
   id: string;
   doctorProfileId: string;
   clinicId?: string;
   serviceType: ServiceType;
   name?: Multilingual;
-  price: number;
+  price: number | string; // API returns string, Swagger says number
   duration: number;
   reVisitValidityDays?: number;
   isActive: boolean;
@@ -239,6 +240,29 @@ export interface Rating extends Timestamps {
   appointment?: Appointment;
   doctorProfile?: DoctorProfile;
   patientProfile?: PatientProfile;
+}
+
+// Public doctor ratings response - GET /doctors/{doctorId}/ratings
+export interface PublicDoctorRatingsResponse {
+  ratings: Rating[];
+  averageRating: number;
+  totalRatings: number;
+}
+
+// Doctor's own ratings response with statistics - GET /doctors/ratings
+export interface DoctorRatingsWithStats {
+  ratings: Rating[];
+  statistics: {
+    averageRating: number;
+    totalRatings: number;
+    ratingDistribution: {
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+    };
+  };
 }
 
 // Available slot for booking

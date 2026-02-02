@@ -6,3 +6,4 @@ export * from './clinic-form';
 export * from './schedule-manager';
 export * from './service-manager';
 export * from './doctor-profile-form';
+export * from './doctor-ratings';

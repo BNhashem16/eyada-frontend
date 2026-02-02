@@ -118,7 +118,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
       nameAr: service.name?.ar || '',
       nameEn: service.name?.en || '',
       serviceType: service.serviceType,
-      price: service.price,
+      price: typeof service.price === 'string' ? parseFloat(service.price) : service.price,
       durationMinutes: service.duration,
       reVisitValidityDays: service.reVisitValidityDays || undefined,
       isActive: service.isActive,

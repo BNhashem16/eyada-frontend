@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiGet } from '@/lib/api';
 import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
-import { DoctorProfile, PaginatedResponse } from '@/types';
+import { DoctorProfile, PaginatedResponse, PublicDoctorRatingsResponse } from '@/types';
 
 // Extended doctor filters matching Swagger spec
 export interface DoctorFilters {
@@ -56,31 +56,21 @@ export function useDoctor(doctorId: string) {
   });
 }
 
-// Swagger uses limit/offset instead of page/limit for ratings
+// Public doctor ratings - GET /doctors/{doctorId}/ratings
+// Swagger: limit/offset query params, returns ratings with average
 export function useDoctorRatings(doctorId: string, limit = 10, offset = 0) {
   return useQuery({
-    queryKey: ['doctor-ratings', doctorId, limit, offset],
+    queryKey: ['public-doctor-ratings', doctorId, limit, offset],
     queryFn: async () => {
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
       });
-      return apiGet<Rating[]>(PUBLIC_ENDPOINTS.DOCTOR_RATINGS(doctorId) + `?${params}`);
+      return apiGet<PublicDoctorRatingsResponse>(
+        PUBLIC_ENDPOINTS.DOCTOR_RATINGS(doctorId) + `?${params}`
+      );
     },
     enabled: !!doctorId,
     staleTime: 1000 * 60 * 5,
   });
-}
-
-export interface Rating {
-  id: string;
-  rating: number;
-  review?: string;
-  createdAt: string;
-  patientProfile?: {
-    user: {
-      fullName: string;
-      profilePicture?: string;
-    };
-  };
 }

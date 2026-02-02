@@ -10,7 +10,7 @@ import {
   ClinicServiceType,
   Appointment,
   PaginatedResponse,
-  Rating,
+  DoctorRatingsWithStats,
 } from '@/types';
 import { AppointmentStatus, PaymentStatus } from '@/types/enums';
 
@@ -420,16 +420,13 @@ export function useAddMedicalNotes() {
   });
 }
 
-// Ratings hooks
-export function useDoctorRatings(page = 1, limit = 10) {
+// Doctor's own ratings with statistics - GET /doctors/ratings
+// Swagger: NO query params, returns all ratings with statistics
+export function useDoctorOwnRatings() {
   return useQuery({
-    queryKey: ['doctor-ratings', page, limit],
+    queryKey: ['doctor-own-ratings'],
     queryFn: async () => {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-      });
-      return apiGet<PaginatedResponse<Rating>>(`${DOCTOR_ENDPOINTS.RATINGS}?${params}`);
+      return apiGet<DoctorRatingsWithStats>(DOCTOR_ENDPOINTS.RATINGS);
     },
     staleTime: 1000 * 60 * 5,
   });

@@ -100,7 +100,8 @@
     "phone": "الهاتف",
     "findDoctor": "ابحث عن طبيب",
     "findClinic": "ابحث عن عيادة",
-    "myAppointments": "مواعيدي"
+    "myAppointments": "مواعيدي",
+    "ratings": "التقييمات"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -253,7 +254,6 @@
     "noClinics": "لا توجد عيادات",
     "noClinicsRegistered": "لا توجد عيادات مسجلة",
     "noClinicsCta": "قم بإضافة عيادتك الأولى لبدء استقبال الحجوزات",
-    "loadError": "حدث خطأ أثناء تحميل العيادات. يرجى المحاولة مرة أخرى.",
     "nameAr": "اسم العيادة (عربي)",
     "nameEn": "اسم العيادة (إنجليزي)",
     "nameArPlaceholder": "مثال: عيادة الشفاء",
@@ -521,7 +521,10 @@
     "markPaid": "تم الدفع",
     "myRatings": "تقييماتي",
     "averageRating": "متوسط التقييم",
-    "totalRatings": "إجمالي التقييمات"
+    "totalRatings": "إجمالي التقييمات",
+    "ratingDistribution": "توزيع التقييمات",
+    "patientReviews": "آراء المرضى",
+    "ratingsPageDescription": "عرض تقييماتك وآراء المرضى"
   },
   "secretary": {
     "dashboard": "لوحة تحكم السكرتارية",

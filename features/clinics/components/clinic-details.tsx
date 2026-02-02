@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useClinic, useClinicSchedules, useClinicServices } from '../hooks/use-clinics';
+import { useClinic } from '../hooks/use-clinics';
 import { BookingWidget } from './booking-widget';
 import { DayOfWeek } from '@/types/enums';
 import { useTranslation } from '@/lib/i18n';
@@ -50,8 +50,9 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
   const { t } = useTranslation();
   const dayNames = getDayNames(t);
   const { data: clinic, isLoading, isError } = useClinic(clinicId);
-  const { data: schedules } = useClinicSchedules(clinicId);
-  const { data: services } = useClinicServices(clinicId);
+  // Use embedded data from clinic response (reduces API calls from 3 to 1)
+  const schedules = clinic?.schedules;
+  const services = clinic?.serviceTypes;
   const [activeTab, setActiveTab] = useState('booking');
 
   if (isLoading) {

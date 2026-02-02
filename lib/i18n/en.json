@@ -100,7 +100,8 @@
     "phone": "Phone",
     "findDoctor": "Find a Doctor",
     "findClinic": "Find a Clinic",
-    "myAppointments": "My Appointments"
+    "myAppointments": "My Appointments",
+    "ratings": "Ratings"
   },
   "auth": {
     "login": "Login",
@@ -253,7 +254,6 @@
     "noClinics": "No clinics",
     "noClinicsRegistered": "No clinics registered",
     "noClinicsCta": "Add your first clinic to start receiving bookings",
-    "loadError": "Error loading clinics. Please try again.",
     "nameAr": "Clinic Name (Arabic)",
     "nameEn": "Clinic Name (English)",
     "nameArPlaceholder": "e.g., Al-Shifa Clinic",
@@ -521,7 +521,10 @@
     "markPaid": "Mark Paid",
     "myRatings": "My Ratings",
     "averageRating": "Average Rating",
-    "totalRatings": "Total Ratings"
+    "totalRatings": "Total Ratings",
+    "ratingDistribution": "Rating Distribution",
+    "patientReviews": "Patient Reviews",
+    "ratingsPageDescription": "View your ratings and patient feedback"
   },
   "secretary": {
     "dashboard": "Secretary Dashboard",

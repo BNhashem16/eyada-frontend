@@ -6,7 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDoctorRatings, Rating } from '../hooks/use-doctors';
+import { useDoctorRatings } from '../hooks/use-doctors';
+import { Rating } from '@/types';
 import { formatRelativeDate, getInitials } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 
@@ -21,9 +22,11 @@ export function RatingsList({ doctorId }: RatingsListProps) {
   const offset = (page - 1) * limit;
   const { data, isLoading, isError } = useDoctorRatings(doctorId, limit, offset);
 
-  const ratings: Rating[] = data ?? [];
-  const totalItems = ratings.length;
-  const hasMore = ratings.length === limit; // Simple pagination indicator
+  // Extract from PublicDoctorRatingsResponse
+  const ratings: Rating[] = data?.ratings ?? [];
+  const totalRatings = data?.totalRatings ?? 0;
+  const averageRating = data?.averageRating ?? 0;
+  const hasMore = offset + ratings.length < totalRatings;
 
   if (isLoading) {
     return (
@@ -69,10 +72,18 @@ export function RatingsList({ doctorId }: RatingsListProps) {
 
   return (
     <div className="space-y-4">
-      {/* Count */}
-      <p className="text-sm text-muted-foreground">
-        {t('doctors.ratingsCountLabel').replace('{count}', String(totalItems))}
-      </p>
+      {/* Summary with average rating */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          {t('doctors.ratingsCountLabel').replace('{count}', String(totalRatings))}
+        </p>
+        {averageRating > 0 && (
+          <div className="flex items-center gap-1.5">
+            <Star className="h-4 w-4 fill-warning-400 text-warning-400" />
+            <span className="font-medium text-foreground">{averageRating.toFixed(1)}</span>
+          </div>
+        )}
+      </div>
 
       {/* Ratings */}
       {ratings.map((rating) => (
