@@ -13,10 +13,12 @@ export enum Gender {
 }
 
 // Appointment lifecycle states
+// Note: Backend DTO uses IN_PROGRESS, Prisma uses CHECKED_IN - supporting both for compatibility
 export enum AppointmentStatus {
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
   CHECKED_IN = 'CHECKED_IN',
+  IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
   NO_SHOW = 'NO_SHOW',

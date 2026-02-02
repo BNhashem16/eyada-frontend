@@ -1,25 +1,24 @@
-import { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
 import { Mail, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-export const metadata: Metadata = {
-  title: 'نسيت كلمة المرور',
-  description: 'استعادة كلمة المرور',
-};
+import { useTranslation } from '@/lib/i18n';
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="mb-2 text-2xl font-bold text-foreground">
-          نسيت كلمة المرور؟
+          {t('pages.forgotPassword.title')}
         </h1>
         <p className="text-muted-foreground">
-          أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور
+          {t('pages.forgotPassword.subtitle')}
         </p>
       </div>
 
@@ -27,7 +26,7 @@ export default function ForgotPasswordPage() {
       <form className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="email" required>
-            البريد الإلكتروني
+            {t('auth.email')}
           </Label>
           <Input
             id="email"
@@ -39,7 +38,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         <Button type="submit" className="w-full" size="lg">
-          إرسال رابط إعادة التعيين
+          {t('pages.forgotPassword.sendResetLink')}
         </Button>
 
         <Link
@@ -47,7 +46,7 @@ export default function ForgotPasswordPage() {
           className="flex items-center justify-center gap-2 text-primary-600 dark:text-primary-400 hover:underline"
         >
           <ArrowRight className="h-4 w-4" />
-          العودة لتسجيل الدخول
+          {t('pages.forgotPassword.backToLogin')}
         </Link>
       </form>
     </>

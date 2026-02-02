@@ -41,44 +41,49 @@ interface AppointmentDetailsProps {
   appointmentId: string;
 }
 
-const statusConfig: Record<AppointmentStatus, { label: string; color: string; icon: React.ReactNode }> = {
+const getStatusConfig = (t: (key: string) => string): Record<AppointmentStatus, { label: string; color: string; icon: React.ReactNode }> => ({
   [AppointmentStatus.PENDING]: {
-    label: 'في الانتظار',
+    label: t('status.pending'),
     color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
     icon: <AlertCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CONFIRMED]: {
-    label: 'مؤكد',
+    label: t('status.confirmed'),
     color: 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CHECKED_IN]: {
-    label: 'تم الحضور',
+    label: t('status.checkedIn'),
     color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400',
     icon: <CheckCircle className="h-4 w-4" />,
   },
+  [AppointmentStatus.IN_PROGRESS]: {
+    label: t('status.inProgress'),
+    color: 'bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-400',
+    icon: <Stethoscope className="h-4 w-4" />,
+  },
   [AppointmentStatus.COMPLETED]: {
-    label: 'مكتمل',
+    label: t('status.completed'),
     color: 'bg-muted text-muted-foreground',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CANCELLED]: {
-    label: 'ملغي',
+    label: t('status.cancelled'),
     color: 'bg-error-100 text-error-800 dark:bg-error-900/30 dark:text-error-400',
     icon: <XCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.NO_SHOW]: {
-    label: 'لم يحضر',
+    label: t('status.noShow'),
     color: 'bg-muted text-muted-foreground',
     icon: <XCircle className="h-4 w-4" />,
   },
-};
+});
 
-const paymentStatusConfig: Record<PaymentStatus, { label: string; color: string }> = {
-  [PaymentStatus.PENDING]: { label: 'غير مدفوع', color: 'bg-warning-100 text-warning-800' },
-  [PaymentStatus.PAID]: { label: 'مدفوع', color: 'bg-success-100 text-success-800' },
-  [PaymentStatus.REFUNDED]: { label: 'مسترد', color: 'bg-muted text-muted-foreground' },
-};
+const getPaymentStatusConfig = (t: (key: string) => string): Record<PaymentStatus, { label: string; color: string }> => ({
+  [PaymentStatus.PENDING]: { label: t('payment.unpaid'), color: 'bg-warning-100 text-warning-800' },
+  [PaymentStatus.PAID]: { label: t('payment.paid'), color: 'bg-success-100 text-success-800' },
+  [PaymentStatus.REFUNDED]: { label: t('secretary.refunded'), color: 'bg-muted text-muted-foreground' },
+});
 
 export function SecretaryAppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
   const { t } = useTranslation();

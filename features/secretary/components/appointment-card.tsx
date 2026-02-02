@@ -14,6 +14,7 @@ import {
   AlertCircle,
   MoreVertical,
   Eye,
+  Stethoscope,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,8 +57,8 @@ const getStatusConfig = (t: (key: string) => string): Record<
   },
   [AppointmentStatus.IN_PROGRESS]: {
     label: t('secretary.inProgress'),
-    color: 'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400',
-    icon: <Clock className="h-4 w-4" />,
+    color: 'bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-400',
+    icon: <Stethoscope className="h-4 w-4" />,
   },
   [AppointmentStatus.COMPLETED]: {
     label: t('secretary.completed'),

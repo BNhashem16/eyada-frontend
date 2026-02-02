@@ -40,6 +40,7 @@ export function PatientDashboard() {
       [AppointmentStatus.PENDING]: t('status.pending'),
       [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
       [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+      [AppointmentStatus.IN_PROGRESS]: t('status.inProgress'),
       [AppointmentStatus.COMPLETED]: t('status.completed'),
       [AppointmentStatus.CANCELLED]: t('status.cancelled'),
       [AppointmentStatus.NO_SHOW]: t('status.noShow'),
@@ -169,19 +170,19 @@ export function PatientDashboard() {
                   >
                     <Avatar className="h-12 w-12">
                       <AvatarImage
-                        src={appointment.clinic?.doctor?.user?.profilePicture || undefined}
+                        src={appointment.clinic?.doctorProfile?.user?.profilePicture || undefined}
                       />
                       <AvatarFallback>
-                        {getInitials(appointment.clinic?.doctor?.user?.name || '')}
+                        {getInitials(appointment.clinic?.doctorProfile?.user?.fullName || '')}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-foreground truncate">
-                        {t('auth.doctor')}. {appointment.clinic?.doctor?.user?.name}
+                        {t('auth.doctor')}. {appointment.clinic?.doctorProfile?.user?.fullName}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {formatDate(date, 'EEEE, d MMMM')} -{' '}
-                        <span dir="ltr">{formatTime(appointment.startTime)}</span>
+                        <span dir="ltr">{formatTime(appointment.appointmentTime)}</span>
                       </p>
                     </div>
                     <Badge

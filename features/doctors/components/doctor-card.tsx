@@ -9,12 +9,14 @@ import { Button } from '@/components/ui/button';
 import { DoctorProfile } from '@/types';
 import { DoctorStatus } from '@/types/enums';
 import { getInitials } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface DoctorCardProps {
   doctor: DoctorProfile;
 }
 
 export function DoctorCard({ doctor }: DoctorCardProps) {
+  const { t } = useTranslation();
   const averageRating = doctor.averageRating ?? 0;
   const totalRatings = doctor.totalRatings ?? 0;
 
@@ -39,7 +41,7 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
                 variant="success"
                 className="absolute top-3 start-3 shadow-md"
               >
-                موثق
+                {t('doctor.verified')}
               </Badge>
             )}
           </div>
@@ -67,7 +69,7 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
                 </span>
               </div>
               <span className="text-sm text-muted-foreground">
-                ({totalRatings} تقييم)
+                ({totalRatings} {t('doctor.rating')})
               </span>
             </div>
 
@@ -84,7 +86,7 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
               {doctor.yearsOfExperience && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" />
-                  <span>{doctor.yearsOfExperience} سنة خبرة</span>
+                  <span>{doctor.yearsOfExperience} {t('doctors.yearsExp')}</span>
                 </div>
               )}
             </div>
@@ -94,9 +96,9 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
               <div>
                 {doctor.clinics && doctor.clinics[0]?.serviceTypes?.[0]?.price && (
                   <div className="text-sm">
-                    <span className="text-muted-foreground">الكشف: </span>
+                    <span className="text-muted-foreground">{t('doctor.consultationPrice')} </span>
                     <span className="font-bold text-primary-600 dark:text-primary-400">
-                      {doctor.clinics[0].serviceTypes[0].price} ج.م
+                      {doctor.clinics[0].serviceTypes[0].price} {t('common.currency')}
                     </span>
                   </div>
                 )}
@@ -104,7 +106,7 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
               <Button asChild size="sm" className="gap-1 group-hover:gap-2 transition-all">
                 <Link href={`/doctors/${doctor.id}`}>
                   <Calendar className="h-4 w-4" />
-                  احجز الآن
+                  {t('doctor.bookNow')}
                   <ChevronLeft className="h-4 w-4" />
                 </Link>
               </Button>

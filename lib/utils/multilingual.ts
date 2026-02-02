@@ -1,6 +1,5 @@
 import type { Multilingual } from '@/types';
-
-export type SupportedLocale = 'ar' | 'en';
+import type { SupportedLocale } from './date';
 
 /**
  * Get localized text from a Multilingual object

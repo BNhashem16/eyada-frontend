@@ -56,6 +56,7 @@ export function DoctorDashboard() {
       [AppointmentStatus.PENDING]: t('status.pending'),
       [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
       [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+      [AppointmentStatus.IN_PROGRESS]: t('status.inProgress'),
       [AppointmentStatus.COMPLETED]: t('status.completed'),
       [AppointmentStatus.CANCELLED]: t('status.cancelled'),
       [AppointmentStatus.NO_SHOW]: t('status.noShow'),

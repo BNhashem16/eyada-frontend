@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n';
 
 export default function Error({
   error,
@@ -12,6 +13,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useTranslation();
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error(error);
@@ -24,20 +27,20 @@ export default function Error({
           <AlertTriangle className="h-10 w-10 text-error-600 dark:text-error-400" />
         </div>
         <h1 className="text-2xl font-bold text-foreground mb-2">
-          حدث خطأ غير متوقع
+          {t('errors.unexpectedError')}
         </h1>
         <p className="text-muted-foreground mb-6">
-          نعتذر عن هذا الخطأ. يرجى المحاولة مرة أخرى أو العودة للصفحة الرئيسية.
+          {t('errors.unexpectedErrorDesc')}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button onClick={reset} variant="default">
             <RefreshCw className="h-4 w-4 ms-2" />
-            حاول مرة أخرى
+            {t('errors.tryAgain')}
           </Button>
           <Button asChild variant="outline">
             <Link href="/">
               <Home className="h-4 w-4 ms-2" />
-              الصفحة الرئيسية
+              {t('errors.goHome')}
             </Link>
           </Button>
         </div>

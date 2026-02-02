@@ -43,33 +43,32 @@ import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
 import { DoctorStatus } from '@/types/enums';
 import type { Specialty } from '@/types';
 import { useAuthStore } from '@/lib/auth/store';
+import { useTranslation } from '@/lib/i18n';
 
-// Schema for creating new profile (specialty required)
-const createProfileSchema = z.object({
-  specialtyId: z.string().min(1, 'يجب اختيار التخصص'),
+// Schema factory for creating new profile (specialty required)
+const getCreateProfileSchema = (t: (key: string) => string) => z.object({
+  specialtyId: z.string().min(1, t('validation.specialtyRequired')),
   licenseNumber: z.string().optional(),
   yearsOfExperience: z.coerce.number().min(0).max(70).optional(),
   qualificationsAr: z.string().optional(),
   qualificationsEn: z.string().optional(),
-  bioAr: z.string().max(500, 'السيرة الذاتية يجب أن تكون أقل من 500 حرف').optional(),
-  bioEn: z.string().max(500, 'Bio must be less than 500 characters').optional(),
+  bioAr: z.string().max(500, t('validation.bioMaxLength')).optional(),
+  bioEn: z.string().max(500, t('validation.bioMaxLengthEn')).optional(),
   showPhoneNumber: z.boolean(),
   showWhatsappNumber: z.boolean(),
 });
 
-// Schema for updating existing profile (uses same schema as create)
-const updateProfileSchema = createProfileSchema;
+type ProfileFormData = z.infer<ReturnType<typeof getCreateProfileSchema>>;
 
-type ProfileFormData = z.infer<typeof createProfileSchema>;
-
-const statusLabels: Record<DoctorStatus, { label: string; variant: 'success' | 'warning' | 'error' | 'secondary' }> = {
-  [DoctorStatus.APPROVED]: { label: 'معتمد', variant: 'success' },
-  [DoctorStatus.PENDING]: { label: 'قيد المراجعة', variant: 'warning' },
-  [DoctorStatus.REJECTED]: { label: 'مرفوض', variant: 'error' },
-  [DoctorStatus.SUSPENDED]: { label: 'موقوف', variant: 'error' },
-};
+const getStatusLabels = (t: (key: string) => string): Record<DoctorStatus, { label: string; variant: 'success' | 'warning' | 'error' | 'secondary' }> => ({
+  [DoctorStatus.APPROVED]: { label: t('doctor.profileForm.statusApproved'), variant: 'success' },
+  [DoctorStatus.PENDING]: { label: t('doctor.profileForm.statusPending'), variant: 'warning' },
+  [DoctorStatus.REJECTED]: { label: t('doctor.profileForm.statusRejected'), variant: 'error' },
+  [DoctorStatus.SUSPENDED]: { label: t('doctor.profileForm.statusSuspended'), variant: 'error' },
+});
 
 export function DoctorProfileForm() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { data: profile, isLoading, error } = useDoctorProfile();
   const updateMutation = useUpdateDoctorProfile();
@@ -84,6 +83,10 @@ export function DoctorProfileForm() {
   // Determine if this is a new profile (profile is null/undefined or error occurred)
   // The backend returns null when profile doesn't exist, not a 404 error
   const isNewProfile = !isLoading && (!profile || error);
+
+  const statusLabels = getStatusLabels(t);
+  const createProfileSchema = getCreateProfileSchema(t);
+  const updateProfileSchema = createProfileSchema;
 
   // Use appropriate schema based on mode
   const {
@@ -164,23 +167,23 @@ export function DoctorProfileForm() {
           specialtyId: data.specialtyId,
         });
         toast({
-          title: 'تم الإنشاء',
-          description: 'تم إنشاء الملف الشخصي بنجاح',
+          title: t('doctor.profileForm.createdTitle'),
+          description: t('doctor.profileForm.createdDescription'),
           variant: 'success',
         });
       } else {
         // Update existing profile
         await updateMutation.mutateAsync(formData);
         toast({
-          title: 'تم الحفظ',
-          description: 'تم تحديث الملف الشخصي بنجاح',
+          title: t('doctor.profileForm.savedTitle'),
+          description: t('doctor.profileForm.savedDescription'),
           variant: 'success',
         });
       }
     } catch (err) {
       toast({
-        title: 'خطأ',
-        description: isNewProfile ? 'فشل في إنشاء الملف الشخصي' : 'فشل في تحديث الملف الشخصي',
+        title: t('doctor.profileForm.errorTitle'),
+        description: isNewProfile ? t('doctor.profileForm.createError') : t('doctor.profileForm.updateError'),
         variant: 'error',
       });
     }
@@ -259,7 +262,7 @@ export function DoctorProfileForm() {
                   د. {profile?.user?.fullName || user?.fullName}
                 </h2>
                 {isNewProfile ? (
-                  <Badge variant="warning">ملف جديد</Badge>
+                  <Badge variant="warning">{t('doctor.profileForm.newProfile')}</Badge>
                 ) : profile?.status && (
                   <Badge variant={statusLabels[profile.status].variant}>
                     {statusLabels[profile.status].label}
@@ -267,7 +270,7 @@ export function DoctorProfileForm() {
                 )}
               </div>
               {isNewProfile ? (
-                <p className="text-muted-foreground mb-1">أكمل بياناتك لإنشاء ملفك الشخصي</p>
+                <p className="text-muted-foreground mb-1">{t('doctor.profileForm.completeProfileMessage')}</p>
               ) : (
                 <p className="text-muted-foreground mb-1">
                   {profile?.specialty?.name?.ar || profile?.specialty?.name?.en}
@@ -282,19 +285,19 @@ export function DoctorProfileForm() {
                     <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {profile?.averageRating?.toFixed(1) || '0.0'}
                     </p>
-                    <p className="text-xs text-muted-foreground">التقييم</p>
+                    <p className="text-xs text-muted-foreground">{t('doctor.profileForm.ratingLabel')}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {profile?.totalRatings || 0}
                     </p>
-                    <p className="text-xs text-muted-foreground">المراجعات</p>
+                    <p className="text-xs text-muted-foreground">{t('doctor.profileForm.reviewsLabel')}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {profile?.totalAppointments || 0}
                     </p>
-                    <p className="text-xs text-muted-foreground">المواعيد</p>
+                    <p className="text-xs text-muted-foreground">{t('doctor.profileForm.appointmentsLabel')}</p>
                   </div>
                 </div>
               )}
@@ -309,19 +312,19 @@ export function DoctorProfileForm() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Stethoscope className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-              التخصص الطبي
+              {t('doctor.profileForm.medicalSpecialty')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="specialtyId">التخصص <span className="text-error-500">*</span></Label>
+              <Label htmlFor="specialtyId">{t('doctor.profileForm.specialty')} <span className="text-error-500">*</span></Label>
               <Select
                 value={watch('specialtyId') || ''}
                 onValueChange={(value) => setValue('specialtyId', value, { shouldValidate: true, shouldDirty: true })}
                 disabled={loadingSpecialties}
               >
                 <SelectTrigger className="bg-background">
-                  <SelectValue placeholder={loadingSpecialties ? 'جاري التحميل...' : 'اختر تخصصك الطبي'} />
+                  <SelectValue placeholder={loadingSpecialties ? t('common.loading') : t('doctor.profileForm.selectSpecialty')} />
                 </SelectTrigger>
                 <SelectContent>
                   {specialties.map((specialty) => (
@@ -344,24 +347,24 @@ export function DoctorProfileForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Award className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            المعلومات المهنية
+            {t('doctor.profileForm.professionalInfo')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             {/* License Number */}
             <div className="space-y-2">
-              <Label htmlFor="licenseNumber">رقم الترخيص</Label>
+              <Label htmlFor="licenseNumber">{t('doctor.profileForm.licenseNumber')}</Label>
               <Input
                 id="licenseNumber"
-                placeholder="أدخل رقم الترخيص"
+                placeholder={t('doctor.profileForm.licenseNumberPlaceholder')}
                 {...register('licenseNumber')}
               />
             </div>
 
             {/* Years of Experience */}
             <div className="space-y-2">
-              <Label htmlFor="yearsOfExperience">سنوات الخبرة</Label>
+              <Label htmlFor="yearsOfExperience">{t('doctor.profileForm.yearsOfExperience')}</Label>
               <Input
                 id="yearsOfExperience"
                 type="number"
@@ -378,22 +381,22 @@ export function DoctorProfileForm() {
 
           {/* Qualifications */}
           <div className="space-y-2">
-            <Label htmlFor="qualificationsAr">المؤهلات (عربي)</Label>
+            <Label htmlFor="qualificationsAr">{t('doctor.profileForm.qualificationsAr')}</Label>
             <textarea
               id="qualificationsAr"
               rows={2}
-              placeholder="بكالوريوس الطب والجراحة، ماجستير..."
+              placeholder={t('doctor.profileForm.qualificationsArPlaceholder')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('qualificationsAr')}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="qualificationsEn">Qualifications (English)</Label>
+            <Label htmlFor="qualificationsEn">{t('doctor.profileForm.qualificationsEn')}</Label>
             <textarea
               id="qualificationsEn"
               rows={2}
-              placeholder="Bachelor of Medicine, Master's..."
+              placeholder={t('doctor.profileForm.qualificationsEnPlaceholder')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('qualificationsEn')}
             />
@@ -406,16 +409,16 @@ export function DoctorProfileForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <FileText className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            السيرة الذاتية
+            {t('doctor.profileForm.bioSection')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="bioAr">نبذة عنك (عربي)</Label>
+            <Label htmlFor="bioAr">{t('doctor.profileForm.bioAr')}</Label>
             <textarea
               id="bioAr"
               rows={3}
-              placeholder="اكتب نبذة مختصرة عن خبرتك وتخصصك..."
+              placeholder={t('doctor.profileForm.bioArPlaceholder')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('bioAr')}
             />
@@ -425,11 +428,11 @@ export function DoctorProfileForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bioEn">About You (English)</Label>
+            <Label htmlFor="bioEn">{t('doctor.profileForm.bioEn')}</Label>
             <textarea
               id="bioEn"
               rows={3}
-              placeholder="Write a brief description about your experience..."
+              placeholder={t('doctor.profileForm.bioEnPlaceholder')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('bioEn')}
             />
@@ -445,7 +448,7 @@ export function DoctorProfileForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Phone className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            التواصل والخصوصية
+            {t('doctor.profileForm.contactAndPrivacy')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -454,8 +457,8 @@ export function DoctorProfileForm() {
             <div className="flex items-center gap-3">
               <Phone className="h-5 w-5 text-muted-foreground" />
               <div>
-                <p className="font-medium text-foreground">عرض رقم الهاتف</p>
-                <p className="text-sm text-muted-foreground">السماح للمرضى برؤية رقم هاتفك</p>
+                <p className="font-medium text-foreground">{t('doctor.profileForm.showPhoneNumber')}</p>
+                <p className="text-sm text-muted-foreground">{t('doctor.profileForm.showPhoneNumberDesc')}</p>
               </div>
             </div>
             <Switch
@@ -469,8 +472,8 @@ export function DoctorProfileForm() {
             <div className="flex items-center gap-3">
               <MessageCircle className="h-5 w-5 text-muted-foreground" />
               <div>
-                <p className="font-medium text-foreground">عرض رقم الواتساب</p>
-                <p className="text-sm text-muted-foreground">السماح للمرضى بالتواصل عبر واتساب</p>
+                <p className="font-medium text-foreground">{t('doctor.profileForm.showWhatsappNumber')}</p>
+                <p className="text-sm text-muted-foreground">{t('doctor.profileForm.showWhatsappNumberDesc')}</p>
               </div>
             </div>
             <Switch
@@ -482,7 +485,7 @@ export function DoctorProfileForm() {
           {/* WhatsApp Numbers */}
           {showWhatsappNumber && (
             <div className="space-y-3 p-3 border border-border rounded-lg">
-              <Label>أرقام الواتساب</Label>
+              <Label>{t('doctor.profileForm.whatsappNumbers')}</Label>
 
               {/* Existing Numbers */}
               {whatsappNumbers.length > 0 && (
@@ -535,7 +538,7 @@ export function DoctorProfileForm() {
           disabled={!isNewProfile && !isDirty && whatsappNumbers.length === (profile?.whatsappNumbers?.length || 0)}
         >
           <Save className="h-4 w-4 ms-2" />
-          {isNewProfile ? 'إنشاء الملف الشخصي' : 'حفظ التغييرات'}
+          {isNewProfile ? t('doctor.profileForm.createProfile') : t('common.saveChanges')}
         </Button>
       </div>
     </form>

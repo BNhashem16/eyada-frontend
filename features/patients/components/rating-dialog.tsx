@@ -16,6 +16,7 @@ import { Appointment } from '@/types';
 import { useSubmitRating } from '../hooks/use-patient';
 import { useToast } from '@/hooks/use-toast';
 import { getInitials } from '@/lib/utils';
+import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useTranslation } from '@/lib/i18n';
 
 interface RatingDialogProps {
@@ -39,7 +40,7 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
       await submitMutation.mutateAsync({
         appointmentId: appointment.id,
         rating,
-        comment: comment.trim() || undefined,
+        review: comment.trim() || undefined,
       });
       toast({
         title: t('common.success'),
@@ -63,7 +64,7 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
     onClose();
   };
 
-  const doctorName = appointment?.clinic?.doctor?.user?.name || '';
+  const doctorName = appointment?.clinic?.doctorProfile?.user?.fullName || '';
 
   return (
     <Dialog open={!!appointment} onOpenChange={(open) => !open && handleClose()}>
@@ -77,11 +78,11 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
 
         <div className="space-y-6 py-4">
           {/* Doctor Info */}
-          {appointment?.clinic?.doctor && (
+          {appointment?.clinic?.doctorProfile && (
             <div className="flex items-center justify-center gap-3">
               <Avatar className="h-12 w-12">
                 <AvatarImage
-                  src={appointment.clinic.doctor.user?.profilePicture || undefined}
+                  src={appointment.clinic.doctorProfile.user?.profilePicture || undefined}
                 />
                 <AvatarFallback>
                   {getInitials(doctorName)}
@@ -90,7 +91,7 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
               <div>
                 <p className="font-semibold text-foreground">{t('auth.doctor')}. {doctorName}</p>
                 <p className="text-sm text-muted-foreground">
-                  {appointment.clinic.doctor.specialty?.nameAr}
+                  {getLocalizedText(appointment.clinic.doctorProfile.specialty?.name, 'ar')}
                 </p>
               </div>
             </div>

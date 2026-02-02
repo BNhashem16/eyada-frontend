@@ -61,6 +61,11 @@ const statusConfig: Record<AppointmentStatus, { label: string; color: string; ic
     color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400',
     icon: <CheckCircle className="h-4 w-4" />,
   },
+  [AppointmentStatus.IN_PROGRESS]: {
+    label: 'جاري الكشف',
+    color: 'bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-400',
+    icon: <Stethoscope className="h-4 w-4" />,
+  },
   [AppointmentStatus.COMPLETED]: {
     label: 'مكتمل',
     color: 'bg-muted text-muted-foreground',

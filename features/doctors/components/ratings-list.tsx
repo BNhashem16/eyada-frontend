@@ -6,20 +6,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDoctorRatings } from '../hooks/use-doctors';
+import { useDoctorRatings, Rating } from '../hooks/use-doctors';
 import { formatRelativeDate, getInitials } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface RatingsListProps {
   doctorId: string;
 }
 
 export function RatingsList({ doctorId }: RatingsListProps) {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError } = useDoctorRatings(doctorId, page);
+  const limit = 10;
+  const offset = (page - 1) * limit;
+  const { data, isLoading, isError } = useDoctorRatings(doctorId, limit, offset);
 
-  const ratings = data?.data ?? [];
-  const totalPages = data?.meta?.totalPages ?? 1;
-  const totalItems = data?.meta?.total ?? 0;
+  const ratings: Rating[] = data ?? [];
+  const totalItems = ratings.length;
+  const hasMore = ratings.length === limit; // Simple pagination indicator
 
   if (isLoading) {
     return (
@@ -46,7 +50,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
     return (
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-6 text-center text-error-600 dark:text-error-400">
-          حدث خطأ أثناء تحميل التقييمات
+          {t('doctors.ratingsLoadError')}
         </CardContent>
       </Card>
     );
@@ -57,7 +61,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
       <Card>
         <CardContent className="py-10 text-center">
           <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-muted-foreground">لا توجد تقييمات حتى الآن</p>
+          <p className="text-muted-foreground">{t('doctors.noRatingsYet')}</p>
         </CardContent>
       </Card>
     );
@@ -67,7 +71,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
     <div className="space-y-4">
       {/* Count */}
       <p className="text-sm text-muted-foreground">
-        {totalItems} تقييم
+        {t('doctors.ratingsCountLabel').replace('{count}', String(totalItems))}
       </p>
 
       {/* Ratings */}
@@ -77,11 +81,11 @@ export function RatingsList({ doctorId }: RatingsListProps) {
             <div className="flex gap-4">
               <Avatar>
                 <AvatarImage
-                  src={rating.patient?.user?.profilePicture || undefined}
-                  alt={rating.patient?.user?.name}
+                  src={rating.patientProfile?.user?.profilePicture || undefined}
+                  alt={rating.patientProfile?.user?.fullName}
                 />
                 <AvatarFallback>
-                  {getInitials(rating.patient?.user?.name || 'مريض')}
+                  {getInitials(rating.patientProfile?.user?.fullName || t('doctors.patientFallback'))}
                 </AvatarFallback>
               </Avatar>
 
@@ -89,7 +93,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-semibold text-foreground">
-                      {rating.patient?.user?.name || 'مريض'}
+                      {rating.patientProfile?.user?.fullName || t('doctors.patientFallback')}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex items-center">
@@ -111,8 +115,8 @@ export function RatingsList({ doctorId }: RatingsListProps) {
                   </span>
                 </div>
 
-                {rating.comment && (
-                  <p className="mt-3 text-foreground">{rating.comment}</p>
+                {rating.review && (
+                  <p className="mt-3 text-foreground">{rating.review}</p>
                 )}
               </div>
             </div>
@@ -121,7 +125,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
       ))}
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {(hasMore || page > 1) && (
         <div className="flex items-center justify-center gap-4 pt-4">
           <Button
             variant="outline"
@@ -130,18 +134,18 @@ export function RatingsList({ doctorId }: RatingsListProps) {
             disabled={page === 1}
           >
             <ChevronRight className="h-4 w-4" />
-            السابق
+            {t('common.previous')}
           </Button>
           <span className="text-sm text-muted-foreground">
-            صفحة {page} من {totalPages}
+            {t('doctors.pageLabel').replace('{page}', String(page))}
           </span>
           <Button
             variant="outline"
             className="text-xs"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            disabled={!hasMore}
           >
-            التالي
+            {t('common.next')}
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>

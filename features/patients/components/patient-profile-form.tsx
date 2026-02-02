@@ -60,7 +60,7 @@ export function PatientProfileForm() {
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: user?.fullName || user?.name || '',
-      phone: user?.phone || '',
+      phone: user?.phoneNumber || '',
     },
   });
 
@@ -69,7 +69,7 @@ export function PatientProfileForm() {
     if (profile) {
       reset({
         name: profile.user?.fullName || profile.user?.name || user?.fullName || user?.name || '',
-        phone: profile.user?.phone || user?.phone || '',
+        phone: profile.user?.phoneNumber || user?.phoneNumber || '',
         dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
         gender: profile.gender,
         whatsappNumber: profile.whatsappNumber || '',
@@ -79,7 +79,7 @@ export function PatientProfileForm() {
       // Set defaults from user data for new profile
       reset({
         name: user.fullName || user.name || '',
-        phone: user.phone || '',
+        phone: user.phoneNumber || '',
         dateOfBirth: '',
         gender: undefined,
         whatsappNumber: '',
@@ -167,8 +167,11 @@ export function PatientProfileForm() {
               {...register('name')}
               icon={<User className="h-5 w-5" />}
               iconPosition="start"
-              error={errors.name?.message}
+              error={!!errors.name}
             />
+            {errors.name?.message && (
+              <p className="text-sm text-error-600">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Phone */}
@@ -182,8 +185,11 @@ export function PatientProfileForm() {
               icon={<Phone className="h-5 w-5" />}
               iconPosition="start"
               placeholder="01xxxxxxxxx"
-              error={errors.phone?.message}
+              error={!!errors.phone}
             />
+            {errors.phone?.message && (
+              <p className="text-sm text-error-600">{errors.phone.message}</p>
+            )}
           </div>
 
           {/* Email (read-only) */}

@@ -8,12 +8,14 @@ import { useDoctors } from '../hooks/use-doctors';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 
 interface DoctorListProps {
   initialFilters?: DoctorFilters;
 }
 
 export function DoctorList({ initialFilters = {} }: DoctorListProps) {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState<DoctorFilters>(initialFilters);
   const [page, setPage] = useState(1);
 
@@ -48,7 +50,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
         {/* Results Count */}
         {!isLoading && !isError && (
           <div className="mb-4 text-sm text-muted-foreground">
-            عرض {doctors.length} من {totalItems} طبيب
+            {t('doctor.showingResults').replace('{count}', String(doctors.length)).replace('{total}', String(totalItems))}
           </div>
         )}
 
@@ -85,10 +87,10 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
           <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
             <CardContent className="py-10 text-center">
               <p className="text-error-600 dark:text-error-400">
-                حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.
+                {t('doctor.loadError')}
               </p>
               <p className="text-sm text-error-500 dark:text-error-400 mt-2">
-                {error instanceof Error ? error.message : 'Unknown error'}
+                {error instanceof Error ? error.message : t('common.error')}
               </p>
             </CardContent>
           </Card>
@@ -100,13 +102,13 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
             <CardContent className="py-16 text-center">
               <Frown className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                لم يتم العثور على أطباء
+                {t('doctor.noDoctorsFound')}
               </h3>
               <p className="text-muted-foreground mb-4">
-                جرب تغيير معايير البحث أو مسح الفلاتر
+                {t('doctor.tryDifferentFilters')}
               </p>
               <Button variant="outline" onClick={() => handleFiltersChange({})}>
-                مسح الفلاتر
+                {t('common.clearFilters')}
               </Button>
             </CardContent>
           </Card>
@@ -131,7 +133,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
               disabled={page === 1}
             >
               <ChevronRight className="h-4 w-4" />
-              السابق
+              {t('common.previous')}
             </Button>
 
             <div className="flex items-center gap-1">
@@ -166,7 +168,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
-              التالي
+              {t('common.next')}
               <ChevronLeft className="h-4 w-4" />
             </Button>
           </div>

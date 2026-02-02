@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { useTranslation } from '@/lib/i18n';
 
 export default function DoctorsPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
 
   // Get initial filters from URL
@@ -39,10 +40,10 @@ export default function DoctorsPage() {
           <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <Stethoscope className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">ابحث عن طبيب</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('pages.doctors.title')}</h1>
         </div>
         <p className="text-muted-foreground">
-          اعثر على أفضل الأطباء المتخصصين واحجز موعدك بسهولة
+          {t('pages.doctors.subtitle')}
         </p>
       </div>
 

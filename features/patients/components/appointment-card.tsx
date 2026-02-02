@@ -30,12 +30,13 @@ interface AppointmentCardProps {
   onRate?: (appointment: Appointment) => void;
 }
 
-const statusVariants: Record<AppointmentStatus, 'warning' | 'success' | 'primary' | 'default' | 'destructive' | 'secondary'> = {
+const statusVariants: Record<AppointmentStatus, 'warning' | 'success' | 'default' | 'error' | 'secondary'> = {
   [AppointmentStatus.PENDING]: 'warning',
   [AppointmentStatus.CONFIRMED]: 'success',
-  [AppointmentStatus.CHECKED_IN]: 'primary',
-  [AppointmentStatus.COMPLETED]: 'default',
-  [AppointmentStatus.CANCELLED]: 'destructive',
+  [AppointmentStatus.CHECKED_IN]: 'default',
+  [AppointmentStatus.IN_PROGRESS]: 'default',
+  [AppointmentStatus.COMPLETED]: 'secondary',
+  [AppointmentStatus.CANCELLED]: 'error',
   [AppointmentStatus.NO_SHOW]: 'secondary',
 };
 
@@ -48,6 +49,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
       [AppointmentStatus.PENDING]: t('status.pending'),
       [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
       [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+      [AppointmentStatus.IN_PROGRESS]: t('status.inProgress'),
       [AppointmentStatus.COMPLETED]: t('status.completed'),
       [AppointmentStatus.CANCELLED]: t('status.cancelled'),
       [AppointmentStatus.NO_SHOW]: t('status.noShow'),
