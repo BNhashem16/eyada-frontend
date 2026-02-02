@@ -10,6 +10,8 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import type { ApiError } from '@/types/models';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -85,10 +87,11 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
       router.push('/patient/appointments');
     },
-    onError: (error: Error) => {
+    onError: (error: AxiosError<ApiError>) => {
+      const message = error.response?.data?.message || t('booking.bookingFailedDesc');
       toast({
         title: t('booking.bookingFailedTitle'),
-        description: error.message || t('booking.bookingFailedDesc'),
+        description: message,
         variant: 'error',
       });
     },

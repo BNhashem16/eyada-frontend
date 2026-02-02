@@ -3,10 +3,20 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Frown, Calendar as CalendarIcon } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Frown,
+  Calendar as CalendarIcon,
+  Plus,
+  Search,
+  SlidersHorizontal,
+} from 'lucide-react';
 import { AppointmentCard } from './appointment-card';
+import { BookAppointmentDialog } from './book-appointment-dialog';
 import { useSecretaryAppointments, useSecretaryClinics } from '../hooks';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -18,16 +28,29 @@ import {
 } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { AppointmentStatus } from '@/types/enums';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { AppointmentStatus, PaymentStatus } from '@/types/enums';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 
-export function AppointmentList() {
+interface AppointmentListProps {
+  showBookButton?: boolean;
+}
+
+export function AppointmentList({ showBookButton = true }: AppointmentListProps) {
   const { t } = useTranslation();
   const [selectedClinic, setSelectedClinic] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [bookDialogOpen, setBookDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
 
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
@@ -35,6 +58,8 @@ export function AppointmentList() {
     clinicId: selectedClinic === 'all' ? undefined : selectedClinic,
     date: format(selectedDate, 'yyyy-MM-dd'),
     status: selectedStatus === 'all' ? undefined : selectedStatus as AppointmentStatus,
+    paymentStatus: selectedPaymentStatus === 'all' ? undefined : selectedPaymentStatus as PaymentStatus,
+    search: searchQuery.trim() || undefined,
     page,
     limit: 20,
   });
@@ -48,65 +73,127 @@ export function AppointmentList() {
     { value: AppointmentStatus.PENDING, label: t('secretary.waiting') },
     { value: AppointmentStatus.CONFIRMED, label: t('secretary.confirmed') },
     { value: AppointmentStatus.CHECKED_IN, label: t('secretary.attended') },
+    { value: AppointmentStatus.IN_PROGRESS, label: t('secretary.inProgress') },
     { value: AppointmentStatus.COMPLETED, label: t('secretary.completed') },
     { value: AppointmentStatus.CANCELLED, label: t('secretary.cancelled') },
+    { value: AppointmentStatus.NO_SHOW, label: t('secretary.noShow') },
+  ];
+
+  const paymentStatusOptions = [
+    { value: 'all', label: t('secretary.allPaymentStatuses') },
+    { value: PaymentStatus.PENDING, label: t('secretary.unpaid') },
+    { value: PaymentStatus.PAID, label: t('secretary.paid') },
+    { value: PaymentStatus.REFUNDED, label: t('secretary.refunded') },
   ];
 
   return (
     <div className="space-y-4">
+      {/* Header with Book Button */}
+      {showBookButton && (
+        <div className="flex justify-between items-center">
+          <div className="flex-1" />
+          <Button onClick={() => setBookDialogOpen(true)}>
+            <Plus className="h-4 w-4 me-2" />
+            {t('secretary.bookAppointment')}
+          </Button>
+        </div>
+      )}
+
       {/* Filters */}
       <Card>
         <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row flex-wrap gap-4">
-            {/* Clinic Filter */}
-            <Select value={selectedClinic} onValueChange={setSelectedClinic}>
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder={t('secretary.selectClinic')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('secretary.allClinics')}</SelectItem>
-                {clinics?.map((clinic) => (
-                  <SelectItem key={clinic.id} value={clinic.id}>
-                    {getLocalizedText(clinic.name, 'ar')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Date Filter */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className={cn('w-full sm:w-[200px] justify-start')}>
-                  <CalendarIcon className="me-2 h-4 w-4" />
-                  {format(selectedDate, 'dd MMMM yyyy', { locale: ar })}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => date && setSelectedDate(date)}
-                  initialFocus
+          <div className="space-y-4">
+            {/* Primary Filters */}
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t('secretary.searchPlaceholder')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="ps-9"
                 />
-              </PopoverContent>
-            </Popover>
+              </div>
 
-            {/* Status Filter */}
-            <Select
-              value={selectedStatus}
-              onValueChange={setSelectedStatus}
-            >
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder={t('secretary.appointmentStatus')} />
-              </SelectTrigger>
-              <SelectContent>
-                {statusOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {/* Clinic Filter */}
+              <Select value={selectedClinic} onValueChange={setSelectedClinic}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder={t('secretary.selectClinic')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('secretary.allClinics')}</SelectItem>
+                  {clinics?.map((clinic) => (
+                    <SelectItem key={clinic.id} value={clinic.id}>
+                      {getLocalizedText(clinic.name, 'ar')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Date Filter */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={cn('w-full sm:w-[200px] justify-start')}>
+                    <CalendarIcon className="me-2 h-4 w-4" />
+                    {format(selectedDate, 'dd MMMM yyyy', { locale: ar })}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => date && setSelectedDate(date)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {/* Advanced Filters Toggle */}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className={cn(showAdvancedFilters && 'bg-primary-100 dark:bg-primary-900/30')}
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Advanced Filters */}
+            <Collapsible open={showAdvancedFilters}>
+              <CollapsibleContent className="pt-4 border-t">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-4">
+                  {/* Status Filter */}
+                  <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                    <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectValue placeholder={t('secretary.appointmentStatus')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {statusOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Payment Status Filter */}
+                  <Select value={selectedPaymentStatus} onValueChange={setSelectedPaymentStatus}>
+                    <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectValue placeholder={t('secretary.paymentStatusFilter')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paymentStatusOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         </CardContent>
       </Card>
@@ -206,6 +293,12 @@ export function AppointmentList() {
           </Button>
         </div>
       )}
+
+      {/* Book Appointment Dialog */}
+      <BookAppointmentDialog
+        open={bookDialogOpen}
+        onOpenChange={setBookDialogOpen}
+      />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { User, Phone, Mail, Calendar, Loader2 } from 'lucide-react';
@@ -38,55 +37,67 @@ type ProfileFormData = z.infer<ReturnType<typeof getProfileSchema>>;
 
 export function PatientProfileForm() {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const { data: profile, isLoading, error } = usePatientProfile();
-  const updateMutation = useUpdatePatientProfile();
-  const createMutation = useCreatePatientProfile();
   const user = useAuthStore((state) => state.user);
 
-  const profileSchema = getProfileSchema(t);
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-40" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Determine if this is a new profile (profile doesn't exist)
-  const isNewProfile = !isLoading && (!profile || error);
+  const isNewProfile = !profile || error;
+
+  return (
+    <PatientProfileFormContent
+      profile={profile}
+      user={user}
+      isNewProfile={isNewProfile}
+    />
+  );
+}
+
+interface PatientProfileFormContentProps {
+  profile: ReturnType<typeof usePatientProfile>['data'];
+  user: ReturnType<typeof useAuthStore>['user'];
+  isNewProfile: boolean;
+}
+
+function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfileFormContentProps) {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const updateMutation = useUpdatePatientProfile();
+  const createMutation = useCreatePatientProfile();
+
+  const profileSchema = getProfileSchema(t);
 
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
+    control,
     formState: { errors, isDirty },
-    reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.fullName || user?.name || '',
-      phone: user?.phoneNumber || '',
+      name: profile?.user?.fullName || profile?.user?.name || user?.fullName || user?.name || '',
+      phone: profile?.user?.phoneNumber || user?.phoneNumber || '',
+      dateOfBirth: profile?.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
+      gender: profile?.gender || undefined,
+      whatsappNumber: profile?.whatsappNumber || '',
+      bloodType: profile?.bloodType || '',
     },
   });
-
-  // Populate form when profile loads
-  useEffect(() => {
-    if (profile) {
-      reset({
-        name: profile.user?.fullName || profile.user?.name || user?.fullName || user?.name || '',
-        phone: profile.user?.phoneNumber || user?.phoneNumber || '',
-        dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
-        gender: profile.gender,
-        whatsappNumber: profile.whatsappNumber || '',
-        bloodType: profile.bloodType || '',
-      });
-    } else if (user) {
-      // Set defaults from user data for new profile
-      reset({
-        name: user.fullName || user.name || '',
-        phone: user.phoneNumber || '',
-        dateOfBirth: '',
-        gender: undefined,
-        whatsappNumber: '',
-        bloodType: '',
-      });
-    }
-  }, [profile, user, reset]);
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
@@ -125,22 +136,6 @@ export function PatientProfileForm() {
   };
 
   const isPending = createMutation.isPending || updateMutation.isPending;
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-40" />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -221,18 +216,24 @@ export function PatientProfileForm() {
           {/* Gender */}
           <div className="space-y-2">
             <Label>{t('patient.gender')}</Label>
-            <Select
-              value={watch('gender') || ''}
-              onValueChange={(value) => setValue('gender', value as Gender, { shouldDirty: true })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t('patient.selectGender')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={Gender.MALE}>{t('patient.male')}</SelectItem>
-                <SelectItem value={Gender.FEMALE}>{t('patient.female')}</SelectItem>
-              </SelectContent>
-            </Select>
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value || ''}
+                  onValueChange={(value) => field.onChange(value as Gender)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('patient.selectGender')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={Gender.MALE}>{t('patient.male')}</SelectItem>
+                    <SelectItem value={Gender.FEMALE}>{t('patient.female')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           {/* WhatsApp Number */}
@@ -252,24 +253,30 @@ export function PatientProfileForm() {
           {/* Blood Type */}
           <div className="space-y-2">
             <Label>{t('patient.bloodType')}</Label>
-            <Select
-              value={watch('bloodType') || ''}
-              onValueChange={(value) => setValue('bloodType', value, { shouldDirty: true })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t('patient.selectBloodType')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="A+">A+</SelectItem>
-                <SelectItem value="A-">A-</SelectItem>
-                <SelectItem value="B+">B+</SelectItem>
-                <SelectItem value="B-">B-</SelectItem>
-                <SelectItem value="AB+">AB+</SelectItem>
-                <SelectItem value="AB-">AB-</SelectItem>
-                <SelectItem value="O+">O+</SelectItem>
-                <SelectItem value="O-">O-</SelectItem>
-              </SelectContent>
-            </Select>
+            <Controller
+              name="bloodType"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value || ''}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('patient.selectBloodType')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="A+">A+</SelectItem>
+                    <SelectItem value="A-">A-</SelectItem>
+                    <SelectItem value="B+">B+</SelectItem>
+                    <SelectItem value="B-">B-</SelectItem>
+                    <SelectItem value="AB+">AB+</SelectItem>
+                    <SelectItem value="AB-">AB-</SelectItem>
+                    <SelectItem value="O+">O+</SelectItem>
+                    <SelectItem value="O-">O-</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           {/* Submit */}

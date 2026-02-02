@@ -75,7 +75,8 @@ export function AdminDoctorsList() {
 
   // Queries
   const { data, isLoading, isError, error } = useAdminDoctors(filters);
-  const { data: specialties } = useAdminSpecialties();
+  const { data: specialtiesData } = useAdminSpecialties();
+  const specialties = specialtiesData?.data || [];
 
   // Mutations
   const approveDoctor = useApproveDoctor();

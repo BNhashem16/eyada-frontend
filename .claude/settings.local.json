@@ -23,7 +23,8 @@
       "Bash(npx @nestjs/cli new . --skip-git --package-manager npm)",
       "Bash(node -e:*)",
       "Bash(python -c:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(python:*)"
     ]
   }
 }
