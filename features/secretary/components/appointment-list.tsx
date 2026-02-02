@@ -23,16 +23,16 @@ import { getLocalizedText } from '@/lib/utils/multilingual';
 import { cn } from '@/lib/utils';
 
 export function AppointmentList() {
-  const [selectedClinic, setSelectedClinic] = useState<string>('');
+  const [selectedClinic, setSelectedClinic] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedStatus, setSelectedStatus] = useState<AppointmentStatus | ''>('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [page, setPage] = useState(1);
 
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
   const { data, isLoading, isError, error } = useSecretaryAppointments({
-    clinicId: selectedClinic || undefined,
+    clinicId: selectedClinic === 'all' ? undefined : selectedClinic,
     date: format(selectedDate, 'yyyy-MM-dd'),
-    status: selectedStatus || undefined,
+    status: selectedStatus === 'all' ? undefined : selectedStatus as AppointmentStatus,
     page,
     limit: 20,
   });
@@ -42,7 +42,7 @@ export function AppointmentList() {
   const totalItems = data?.meta?.total ?? 0;
 
   const statusOptions = [
-    { value: '', label: 'جميع الحالات' },
+    { value: 'all', label: 'جميع الحالات' },
     { value: AppointmentStatus.PENDING, label: 'في الانتظار' },
     { value: AppointmentStatus.CONFIRMED, label: 'مؤكد' },
     { value: AppointmentStatus.CHECKED_IN, label: 'حضر' },
@@ -62,7 +62,7 @@ export function AppointmentList() {
                 <SelectValue placeholder="اختر العيادة" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">جميع العيادات</SelectItem>
+                <SelectItem value="all">جميع العيادات</SelectItem>
                 {clinics?.map((clinic) => (
                   <SelectItem key={clinic.id} value={clinic.id}>
                     {getLocalizedText(clinic.name, 'ar')}
@@ -92,7 +92,7 @@ export function AppointmentList() {
             {/* Status Filter */}
             <Select
               value={selectedStatus}
-              onValueChange={(v) => setSelectedStatus(v as AppointmentStatus | '')}
+              onValueChange={setSelectedStatus}
             >
               <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="حالة الموعد" />

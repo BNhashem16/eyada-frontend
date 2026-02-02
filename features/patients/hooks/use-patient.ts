@@ -215,6 +215,19 @@ export function useAddFamilyMember() {
   });
 }
 
+export function useUpdateFamilyMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ memberId, data }: { memberId: string; data: Partial<Omit<FamilyMember, 'id' | 'patientId' | 'createdAt' | 'updatedAt'>> }) => {
+      return apiPatch<FamilyMember>(`${PATIENT_ENDPOINTS.FAMILY}/${memberId}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-family'] });
+    },
+  });
+}
+
 export function useDeleteFamilyMember() {
   const queryClient = useQueryClient();
 
