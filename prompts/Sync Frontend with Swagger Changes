@@ -1,49 +1,21 @@
-You are a senior frontend engineer.
+You have TWO separate projects:
 
-Context:
-- Frontend application consumes backend APIs
-- Backend APIs are documented using Swagger / OpenAPI
-- Swagger is the SINGLE source of truth
-- Swagger has been recently updated
+Backend (NestJS):
+Path: C:\Nest\eyada
+Swagger URL: http://localhost:3000/api
 
-Task:
-Review the latest Swagger / OpenAPI documentation
-and apply ALL required changes to the frontend so it fully matches Swagger.
-
-Url: http://localhost:3000/api
-Scope:
-- Request payloads
-- Query parameters
-- Path parameters
-- Response structures
-- Status codes
-- Required vs optional fields
+Frontend (Next.js React):
+Path: C:\React\eyada-frontend
 
 Rules:
-- Do NOT assume old API behavior
-- Do NOT rely on previous frontend implementation
-- Follow Swagger exactly as documented
-- Update API calls, types/interfaces, and validations accordingly
+- Do NOT modify backend code at all
+- Backend is the source of truth
+- Analyze Swagger documentation only
+- Detect API changes (new endpoints, removed fields, changed DTOs)
+- Update frontend API calls, types, and services accordingly
+- Keep frontend clean and type-safe
+- If something is missing in frontend, implement it
+- If something is deprecated, remove it safely
 
-Requirements:
-- Update API service layer
-- Update types/interfaces (TypeScript if used)
-- Update forms and validations to match Swagger
-- Handle new/changed error responses properly
-- Ensure backward compatibility only if Swagger explicitly supports it
-
-Constraints:
-- Do NOT change backend code
-- Do NOT modify Swagger
-- Frontend changes only
-
-Validation:
-- No API call should send undocumented fields
-- All required fields must be sent
-- Frontend correctly handles all documented responses
-- No console errors related to API mismatch
-
-Output:
-- List Swagger changes detected
-- Show frontend files updated
-- Explain how frontend now aligns with Swagger
+Goal:
+Sync frontend with backend based ONLY on Swagger changes

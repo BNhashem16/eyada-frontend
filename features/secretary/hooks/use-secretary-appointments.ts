@@ -78,11 +78,11 @@ export function useSecretaryClinics() {
   });
 }
 
-// Create appointment for patient - matching Swagger CreateSecretaryAppointmentDto
+// Create appointment for patient - per Swagger CreateSecretaryAppointmentDto
 export interface CreateSecretaryAppointmentData {
   clinicId: string;
   serviceTypeId: string;
-  appointmentDate: string; // YYYY-MM-DD format
+  appointmentDate: string; // YYYY-MM-DD format per Swagger
   patientProfileId: string; // Required for secretary
   notes?: string;
   symptoms?: string;

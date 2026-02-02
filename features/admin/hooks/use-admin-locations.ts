@@ -2,23 +2,26 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS, PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
+import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
 import { State, City, Multilingual } from '@/types';
 
-// States
+// States - per Swagger: GET /admin/states returns all states (active and inactive)
 export function useAdminStates() {
   return useQuery({
     queryKey: ['admin-states'],
     queryFn: async () => {
-      return apiGet<State[]>(PUBLIC_ENDPOINTS.STATES);
+      return apiGet<State[]>(ADMIN_ENDPOINTS.STATES);
     },
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
 }
 
+// Per Swagger CreateStateDto: name and code are REQUIRED
 interface CreateStateData {
   name: Multilingual;
-  code?: string;
+  code: string; // Required per Swagger, maxLength: 10
+  sortOrder?: number;
+  isActive?: boolean;
 }
 
 export function useCreateState() {
@@ -68,13 +71,13 @@ export function useDeleteState() {
   });
 }
 
-// Cities
+// Cities - per Swagger: GET /admin/cities returns all cities (active and inactive)
 export function useAdminCities(stateId?: string) {
   return useQuery({
     queryKey: ['admin-cities', stateId],
     queryFn: async () => {
       const params = stateId ? `?stateId=${stateId}` : '';
-      return apiGet<City[]>(`${PUBLIC_ENDPOINTS.CITIES}${params}`);
+      return apiGet<City[]>(`${ADMIN_ENDPOINTS.CITIES}${params}`);
     },
     staleTime: 1000 * 60 * 10, // 10 minutes
   });

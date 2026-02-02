@@ -357,6 +357,7 @@ export function useUpdateAppointmentStatus() {
   });
 }
 
+// Per Swagger UpdatePaymentStatusDto: paymentStatus (required), paymentMethod (optional)
 export function useUpdateAppointmentPayment() {
   const queryClient = useQueryClient();
 
@@ -364,15 +365,15 @@ export function useUpdateAppointmentPayment() {
     mutationFn: async ({
       appointmentId,
       paymentStatus,
-      amountPaid,
+      paymentMethod,
     }: {
       appointmentId: string;
       paymentStatus: PaymentStatus;
-      amountPaid?: number;
+      paymentMethod?: 'CASH' | 'CARD' | 'INSURANCE';
     }) => {
       return apiPatch(`${DOCTOR_ENDPOINTS.APPOINTMENTS}/${appointmentId}/payment`, {
         paymentStatus,
-        amountPaid,
+        paymentMethod,
       });
     },
     onSuccess: () => {

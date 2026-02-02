@@ -75,14 +75,15 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     selectedDate ? formatDate(selectedDate, 'yyyy-MM-dd') : ''
   );
 
-  // Booking mutation
+  // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({
     mutationFn: async () => {
       if (!selectedDate || !selectedSlot || !selectedServiceId) {
         throw new Error(t('booking.selectAllRequired'));
       }
 
-      // Per Swagger CreateAppointmentDto - only these fields are documented
+      // Per Swagger: appointmentDate is YYYY-MM-DD format only
+      // Note: Time slot selection is for UX but not sent per Swagger spec
       return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, {
         clinicId,
         serviceTypeId: selectedServiceId,

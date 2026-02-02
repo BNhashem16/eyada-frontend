@@ -450,7 +450,19 @@
     "createdSuccess": "Your profile has been created successfully",
     "updatedSuccess": "Your data has been updated successfully",
     "saveError": "An error occurred while saving data",
-    "createProfile": "Create Profile"
+    "createProfile": "Create Profile",
+    "appointmentsPage": {
+      "title": "My Appointments",
+      "subtitle": "Manage and track your medical appointments"
+    },
+    "profilePage": {
+      "title": "Profile",
+      "subtitle": "Update your personal information"
+    },
+    "familyPage": {
+      "title": "Family Members",
+      "subtitle": "Add and manage family members to book appointments for them"
+    }
   },
   "rating": {
     "title": "Rate Your Experience",
@@ -524,7 +536,66 @@
     "totalRatings": "Total Ratings",
     "ratingDistribution": "Rating Distribution",
     "patientReviews": "Patient Reviews",
-    "ratingsPageDescription": "View your ratings and patient feedback"
+    "ratingsPageDescription": "View your ratings and patient feedback",
+    "appointmentsPage": {
+      "title": "Appointments",
+      "subtitle": "Manage patient appointments and waiting list"
+    },
+    "clinicsPage": {
+      "title": "Clinics",
+      "subtitle": "Manage clinics, appointments, and services",
+      "addNew": "Add New Clinic",
+      "noClinics": "No clinics found",
+      "noClinicsCta": "Add your first clinic to start receiving bookings",
+      "loadError": "Error loading clinics. Please try again.",
+      "serviceCount": "service",
+      "workDayCount": "work day"
+    },
+    "profilePage": {
+      "title": "Profile",
+      "subtitle": "Update your information and qualifications"
+    },
+    "profileForm": {
+      "newProfile": "New Profile",
+      "completeProfileMessage": "Complete your information to create your profile",
+      "ratingLabel": "Rating",
+      "reviewsLabel": "Reviews",
+      "appointmentsLabel": "Appointments",
+      "medicalSpecialty": "Medical Specialty",
+      "specialty": "Specialty",
+      "selectSpecialty": "Select your medical specialty",
+      "professionalInfo": "Professional Information",
+      "licenseNumber": "License Number",
+      "licenseNumberPlaceholder": "Enter license number",
+      "yearsOfExperience": "Years of Experience",
+      "qualificationsAr": "Qualifications (Arabic)",
+      "qualificationsArPlaceholder": "Bachelor of Medicine, Master's...",
+      "qualificationsEn": "Qualifications (English)",
+      "qualificationsEnPlaceholder": "Bachelor of Medicine, Master's...",
+      "bioSection": "Biography",
+      "bioAr": "About You (Arabic)",
+      "bioArPlaceholder": "Write a brief description about your experience...",
+      "bioEn": "About You (English)",
+      "bioEnPlaceholder": "Write a brief description about your experience...",
+      "contactAndPrivacy": "Contact & Privacy",
+      "showPhoneNumber": "Show Phone Number",
+      "showPhoneNumberDesc": "Allow patients to see your phone number",
+      "showWhatsappNumber": "Show WhatsApp Number",
+      "showWhatsappNumberDesc": "Allow patients to contact you via WhatsApp",
+      "whatsappNumbers": "WhatsApp Numbers",
+      "createProfile": "Create Profile",
+      "statusApproved": "Approved",
+      "statusPending": "Under Review",
+      "statusRejected": "Rejected",
+      "statusSuspended": "Suspended",
+      "createdTitle": "Created",
+      "createdDescription": "Profile created successfully",
+      "savedTitle": "Saved",
+      "savedDescription": "Profile updated successfully",
+      "errorTitle": "Error",
+      "createError": "Failed to create profile",
+      "updateError": "Failed to update profile"
+    }
   },
   "secretary": {
     "dashboard": "Secretary Dashboard",
@@ -548,7 +619,6 @@
     "noShow": "No Show",
     "revenue": "Revenue",
     "bookAppointment": "Book Appointment",
-    "selectClinic": "Select Clinic",
     "selectService": "Select Service",
     "selectPatient": "Select Patient",
     "selectDate": "Select Date",
@@ -562,7 +632,16 @@
     "insurance": "Insurance",
     "unpaid": "Unpaid",
     "paid": "Paid",
-    "refunded": "Refunded"
+    "refunded": "Refunded",
+    "dashboardPage": {
+      "title": "Dashboard",
+      "subtitle": "Welcome to the secretary dashboard",
+      "todayAppointments": "Today's Appointments"
+    },
+    "appointmentsPage": {
+      "title": "Manage Appointments",
+      "subtitle": "View and manage all clinic appointments"
+    }
   },
   "admin": {
     "dashboard": "Dashboard",
@@ -601,7 +680,48 @@
     "editState": "Edit State",
     "editCity": "Edit City",
     "stateCode": "State Code",
-    "sortOrder": "Sort Order"
+    "sortOrder": "Sort Order",
+    "doctors": {
+      "title": "Manage Doctors",
+      "subtitle": "View and manage all registered doctors on the platform",
+      "searchPlaceholder": "Search by name, email, or phone...",
+      "allStatuses": "All Statuses",
+      "underReview": "Under Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "suspended": "Suspended",
+      "totalResults": "Total Results:",
+      "pageOf": "Page {current} of {total}",
+      "noDoctorsFound": "No doctors found",
+      "noDoctorsMatchFilters": "No doctors match the selected filters",
+      "license": "License:",
+      "reactivate": "Reactivate",
+      "confirmSuspend": "Confirm Suspension",
+      "suspendMessage": "The doctor's account will be temporarily suspended and won't appear in search results.",
+      "approveMessage": "The doctor's account will be activated and they can manage their clinic and receive bookings.",
+      "rejectConfirmMessage": "The doctor's request will be rejected and they won't be able to use the platform."
+    },
+    "locations": {
+      "title": "Manage Locations",
+      "subtitle": "Manage states and cities in the system",
+      "statesAndCities": "States and Cities",
+      "noStates": "No states found",
+      "noCities": "No cities found",
+      "addNewState": "Add New State",
+      "addNewCity": "Add New City",
+      "nameArRequired": "Name (Arabic) *",
+      "nameEnRequired": "Name (English) *",
+      "code": "Code",
+      "deleteState": "Delete State",
+      "deleteStateConfirm": "All cities in this state will be deleted. Are you sure?",
+      "deleteCity": "Delete City",
+      "deleteCityConfirm": "Are you sure you want to delete this city?",
+      "cityCount": "city"
+    },
+    "specialtiesPage": {
+      "title": "Manage Specialties",
+      "subtitle": "Add, edit, and delete medical specialties"
+    }
   },
   "table": {
     "nameAr": "Name (Arabic)",
@@ -787,135 +907,6 @@
     "specialties": {
       "title": "Medical Specialties",
       "subtitle": "Choose the right specialty to find the best doctors"
-    }
-  },
-  "admin": {
-    "doctors": {
-      "title": "Manage Doctors",
-      "subtitle": "View and manage all registered doctors on the platform",
-      "searchPlaceholder": "Search by name, email, or phone...",
-      "allStatuses": "All Statuses",
-      "underReview": "Under Review",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "suspended": "Suspended",
-      "totalResults": "Total Results:",
-      "pageOf": "Page {current} of {total}",
-      "noDoctorsFound": "No doctors found",
-      "noDoctorsMatchFilters": "No doctors match the selected filters",
-      "license": "License:",
-      "reactivate": "Reactivate",
-      "confirmSuspend": "Confirm Suspension",
-      "suspendMessage": "The doctor's account will be temporarily suspended and won't appear in search results.",
-      "approveMessage": "The doctor's account will be activated and they can manage their clinic and receive bookings.",
-      "rejectConfirmMessage": "The doctor's request will be rejected and they won't be able to use the platform."
-    },
-    "locations": {
-      "title": "Manage Locations",
-      "subtitle": "Manage states and cities in the system",
-      "statesAndCities": "States and Cities",
-      "noStates": "No states found",
-      "noCities": "No cities found",
-      "addNewState": "Add New State",
-      "addNewCity": "Add New City",
-      "nameArRequired": "Name (Arabic) *",
-      "nameEnRequired": "Name (English) *",
-      "code": "Code",
-      "deleteState": "Delete State",
-      "deleteStateConfirm": "All cities in this state will be deleted. Are you sure?",
-      "deleteCity": "Delete City",
-      "deleteCityConfirm": "Are you sure you want to delete this city?",
-      "cityCount": "city"
-    },
-    "specialtiesPage": {
-      "title": "Manage Specialties",
-      "subtitle": "Add, edit, and delete medical specialties"
-    }
-  },
-  "doctor": {
-    "appointmentsPage": {
-      "title": "Appointments",
-      "subtitle": "Manage patient appointments and waiting list"
-    },
-    "clinicsPage": {
-      "title": "Clinics",
-      "subtitle": "Manage clinics, appointments, and services",
-      "addNew": "Add New Clinic",
-      "noClinics": "No clinics found",
-      "noClinicsCta": "Add your first clinic to start receiving bookings",
-      "loadError": "Error loading clinics. Please try again.",
-      "serviceCount": "service",
-      "workDayCount": "work day"
-    },
-    "profilePage": {
-      "title": "Profile",
-      "subtitle": "Update your information and qualifications"
-    },
-    "profileForm": {
-      "newProfile": "New Profile",
-      "completeProfileMessage": "Complete your information to create your profile",
-      "ratingLabel": "Rating",
-      "reviewsLabel": "Reviews",
-      "appointmentsLabel": "Appointments",
-      "medicalSpecialty": "Medical Specialty",
-      "specialty": "Specialty",
-      "selectSpecialty": "Select your medical specialty",
-      "professionalInfo": "Professional Information",
-      "licenseNumber": "License Number",
-      "licenseNumberPlaceholder": "Enter license number",
-      "yearsOfExperience": "Years of Experience",
-      "qualificationsAr": "Qualifications (Arabic)",
-      "qualificationsArPlaceholder": "Bachelor of Medicine, Master's...",
-      "qualificationsEn": "Qualifications (English)",
-      "qualificationsEnPlaceholder": "Bachelor of Medicine, Master's...",
-      "bioSection": "Biography",
-      "bioAr": "About You (Arabic)",
-      "bioArPlaceholder": "Write a brief description about your experience...",
-      "bioEn": "About You (English)",
-      "bioEnPlaceholder": "Write a brief description about your experience...",
-      "contactAndPrivacy": "Contact & Privacy",
-      "showPhoneNumber": "Show Phone Number",
-      "showPhoneNumberDesc": "Allow patients to see your phone number",
-      "showWhatsappNumber": "Show WhatsApp Number",
-      "showWhatsappNumberDesc": "Allow patients to contact you via WhatsApp",
-      "whatsappNumbers": "WhatsApp Numbers",
-      "createProfile": "Create Profile",
-      "statusApproved": "Approved",
-      "statusPending": "Under Review",
-      "statusRejected": "Rejected",
-      "statusSuspended": "Suspended",
-      "createdTitle": "Created",
-      "createdDescription": "Profile created successfully",
-      "savedTitle": "Saved",
-      "savedDescription": "Profile updated successfully",
-      "errorTitle": "Error",
-      "createError": "Failed to create profile",
-      "updateError": "Failed to update profile"
-    }
-  },
-  "patient": {
-    "appointmentsPage": {
-      "title": "My Appointments",
-      "subtitle": "Manage and track your medical appointments"
-    },
-    "profilePage": {
-      "title": "Profile",
-      "subtitle": "Update your personal information"
-    },
-    "familyPage": {
-      "title": "Family Members",
-      "subtitle": "Add and manage family members to book appointments for them"
-    }
-  },
-  "secretary": {
-    "dashboardPage": {
-      "title": "Dashboard",
-      "subtitle": "Welcome to the secretary dashboard",
-      "todayAppointments": "Today's Appointments"
-    },
-    "appointmentsPage": {
-      "title": "Manage Appointments",
-      "subtitle": "View and manage all clinic appointments"
     }
   }
 }

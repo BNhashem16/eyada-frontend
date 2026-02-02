@@ -2,15 +2,30 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS, PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
-import { Specialty, Multilingual } from '@/types';
+import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
+import { Specialty, Multilingual, PaginatedResponse } from '@/types';
 
-export function useAdminSpecialties() {
+// Per Swagger: GET /admin/specialties with optional filters and pagination
+export interface UseAdminSpecialtiesOptions {
+  page?: number;
+  limit?: number;
+  search?: string;
+  isActive?: boolean;
+}
+
+export function useAdminSpecialties(options: UseAdminSpecialtiesOptions = {}) {
+  const { page = 1, limit = 10, search, isActive } = options;
+
   return useQuery({
-    queryKey: ['admin-specialties'],
+    queryKey: ['admin-specialties', { page, limit, search, isActive }],
     queryFn: async () => {
-      // Include all specialties (active and inactive) for admin view
-      return apiGet<Specialty[]>(`${PUBLIC_ENDPOINTS.SPECIALTIES}?includeInactive=true`);
+      const params = new URLSearchParams();
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+      if (search) params.append('search', search);
+      if (isActive !== undefined) params.append('isActive', isActive.toString());
+
+      return apiGet<PaginatedResponse<Specialty>>(`${ADMIN_ENDPOINTS.SPECIALTIES}?${params.toString()}`);
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });

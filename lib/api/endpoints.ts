@@ -115,13 +115,13 @@ export const ADMIN_ENDPOINTS = {
   REJECT_DOCTOR: (id: string) => `/admin/doctors/${id}/reject`,
   SUSPEND_DOCTOR: (id: string) => `/admin/doctors/${id}/suspend`,
 
-  // Specialties (CRUD)
-  SPECIALTIES: '/specialties',
-  SPECIALTY: (id: string) => `/specialties/${id}`,
+  // Specialties (CRUD) - per Swagger: /admin/specialties
+  SPECIALTIES: '/admin/specialties',
+  SPECIALTY: (id: string) => `/admin/specialties/${id}`,
 
-  // Locations (CRUD)
-  STATES: '/states',
-  STATE: (id: string) => `/states/${id}`,
-  CITIES: '/cities',
-  CITY: (id: string) => `/cities/${id}`,
+  // Locations (CRUD) - per Swagger: /admin/states, /admin/cities
+  STATES: '/admin/states',
+  STATE: (id: string) => `/admin/states/${id}`,
+  CITIES: '/admin/cities',
+  CITY: (id: string) => `/admin/cities/${id}`,
 } as const;

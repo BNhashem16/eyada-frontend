@@ -450,7 +450,19 @@
     "createdSuccess": "تم إنشاء ملفك الشخصي بنجاح",
     "updatedSuccess": "تم تحديث بياناتك بنجاح",
     "saveError": "حدث خطأ أثناء حفظ البيانات",
-    "createProfile": "إنشاء الملف الشخصي"
+    "createProfile": "إنشاء الملف الشخصي",
+    "appointmentsPage": {
+      "title": "مواعيدي",
+      "subtitle": "إدارة ومتابعة مواعيدك الطبية"
+    },
+    "profilePage": {
+      "title": "الملف الشخصي",
+      "subtitle": "تحديث بياناتك الشخصية"
+    },
+    "familyPage": {
+      "title": "أفراد العائلة",
+      "subtitle": "إضافة وإدارة أفراد عائلتك لحجز مواعيد لهم"
+    }
   },
   "rating": {
     "title": "قيّم تجربتك",
@@ -524,7 +536,66 @@
     "totalRatings": "إجمالي التقييمات",
     "ratingDistribution": "توزيع التقييمات",
     "patientReviews": "آراء المرضى",
-    "ratingsPageDescription": "عرض تقييماتك وآراء المرضى"
+    "ratingsPageDescription": "عرض تقييماتك وآراء المرضى",
+    "appointmentsPage": {
+      "title": "المواعيد",
+      "subtitle": "إدارة مواعيد المرضى وقائمة الانتظار"
+    },
+    "clinicsPage": {
+      "title": "العيادات",
+      "subtitle": "إدارة العيادات والمواعيد والخدمات",
+      "addNew": "إضافة عيادة جديدة",
+      "noClinics": "لا توجد عيادات",
+      "noClinicsCta": "قم بإضافة عيادتك الأولى لبدء استقبال الحجوزات",
+      "loadError": "حدث خطأ أثناء تحميل العيادات. يرجى المحاولة مرة أخرى.",
+      "serviceCount": "خدمة",
+      "workDayCount": "يوم عمل"
+    },
+    "profilePage": {
+      "title": "الملف الشخصي",
+      "subtitle": "تحديث بياناتك ومؤهلاتك"
+    },
+    "profileForm": {
+      "newProfile": "ملف جديد",
+      "completeProfileMessage": "أكمل بياناتك لإنشاء ملفك الشخصي",
+      "ratingLabel": "التقييم",
+      "reviewsLabel": "المراجعات",
+      "appointmentsLabel": "المواعيد",
+      "medicalSpecialty": "التخصص الطبي",
+      "specialty": "التخصص",
+      "selectSpecialty": "اختر تخصصك الطبي",
+      "professionalInfo": "المعلومات المهنية",
+      "licenseNumber": "رقم الترخيص",
+      "licenseNumberPlaceholder": "أدخل رقم الترخيص",
+      "yearsOfExperience": "سنوات الخبرة",
+      "qualificationsAr": "المؤهلات (عربي)",
+      "qualificationsArPlaceholder": "بكالوريوس الطب والجراحة، ماجستير...",
+      "qualificationsEn": "Qualifications (English)",
+      "qualificationsEnPlaceholder": "Bachelor of Medicine, Master's...",
+      "bioSection": "السيرة الذاتية",
+      "bioAr": "نبذة عنك (عربي)",
+      "bioArPlaceholder": "اكتب نبذة مختصرة عن خبرتك وتخصصك...",
+      "bioEn": "About You (English)",
+      "bioEnPlaceholder": "Write a brief description about your experience...",
+      "contactAndPrivacy": "التواصل والخصوصية",
+      "showPhoneNumber": "عرض رقم الهاتف",
+      "showPhoneNumberDesc": "السماح للمرضى برؤية رقم هاتفك",
+      "showWhatsappNumber": "عرض رقم الواتساب",
+      "showWhatsappNumberDesc": "السماح للمرضى بالتواصل عبر واتساب",
+      "whatsappNumbers": "أرقام الواتساب",
+      "createProfile": "إنشاء الملف الشخصي",
+      "statusApproved": "معتمد",
+      "statusPending": "قيد المراجعة",
+      "statusRejected": "مرفوض",
+      "statusSuspended": "موقوف",
+      "createdTitle": "تم الإنشاء",
+      "createdDescription": "تم إنشاء الملف الشخصي بنجاح",
+      "savedTitle": "تم الحفظ",
+      "savedDescription": "تم تحديث الملف الشخصي بنجاح",
+      "errorTitle": "خطأ",
+      "createError": "فشل في إنشاء الملف الشخصي",
+      "updateError": "فشل في تحديث الملف الشخصي"
+    }
   },
   "secretary": {
     "dashboard": "لوحة تحكم السكرتارية",
@@ -548,7 +619,6 @@
     "noShow": "لم يحضر",
     "revenue": "الإيرادات",
     "bookAppointment": "حجز موعد",
-    "selectClinic": "اختر العيادة",
     "selectService": "اختر الخدمة",
     "selectPatient": "اختر المريض",
     "selectDate": "اختر التاريخ",
@@ -562,7 +632,16 @@
     "insurance": "تأمين",
     "unpaid": "غير مدفوع",
     "paid": "مدفوع",
-    "refunded": "مسترد"
+    "refunded": "مسترد",
+    "dashboardPage": {
+      "title": "لوحة التحكم",
+      "subtitle": "مرحباً بك في لوحة تحكم السكرتير",
+      "todayAppointments": "مواعيد اليوم"
+    },
+    "appointmentsPage": {
+      "title": "إدارة المواعيد",
+      "subtitle": "عرض وإدارة جميع مواعيد العيادة"
+    }
   },
   "admin": {
     "dashboard": "لوحة التحكم",
@@ -601,7 +680,48 @@
     "editState": "تعديل المحافظة",
     "editCity": "تعديل المدينة",
     "stateCode": "كود المحافظة",
-    "sortOrder": "الترتيب"
+    "sortOrder": "الترتيب",
+    "doctors": {
+      "title": "إدارة الأطباء",
+      "subtitle": "عرض وإدارة جميع الأطباء المسجلين في المنصة",
+      "searchPlaceholder": "بحث بالاسم، الإيميل، أو الهاتف...",
+      "allStatuses": "كل الحالات",
+      "underReview": "قيد المراجعة",
+      "approved": "معتمد",
+      "rejected": "مرفوض",
+      "suspended": "موقوف",
+      "totalResults": "إجمالي النتائج:",
+      "pageOf": "صفحة {current} من {total}",
+      "noDoctorsFound": "لا يوجد أطباء",
+      "noDoctorsMatchFilters": "لم يتم العثور على أطباء بالفلاتر المحددة",
+      "license": "رخصة:",
+      "reactivate": "إعادة تفعيل",
+      "confirmSuspend": "تأكيد الإيقاف",
+      "suspendMessage": "سيتم إيقاف حساب الطبيب مؤقتاً ولن يظهر في نتائج البحث.",
+      "approveMessage": "سيتم تفعيل حساب الطبيب وسيتمكن من إدارة عيادته واستقبال الحجوزات.",
+      "rejectConfirmMessage": "سيتم رفض طلب الطبيب ولن يتمكن من استخدام المنصة."
+    },
+    "locations": {
+      "title": "إدارة المواقع",
+      "subtitle": "إدارة المحافظات والمدن في النظام",
+      "statesAndCities": "المحافظات والمدن",
+      "noStates": "لا توجد محافظات",
+      "noCities": "لا توجد مدن",
+      "addNewState": "إضافة محافظة جديدة",
+      "addNewCity": "إضافة مدينة جديدة",
+      "nameArRequired": "الاسم بالعربية *",
+      "nameEnRequired": "الاسم بالإنجليزية *",
+      "code": "الكود",
+      "deleteState": "حذف المحافظة",
+      "deleteStateConfirm": "سيتم حذف جميع المدن التابعة لهذه المحافظة. هل أنت متأكد؟",
+      "deleteCity": "حذف المدينة",
+      "deleteCityConfirm": "هل أنت متأكد من حذف هذه المدينة؟",
+      "cityCount": "مدينة"
+    },
+    "specialtiesPage": {
+      "title": "إدارة التخصصات",
+      "subtitle": "إضافة وتعديل وحذف التخصصات الطبية"
+    }
   },
   "table": {
     "nameAr": "الاسم (عربي)",
@@ -787,135 +907,6 @@
     "specialties": {
       "title": "التخصصات الطبية",
       "subtitle": "اختر التخصص المناسب للعثور على أفضل الأطباء"
-    }
-  },
-  "admin": {
-    "doctors": {
-      "title": "إدارة الأطباء",
-      "subtitle": "عرض وإدارة جميع الأطباء المسجلين في المنصة",
-      "searchPlaceholder": "بحث بالاسم، الإيميل، أو الهاتف...",
-      "allStatuses": "كل الحالات",
-      "underReview": "قيد المراجعة",
-      "approved": "معتمد",
-      "rejected": "مرفوض",
-      "suspended": "موقوف",
-      "totalResults": "إجمالي النتائج:",
-      "pageOf": "صفحة {current} من {total}",
-      "noDoctorsFound": "لا يوجد أطباء",
-      "noDoctorsMatchFilters": "لم يتم العثور على أطباء بالفلاتر المحددة",
-      "license": "رخصة:",
-      "reactivate": "إعادة تفعيل",
-      "confirmSuspend": "تأكيد الإيقاف",
-      "suspendMessage": "سيتم إيقاف حساب الطبيب مؤقتاً ولن يظهر في نتائج البحث.",
-      "approveMessage": "سيتم تفعيل حساب الطبيب وسيتمكن من إدارة عيادته واستقبال الحجوزات.",
-      "rejectConfirmMessage": "سيتم رفض طلب الطبيب ولن يتمكن من استخدام المنصة."
-    },
-    "locations": {
-      "title": "إدارة المواقع",
-      "subtitle": "إدارة المحافظات والمدن في النظام",
-      "statesAndCities": "المحافظات والمدن",
-      "noStates": "لا توجد محافظات",
-      "noCities": "لا توجد مدن",
-      "addNewState": "إضافة محافظة جديدة",
-      "addNewCity": "إضافة مدينة جديدة",
-      "nameArRequired": "الاسم بالعربية *",
-      "nameEnRequired": "الاسم بالإنجليزية *",
-      "code": "الكود",
-      "deleteState": "حذف المحافظة",
-      "deleteStateConfirm": "سيتم حذف جميع المدن التابعة لهذه المحافظة. هل أنت متأكد؟",
-      "deleteCity": "حذف المدينة",
-      "deleteCityConfirm": "هل أنت متأكد من حذف هذه المدينة؟",
-      "cityCount": "مدينة"
-    },
-    "specialtiesPage": {
-      "title": "إدارة التخصصات",
-      "subtitle": "إضافة وتعديل وحذف التخصصات الطبية"
-    }
-  },
-  "doctor": {
-    "appointmentsPage": {
-      "title": "المواعيد",
-      "subtitle": "إدارة مواعيد المرضى وقائمة الانتظار"
-    },
-    "clinicsPage": {
-      "title": "العيادات",
-      "subtitle": "إدارة العيادات والمواعيد والخدمات",
-      "addNew": "إضافة عيادة جديدة",
-      "noClinics": "لا توجد عيادات",
-      "noClinicsCta": "قم بإضافة عيادتك الأولى لبدء استقبال الحجوزات",
-      "loadError": "حدث خطأ أثناء تحميل العيادات. يرجى المحاولة مرة أخرى.",
-      "serviceCount": "خدمة",
-      "workDayCount": "يوم عمل"
-    },
-    "profilePage": {
-      "title": "الملف الشخصي",
-      "subtitle": "تحديث بياناتك ومؤهلاتك"
-    },
-    "profileForm": {
-      "newProfile": "ملف جديد",
-      "completeProfileMessage": "أكمل بياناتك لإنشاء ملفك الشخصي",
-      "ratingLabel": "التقييم",
-      "reviewsLabel": "المراجعات",
-      "appointmentsLabel": "المواعيد",
-      "medicalSpecialty": "التخصص الطبي",
-      "specialty": "التخصص",
-      "selectSpecialty": "اختر تخصصك الطبي",
-      "professionalInfo": "المعلومات المهنية",
-      "licenseNumber": "رقم الترخيص",
-      "licenseNumberPlaceholder": "أدخل رقم الترخيص",
-      "yearsOfExperience": "سنوات الخبرة",
-      "qualificationsAr": "المؤهلات (عربي)",
-      "qualificationsArPlaceholder": "بكالوريوس الطب والجراحة، ماجستير...",
-      "qualificationsEn": "Qualifications (English)",
-      "qualificationsEnPlaceholder": "Bachelor of Medicine, Master's...",
-      "bioSection": "السيرة الذاتية",
-      "bioAr": "نبذة عنك (عربي)",
-      "bioArPlaceholder": "اكتب نبذة مختصرة عن خبرتك وتخصصك...",
-      "bioEn": "About You (English)",
-      "bioEnPlaceholder": "Write a brief description about your experience...",
-      "contactAndPrivacy": "التواصل والخصوصية",
-      "showPhoneNumber": "عرض رقم الهاتف",
-      "showPhoneNumberDesc": "السماح للمرضى برؤية رقم هاتفك",
-      "showWhatsappNumber": "عرض رقم الواتساب",
-      "showWhatsappNumberDesc": "السماح للمرضى بالتواصل عبر واتساب",
-      "whatsappNumbers": "أرقام الواتساب",
-      "createProfile": "إنشاء الملف الشخصي",
-      "statusApproved": "معتمد",
-      "statusPending": "قيد المراجعة",
-      "statusRejected": "مرفوض",
-      "statusSuspended": "موقوف",
-      "createdTitle": "تم الإنشاء",
-      "createdDescription": "تم إنشاء الملف الشخصي بنجاح",
-      "savedTitle": "تم الحفظ",
-      "savedDescription": "تم تحديث الملف الشخصي بنجاح",
-      "errorTitle": "خطأ",
-      "createError": "فشل في إنشاء الملف الشخصي",
-      "updateError": "فشل في تحديث الملف الشخصي"
-    }
-  },
-  "patient": {
-    "appointmentsPage": {
-      "title": "مواعيدي",
-      "subtitle": "إدارة ومتابعة مواعيدك الطبية"
-    },
-    "profilePage": {
-      "title": "الملف الشخصي",
-      "subtitle": "تحديث بياناتك الشخصية"
-    },
-    "familyPage": {
-      "title": "أفراد العائلة",
-      "subtitle": "إضافة وإدارة أفراد عائلتك لحجز مواعيد لهم"
-    }
-  },
-  "secretary": {
-    "dashboardPage": {
-      "title": "لوحة التحكم",
-      "subtitle": "مرحباً بك في لوحة تحكم السكرتير",
-      "todayAppointments": "مواعيد اليوم"
-    },
-    "appointmentsPage": {
-      "title": "إدارة المواعيد",
-      "subtitle": "عرض وإدارة جميع مواعيد العيادة"
     }
   }
 }

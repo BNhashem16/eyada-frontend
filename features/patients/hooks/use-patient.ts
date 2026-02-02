@@ -137,11 +137,11 @@ export function usePatientAppointment(appointmentId: string) {
   });
 }
 
-// Book appointment - matches Swagger CreateAppointmentDto
+// Book appointment - per Swagger CreateAppointmentDto
 export interface BookAppointmentData {
   clinicId: string;
   serviceTypeId: string;
-  appointmentDate: string; // YYYY-MM-DD format
+  appointmentDate: string; // YYYY-MM-DD format per Swagger
   patientProfileId?: string; // For booking for family members
   notes?: string;
 }
