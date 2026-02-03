@@ -6,15 +6,15 @@ import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import {
   CalendarIcon,
-  Clock,
   User,
   Loader2,
-  Search,
   Plus,
   AlertCircle,
   ArrowRight,
   Building2,
   Stethoscope,
+  Phone,
+  Cake,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,16 +27,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useSecretaryClinics, useCreateAppointment } from '@/features/secretary';
-import { useClinicServices, useClinicAvailableSlots } from '@/features/clinics/hooks/use-clinics';
+import { useClinicServices } from '@/features/clinics/hooks/use-clinics';
 
 export default function NewAppointmentPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -44,18 +43,15 @@ export default function NewAppointmentPage() {
   const [selectedClinic, setSelectedClinic] = useState<string>('');
   const [selectedService, setSelectedService] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [selectedTime, setSelectedTime] = useState<string>('');
-  const [patientProfileId, setPatientProfileId] = useState<string>('');
+  const [patientName, setPatientName] = useState<string>('');
+  const [patientDateOfBirth, setPatientDateOfBirth] = useState<Date | undefined>();
+  const [patientPhone, setPatientPhone] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [symptoms, setSymptoms] = useState<string>('');
 
   // Data fetching
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
   const { data: services, isLoading: servicesLoading } = useClinicServices(selectedClinic);
-  const { data: slots, isLoading: slotsLoading } = useClinicAvailableSlots(
-    selectedClinic,
-    selectedDate ? format(selectedDate, 'yyyy-MM-dd') : ''
-  );
 
   const createAppointment = useCreateAppointment();
 
@@ -63,23 +59,17 @@ export default function NewAppointmentPage() {
   useEffect(() => {
     setSelectedService('');
     setSelectedDate(undefined);
-    setSelectedTime('');
   }, [selectedClinic]);
-
-  useEffect(() => {
-    setSelectedTime('');
-  }, [selectedDate]);
 
   const selectedClinicData = clinics?.find((c) => c.id === selectedClinic);
   const selectedServiceData = services?.find((s) => s.id === selectedService);
-  const availableSlots = slots?.filter((slot) => slot.isAvailable) || [];
 
   const canSubmit =
     selectedClinic &&
     selectedService &&
     selectedDate &&
-    selectedTime &&
-    patientProfileId.trim();
+    patientName.trim().length >= 2 &&
+    patientDateOfBirth;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -88,8 +78,10 @@ export default function NewAppointmentPage() {
       await createAppointment.mutateAsync({
         clinicId: selectedClinic,
         serviceTypeId: selectedService,
-        appointmentDate: `${format(selectedDate!, 'yyyy-MM-dd')}T${selectedTime}`,
-        patientProfileId: patientProfileId.trim(),
+        appointmentDate: format(selectedDate!, 'yyyy-MM-dd'),
+        patientName: patientName.trim(),
+        patientDateOfBirth: format(patientDateOfBirth!, 'yyyy-MM-dd'),
+        patientPhone: patientPhone.trim() || undefined,
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
       });
@@ -109,6 +101,17 @@ export default function NewAppointmentPage() {
         variant: 'error',
       });
     }
+  };
+
+  // Calculate age from date of birth
+  const calculateAge = (dob: Date) => {
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age;
   };
 
   return (
@@ -152,20 +155,76 @@ export default function NewAppointmentPage() {
                 {t('secretary.patientInfo')}
               </CardTitle>
               <CardDescription>
-                {t('secretary.patientProfileIdHint')}
+                {t('secretary.walkInPatientHint')}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              {/* Patient Name */}
               <div className="space-y-2">
-                <Label htmlFor="patientProfileId">{t('secretary.patientProfileId')}</Label>
+                <Label htmlFor="patientName">{t('auth.fullName')} *</Label>
                 <div className="relative">
-                  <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="patientProfileId"
-                    value={patientProfileId}
-                    onChange={(e) => setPatientProfileId(e.target.value)}
-                    placeholder={t('secretary.patientProfileIdPlaceholder')}
+                    id="patientName"
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder={t('auth.fullNamePlaceholder')}
                     className="ps-9"
+                  />
+                </div>
+              </div>
+
+              {/* Patient Date of Birth */}
+              <div className="space-y-2">
+                <Label>{t('patient.dateOfBirth')} *</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'w-full justify-start',
+                        !patientDateOfBirth && 'text-muted-foreground'
+                      )}
+                    >
+                      <Cake className="me-2 h-4 w-4" />
+                      {patientDateOfBirth
+                        ? format(patientDateOfBirth, 'dd MMMM yyyy', { locale: ar })
+                        : t('patient.dateOfBirth')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={patientDateOfBirth}
+                      onSelect={setPatientDateOfBirth}
+                      disabled={(date) => date > new Date()}
+                      defaultMonth={new Date(1990, 0)}
+                      captionLayout="dropdown"
+                      fromYear={1920}
+                      toYear={new Date().getFullYear()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {patientDateOfBirth && (
+                  <p className="text-sm text-muted-foreground">
+                    {t('family.age')}: {calculateAge(patientDateOfBirth)} {t('family.yearsOld')}
+                  </p>
+                )}
+              </div>
+
+              {/* Patient Phone (Optional) */}
+              <div className="space-y-2">
+                <Label htmlFor="patientPhone">{t('auth.phoneNumber')} ({t('common.optional')})</Label>
+                <div className="relative">
+                  <Phone className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="patientPhone"
+                    value={patientPhone}
+                    onChange={(e) => setPatientPhone(e.target.value)}
+                    placeholder="01012345678"
+                    className="ps-9"
+                    dir="ltr"
                   />
                 </div>
               </div>
@@ -183,11 +242,11 @@ export default function NewAppointmentPage() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>{t('secretary.selectClinic')}</Label>
+                  <Label>{t('secretary.selectClinic')} *</Label>
                   <SearchableSelect
                     options={clinics?.map((clinic) => ({
                       value: clinic.id,
-                      label: getLocalizedText(clinic.name, 'ar'),
+                      label: getLocalizedText(clinic.name, locale),
                       icon: <Building2 className="h-4 w-4" />,
                     })) || []}
                     value={selectedClinic}
@@ -200,11 +259,11 @@ export default function NewAppointmentPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t('secretary.selectService')}</Label>
+                  <Label>{t('secretary.selectService')} *</Label>
                   <SearchableSelect
                     options={services?.filter((s) => s.isActive).map((service) => ({
                       value: service.id,
-                      label: `${getLocalizedText(service.name, 'ar')} - ${service.price} ${t('common.egp')}`,
+                      label: `${getLocalizedText(service.name, locale)} - ${service.price} ${t('common.egp')}`,
                       description: service.duration ? `${service.duration} ${t('services.minute')}` : undefined,
                       icon: <Stethoscope className="h-4 w-4" />,
                     })) || []}
@@ -224,7 +283,7 @@ export default function NewAppointmentPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Stethoscope className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                      <span className="font-medium">{getLocalizedText(selectedServiceData.name, 'ar')}</span>
+                      <span className="font-medium">{getLocalizedText(selectedServiceData.name, locale)}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge className="bg-primary-600">
@@ -240,63 +299,43 @@ export default function NewAppointmentPage() {
             </CardContent>
           </Card>
 
-          {/* Date & Time Selection */}
+          {/* Date Selection */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t('secretary.dateAndTime')}
+                {t('secretary.selectDate')}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>{t('secretary.selectDate')}</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start',
-                          !selectedDate && 'text-muted-foreground'
-                        )}
-                        disabled={!selectedClinic}
-                      >
-                        <CalendarIcon className="me-2 h-4 w-4" />
-                        {selectedDate
-                          ? format(selectedDate, 'dd MMMM yyyy', { locale: ar })
-                          : t('secretary.selectDate')}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={setSelectedDate}
-                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t('secretary.selectTime')}</Label>
-                  <SearchableSelect
-                    options={availableSlots.map((slot) => ({
-                      value: slot.time,
-                      label: slot.time,
-                      icon: <Clock className="h-4 w-4" />,
-                    }))}
-                    value={selectedTime}
-                    onValueChange={setSelectedTime}
-                    placeholder={t('secretary.selectTime')}
-                    emptyMessage={t('clinics.noSlotsAvailable')}
-                    disabled={!selectedDate || !selectedClinic}
-                    loading={slotsLoading}
-                    showSearch={availableSlots.length > 6}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label>{t('appointments.date')} *</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'w-full justify-start',
+                        !selectedDate && 'text-muted-foreground'
+                      )}
+                      disabled={!selectedClinic}
+                    >
+                      <CalendarIcon className="me-2 h-4 w-4" />
+                      {selectedDate
+                        ? format(selectedDate, 'dd MMMM yyyy', { locale: ar })
+                        : t('secretary.selectDate')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </CardContent>
           </Card>
@@ -339,11 +378,19 @@ export default function NewAppointmentPage() {
               <CardTitle className="text-lg">{t('secretary.bookingSummary')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Patient */}
+              {/* Patient Name */}
               <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-sm text-muted-foreground">{t('secretary.patientProfileId')}</span>
+                <span className="text-sm text-muted-foreground">{t('auth.fullName')}</span>
                 <span className="font-medium text-sm">
-                  {patientProfileId.trim() || '-'}
+                  {patientName.trim() || '-'}
+                </span>
+              </div>
+
+              {/* Patient Age */}
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm text-muted-foreground">{t('family.age')}</span>
+                <span className="font-medium text-sm">
+                  {patientDateOfBirth ? `${calculateAge(patientDateOfBirth)} ${t('family.yearsOld')}` : '-'}
                 </span>
               </div>
 
@@ -351,7 +398,7 @@ export default function NewAppointmentPage() {
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm text-muted-foreground">{t('appointments.clinic')}</span>
                 <span className="font-medium text-sm">
-                  {selectedClinicData ? getLocalizedText(selectedClinicData.name, 'ar') : '-'}
+                  {selectedClinicData ? getLocalizedText(selectedClinicData.name, locale) : '-'}
                 </span>
               </div>
 
@@ -359,7 +406,7 @@ export default function NewAppointmentPage() {
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm text-muted-foreground">{t('appointments.service')}</span>
                 <span className="font-medium text-sm">
-                  {selectedServiceData ? getLocalizedText(selectedServiceData.name, 'ar') : '-'}
+                  {selectedServiceData ? getLocalizedText(selectedServiceData.name, locale) : '-'}
                 </span>
               </div>
 
@@ -368,14 +415,6 @@ export default function NewAppointmentPage() {
                 <span className="text-sm text-muted-foreground">{t('appointments.date')}</span>
                 <span className="font-medium text-sm">
                   {selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '-'}
-                </span>
-              </div>
-
-              {/* Time */}
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-sm text-muted-foreground">{t('appointments.time')}</span>
-                <span className="font-medium text-sm" dir="ltr">
-                  {selectedTime || '-'}
                 </span>
               </div>
 
