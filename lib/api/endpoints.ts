@@ -1,6 +1,11 @@
 // API Base URL
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
+// Public endpoints (no auth required)
+export const PUBLIC_TRACKING_ENDPOINTS = {
+  TRACK_QUEUE: (bookingNumber: string) => `/appointments/track/${bookingNumber}`,
+} as const;
+
 // Authentication endpoints
 export const AUTH_ENDPOINTS = {
   LOGIN: '/auth/login',

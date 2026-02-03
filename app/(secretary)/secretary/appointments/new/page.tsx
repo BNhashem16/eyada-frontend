@@ -15,6 +15,9 @@ import {
   Stethoscope,
   Phone,
   Cake,
+  CheckCircle2,
+  Copy,
+  ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +30,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
@@ -48,6 +58,12 @@ export default function NewAppointmentPage() {
   const [patientPhone, setPatientPhone] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [symptoms, setSymptoms] = useState<string>('');
+
+  // Success dialog state
+  const [successData, setSuccessData] = useState<{
+    bookingNumber: string;
+    queueNumber: number;
+  } | null>(null);
 
   // Data fetching
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
@@ -75,7 +91,7 @@ export default function NewAppointmentPage() {
     if (!canSubmit) return;
 
     try {
-      await createAppointment.mutateAsync({
+      const result = await createAppointment.mutateAsync({
         clinicId: selectedClinic,
         serviceTypeId: selectedService,
         appointmentDate: format(selectedDate!, 'yyyy-MM-dd'),
@@ -86,13 +102,11 @@ export default function NewAppointmentPage() {
         symptoms: symptoms.trim() || undefined,
       });
 
-      toast({
-        title: t('toast.success'),
-        description: t('secretary.bookingSuccess'),
-        variant: 'success',
+      // Show success dialog with booking info
+      setSuccessData({
+        bookingNumber: result.data?.bookingNumber || result.bookingNumber,
+        queueNumber: result.data?.queueNumber || result.queueNumber,
       });
-
-      router.push('/secretary/appointments');
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : t('errors.somethingWentWrong');
       toast({
@@ -101,6 +115,19 @@ export default function NewAppointmentPage() {
         variant: 'error',
       });
     }
+  };
+
+  const trackingUrl = successData
+    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/track/${successData.bookingNumber}`
+    : '';
+
+  const copyTrackingLink = () => {
+    navigator.clipboard.writeText(trackingUrl);
+    toast({
+      title: t('toast.success'),
+      description: t('secretary.linkCopied'),
+      variant: 'success',
+    });
   };
 
   // Calculate age from date of birth
@@ -457,6 +484,82 @@ export default function NewAppointmentPage() {
           </Card>
         </div>
       </div>
+
+      {/* Success Dialog */}
+      <Dialog open={!!successData} onOpenChange={() => setSuccessData(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
+              <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+            </div>
+            <DialogTitle className="text-center text-xl">
+              {t('secretary.bookingSuccess')}
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              {t('booking.bookingSuccessDesc')}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Booking Number */}
+            <div className="p-4 bg-muted rounded-lg text-center">
+              <p className="text-sm text-muted-foreground mb-1">
+                {t('appointments.bookingNumber')}
+              </p>
+              <p className="font-mono text-xl font-bold text-primary">
+                {successData?.bookingNumber}
+              </p>
+            </div>
+
+            {/* Queue Number */}
+            <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-center">
+              <p className="text-sm text-muted-foreground mb-1">
+                {t('appointments.queueNumber')}
+              </p>
+              <p className="text-3xl font-bold text-primary">
+                {successData?.queueNumber}
+              </p>
+            </div>
+
+            {/* Tracking Link */}
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground text-center">
+                {t('secretary.trackingLinkHint')}
+              </p>
+              <div className="flex items-center gap-2">
+                <Input
+                  value={trackingUrl}
+                  readOnly
+                  className="font-mono text-sm"
+                  dir="ltr"
+                />
+                <Button variant="outline" size="icon" onClick={copyTrackingLink}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Button asChild className="w-full">
+              <a href={trackingUrl} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 me-2" />
+                {t('secretary.openTrackingPage')}
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setSuccessData(null);
+                router.push('/secretary/appointments');
+              }}
+            >
+              {t('secretary.goToAppointments')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

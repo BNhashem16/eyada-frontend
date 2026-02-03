@@ -698,7 +698,11 @@
     },
     "assignmentUpdated": "Assignment updated successfully",
     "removedFromClinic": "Secretary removed from clinic",
-    "loadError": "Error loading secretaries. Please try again."
+    "loadError": "Error loading secretaries. Please try again.",
+    "linkCopied": "Link copied",
+    "trackingLinkHint": "Share this link with the patient to track their appointment",
+    "openTrackingPage": "Open Tracking Page",
+    "goToAppointments": "Go to Appointments"
   },
   "admin": {
     "dashboard": "Dashboard",
@@ -951,6 +955,23 @@
     "loadError": "Error loading specialties. Please try again.",
     "noSpecialties": "No specialties available",
     "comingSoon": "Specialties will be added soon"
+  },
+  "track": {
+    "pageTitle": "Track Your Appointment",
+    "pageSubtitle": "Enter your booking number to check your queue position",
+    "title": "Queue Status",
+    "subtitle": "Track your appointment queue position",
+    "enterBookingNumber": "Enter Booking Number",
+    "enterBookingNumberDesc": "You can find the booking number on your receipt or confirmation message",
+    "checkQueue": "Check Queue",
+    "bookingNumberHint": "The booking number starts with APT- followed by the date and a unique code",
+    "yourPosition": "Your Position in Queue",
+    "estimatedWait": "Estimated Wait",
+    "appointmentDetails": "Appointment Details",
+    "refresh": "Refresh",
+    "autoRefresh": "Page refreshes automatically every 30 seconds",
+    "notFound": "Appointment Not Found",
+    "notFoundDesc": "We couldn't find an appointment with this booking number. Please check and try again."
   },
   "pages": {
     "forgotPassword": {
