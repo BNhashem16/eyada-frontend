@@ -128,8 +128,10 @@ export interface FamilyMember extends Timestamps {
   dateOfBirth?: string;
   age?: number;
   gender?: Gender;
-  relationship: RelationshipType;
+  relationship?: RelationshipType;
+  relationshipToHead?: RelationshipType;
   bloodType?: string;
+  user?: User;
 }
 
 // Clinic model

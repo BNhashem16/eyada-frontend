@@ -3,9 +3,11 @@
 import { Users } from 'lucide-react';
 import { FamilyList } from '@/features/patients';
 import { useTranslation } from '@/lib/i18n';
+import { useAuthStore } from '@/lib/auth/store';
 
 export default function PatientFamilyPage() {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
 
   return (
     <div className="space-y-6">
@@ -15,7 +17,9 @@ export default function PatientFamilyPage() {
           <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('patient.familyPage.title')}</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            {t('patient.familyPage.title')} {user?.fullName && `- ${user.fullName}`}
+          </h1>
           <p className="text-muted-foreground">{t('patient.familyPage.subtitle')}</p>
         </div>
       </div>

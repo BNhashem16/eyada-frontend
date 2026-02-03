@@ -237,7 +237,7 @@ export function AppointmentQueue() {
       {!isLoading && appointments.length > 0 && (
         <div className="space-y-3">
           {appointments
-            .sort((a, b) => a.appointmentTime.localeCompare(b.appointmentTime))
+            .sort((a, b) => (a.appointmentTime || '').localeCompare(b.appointmentTime || ''))
             .map((appointment) => {
               const actions = getAvailableActions(appointment.status);
               const isUpdating = updateStatusMutation.isPending;

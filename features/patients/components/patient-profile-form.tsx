@@ -3,7 +3,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Phone, Mail, Calendar, Loader2 } from 'lucide-react';
+import { User as UserIcon, Phone, Mail, Calendar, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +21,7 @@ import { useAuthStore } from '@/lib/auth/store';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
 import { Gender } from '@/types/enums';
+import { User, PatientProfile } from '@/types/models';
 
 const getProfileSchema = (t: (key: string) => string) => z.object({
   name: z.string().min(3, t('validation.fullNameMinLength')),
@@ -57,7 +58,7 @@ export function PatientProfileForm() {
   }
 
   // Determine if this is a new profile (profile doesn't exist)
-  const isNewProfile = !profile || error;
+  const isNewProfile = !profile || !!error;
 
   return (
     <PatientProfileFormContent
@@ -69,8 +70,8 @@ export function PatientProfileForm() {
 }
 
 interface PatientProfileFormContentProps {
-  profile: ReturnType<typeof usePatientProfile>['data'];
-  user: ReturnType<typeof useAuthStore>['user'];
+  profile: PatientProfile | undefined;
+  user: User | null;
   isNewProfile: boolean;
 }
 
@@ -149,7 +150,7 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+            <UserIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             {t('patient.personalData')}
           </CardTitle>
         </CardHeader>
@@ -160,7 +161,7 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
             <Input
               id="name"
               {...register('name')}
-              icon={<User className="h-5 w-5" />}
+              icon={<UserIcon className="h-5 w-5" />}
               iconPosition="start"
               error={!!errors.name}
             />

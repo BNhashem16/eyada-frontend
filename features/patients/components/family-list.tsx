@@ -47,11 +47,15 @@ const getGenderLabels = (t: (key: string) => string): Record<Gender, string> => 
   [Gender.FEMALE]: t('family.female'),
 });
 
+// Helper to get relationship from member (API may return relationship or relationshipToHead)
+const getMemberRelationship = (member: FamilyMember): RelationshipType => {
+  return member.relationship || member.relationshipToHead || RelationshipType.OTHER;
+};
+
 // Schema matching backend AddFamilyMemberDto / UpdateFamilyMemberDto
 const getFamilyMemberSchema = (t: (key: string) => string) => z.object({
   fullName: z.string().min(2, t('validation.fullNameMinLength')).max(100),
   dateOfBirth: z.string().optional(),
-  age: z.coerce.number().min(1).max(120).optional().or(z.literal('')),
   gender: z.nativeEnum(Gender).optional(),
   relationship: z.nativeEnum(RelationshipType),
   bloodType: z.string().optional(),
@@ -98,7 +102,6 @@ export function FamilyList() {
     reset({
       fullName: '',
       dateOfBirth: '',
-      age: '',
       gender: Gender.MALE,
       relationship: RelationshipType.CHILD,
       bloodType: '',
@@ -114,11 +117,10 @@ export function FamilyList() {
   const openEditDialog = (member: FamilyMember) => {
     setSelectedMember(member);
     reset({
-      fullName: member.fullName,
+      fullName: member.user?.fullName || member.fullName,
       dateOfBirth: member.dateOfBirth ? member.dateOfBirth.split('T')[0] : '',
-      age: member.age || '',
-      gender: member.gender,
-      relationship: member.relationship,
+      gender: member.gender || Gender.MALE,
+      relationship: getMemberRelationship(member),
       bloodType: member.bloodType || '',
     });
     setDialogMode('edit');
@@ -135,7 +137,6 @@ export function FamilyList() {
       const payload = {
         fullName: data.fullName,
         dateOfBirth: data.dateOfBirth || undefined,
-        age: data.age ? Number(data.age) : undefined,
         gender: data.gender,
         relationship: data.relationship,
         bloodType: data.bloodType || undefined,
@@ -235,13 +236,13 @@ export function FamilyList() {
                   onClick={() => openViewDialog(member)}
                 >
                   <Avatar className="h-12 w-12">
-                    <AvatarFallback>{getInitials(member.fullName)}</AvatarFallback>
+                    <AvatarFallback>{getInitials(member.user?.fullName || member.fullName)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground truncate">{member.fullName}</p>
+                    <p className="font-semibold text-foreground truncate">{member.user?.fullName || member.fullName}</p>
                     <div className="flex flex-wrap items-center gap-2 mt-1">
                       <Badge variant="secondary" className="text-xs">
-                        {relationshipLabels[member.relationship]}
+                        {relationshipLabels[getMemberRelationship(member)]}
                       </Badge>
                       {member.gender && (
                         <span className="text-sm text-muted-foreground">
@@ -310,11 +311,11 @@ export function FamilyList() {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarFallback className="text-lg">{getInitials(selectedMember.fullName)}</AvatarFallback>
+                  <AvatarFallback className="text-lg">{getInitials(selectedMember.user?.fullName || selectedMember.fullName)}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="text-lg font-semibold">{selectedMember.fullName}</h3>
-                  <Badge variant="secondary">{relationshipLabels[selectedMember.relationship]}</Badge>
+                  <h3 className="text-lg font-semibold">{selectedMember.user?.fullName || selectedMember.fullName}</h3>
+                  <Badge variant="secondary">{relationshipLabels[getMemberRelationship(selectedMember)]}</Badge>
                 </div>
               </div>
 
@@ -385,7 +386,7 @@ export function FamilyList() {
               <Label required>{t('family.relationship')}</Label>
               <Select
                 value={watch('relationship')}
-                onValueChange={(value) => setValue('relationship', value as RelationshipType)}
+                onValueChange={(value) => setValue('relationship', value as RelationshipType, { shouldDirty: true })}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -406,8 +407,8 @@ export function FamilyList() {
             <div className="space-y-2">
               <Label>{t('family.gender')}</Label>
               <Select
-                value={watch('gender') || undefined}
-                onValueChange={(value) => setValue('gender', value as Gender)}
+                value={watch('gender')}
+                onValueChange={(value) => setValue('gender', value as Gender, { shouldDirty: true })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('family.selectGender')} />
@@ -431,25 +432,12 @@ export function FamilyList() {
               />
             </div>
 
-            {/* Age */}
-            <div className="space-y-2">
-              <Label htmlFor="member-age">{t('family.age')}</Label>
-              <Input
-                id="member-age"
-                type="number"
-                {...register('age')}
-                placeholder="30"
-                min={1}
-                max={120}
-              />
-            </div>
-
             {/* Blood Type */}
             <div className="space-y-2">
               <Label>{t('family.bloodType')}</Label>
               <Select
-                value={watch('bloodType') || undefined}
-                onValueChange={(value) => setValue('bloodType', value)}
+                value={watch('bloodType') || ''}
+                onValueChange={(value) => setValue('bloodType', value, { shouldDirty: true })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('family.selectBloodType')} />

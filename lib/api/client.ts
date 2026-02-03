@@ -71,13 +71,19 @@ const onTokenRefreshed = (token: string) => {
   refreshSubscribers = [];
 };
 
-// Request interceptor - Add auth token
+// Request interceptor - Add auth token and language
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = tokenStorage.getAccessToken();
 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Add Accept-Language header
+    if (typeof window !== 'undefined' && config.headers) {
+      const locale = localStorage.getItem('eyada-locale') || 'ar';
+      config.headers['Accept-Language'] = locale;
     }
 
     return config;
