@@ -49,7 +49,7 @@ export function DoctorDashboard() {
       (a) =>
         a.status === AppointmentStatus.CONFIRMED || a.status === AppointmentStatus.CHECKED_IN
     )
-    .sort((a, b) => a.appointmentTime.localeCompare(b.appointmentTime));
+    .sort((a, b) => (a.appointmentTime || '').localeCompare(b.appointmentTime || ''));
 
   const getStatusLabel = (status: AppointmentStatus) => {
     const statusMap: Record<AppointmentStatus, string> = {

@@ -1,0 +1,2093 @@
+{
+  "info": {
+    "_postman_id": "eyada-api-collection-v1",
+    "name": "Eyada API - Medical Clinic Management",
+    "description": "Complete API collection for Eyada - Medical Clinic Management System.\n\nThis collection includes all endpoints for:\n- Authentication (register, login, logout)\n- Doctor management\n- Patient management\n- Clinic management\n- Appointment booking\n- Schedules and services\n- Ratings\n- Admin operations\n\n**Base URL:** {{base_url}}\n**Authentication:** JWT Bearer Token",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-attach Authorization header if token exists",
+          "if (pm.environment.get('access_token')) {",
+          "    pm.request.headers.add({",
+          "        key: 'Authorization',",
+          "        value: 'Bearer ' + pm.environment.get('access_token')",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "description": "Health check endpoints",
+      "item": [
+        {
+          "name": "Root",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Root endpoint - returns welcome message"
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Health check endpoint - returns status and timestamp"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints for user registration, login, and token management",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.tokens) {",
+                  "        pm.environment.set('access_token', jsonData.tokens.accessToken);",
+                  "        pm.environment.set('refresh_token', jsonData.tokens.refreshToken);",
+                  "    }",
+                  "    if (jsonData.user) {",
+                  "        pm.environment.set('user_id', jsonData.user.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"phoneNumber\": \"01012345678\",\n  \"password\": \"password123\",\n  \"fullName\": \"Ahmed Mohamed\",\n  \"role\": \"PATIENT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new user (patient, doctor, or secretary).\n\n**Required fields:**\n- email: Valid email format\n- phoneNumber: Egyptian mobile (01[0125]XXXXXXXX)\n- password: 8-50 characters\n- fullName: 2-100 characters\n\n**Optional:**\n- role: PATIENT (default) or DOCTOR"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.tokens) {",
+                  "        pm.environment.set('access_token', jsonData.tokens.accessToken);",
+                  "        pm.environment.set('refresh_token', jsonData.tokens.refreshToken);",
+                  "    }",
+                  "    if (jsonData.user) {",
+                  "        pm.environment.set('user_id', jsonData.user.id);",
+                  "        pm.environment.set('user_role', jsonData.user.role);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with email and password.\n\n**Rate limited:** 10 attempts per hour\n\n**Required fields:**\n- email: Valid email\n- password: Min 8 characters"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.accessToken);",
+                  "    pm.environment.set('refresh_token', jsonData.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Refresh access token using refresh token."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Logout and invalidate refresh token.\n\n**Requires:** JWT Bearer Token"
+          }
+        },
+        {
+          "name": "Logout All Devices",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout-all",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout-all"]
+            },
+            "description": "Logout from all devices.\n\n**Requires:** JWT Bearer Token"
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"oldPassword123\",\n  \"newPassword\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "change-password"]
+            },
+            "description": "Change user password.\n\n**Requires:** JWT Bearer Token\n\n**Fields:**\n- currentPassword: Current password\n- newPassword: 8-50 characters"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Get current authenticated user profile.\n\n**Requires:** JWT Bearer Token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctors",
+      "description": "Doctor profile management and search",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Search Doctors",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors"],
+                  "query": [
+                    { "key": "page", "value": "1", "description": "Page number (min: 1)" },
+                    { "key": "limit", "value": "20", "description": "Items per page (1-100)" },
+                    { "key": "specialtyId", "value": "", "description": "Filter by specialty UUID", "disabled": true },
+                    { "key": "cityId", "value": "", "description": "Filter by city UUID", "disabled": true },
+                    { "key": "stateId", "value": "", "description": "Filter by state UUID", "disabled": true },
+                    { "key": "search", "value": "", "description": "Search by doctor name", "disabled": true },
+                    { "key": "minRating", "value": "", "description": "Minimum rating (0-5)", "disabled": true },
+                    { "key": "priceMin", "value": "", "description": "Minimum price", "disabled": true },
+                    { "key": "priceMax", "value": "", "description": "Maximum price", "disabled": true }
+                  ]
+                },
+                "description": "Search doctors with filters and pagination.\n\n**Public endpoint** - No authentication required"
+              }
+            },
+            {
+              "name": "Get Doctor by ID",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{doctor_id}}", "description": "Doctor profile UUID" }
+                  ]
+                },
+                "description": "Get doctor public profile by ID.\n\n**Public endpoint** - No authentication required"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Profile Management",
+          "item": [
+            {
+              "name": "Get My Profile",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/profile/me",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "profile", "me"]
+                },
+                "description": "Get current doctor profile.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Create Profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('doctor_profile_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"specialtyId\": \"{{specialty_id}}\",\n  \"licenseNumber\": \"DOC-2024-001\",\n  \"yearsOfExperience\": 10,\n  \"qualifications\": {\n    \"ar\": \"بكالوريوس طب وجراحة\",\n    \"en\": \"Bachelor of Medicine and Surgery\"\n  },\n  \"bio\": {\n    \"ar\": \"طبيب متخصص في الطب الباطني\",\n    \"en\": \"Specialist in Internal Medicine\"\n  },\n  \"profileImage\": \"https://example.com/doctor-image.jpg\",\n  \"showPhoneNumber\": true,\n  \"showWhatsappNumber\": true,\n  \"whatsappNumbers\": [\"01012345678\"]\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/profile",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "profile"]
+                },
+                "description": "Create doctor profile (registration completion).\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- specialtyId: UUID of specialty\n\n**Optional:**\n- licenseNumber, yearsOfExperience (0-70)\n- qualifications, bio (multilingual ar/en)\n- profileImage, showPhoneNumber, showWhatsappNumber\n- whatsappNumbers (array)"
+              }
+            },
+            {
+              "name": "Update Profile",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"yearsOfExperience\": 12,\n  \"bio\": {\n    \"ar\": \"طبيب باطنة متخصص\",\n    \"en\": \"Senior Internal Medicine Specialist\"\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/profile",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "profile"]
+                },
+                "description": "Update doctor profile.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ratings",
+          "item": [
+            {
+              "name": "Get My Ratings",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/ratings",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "ratings"]
+                },
+                "description": "Get all ratings for current doctor with statistics.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "description": "Patient profile and family member management",
+      "item": [
+        {
+          "name": "Profile",
+          "item": [
+            {
+              "name": "Get My Profile",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/profile/me",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "profile", "me"]
+                },
+                "description": "Get current patient profile with user data and family members.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Create Profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('patient_profile_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"dateOfBirth\": \"1990-01-15\",\n  \"gender\": \"MALE\",\n  \"whatsappNumber\": \"01012345678\",\n  \"usePhoneAsWhatsapp\": false,\n  \"bloodType\": \"A+\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/profile",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "profile"]
+                },
+                "description": "Create patient profile.\n\n**Requires:** JWT Bearer Token (PATIENT role)\n\n**All fields optional:**\n- dateOfBirth: ISO date (YYYY-MM-DD)\n- gender: MALE or FEMALE\n- whatsappNumber: Egyptian mobile\n- usePhoneAsWhatsapp: boolean\n- bloodType: string"
+              }
+            },
+            {
+              "name": "Update Profile",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"bloodType\": \"B+\",\n  \"whatsappNumber\": \"01098765432\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/profile",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "profile"]
+                },
+                "description": "Update patient profile.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Get Medical Data",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/profile/medical",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "profile", "medical"]
+                },
+                "description": "Get patient medical data (decrypted).\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Update Medical Data",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"chronicDiseases\": [\"Diabetes\", \"Hypertension\"],\n  \"allergies\": [\"Penicillin\"]\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/profile/medical",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "profile", "medical"]
+                },
+                "description": "Update patient medical data (encrypted storage).\n\n**Requires:** JWT Bearer Token (PATIENT role)\n\n**Fields:**\n- chronicDiseases: array of strings\n- allergies: array of strings"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Family Members",
+          "item": [
+            {
+              "name": "Get All Family Members",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/family",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "family"]
+                },
+                "description": "Get all family members.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Add Family Member",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('family_member_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Mohamed Ahmed\",\n  \"dateOfBirth\": \"2015-05-10\",\n  \"gender\": \"MALE\",\n  \"relationship\": \"CHILD\",\n  \"bloodType\": \"A+\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/family",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "family"]
+                },
+                "description": "Add a new family member.\n\n**Requires:** JWT Bearer Token (PATIENT role)\n\n**Required:**\n- fullName: 2-100 characters\n- relationship: SPOUSE, CHILD, PARENT, SIBLING, OTHER\n\n**Optional:**\n- dateOfBirth, gender, bloodType"
+              }
+            },
+            {
+              "name": "Get Family Member",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/family/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "family", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{family_member_id}}" }
+                  ]
+                },
+                "description": "Get a specific family member by ID.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Update Family Member",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Mohamed Ahmed Ali\",\n  \"bloodType\": \"B+\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/family/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "family", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{family_member_id}}" }
+                  ]
+                },
+                "description": "Update a family member.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Remove Family Member",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/family/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "family", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{family_member_id}}" }
+                  ]
+                },
+                "description": "Remove a family member.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ratings",
+          "item": [
+            {
+              "name": "Create Rating",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"appointmentId\": \"{{appointment_id}}\",\n  \"rating\": 5,\n  \"review\": \"Excellent doctor, very professional and caring.\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/ratings",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "ratings"]
+                },
+                "description": "Create a rating for a completed appointment.\n\n**Requires:** JWT Bearer Token (PATIENT role)\n\n**Required:**\n- appointmentId: UUID of completed appointment\n- rating: 1-5 (integer)\n\n**Optional:**\n- review: max 1000 characters"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Clinics",
+      "description": "Clinic management and search",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Search Clinics",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/clinics?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["clinics"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "cityId", "value": "", "disabled": true },
+                    { "key": "stateId", "value": "", "disabled": true },
+                    { "key": "specialtyId", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "priceMin", "value": "", "disabled": true },
+                    { "key": "priceMax", "value": "", "disabled": true },
+                    { "key": "minRating", "value": "", "disabled": true },
+                    { "key": "latitude", "value": "", "disabled": true },
+                    { "key": "longitude", "value": "", "disabled": true },
+                    { "key": "radiusKm", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Search clinics with filters and pagination.\n\n**Public endpoint** - No authentication required\n\n**Geo search:** Provide latitude, longitude, and radiusKm for location-based search"
+              }
+            },
+            {
+              "name": "Get Clinic by ID",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/clinics/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["clinics", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Get clinic details by ID.\n\n**Public endpoint** - No authentication required"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Doctor Management",
+          "item": [
+            {
+              "name": "Get My Clinics",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics"]
+                },
+                "description": "Get all clinics owned by the current doctor.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Create Clinic",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('clinic_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"ar\": \"عيادة النور الطبية\",\n    \"en\": \"Al Noor Medical Clinic\"\n  },\n  \"address\": {\n    \"ar\": \"شارع التحرير - الدقي\",\n    \"en\": \"Tahrir Street - Dokki\"\n  },\n  \"cityId\": \"{{city_id}}\",\n  \"phoneNumber\": \"01012345678\",\n  \"latitude\": 30.0444,\n  \"longitude\": 31.2357,\n  \"slotDurationMinutes\": 15,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics"]
+                },
+                "description": "Create a new clinic.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- name: {ar, en} - 2-200 characters each\n- cityId: UUID\n\n**Optional:**\n- address, phoneNumber, latitude/longitude\n- slotDurationMinutes: 1-60 (default 15)\n- isActive: boolean"
+              }
+            },
+            {
+              "name": "Get Clinic Details",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Get clinic details by ID.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Update Clinic",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"phoneNumber\": \"01098765432\",\n  \"slotDurationMinutes\": 20\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Update clinic information.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Toggle Clinic Active",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:id/toggle-active",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":id", "toggle-active"],
+                  "variable": [
+                    { "key": "id", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Toggle clinic active status.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Delete Clinic",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Delete a clinic.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Schedules",
+      "description": "Clinic schedule management",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get Clinic Schedules",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/clinics/:clinicId/schedules",
+                  "host": ["{{base_url}}"],
+                  "path": ["clinics", ":clinicId", "schedules"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Get clinic weekly schedule.\n\n**Public endpoint** - No authentication required"
+              }
+            },
+            {
+              "name": "Get Available Slots",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/clinics/:clinicId/available-slots?date=2026-02-15",
+                  "host": ["{{base_url}}"],
+                  "path": ["clinics", ":clinicId", "available-slots"],
+                  "query": [
+                    { "key": "date", "value": "2026-02-15", "description": "Date in YYYY-MM-DD format" }
+                  ],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Get available time slots for a specific date.\n\n**Public endpoint** - No authentication required\n\n**Required query:**\n- date: YYYY-MM-DD format"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Doctor Management",
+          "item": [
+            {
+              "name": "Get Schedules",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "schedules"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Get all schedules for a clinic.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Create Schedule",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('schedule_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"dayOfWeek\": \"SUNDAY\",\n  \"shifts\": [\n    {\n      \"startTime\": \"09:00\",\n      \"endTime\": \"14:00\",\n      \"breakTime\": \"12:00\"\n    },\n    {\n      \"startTime\": \"17:00\",\n      \"endTime\": \"21:00\"\n    }\n  ],\n  \"slotDuration\": 20,\n  \"maxPatients\": 30,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "schedules"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Create a new schedule entry.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- dayOfWeek: SUNDAY-SATURDAY\n\n**Optional:**\n- startTime/endTime (HH:mm) OR shifts array\n- shifts: [{startTime, endTime, breakTime?}]\n- slotDuration: 5-120 minutes\n- maxPatients: min 1\n- isActive: boolean"
+              }
+            },
+            {
+              "name": "Update Schedule",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"slotDuration\": 15,\n  \"maxPatients\": 40\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules/:scheduleId",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "schedules", ":scheduleId"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" },
+                    { "key": "scheduleId", "value": "{{schedule_id}}" }
+                  ]
+                },
+                "description": "Update a schedule entry.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Delete Schedule",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules/:scheduleId",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "schedules", ":scheduleId"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" },
+                    { "key": "scheduleId", "value": "{{schedule_id}}" }
+                  ]
+                },
+                "description": "Delete a schedule entry.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "description": "Clinic service types management",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get Clinic Services",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/clinics/:clinicId/services",
+                  "host": ["{{base_url}}"],
+                  "path": ["clinics", ":clinicId", "services"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Get all active services for a clinic.\n\n**Public endpoint** - No authentication required"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Doctor Management",
+          "item": [
+            {
+              "name": "Get Services",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/services",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "services"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Get all services for a clinic.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Create Service",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('service_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"serviceType\": \"FIRST_VISIT\",\n  \"name\": {\n    \"ar\": \"كشف أول\",\n    \"en\": \"First Visit\"\n  },\n  \"price\": 200,\n  \"duration\": 30,\n  \"reVisitValidityDays\": 14,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/services",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "services"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" }
+                  ]
+                },
+                "description": "Create a new service type.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- serviceType: FIRST_VISIT, RE_VISIT, CONSULTATION_PHONE, CONSULTATION_VIDEO\n- price: 0-100000\n\n**Optional:**\n- name: {ar, en}\n- duration: 1-240 minutes\n- reVisitValidityDays\n- isActive"
+              }
+            },
+            {
+              "name": "Get Service",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" },
+                    { "key": "serviceId", "value": "{{service_id}}" }
+                  ]
+                },
+                "description": "Get service details by ID.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Update Service",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 250,\n  \"duration\": 25\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" },
+                    { "key": "serviceId", "value": "{{service_id}}" }
+                  ]
+                },
+                "description": "Update service type.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Toggle Service Active",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId/toggle-active",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId", "toggle-active"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" },
+                    { "key": "serviceId", "value": "{{service_id}}" }
+                  ]
+                },
+                "description": "Toggle service active status.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Delete Service",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId"],
+                  "variable": [
+                    { "key": "clinicId", "value": "{{clinic_id}}" },
+                    { "key": "serviceId", "value": "{{service_id}}" }
+                  ]
+                },
+                "description": "Delete a service type.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "description": "Appointment booking and management",
+      "item": [
+        {
+          "name": "Patient",
+          "item": [
+            {
+              "name": "Get My Appointments",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/appointments?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "appointments"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true, "description": "PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW" },
+                    { "key": "paymentStatus", "value": "", "disabled": true, "description": "PENDING, PAID, REFUNDED" },
+                    { "key": "dateFrom", "value": "", "disabled": true },
+                    { "key": "dateTo", "value": "", "disabled": true },
+                    { "key": "clinicId", "value": "", "disabled": true },
+                    { "key": "doctorId", "value": "", "disabled": true },
+                    { "key": "upcoming", "value": "true", "disabled": true },
+                    { "key": "forFamilyMember", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Get patient appointments with filters.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Book Appointment",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('appointment_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clinicId\": \"{{clinic_id}}\",\n  \"serviceTypeId\": \"{{service_id}}\",\n  \"appointmentDate\": \"2026-02-15\",\n  \"appointmentTime\": \"14:30\",\n  \"notes\": \"Patient notes here\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/appointments",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "appointments"]
+                },
+                "description": "Book a new appointment.\n\n**Requires:** JWT Bearer Token (PATIENT role)\n\n**Required:**\n- clinicId, serviceTypeId: UUIDs\n- appointmentDate: YYYY-MM-DD\n\n**Optional:**\n- appointmentTime: HH:mm\n- patientProfileId: UUID (for family members)\n- notes: max 500 chars"
+              }
+            },
+            {
+              "name": "Get Appointment",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/appointments/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "appointments", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Get appointment details by ID.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            },
+            {
+              "name": "Cancel Appointment",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Unable to attend due to personal reasons\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/patients/appointments/:id/cancel",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "appointments", ":id", "cancel"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Cancel an appointment.\n\n**Requires:** JWT Bearer Token (PATIENT role)\n\n**Optional body:**\n- reason: Cancellation reason"
+              }
+            },
+            {
+              "name": "Get Medical Notes",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/patients/appointments/:id/medical-notes",
+                  "host": ["{{base_url}}"],
+                  "path": ["patients", "appointments", ":id", "medical-notes"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Get medical notes for an appointment.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Doctor",
+          "item": [
+            {
+              "name": "Get Appointments",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/appointments?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "appointments"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "clinicId", "value": "", "disabled": true },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "paymentStatus", "value": "", "disabled": true },
+                    { "key": "date", "value": "", "disabled": true },
+                    { "key": "dateFrom", "value": "", "disabled": true },
+                    { "key": "dateTo", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "serviceTypeId", "value": "", "disabled": true },
+                    { "key": "upcoming", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Get doctor appointments with filters.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Get Appointment",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/appointments/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "appointments", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Get appointment details by ID.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Update Status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/appointments/:id/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "appointments", ":id", "status"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Update appointment status.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- status: PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW\n\n**Optional:**\n- cancellationReason: max 500 chars (for CANCELLED)"
+              }
+            },
+            {
+              "name": "Update Medical Notes",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"diagnosis\": \"Hypertension - Stage 1\",\n  \"prescription\": \"Amlodipine 5mg - Once daily\",\n  \"notes\": \"Follow up in 2 weeks\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/appointments/:id/medical-notes",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "appointments", ":id", "medical-notes"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Update medical notes (encrypted storage).\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Optional fields (max 2000 chars each):**\n- diagnosis, prescription, notes"
+              }
+            },
+            {
+              "name": "Get Medical Notes",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/doctors/appointments/:id/medical-notes",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "appointments", ":id", "medical-notes"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Get medical notes (decrypted).\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
+              }
+            },
+            {
+              "name": "Update Payment Status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paymentStatus\": \"PAID\",\n  \"paymentMethod\": \"CASH\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/doctors/appointments/:id/payment",
+                  "host": ["{{base_url}}"],
+                  "path": ["doctors", "appointments", ":id", "payment"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Update payment status.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- paymentStatus: PENDING, PAID, REFUNDED\n\n**Optional:**\n- paymentMethod: CASH, CARD, INSURANCE"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Secretary",
+          "item": [
+            {
+              "name": "Get Assigned Clinics",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/secretary/appointments/clinics",
+                  "host": ["{{base_url}}"],
+                  "path": ["secretary", "appointments", "clinics"]
+                },
+                "description": "Get clinics assigned to secretary.\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
+              }
+            },
+            {
+              "name": "Get Appointments",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/secretary/appointments?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["secretary", "appointments"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "clinicId", "value": "", "disabled": true },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "paymentStatus", "value": "", "disabled": true },
+                    { "key": "date", "value": "", "disabled": true },
+                    { "key": "dateFrom", "value": "", "disabled": true },
+                    { "key": "dateTo", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Get clinic appointments with filters.\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
+              }
+            },
+            {
+              "name": "Create Appointment",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clinicId\": \"{{clinic_id}}\",\n  \"serviceTypeId\": \"{{service_id}}\",\n  \"appointmentDate\": \"2026-02-15\",\n  \"appointmentTime\": \"10:00\",\n  \"patientProfileId\": \"{{patient_profile_id}}\",\n  \"notes\": \"Walk-in patient\",\n  \"symptoms\": \"Headache and fever\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/secretary/appointments",
+                  "host": ["{{base_url}}"],
+                  "path": ["secretary", "appointments"]
+                },
+                "description": "Book appointment for a patient.\n\n**Requires:** JWT Bearer Token (SECRETARY role)\n\n**Required:**\n- clinicId, serviceTypeId, patientProfileId: UUIDs\n- appointmentDate: YYYY-MM-DD\n\n**Optional:**\n- appointmentTime: HH:mm\n- notes, symptoms: max 500 chars"
+              }
+            },
+            {
+              "name": "Get Appointment",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/secretary/appointments/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["secretary", "appointments", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Get appointment details by ID.\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
+              }
+            },
+            {
+              "name": "Update Status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/secretary/appointments/:id/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["secretary", "appointments", ":id", "status"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Update appointment status (limited).\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
+              }
+            },
+            {
+              "name": "Update Payment Status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"paymentStatus\": \"PAID\",\n  \"paymentMethod\": \"CASH\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/secretary/appointments/:id/payment",
+                  "host": ["{{base_url}}"],
+                  "path": ["secretary", "appointments", ":id", "payment"],
+                  "variable": [
+                    { "key": "id", "value": "{{appointment_id}}" }
+                  ]
+                },
+                "description": "Update payment status.\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ratings",
+      "description": "Doctor ratings endpoints",
+      "item": [
+        {
+          "name": "Get Doctor Ratings (Public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/doctors/:doctorId/ratings?limit=10&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["doctors", ":doctorId", "ratings"],
+              "query": [
+                { "key": "limit", "value": "10" },
+                { "key": "offset", "value": "0" }
+              ],
+              "variable": [
+                { "key": "doctorId", "value": "{{doctor_profile_id}}" }
+              ]
+            },
+            "description": "Get public ratings for a doctor.\n\n**Public endpoint** - No authentication required"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Specialties",
+      "description": "Medical specialties management",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get All Specialties",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/specialties",
+                  "host": ["{{base_url}}"],
+                  "path": ["specialties"]
+                },
+                "description": "Get all active specialties.\n\n**Public endpoint** - No authentication required"
+              }
+            },
+            {
+              "name": "Get Specialty by ID",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/specialties/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["specialties", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{specialty_id}}" }
+                  ]
+                },
+                "description": "Get specialty by ID.\n\n**Public endpoint** - No authentication required"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "States",
+      "description": "States/Governorates management",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get All States",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/states",
+                  "host": ["{{base_url}}"],
+                  "path": ["states"]
+                },
+                "description": "Get all active states (governorates).\n\n**Public endpoint** - No authentication required"
+              }
+            },
+            {
+              "name": "Get State by ID",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/states/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["states", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{state_id}}" }
+                  ]
+                },
+                "description": "Get state by ID.\n\n**Public endpoint** - No authentication required"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cities",
+      "description": "Cities management",
+      "item": [
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Get All Cities",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/cities",
+                  "host": ["{{base_url}}"],
+                  "path": ["cities"],
+                  "query": [
+                    { "key": "stateId", "value": "", "disabled": true, "description": "Filter by state UUID" }
+                  ]
+                },
+                "description": "Get all active cities, optionally filter by state.\n\n**Public endpoint** - No authentication required"
+              }
+            },
+            {
+              "name": "Get City by ID",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/cities/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["cities", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{city_id}}" }
+                  ]
+                },
+                "description": "Get city by ID.\n\n**Public endpoint** - No authentication required"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "Admin-only endpoints for system management",
+      "item": [
+        {
+          "name": "Doctors",
+          "item": [
+            {
+              "name": "Get All Doctors",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/doctors?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "doctors"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true, "description": "PENDING, APPROVED, REJECTED, SUSPENDED" },
+                    { "key": "specialtyId", "value": "", "disabled": true },
+                    { "key": "cityId", "value": "", "disabled": true },
+                    { "key": "stateId", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "minRating", "value": "", "disabled": true },
+                    { "key": "isActive", "value": "", "disabled": true },
+                    { "key": "isApproved", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Get all doctors with filters (admin).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Get Doctor by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/doctors/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "doctors", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{doctor_profile_id}}" }
+                  ]
+                },
+                "description": "Get doctor details by ID (admin).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Approve Doctor",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/doctors/:id/approve",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "doctors", ":id", "approve"],
+                  "variable": [
+                    { "key": "id", "value": "{{doctor_profile_id}}" }
+                  ]
+                },
+                "description": "Approve doctor registration.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Reject Doctor",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/doctors/:id/reject",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "doctors", ":id", "reject"],
+                  "variable": [
+                    { "key": "id", "value": "{{doctor_profile_id}}" }
+                  ]
+                },
+                "description": "Reject doctor registration.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Suspend Doctor",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/doctors/:id/suspend",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "doctors", ":id", "suspend"],
+                  "variable": [
+                    { "key": "id", "value": "{{doctor_profile_id}}" }
+                  ]
+                },
+                "description": "Suspend doctor account.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Specialties",
+          "item": [
+            {
+              "name": "Get All Specialties",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/specialties?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "specialties"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" }
+                  ]
+                },
+                "description": "Get all specialties with filters and pagination.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Get Specialty by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/specialties/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "specialties", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{specialty_id}}" }
+                  ]
+                },
+                "description": "Get specialty by ID.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Create Specialty",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('specialty_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"ar\": \"باطنة\",\n    \"en\": \"Internal Medicine\"\n  },\n  \"description\": {\n    \"ar\": \"تشخيص وعلاج أمراض الأعضاء الداخلية\",\n    \"en\": \"Diagnosis and treatment of internal organs\"\n  },\n  \"icon\": \"internal-medicine\",\n  \"sortOrder\": 1,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/specialties",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "specialties"]
+                },
+                "description": "Create a new specialty.\n\n**Requires:** JWT Bearer Token (ADMIN role)\n\n**Required:**\n- name: {ar, en}\n\n**Optional:**\n- description: {ar, en}\n- icon, sortOrder, isActive"
+              }
+            },
+            {
+              "name": "Update Specialty",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sortOrder\": 2,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/specialties/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "specialties", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{specialty_id}}" }
+                  ]
+                },
+                "description": "Update specialty.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Delete Specialty",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/specialties/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "specialties", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{specialty_id}}" }
+                  ]
+                },
+                "description": "Delete specialty.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            }
+          ]
+        },
+        {
+          "name": "States",
+          "item": [
+            {
+              "name": "Get All States",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/states",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "states"]
+                },
+                "description": "Get all states (active and inactive).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Get State by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/states/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "states", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{state_id}}" }
+                  ]
+                },
+                "description": "Get state by ID.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Create State",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('state_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"ar\": \"القاهرة\",\n    \"en\": \"Cairo\"\n  },\n  \"code\": \"CAI\",\n  \"sortOrder\": 1,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/states",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "states"]
+                },
+                "description": "Create a new state.\n\n**Requires:** JWT Bearer Token (ADMIN role)\n\n**Required:**\n- name: {ar, en}\n- code: max 10 chars (unique)\n\n**Optional:**\n- sortOrder, isActive"
+              }
+            },
+            {
+              "name": "Update State",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sortOrder\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/states/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "states", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{state_id}}" }
+                  ]
+                },
+                "description": "Update state.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Delete State",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/states/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "states", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{state_id}}" }
+                  ]
+                },
+                "description": "Delete state (soft delete if has cities).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cities",
+          "item": [
+            {
+              "name": "Get All Cities",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/cities",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "cities"],
+                  "query": [
+                    { "key": "stateId", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Get all cities (active and inactive).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Get City by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/cities/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "cities", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{city_id}}" }
+                  ]
+                },
+                "description": "Get city by ID.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Create City",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.id) {",
+                      "        pm.environment.set('city_id', jsonData.data.id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"stateId\": \"{{state_id}}\",\n  \"name\": {\n    \"ar\": \"مدينة نصر\",\n    \"en\": \"Nasr City\"\n  },\n  \"sortOrder\": 1,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/cities",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "cities"]
+                },
+                "description": "Create a new city.\n\n**Requires:** JWT Bearer Token (ADMIN role)\n\n**Required:**\n- stateId: UUID\n- name: {ar, en}\n\n**Optional:**\n- sortOrder, isActive"
+              }
+            },
+            {
+              "name": "Update City",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sortOrder\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/cities/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "cities", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{city_id}}" }
+                  ]
+                },
+                "description": "Update city.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            },
+            {
+              "name": "Delete City",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/cities/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["admin", "cities", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "{{city_id}}" }
+                  ]
+                },
+                "description": "Delete city (soft delete if has clinics).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

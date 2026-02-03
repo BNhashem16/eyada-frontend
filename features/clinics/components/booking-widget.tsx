@@ -2,12 +2,15 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Check,
   Loader2,
+  User,
+  Users,
 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -22,7 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { useClinicServices } from '../hooks/use-clinics';
+import { usePatientFamily } from '@/features/patients/hooks/use-patient';
 import { useAuthStore } from '@/lib/auth/store';
 import { apiPost } from '@/lib/api';
 import { PATIENT_ENDPOINTS } from '@/lib/api/endpoints';
@@ -60,9 +65,12 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
   });
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedServiceId, setSelectedServiceId] = useState<string>('');
+  const [bookingFor, setBookingFor] = useState<'self' | 'family'>('self');
+  const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState<string>('');
 
   // Queries
   const { data: services, isLoading: servicesLoading } = useClinicServices(clinicId);
+  const { data: familyMembers, isLoading: familyLoading } = usePatientFamily();
 
   // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({
@@ -71,12 +79,30 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         throw new Error(t('booking.selectAllRequired'));
       }
 
+      // Validate family member selection
+      if (bookingFor === 'family' && !selectedFamilyMemberId) {
+        throw new Error(t('booking.selectPatient'));
+      }
+
       // Per Swagger: appointmentDate is YYYY-MM-DD format only
-      return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, {
+      // patientProfileId is optional - used for booking for family members
+      const payload: {
+        clinicId: string;
+        serviceTypeId: string;
+        appointmentDate: string;
+        patientProfileId?: string;
+      } = {
         clinicId,
         serviceTypeId: selectedServiceId,
         appointmentDate: formatDate(selectedDate, 'yyyy-MM-dd'),
-      });
+      };
+
+      // Add patientProfileId if booking for family member
+      if (bookingFor === 'family' && selectedFamilyMemberId) {
+        payload.patientProfileId = selectedFamilyMemberId;
+      }
+
+      return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, payload);
     },
     onSuccess: () => {
       toast({
@@ -183,6 +209,72 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
           )}
         </div>
 
+        {/* Patient Selection - Only show for authenticated patients */}
+        {isAuthenticated && user?.role === 'PATIENT' && (
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              {t('booking.bookingFor')}
+            </label>
+            <div className="flex gap-2 mb-3">
+              <Button
+                type="button"
+                variant={bookingFor === 'self' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1"
+                onClick={() => {
+                  setBookingFor('self');
+                  setSelectedFamilyMemberId('');
+                }}
+              >
+                <User className="h-4 w-4 ms-2" />
+                {t('booking.bookForSelf')}
+              </Button>
+              <Button
+                type="button"
+                variant={bookingFor === 'family' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1"
+                onClick={() => setBookingFor('family')}
+              >
+                <Users className="h-4 w-4 ms-2" />
+                {t('booking.bookForFamily')}
+              </Button>
+            </div>
+
+            {/* Family Member Selection */}
+            {bookingFor === 'family' && (
+              <>
+                {familyLoading ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : familyMembers && familyMembers.length > 0 ? (
+                  <SearchableSelect
+                    options={familyMembers.map((member) => ({
+                      value: member.id,
+                      label: member.fullName || member.user?.fullName || member.user?.name || '',
+                      description: member.relationship ? t(`family.${member.relationship?.toLowerCase()}`) : undefined,
+                    }))}
+                    value={selectedFamilyMemberId}
+                    onValueChange={setSelectedFamilyMemberId}
+                    placeholder={t('booking.selectPatient')}
+                    searchPlaceholder={t('common.search')}
+                    emptyMessage={t('common.noResults')}
+                  />
+                ) : (
+                  <div className="text-center py-3 bg-muted/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground mb-2">{t('booking.noFamilyMembers')}</p>
+                    <p className="text-xs text-muted-foreground mb-2">{t('booking.addFamilyFirst')}</p>
+                    <Link href="/patient/family">
+                      <Button variant="link" size="sm" className="text-primary">
+                        {t('booking.goToFamily')}
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
         {/* Date Selection */}
         <div>
           <div className="flex items-center justify-between mb-4">
@@ -241,6 +333,21 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
               <h4 className="font-semibold text-foreground mb-2">{t('booking.summary')}</h4>
               <div className="space-y-2 text-sm">
+                {/* Show patient name when booking for family */}
+                {isAuthenticated && user?.role === 'PATIENT' && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">{t('booking.bookingFor')}</span>
+                    <span className="font-medium">
+                      {bookingFor === 'self'
+                        ? t('booking.bookForSelf')
+                        : (() => {
+                            const member = familyMembers?.find(m => m.id === selectedFamilyMemberId);
+                            return member?.fullName || member?.user?.fullName || member?.user?.name || t('booking.selectPatient');
+                          })()
+                      }
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('booking.serviceLabel')}</span>
                   <span className="font-medium">
@@ -266,7 +373,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               className="w-full"
               size="lg"
               onClick={handleBooking}
-              disabled={bookingMutation.isPending}
+              disabled={bookingMutation.isPending || (bookingFor === 'family' && !selectedFamilyMemberId)}
             >
               {bookingMutation.isPending ? (
                 <>

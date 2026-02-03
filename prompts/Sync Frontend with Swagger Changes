@@ -3,6 +3,7 @@ You have TWO separate projects:
 Backend (NestJS):
 Path: C:\Nest\eyada_backend
 Swagger URL: http://localhost:3000/api
+Postman Collection : C:\React\eyada-frontend\postman
 
 Frontend (Next.js React):
 Path: C:\React\eyada-frontend

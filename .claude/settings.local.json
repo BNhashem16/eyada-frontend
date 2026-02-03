@@ -24,7 +24,8 @@
       "Bash(node -e:*)",
       "Bash(python -c:*)",
       "Bash(tree:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(python3:*)"
     ]
   }
 }

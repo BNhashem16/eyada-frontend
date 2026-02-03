@@ -867,7 +867,14 @@
     "bookingFailedTitle": "Booking Failed",
     "bookingFailedDesc": "An error occurred while booking. Please try again.",
     "notAllowed": "Not Allowed",
-    "patientRequired": "You must be a patient to book an appointment"
+    "patientRequired": "You must be a patient to book an appointment",
+    "bookingFor": "Booking for",
+    "bookForSelf": "Myself",
+    "bookForFamily": "Family member",
+    "selectPatient": "Select patient",
+    "noFamilyMembers": "No family members",
+    "addFamilyFirst": "Add family members first from the Family page",
+    "goToFamily": "Manage Family"
   },
   "family": {
     "title": "Family Members",

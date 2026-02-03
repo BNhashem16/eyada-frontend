@@ -867,7 +867,14 @@
     "bookingFailedTitle": "فشل الحجز",
     "bookingFailedDesc": "حدث خطأ أثناء الحجز. يرجى المحاولة مرة أخرى.",
     "notAllowed": "غير مسموح",
-    "patientRequired": "يجب أن تكون مريضاً لحجز موعد"
+    "patientRequired": "يجب أن تكون مريضاً لحجز موعد",
+    "bookingFor": "الحجز لـ",
+    "bookForSelf": "لنفسي",
+    "bookForFamily": "لفرد من العائلة",
+    "selectPatient": "اختر المريض",
+    "noFamilyMembers": "لا يوجد أفراد عائلة",
+    "addFamilyFirst": "أضف أفراد عائلتك أولاً من صفحة العائلة",
+    "goToFamily": "إدارة العائلة"
   },
   "family": {
     "title": "أفراد العائلة",
