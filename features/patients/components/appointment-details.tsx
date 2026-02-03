@@ -105,7 +105,7 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
 
   const handleCancel = async () => {
     try {
-      await cancelMutation.mutateAsync(appointmentId);
+      await cancelMutation.mutateAsync({ appointmentId });
       toast({
         title: t('appointments.cancelSuccess'),
         description: t('common.success'),

@@ -64,7 +64,7 @@ export function AppointmentList() {
     if (!cancelingId) return;
 
     try {
-      await cancelMutation.mutateAsync(cancelingId);
+      await cancelMutation.mutateAsync({ appointmentId: cancelingId });
       toast({
         title: t('appointments.cancelSuccess'),
         description: t('common.success'),

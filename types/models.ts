@@ -167,6 +167,7 @@ export interface ClinicSchedule extends Timestamps {
   dayOfWeek: DayOfWeek;
   shifts: ScheduleShift[];
   slotDuration: number;
+  maxPatients?: number;
   isActive: boolean;
 }
 

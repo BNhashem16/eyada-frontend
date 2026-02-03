@@ -131,6 +131,7 @@ export interface CreateScheduleDto {
   endTime?: string; // HH:mm format (legacy, use shifts instead)
   shifts?: ShiftDto[];
   slotDuration?: number; // 5-120 minutes
+  maxPatients?: number; // min: 1, maximum patients per day
   isActive?: boolean; // default: true
 }
 
@@ -159,6 +160,7 @@ export interface CreateAppointmentDto {
   clinicId: string; // UUID, required
   serviceTypeId: string; // UUID, required
   appointmentDate: string; // YYYY-MM-DD format, required (per Swagger)
+  appointmentTime?: string; // HH:mm format, optional
   patientProfileId?: string; // UUID, for booking for family members
   notes?: string; // maxLength: 500
 }
@@ -167,6 +169,7 @@ export interface CreateSecretaryAppointmentDto {
   clinicId: string; // UUID, required
   serviceTypeId: string; // UUID, required
   appointmentDate: string; // YYYY-MM-DD format, required (per Swagger)
+  appointmentTime?: string; // HH:mm format, optional
   patientProfileId: string; // UUID, required for secretary
   notes?: string; // maxLength: 500
   symptoms?: string; // maxLength: 500

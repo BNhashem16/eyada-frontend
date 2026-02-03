@@ -142,6 +142,7 @@ export interface BookAppointmentData {
   clinicId: string;
   serviceTypeId: string;
   appointmentDate: string; // YYYY-MM-DD format per Swagger
+  appointmentTime?: string; // HH:mm format, optional
   patientProfileId?: string; // For booking for family members
   notes?: string;
 }
@@ -163,8 +164,8 @@ export function useCancelAppointment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (appointmentId: string) => {
-      return apiPatch(PATIENT_ENDPOINTS.CANCEL_APPOINTMENT(appointmentId), {});
+    mutationFn: async ({ appointmentId, reason }: { appointmentId: string; reason?: string }) => {
+      return apiPatch(PATIENT_ENDPOINTS.CANCEL_APPOINTMENT(appointmentId), { reason });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });

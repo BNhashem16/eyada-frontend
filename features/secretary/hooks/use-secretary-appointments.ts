@@ -83,6 +83,7 @@ export interface CreateSecretaryAppointmentData {
   clinicId: string;
   serviceTypeId: string;
   appointmentDate: string; // YYYY-MM-DD format per Swagger
+  appointmentTime?: string; // HH:mm format, optional
   patientProfileId: string; // Required for secretary
   notes?: string;
   symptoms?: string;
