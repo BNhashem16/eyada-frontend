@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "جاري التحميل...",
+    "tryAgain": "حاول مرة أخرى",
     "error": "حدث خطأ",
     "success": "تم بنجاح",
     "save": "حفظ",
@@ -101,7 +102,8 @@
     "findDoctor": "ابحث عن طبيب",
     "findClinic": "ابحث عن عيادة",
     "myAppointments": "مواعيدي",
-    "ratings": "التقييمات"
+    "ratings": "التقييمات",
+    "secretaries": "السكرتارية"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -664,7 +666,41 @@
     "appointmentsPage": {
       "title": "إدارة المواعيد",
       "subtitle": "عرض وإدارة جميع مواعيد العيادة"
-    }
+    },
+    "ratingsPage": {
+      "title": "التقييمات",
+      "subtitle": "عرض تقييمات العيادة وآراء المرضى",
+      "performance": "الأداء",
+      "excellent": "ممتاز",
+      "good": "جيد",
+      "needsImprovement": "يحتاج تحسين",
+      "basedOnRatings": "بناءً على تقييمات المرضى",
+      "reviewsDesc": "آخر تقييمات المرضى"
+    },
+    "management": {
+      "title": "إدارة السكرتارية",
+      "subtitle": "إدارة سكرتارية عياداتك",
+      "addSecretary": "إضافة سكرتير",
+      "addSecretaryDesc": "إضافة سكرتير جديد لإدارة عيادتك",
+      "addFirstSecretary": "إضافة أول سكرتير",
+      "noSecretaries": "لا يوجد سكرتارية",
+      "noSecretariesDesc": "أضف سكرتارية للمساعدة في إدارة عياداتك",
+      "secretaryInfo": "معلومات السكرتير",
+      "secretaryInfoDesc": "أدخل المعلومات الأساسية للسكرتير",
+      "selectClinic": "اختر العيادة",
+      "selectClinicPlaceholder": "اختر عيادة للتعيين",
+      "assignedClinics": "العيادات المعينة",
+      "secretaryCreated": "تم إنشاء السكرتير بنجاح",
+      "secretaryUpdated": "تم تحديث السكرتير بنجاح",
+      "deactivate": "إلغاء التفعيل",
+      "activate": "تفعيل",
+      "removeFromClinic": "إزالة من العيادة",
+      "confirmRemove": "تأكيد الإزالة",
+      "confirmRemoveDesc": "هل أنت متأكد من إزالة {secretary} من {clinic}؟"
+    },
+    "assignmentUpdated": "تم تحديث التعيين بنجاح",
+    "removedFromClinic": "تم إزالة السكرتير من العيادة",
+    "loadError": "حدث خطأ أثناء تحميل السكرتارية. يرجى المحاولة مرة أخرى."
   },
   "admin": {
     "dashboard": "لوحة التحكم",

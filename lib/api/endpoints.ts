@@ -104,6 +104,23 @@ export const SECRETARY_ENDPOINTS = {
   APPOINTMENT: (id: string) => `/secretary/appointments/${id}`,
   APPOINTMENT_STATUS: (id: string) => `/secretary/appointments/${id}/status`,
   APPOINTMENT_PAYMENT: (id: string) => `/secretary/appointments/${id}/payment`,
+
+  // Ratings
+  RATINGS: '/secretary/ratings',
+
+  // Patients search
+  PATIENTS_SEARCH: '/secretary/patients/search',
+  PATIENT: (id: string) => `/secretary/patients/${id}`,
+} as const;
+
+// Doctor Secretaries endpoints (requires DOCTOR role)
+export const DOCTOR_SECRETARIES_ENDPOINTS = {
+  // Secretaries management
+  SECRETARIES: '/doctors/secretaries',
+  SECRETARY: (id: string) => `/doctors/secretaries/${id}`,
+  ASSIGN: '/doctors/secretaries/assign',
+  CLINIC_SECRETARIES: (clinicId: string) => `/doctors/secretaries/clinic/${clinicId}`,
+  ASSIGNMENT: (assignmentId: string) => `/doctors/secretaries/assignment/${assignmentId}`,
 } as const;
 
 // Admin endpoints (requires ADMIN role)
@@ -124,4 +141,10 @@ export const ADMIN_ENDPOINTS = {
   STATE: (id: string) => `/admin/states/${id}`,
   CITIES: '/admin/cities',
   CITY: (id: string) => `/admin/cities/${id}`,
+
+  // Secretaries management
+  SECRETARIES: '/admin/secretaries',
+  SECRETARY: (id: string) => `/admin/secretaries/${id}`,
+  ASSIGN_SECRETARY: '/admin/secretaries/assign',
+  SECRETARY_ASSIGNMENT: (assignmentId: string) => `/admin/secretaries/assignment/${assignmentId}`,
 } as const;

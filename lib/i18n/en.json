@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Loading...",
+    "tryAgain": "Try again",
     "error": "An error occurred",
     "success": "Success",
     "save": "Save",
@@ -101,7 +102,8 @@
     "findDoctor": "Find a Doctor",
     "findClinic": "Find a Clinic",
     "myAppointments": "My Appointments",
-    "ratings": "Ratings"
+    "ratings": "Ratings",
+    "secretaries": "Secretaries"
   },
   "auth": {
     "login": "Login",
@@ -664,7 +666,41 @@
     "appointmentsPage": {
       "title": "Manage Appointments",
       "subtitle": "View and manage all clinic appointments"
-    }
+    },
+    "ratingsPage": {
+      "title": "Ratings",
+      "subtitle": "View clinic ratings and patient feedback",
+      "performance": "Performance",
+      "excellent": "Excellent",
+      "good": "Good",
+      "needsImprovement": "Needs Improvement",
+      "basedOnRatings": "Based on patient ratings",
+      "reviewsDesc": "Recent reviews from patients"
+    },
+    "management": {
+      "title": "Secretary Management",
+      "subtitle": "Manage your clinic secretaries",
+      "addSecretary": "Add Secretary",
+      "addSecretaryDesc": "Add a new secretary to manage your clinic",
+      "addFirstSecretary": "Add First Secretary",
+      "noSecretaries": "No secretaries yet",
+      "noSecretariesDesc": "Add secretaries to help manage your clinics",
+      "secretaryInfo": "Secretary Information",
+      "secretaryInfoDesc": "Enter the secretary's basic information",
+      "selectClinic": "Select Clinic",
+      "selectClinicPlaceholder": "Select a clinic to assign",
+      "assignedClinics": "Assigned Clinics",
+      "secretaryCreated": "Secretary created successfully",
+      "secretaryUpdated": "Secretary updated successfully",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "removeFromClinic": "Remove from Clinic",
+      "confirmRemove": "Confirm Removal",
+      "confirmRemoveDesc": "Are you sure you want to remove {secretary} from {clinic}?"
+    },
+    "assignmentUpdated": "Assignment updated successfully",
+    "removedFromClinic": "Secretary removed from clinic",
+    "loadError": "Error loading secretaries. Please try again."
   },
   "admin": {
     "dashboard": "Dashboard",

@@ -296,3 +296,34 @@ export interface ApiError {
   message: string;
   error?: string;
 }
+
+// Secretary assignment model
+export interface SecretaryAssignment extends Timestamps {
+  id: string;
+  clinicId: string;
+  userId: string;
+  isActive: boolean;
+  assignedBy?: string;
+  clinic?: Clinic;
+  user?: User;
+}
+
+// Secretary with clinics
+export interface SecretaryWithClinics extends User {
+  clinics: {
+    id: string;
+    name: Multilingual;
+    assignmentId: string;
+    isActive: boolean;
+    assignedAt: string;
+  }[];
+}
+
+// Secretary ratings response
+export interface SecretaryRatingsResponse {
+  ratings: Rating[];
+  statistics: {
+    averageRating: number;
+    totalRatings: number;
+  };
+}

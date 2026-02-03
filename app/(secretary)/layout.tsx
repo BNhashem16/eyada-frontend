@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Calendar,
   Plus,
+  Star,
 } from 'lucide-react';
 import { ProtectedRoute } from '@/lib/auth/guards';
 import { Role } from '@/types';
@@ -17,6 +18,7 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
     { href: '/secretary/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
     { href: '/secretary/appointments', label: t('nav.appointments'), icon: Calendar },
     { href: '/secretary/appointments/new', label: t('secretary.bookAppointment'), icon: Plus },
+    { href: '/secretary/ratings', label: t('nav.ratings'), icon: Star },
   ];
 
   return (
