@@ -17,6 +17,7 @@ import {
   UserCheck,
   Clock,
   AlertTriangle,
+  Stethoscope,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,13 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   AlertDialog,
@@ -193,39 +188,38 @@ export function AdminDoctorsList() {
             </div>
 
             {/* Status Filter */}
-            <Select
-              value={filters.status || 'all'}
-              onValueChange={(value) => handleFilterChange('status', value)}
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder={t('appointments.status')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('admin.doctors.allStatuses')}</SelectItem>
-                <SelectItem value={DoctorStatus.PENDING}>{t('admin.doctors.underReview')}</SelectItem>
-                <SelectItem value={DoctorStatus.APPROVED}>{t('admin.doctors.approved')}</SelectItem>
-                <SelectItem value={DoctorStatus.REJECTED}>{t('admin.doctors.rejected')}</SelectItem>
-                <SelectItem value={DoctorStatus.SUSPENDED}>{t('admin.doctors.suspended')}</SelectItem>
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              options={[
+                { value: '', label: t('admin.doctors.allStatuses'), icon: <Clock className="h-4 w-4" /> },
+                { value: DoctorStatus.PENDING, label: t('admin.doctors.underReview'), icon: <Clock className="h-4 w-4 text-warning-500" /> },
+                { value: DoctorStatus.APPROVED, label: t('admin.doctors.approved'), icon: <UserCheck className="h-4 w-4 text-success-500" /> },
+                { value: DoctorStatus.REJECTED, label: t('admin.doctors.rejected'), icon: <XCircle className="h-4 w-4 text-error-500" /> },
+                { value: DoctorStatus.SUSPENDED, label: t('admin.doctors.suspended'), icon: <Ban className="h-4 w-4 text-error-500" /> },
+              ]}
+              value={filters.status || ''}
+              onValueChange={(value) => handleFilterChange('status', value || undefined)}
+              placeholder={t('appointments.status')}
+              showSearch={false}
+              className="w-40"
+            />
 
             {/* Specialty Filter */}
-            <Select
-              value={filters.specialtyId || 'all'}
-              onValueChange={(value) => handleFilterChange('specialtyId', value)}
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder={t('doctors.filterBySpecialty')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('doctors.allSpecialties')}</SelectItem>
-                {specialties?.map((specialty) => (
-                  <SelectItem key={specialty.id} value={specialty.id}>
-                    {getLocalizedText(specialty.name, 'ar')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              options={[
+                { value: '', label: t('doctors.allSpecialties'), icon: <Stethoscope className="h-4 w-4" /> },
+                ...(specialties?.map((specialty) => ({
+                  value: specialty.id,
+                  label: getLocalizedText(specialty.name, 'ar'),
+                  icon: <Stethoscope className="h-4 w-4" />,
+                })) || []),
+              ]}
+              value={filters.specialtyId || ''}
+              onValueChange={(value) => handleFilterChange('specialtyId', value || undefined)}
+              placeholder={t('doctors.filterBySpecialty')}
+              searchPlaceholder={t('common.search')}
+              emptyMessage={t('common.noResults')}
+              className="w-40"
+            />
           </div>
         </CardContent>
       </Card>

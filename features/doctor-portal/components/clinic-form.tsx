@@ -10,13 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreateClinic, useUpdateClinic, useDoctorClinic } from '../hooks/use-doctor-portal';
 import { useToast } from '@/hooks/use-toast';
@@ -288,25 +282,25 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label required>{t('clinics.state')}</Label>
-              <Select
+              <SearchableSelect
+                options={states.map((state) => ({
+                  value: state.id,
+                  label: state.name?.ar || state.name?.en || '',
+                  icon: <MapPin className="h-4 w-4" />,
+                }))}
                 value={watch('stateId') || ''}
                 onValueChange={(value) => {
                   setValue('stateId', value, { shouldDirty: true, shouldValidate: true });
                   setValue('cityId', '', { shouldDirty: true });
                 }}
+                placeholder={t('clinics.selectState')}
+                searchPlaceholder={t('common.search')}
+                emptyMessage={t('common.noResults')}
                 disabled={loadingLocations}
-              >
-                <SelectTrigger className="bg-background text-foreground">
-                  <SelectValue placeholder={t('clinics.selectState')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {states.map((state) => (
-                    <SelectItem key={state.id} value={state.id}>
-                      {state.name?.ar || state.name?.en}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                loading={loadingLocations}
+                clearable={false}
+                className="bg-background text-foreground"
+              />
               {errors.stateId && (
                 <p className="text-sm text-error-600 dark:text-error-400">{errors.stateId.message}</p>
               )}
@@ -314,22 +308,21 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
 
             <div className="space-y-2">
               <Label required>{t('clinics.city')}</Label>
-              <Select
+              <SearchableSelect
+                options={cities.map((city) => ({
+                  value: city.id,
+                  label: city.name?.ar || city.name?.en || '',
+                  icon: <Building2 className="h-4 w-4" />,
+                }))}
                 value={watch('cityId') || ''}
                 onValueChange={(value) => setValue('cityId', value, { shouldDirty: true, shouldValidate: true })}
+                placeholder={!selectedStateId ? t('clinics.selectStateFirst') : t('clinics.selectCity')}
+                searchPlaceholder={t('common.search')}
+                emptyMessage={t('common.noResults')}
                 disabled={!selectedStateId || cities.length === 0}
-              >
-                <SelectTrigger className="bg-background text-foreground">
-                  <SelectValue placeholder={!selectedStateId ? t('clinics.selectStateFirst') : t('clinics.selectCity')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((city) => (
-                    <SelectItem key={city.id} value={city.id}>
-                      {city.name?.ar || city.name?.en}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                clearable={false}
+                className="bg-background text-foreground"
+              />
               {errors.cityId && (
                 <p className="text-sm text-error-600 dark:text-error-400">{errors.cityId.message}</p>
               )}

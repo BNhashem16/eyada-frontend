@@ -1,17 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Search, Filter, X, ChevronDown } from 'lucide-react';
+import { Search, Filter, X, ChevronDown, Stethoscope, MapPin, Building2, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Badge } from '@/components/ui/badge';
 import { Specialty, State, City } from '@/types';
 import { apiGet } from '@/lib/api';
@@ -138,75 +132,74 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       </div>
 
       {/* Specialty */}
-      <Select
-        value={filters.specialtyId || 'all'}
-        onValueChange={(value) => handleFilterChange('specialtyId', value === 'all' ? undefined : value)}
-      >
-        <SelectTrigger className="bg-background">
-          <SelectValue placeholder={t('doctors.filterBySpecialty')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{t('doctors.allSpecialties')}</SelectItem>
-          {specialties.map((specialty) => (
-            <SelectItem key={specialty.id} value={specialty.id}>
-              {specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SearchableSelect
+        options={[
+          { value: '', label: t('doctors.allSpecialties'), icon: <Stethoscope className="h-4 w-4" /> },
+          ...specialties.map((specialty) => ({
+            value: specialty.id,
+            label: specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn || '',
+            icon: <Stethoscope className="h-4 w-4" />,
+          })),
+        ]}
+        value={filters.specialtyId || ''}
+        onValueChange={(value) => handleFilterChange('specialtyId', value || undefined)}
+        placeholder={t('doctors.filterBySpecialty')}
+        searchPlaceholder={t('common.search')}
+        emptyMessage={t('common.noResults')}
+        className="bg-background"
+      />
 
       {/* State */}
-      <Select
-        value={filters.stateId || 'all'}
-        onValueChange={(value) => handleFilterChange('stateId', value === 'all' ? undefined : value)}
-      >
-        <SelectTrigger className="bg-background">
-          <SelectValue placeholder={t('doctors.filterByState')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{t('doctors.allStates')}</SelectItem>
-          {states.map((state) => (
-            <SelectItem key={state.id} value={state.id}>
-              {state.name?.ar || state.name?.en || (state as any).nameAr || (state as any).nameEn}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SearchableSelect
+        options={[
+          { value: '', label: t('doctors.allStates'), icon: <MapPin className="h-4 w-4" /> },
+          ...states.map((state) => ({
+            value: state.id,
+            label: state.name?.ar || state.name?.en || (state as any).nameAr || (state as any).nameEn || '',
+            icon: <MapPin className="h-4 w-4" />,
+          })),
+        ]}
+        value={filters.stateId || ''}
+        onValueChange={(value) => handleFilterChange('stateId', value || undefined)}
+        placeholder={t('doctors.filterByState')}
+        searchPlaceholder={t('common.search')}
+        emptyMessage={t('common.noResults')}
+        className="bg-background"
+      />
 
       {/* City */}
-      <Select
-        value={filters.cityId || 'all'}
-        onValueChange={(value) => handleFilterChange('cityId', value === 'all' ? undefined : value)}
+      <SearchableSelect
+        options={[
+          { value: '', label: t('doctors.allCities'), icon: <Building2 className="h-4 w-4" /> },
+          ...cities.map((city) => ({
+            value: city.id,
+            label: city.name?.ar || city.name?.en || (city as any).nameAr || (city as any).nameEn || '',
+            icon: <Building2 className="h-4 w-4" />,
+          })),
+        ]}
+        value={filters.cityId || ''}
+        onValueChange={(value) => handleFilterChange('cityId', value || undefined)}
+        placeholder={t('doctors.filterByCity')}
+        searchPlaceholder={t('common.search')}
+        emptyMessage={t('common.noResults')}
         disabled={!filters.stateId}
-      >
-        <SelectTrigger className="bg-background">
-          <SelectValue placeholder={t('doctors.filterByCity')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{t('doctors.allCities')}</SelectItem>
-          {cities.map((city) => (
-            <SelectItem key={city.id} value={city.id}>
-              {city.name?.ar || city.name?.en || (city as any).nameAr || (city as any).nameEn}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        className="bg-background"
+      />
 
       {/* Rating */}
-      <Select
-        value={filters.minRating?.toString() || 'all'}
-        onValueChange={(value) => handleFilterChange('minRating', value === 'all' ? undefined : Number(value))}
-      >
-        <SelectTrigger className="bg-background">
-          <SelectValue placeholder={t('doctors.filterByRating')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{t('doctors.allRatings')}</SelectItem>
-          <SelectItem value="4">4+ {t('common.stars')}</SelectItem>
-          <SelectItem value="3">3+ {t('common.stars')}</SelectItem>
-          <SelectItem value="2">2+ {t('common.stars')}</SelectItem>
-        </SelectContent>
-      </Select>
+      <SearchableSelect
+        options={[
+          { value: '', label: t('doctors.allRatings'), icon: <Star className="h-4 w-4" /> },
+          { value: '4', label: `4+ ${t('common.stars')}`, icon: <Star className="h-4 w-4 fill-warning-400 text-warning-400" /> },
+          { value: '3', label: `3+ ${t('common.stars')}`, icon: <Star className="h-4 w-4 fill-warning-400 text-warning-400" /> },
+          { value: '2', label: `2+ ${t('common.stars')}`, icon: <Star className="h-4 w-4 fill-warning-400 text-warning-400" /> },
+        ]}
+        value={filters.minRating?.toString() || ''}
+        onValueChange={(value) => handleFilterChange('minRating', value ? Number(value) : undefined)}
+        placeholder={t('doctors.filterByRating')}
+        showSearch={false}
+        className="bg-background"
+      />
 
       {/* Price Range */}
       <div className="space-y-2">

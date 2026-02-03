@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Users, Plus, Trash2, User, Calendar, Loader2, Edit, Eye } from 'lucide-react';
+import { Users, Plus, Trash2, User, Calendar, Loader2, Edit, Eye, Heart, Droplets } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,13 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import {
   Dialog,
   DialogContent,
@@ -384,40 +378,36 @@ export function FamilyList() {
             {/* Relationship */}
             <div className="space-y-2">
               <Label required>{t('family.relationship')}</Label>
-              <Select
+              <SearchableSelect
+                options={Object.entries(relationshipLabels)
+                  .filter(([key]) => key !== RelationshipType.SELF)
+                  .map(([value, label]) => ({
+                    value,
+                    label,
+                    icon: <Heart className="h-4 w-4" />,
+                  }))}
                 value={watch('relationship')}
                 onValueChange={(value) => setValue('relationship', value as RelationshipType, { shouldDirty: true })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(relationshipLabels)
-                    .filter(([key]) => key !== RelationshipType.SELF)
-                    .map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
+                placeholder={t('family.selectRelationship')}
+                showSearch={false}
+                clearable={false}
+              />
             </div>
 
             {/* Gender */}
             <div className="space-y-2">
               <Label>{t('family.gender')}</Label>
-              <Select
-                value={watch('gender')}
+              <SearchableSelect
+                options={[
+                  { value: Gender.MALE, label: t('family.male'), icon: <User className="h-4 w-4" /> },
+                  { value: Gender.FEMALE, label: t('family.female'), icon: <User className="h-4 w-4" /> },
+                ]}
+                value={watch('gender') || ''}
                 onValueChange={(value) => setValue('gender', value as Gender, { shouldDirty: true })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('family.selectGender')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={Gender.MALE}>{t('family.male')}</SelectItem>
-                  <SelectItem value={Gender.FEMALE}>{t('family.female')}</SelectItem>
-                </SelectContent>
-              </Select>
+                placeholder={t('family.selectGender')}
+                showSearch={false}
+                clearable={false}
+              />
             </div>
 
             {/* Date of Birth */}
@@ -435,24 +425,22 @@ export function FamilyList() {
             {/* Blood Type */}
             <div className="space-y-2">
               <Label>{t('family.bloodType')}</Label>
-              <Select
+              <SearchableSelect
+                options={[
+                  { value: 'A+', label: 'A+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  { value: 'A-', label: 'A-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  { value: 'B+', label: 'B+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  { value: 'B-', label: 'B-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  { value: 'AB+', label: 'AB+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  { value: 'AB-', label: 'AB-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  { value: 'O+', label: 'O+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  { value: 'O-', label: 'O-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                ]}
                 value={watch('bloodType') || ''}
                 onValueChange={(value) => setValue('bloodType', value, { shouldDirty: true })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('family.selectBloodType')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="A+">A+</SelectItem>
-                  <SelectItem value="A-">A-</SelectItem>
-                  <SelectItem value="B+">B+</SelectItem>
-                  <SelectItem value="B-">B-</SelectItem>
-                  <SelectItem value="AB+">AB+</SelectItem>
-                  <SelectItem value="AB-">AB-</SelectItem>
-                  <SelectItem value="O+">O+</SelectItem>
-                  <SelectItem value="O-">O-</SelectItem>
-                </SelectContent>
-              </Select>
+                placeholder={t('family.selectBloodType')}
+                showSearch={false}
+              />
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0">

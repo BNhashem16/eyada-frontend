@@ -24,13 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Switch } from '@/components/ui/switch';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -318,22 +312,21 @@ export function DoctorProfileForm() {
           <CardContent>
             <div className="space-y-2">
               <Label htmlFor="specialtyId">{t('doctor.profileForm.specialty')} <span className="text-error-500">*</span></Label>
-              <Select
+              <SearchableSelect
+                options={specialties.map((specialty) => ({
+                  value: specialty.id,
+                  label: specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn || '',
+                  icon: <Stethoscope className="h-4 w-4" />,
+                }))}
                 value={watch('specialtyId') || ''}
                 onValueChange={(value) => setValue('specialtyId', value, { shouldValidate: true, shouldDirty: true })}
+                placeholder={t('doctor.profileForm.selectSpecialty')}
+                searchPlaceholder={t('common.search')}
+                emptyMessage={t('common.noResults')}
                 disabled={loadingSpecialties}
-              >
-                <SelectTrigger className="bg-background">
-                  <SelectValue placeholder={loadingSpecialties ? t('common.loading') : t('doctor.profileForm.selectSpecialty')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {specialties.map((specialty) => (
-                    <SelectItem key={specialty.id} value={specialty.id}>
-                      {specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                loading={loadingSpecialties}
+                className="bg-background"
+              />
               {errors.specialtyId && (
                 <p className="text-sm text-error-500">{errors.specialtyId.message}</p>
               )}

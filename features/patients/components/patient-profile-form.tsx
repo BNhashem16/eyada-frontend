@@ -3,18 +3,12 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User as UserIcon, Phone, Mail, Calendar, Loader2 } from 'lucide-react';
+import { User as UserIcon, Phone, Mail, Calendar, Loader2, Droplets } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePatientProfile, useUpdatePatientProfile, useCreatePatientProfile } from '../hooks/use-patient';
 import { useAuthStore } from '@/lib/auth/store';
@@ -221,18 +215,16 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
               name="gender"
               control={control}
               render={({ field }) => (
-                <Select
+                <SearchableSelect
+                  options={[
+                    { value: Gender.MALE, label: t('patient.male'), icon: <UserIcon className="h-4 w-4" /> },
+                    { value: Gender.FEMALE, label: t('patient.female'), icon: <UserIcon className="h-4 w-4" /> },
+                  ]}
                   value={field.value || ''}
                   onValueChange={(value) => field.onChange(value as Gender)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('patient.selectGender')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={Gender.MALE}>{t('patient.male')}</SelectItem>
-                    <SelectItem value={Gender.FEMALE}>{t('patient.female')}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder={t('patient.selectGender')}
+                  showSearch={false}
+                />
               )}
             />
           </div>
@@ -258,24 +250,22 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
               name="bloodType"
               control={control}
               render={({ field }) => (
-                <Select
+                <SearchableSelect
+                  options={[
+                    { value: 'A+', label: 'A+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    { value: 'A-', label: 'A-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    { value: 'B+', label: 'B+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    { value: 'B-', label: 'B-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    { value: 'AB+', label: 'AB+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    { value: 'AB-', label: 'AB-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    { value: 'O+', label: 'O+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    { value: 'O-', label: 'O-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                  ]}
                   value={field.value || ''}
                   onValueChange={field.onChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('patient.selectBloodType')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="A+">A+</SelectItem>
-                    <SelectItem value="A-">A-</SelectItem>
-                    <SelectItem value="B+">B+</SelectItem>
-                    <SelectItem value="B-">B-</SelectItem>
-                    <SelectItem value="AB+">AB+</SelectItem>
-                    <SelectItem value="AB-">AB-</SelectItem>
-                    <SelectItem value="O+">O+</SelectItem>
-                    <SelectItem value="O-">O-</SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder={t('patient.selectBloodType')}
+                  showSearch={false}
+                />
               )}
             />
           </div>

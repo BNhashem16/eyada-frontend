@@ -18,13 +18,6 @@ import type { ApiError } from '@/types/models';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { SearchableSelect } from '@/components/ui/searchable-select';
 import { useClinicServices } from '../hooks/use-clinics';
 import { usePatientFamily } from '@/features/patients/hooks/use-patient';
@@ -192,18 +185,20 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
           {servicesLoading ? (
             <Skeleton className="h-10 w-full" />
           ) : services && services.length > 0 ? (
-            <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('booking.selectServiceType')} />
-              </SelectTrigger>
-              <SelectContent>
-                {services.map((service) => (
-                  <SelectItem key={service.id} value={service.id}>
-                    {service.name?.ar || service.name?.en || service.serviceType} - {service.price} {t('common.egp')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              options={services.map((service) => ({
+                value: service.id,
+                label: `${service.name?.ar || service.name?.en || service.serviceType} - ${service.price} ${t('common.egp')}`,
+                description: service.duration ? `${service.duration} ${t('services.minute')}` : undefined,
+              }))}
+              value={selectedServiceId}
+              onValueChange={setSelectedServiceId}
+              placeholder={t('booking.selectServiceType')}
+              searchPlaceholder={t('common.search')}
+              emptyMessage={t('common.noResults')}
+              showSearch={services.length > 5}
+              clearable={false}
+            />
           ) : (
             <p className="text-sm text-muted-foreground">{t('booking.noServicesAvailable')}</p>
           )}

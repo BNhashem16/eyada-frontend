@@ -12,18 +12,16 @@ import {
   Loader2,
   Clock,
   Calendar,
+  Stethoscope,
+  Phone,
+  Video,
+  RefreshCw,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import {
   Dialog,
   DialogContent,
@@ -332,23 +330,20 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             {/* Service Type */}
             <div className="space-y-2">
               <Label required>{t('services.serviceType')}</Label>
-              <Select
+              <SearchableSelect
+                options={[
+                  { value: ServiceType.FIRST_VISIT, label: serviceTypeLabels[ServiceType.FIRST_VISIT], icon: <Stethoscope className="h-4 w-4" /> },
+                  { value: ServiceType.RE_VISIT, label: serviceTypeLabels[ServiceType.RE_VISIT], icon: <RefreshCw className="h-4 w-4" /> },
+                  { value: ServiceType.CONSULTATION_PHONE, label: serviceTypeLabels[ServiceType.CONSULTATION_PHONE], icon: <Phone className="h-4 w-4" /> },
+                  { value: ServiceType.CONSULTATION_VIDEO, label: serviceTypeLabels[ServiceType.CONSULTATION_VIDEO], icon: <Video className="h-4 w-4" /> },
+                ]}
                 value={watch('serviceType')}
                 onValueChange={(value) =>
                   setValue('serviceType', value as ServiceType)
                 }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(serviceTypeLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                showSearch={false}
+                clearable={false}
+              />
             </div>
 
             {/* Price & Duration */}

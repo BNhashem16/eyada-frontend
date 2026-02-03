@@ -11,6 +11,16 @@ import {
   Plus,
   Search,
   SlidersHorizontal,
+  Building2,
+  Clock,
+  CheckCircle,
+  UserCheck,
+  Play,
+  XCircle,
+  Ban,
+  CreditCard,
+  DollarSign,
+  Undo,
 } from 'lucide-react';
 import { AppointmentCard } from './appointment-card';
 import { BookAppointmentDialog } from './book-appointment-dialog';
@@ -19,13 +29,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
@@ -69,21 +73,21 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
   const totalItems = data?.meta?.total ?? 0;
 
   const statusOptions = [
-    { value: 'all', label: t('secretary.allStatuses') },
-    { value: AppointmentStatus.PENDING, label: t('secretary.waiting') },
-    { value: AppointmentStatus.CONFIRMED, label: t('secretary.confirmed') },
-    { value: AppointmentStatus.CHECKED_IN, label: t('secretary.attended') },
-    { value: AppointmentStatus.IN_PROGRESS, label: t('secretary.inProgress') },
-    { value: AppointmentStatus.COMPLETED, label: t('secretary.completed') },
-    { value: AppointmentStatus.CANCELLED, label: t('secretary.cancelled') },
-    { value: AppointmentStatus.NO_SHOW, label: t('secretary.noShow') },
+    { value: 'all', label: t('secretary.allStatuses'), icon: <Clock className="h-4 w-4" /> },
+    { value: AppointmentStatus.PENDING, label: t('secretary.waiting'), icon: <Clock className="h-4 w-4 text-warning-500" /> },
+    { value: AppointmentStatus.CONFIRMED, label: t('secretary.confirmed'), icon: <CheckCircle className="h-4 w-4 text-success-500" /> },
+    { value: AppointmentStatus.CHECKED_IN, label: t('secretary.attended'), icon: <UserCheck className="h-4 w-4 text-primary-500" /> },
+    { value: AppointmentStatus.IN_PROGRESS, label: t('secretary.inProgress'), icon: <Play className="h-4 w-4 text-info-500" /> },
+    { value: AppointmentStatus.COMPLETED, label: t('secretary.completed'), icon: <CheckCircle className="h-4 w-4 text-muted-foreground" /> },
+    { value: AppointmentStatus.CANCELLED, label: t('secretary.cancelled'), icon: <XCircle className="h-4 w-4 text-error-500" /> },
+    { value: AppointmentStatus.NO_SHOW, label: t('secretary.noShow'), icon: <Ban className="h-4 w-4 text-muted-foreground" /> },
   ];
 
   const paymentStatusOptions = [
-    { value: 'all', label: t('secretary.allPaymentStatuses') },
-    { value: PaymentStatus.PENDING, label: t('secretary.unpaid') },
-    { value: PaymentStatus.PAID, label: t('secretary.paid') },
-    { value: PaymentStatus.REFUNDED, label: t('secretary.refunded') },
+    { value: 'all', label: t('secretary.allPaymentStatuses'), icon: <CreditCard className="h-4 w-4" /> },
+    { value: PaymentStatus.PENDING, label: t('secretary.unpaid'), icon: <Clock className="h-4 w-4 text-warning-500" /> },
+    { value: PaymentStatus.PAID, label: t('secretary.paid'), icon: <DollarSign className="h-4 w-4 text-success-500" /> },
+    { value: PaymentStatus.REFUNDED, label: t('secretary.refunded'), icon: <Undo className="h-4 w-4 text-info-500" /> },
   ];
 
   return (
@@ -117,19 +121,22 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
               </div>
 
               {/* Clinic Filter */}
-              <Select value={selectedClinic} onValueChange={setSelectedClinic}>
-                <SelectTrigger className="w-full sm:w-[200px]">
-                  <SelectValue placeholder={t('secretary.selectClinic')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('secretary.allClinics')}</SelectItem>
-                  {clinics?.map((clinic) => (
-                    <SelectItem key={clinic.id} value={clinic.id}>
-                      {getLocalizedText(clinic.name, 'ar')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                options={[
+                  { value: 'all', label: t('secretary.allClinics'), icon: <Building2 className="h-4 w-4" /> },
+                  ...(clinics?.map((clinic) => ({
+                    value: clinic.id,
+                    label: getLocalizedText(clinic.name, 'ar'),
+                    icon: <Building2 className="h-4 w-4" />,
+                  })) || []),
+                ]}
+                value={selectedClinic}
+                onValueChange={setSelectedClinic}
+                placeholder={t('secretary.selectClinic')}
+                searchPlaceholder={t('common.search')}
+                emptyMessage={t('common.noResults')}
+                className="w-full sm:w-[200px]"
+              />
 
               {/* Date Filter */}
               <Popover>
@@ -165,32 +172,24 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
               <CollapsibleContent className="pt-4 border-t">
                 <div className="flex flex-col sm:flex-row flex-wrap gap-4">
                   {/* Status Filter */}
-                  <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder={t('secretary.appointmentStatus')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect
+                    options={statusOptions}
+                    value={selectedStatus}
+                    onValueChange={setSelectedStatus}
+                    placeholder={t('secretary.appointmentStatus')}
+                    showSearch={false}
+                    className="w-full sm:w-[200px]"
+                  />
 
                   {/* Payment Status Filter */}
-                  <Select value={selectedPaymentStatus} onValueChange={setSelectedPaymentStatus}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder={t('secretary.paymentStatusFilter')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {paymentStatusOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect
+                    options={paymentStatusOptions}
+                    value={selectedPaymentStatus}
+                    onValueChange={setSelectedPaymentStatus}
+                    placeholder={t('secretary.paymentStatusFilter')}
+                    showSearch={false}
+                    className="w-full sm:w-[200px]"
+                  />
                 </div>
               </CollapsibleContent>
             </Collapsible>

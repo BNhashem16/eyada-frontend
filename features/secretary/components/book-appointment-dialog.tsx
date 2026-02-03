@@ -11,6 +11,8 @@ import {
   Search,
   Plus,
   AlertCircle,
+  Building2,
+  Stethoscope,
 } from 'lucide-react';
 import {
   Dialog,
@@ -23,13 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent } from '@/components/ui/card';
@@ -185,54 +181,38 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>{t('secretary.selectClinic')}</Label>
-                <Select value={selectedClinic} onValueChange={setSelectedClinic}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('secretary.selectClinic')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {clinicsLoading ? (
-                      <div className="p-2">
-                        <Skeleton className="h-8 w-full" />
-                      </div>
-                    ) : (
-                      clinics?.map((clinic) => (
-                        <SelectItem key={clinic.id} value={clinic.id}>
-                          {getLocalizedText(clinic.name, 'ar')}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect
+                  options={clinics?.map((clinic) => ({
+                    value: clinic.id,
+                    label: getLocalizedText(clinic.name, 'ar'),
+                    icon: <Building2 className="h-4 w-4" />,
+                  })) || []}
+                  value={selectedClinic}
+                  onValueChange={setSelectedClinic}
+                  placeholder={t('secretary.selectClinic')}
+                  searchPlaceholder={t('common.search')}
+                  emptyMessage={t('common.noResults')}
+                  loading={clinicsLoading}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label>{t('secretary.selectService')}</Label>
-                <Select
+                <SearchableSelect
+                  options={services?.filter((s) => s.isActive).map((service) => ({
+                    value: service.id,
+                    label: `${getLocalizedText(service.name, 'ar')} - ${service.price} ${t('common.egp')}`,
+                    description: service.duration ? `${service.duration} ${t('services.minute')}` : undefined,
+                    icon: <Stethoscope className="h-4 w-4" />,
+                  })) || []}
                   value={selectedService}
                   onValueChange={setSelectedService}
+                  placeholder={t('secretary.selectService')}
+                  searchPlaceholder={t('common.search')}
+                  emptyMessage={servicesLoading ? t('common.loading') : t('clinics.noServicesAvailable')}
                   disabled={!selectedClinic}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('secretary.selectService')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {servicesLoading ? (
-                      <div className="p-2">
-                        <Skeleton className="h-8 w-full" />
-                      </div>
-                    ) : services?.length === 0 ? (
-                      <div className="p-2 text-sm text-muted-foreground">
-                        {t('clinics.noServicesAvailable')}
-                      </div>
-                    ) : (
-                      services?.filter((s) => s.isActive).map((service) => (
-                        <SelectItem key={service.id} value={service.id}>
-                          {getLocalizedText(service.name, 'ar')} - {service.price} {t('common.egp')}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
+                  loading={servicesLoading}
+                />
               </div>
             </div>
 
@@ -300,50 +280,20 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
 
               <div className="space-y-2">
                 <Label>{t('secretary.selectTime')}</Label>
-                <Select
+                <SearchableSelect
+                  options={availableSlots.map((slot) => ({
+                    value: slot.time,
+                    label: slot.time,
+                    icon: <Clock className="h-4 w-4" />,
+                  }))}
                   value={selectedTime}
                   onValueChange={setSelectedTime}
+                  placeholder={t('secretary.selectTime')}
+                  emptyMessage={t('clinics.noSlotsAvailable')}
                   disabled={!selectedDate || !selectedClinic}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('secretary.selectTime')}>
-                      {selectedTime && (
-                        <span className="flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          {selectedTime}
-                        </span>
-                      )}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {slotsLoading ? (
-                      <div className="p-2 space-y-2">
-                        {[...Array(3)].map((_, i) => (
-                          <Skeleton key={i} className="h-8 w-full" />
-                        ))}
-                      </div>
-                    ) : availableSlots.length === 0 ? (
-                      <div className="p-4 text-center">
-                        <AlertCircle className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">
-                          {t('clinics.noSlotsAvailable')}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-3 gap-1 p-2">
-                        {availableSlots.map((slot) => (
-                          <SelectItem
-                            key={slot.time}
-                            value={slot.time}
-                            className="text-center"
-                          >
-                            {slot.time}
-                          </SelectItem>
-                        ))}
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
+                  loading={slotsLoading}
+                  showSearch={availableSlots.length > 6}
+                />
               </div>
             </div>
           </div>
