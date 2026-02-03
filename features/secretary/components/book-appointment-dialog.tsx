@@ -39,6 +39,7 @@ import { useTranslation } from '@/lib/i18n';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useSecretaryClinics, useCreateAppointment } from '../hooks';
 import { useClinicServices, useClinicAvailableSlots } from '@/features/clinics/hooks/use-clinics';
+import { formatTime, utcTimeToLocal } from '@/lib/utils/date';
 
 interface BookAppointmentDialogProps {
   open: boolean;
@@ -283,7 +284,7 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
                 <SearchableSelect
                   options={availableSlots.map((slot) => ({
                     value: slot.time,
-                    label: slot.time,
+                    label: utcTimeToLocal(slot.time),
                     icon: <Clock className="h-4 w-4" />,
                   }))}
                   value={selectedTime}
@@ -344,7 +345,7 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
                     {' - '}
                     <span>{format(selectedDate!, 'dd/MM/yyyy')}</span>
                     {' - '}
-                    <span dir="ltr">{selectedTime}</span>
+                    <span dir="ltr">{formatTime(selectedTime)}</span>
                   </div>
                 </div>
               </AlertDescription>

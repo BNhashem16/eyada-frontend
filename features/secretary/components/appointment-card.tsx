@@ -29,6 +29,7 @@ import {
 import { Appointment } from '@/types';
 import { AppointmentStatus, PaymentStatus } from '@/types/enums';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { formatTime } from '@/lib/utils/date';
 import { useUpdateAppointmentStatus, useUpdatePayment } from '../hooks';
 import { useTranslation } from '@/lib/i18n';
 
@@ -144,7 +145,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
-                {appointment.appointmentTime}
+                <span dir="ltr">{formatTime(appointment.appointmentTime)}</span>
               </span>
               <span className="flex items-center gap-1">
                 <User className="h-4 w-4" />

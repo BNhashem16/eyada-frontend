@@ -27,7 +27,8 @@
       "Bash(python:*)",
       "Bash(python3:*)",
       "Bash(xargs:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

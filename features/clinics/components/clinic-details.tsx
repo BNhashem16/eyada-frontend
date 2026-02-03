@@ -21,6 +21,7 @@ import { useClinic } from '../hooks/use-clinics';
 import { BookingWidget } from './booking-widget';
 import { DayOfWeek } from '@/types/enums';
 import { useTranslation } from '@/lib/i18n';
+import { formatTime } from '@/lib/utils/date';
 
 interface ClinicDetailsProps {
   clinicId: string;
@@ -180,7 +181,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                           </span>
                           {schedule.isActive && firstShift ? (
                             <span dir="ltr">
-                              {firstShift.startTime} - {firstShift.endTime}
+                              {formatTime(firstShift.startTime)} - {formatTime(firstShift.endTime)}
                             </span>
                           ) : (
                             <span className="text-sm">{t('common.closed')}</span>
