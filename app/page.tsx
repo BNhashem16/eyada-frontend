@@ -19,6 +19,7 @@ import {
   LayoutDashboard,
   CalendarCheck,
   User,
+  Navigation,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,6 +49,7 @@ export default function HomePage() {
   const router = useRouter();
   const { locale } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
+  const [trackingNumber, setTrackingNumber] = useState('');
 
   // Auth state
   const { isAuthenticated, user } = useAuthStore();
@@ -93,6 +95,19 @@ export default function HomePage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
+    }
+  };
+
+  // Handle tracking
+  const handleTrack = () => {
+    if (trackingNumber.trim()) {
+      router.push(`/track/${encodeURIComponent(trackingNumber.trim())}`);
+    }
+  };
+
+  const handleTrackKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleTrack();
     }
   };
 
@@ -225,6 +240,44 @@ export default function HomePage() {
                 <div className="mt-1 text-muted-foreground">{stat.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Track Appointment Section */}
+      <section className="py-12 bg-gradient-to-r from-secondary-50 to-primary-50 dark:from-secondary-950/50 dark:to-primary-950/50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Navigation className="h-8 w-8 text-secondary-600 dark:text-secondary-400" />
+              <h2 className="text-2xl font-bold text-foreground">{t('home.trackAppointment')}</h2>
+            </div>
+            <p className="text-muted-foreground mb-6">{t('home.trackAppointmentDesc')}</p>
+
+            <div className="flex flex-col sm:flex-row gap-3 rounded-2xl bg-card p-4 shadow-lg">
+              <div className="flex flex-1 items-center gap-2 rounded-xl border border-border px-4 py-3">
+                <Navigation className="h-5 w-5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder={t('home.trackAppointmentPlaceholder')}
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  onKeyDown={handleTrackKeyDown}
+                  className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
+                  dir="ltr"
+                />
+              </div>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="sm:px-8"
+                onClick={handleTrack}
+                disabled={!trackingNumber.trim()}
+              >
+                <Navigation className="h-4 w-4 ms-2" />
+                {t('home.trackButton')}
+              </Button>
+            </div>
           </div>
         </div>
       </section>

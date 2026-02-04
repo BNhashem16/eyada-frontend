@@ -11,6 +11,7 @@ import {
   X,
   Star,
   ChevronLeft,
+  Navigation,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -222,8 +223,8 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
               </div>
             )}
 
-            {/* View Details Link */}
-            <div className="mt-3 pt-3 border-t border-border">
+            {/* View Details & Track Links */}
+            <div className="mt-3 pt-3 border-t border-border flex items-center justify-between gap-2">
               <Link
                 href={`/patient/appointments/${appointment.id}`}
                 className="flex items-center gap-1 text-sm text-primary-600 dark:text-primary-400 hover:underline"
@@ -231,6 +232,15 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                 {t('common.viewDetails')}
                 <ChevronLeft className="h-4 w-4" />
               </Link>
+              {appointment.bookingNumber && isUpcoming && (
+                <Link
+                  href={`/track/${encodeURIComponent(appointment.bookingNumber)}`}
+                  className="flex items-center gap-1 text-sm text-secondary-600 dark:text-secondary-400 hover:underline"
+                >
+                  <Navigation className="h-4 w-4" />
+                  {t('track.trackBooking')}
+                </Link>
+              )}
             </div>
           </div>
         </div>

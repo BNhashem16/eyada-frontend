@@ -178,7 +178,11 @@
       "specialties": "Medical Specialties",
       "appointments": "Booked Appointments",
       "rating": "User Rating"
-    }
+    },
+    "trackAppointment": "Track Your Appointment",
+    "trackAppointmentDesc": "Enter your booking number to check your queue position",
+    "trackAppointmentPlaceholder": "Enter booking number (e.g., APT-20250101-ABC123)",
+    "trackButton": "Track"
   },
   "doctors": {
     "title": "Doctors",
@@ -971,7 +975,8 @@
     "refresh": "Refresh",
     "autoRefresh": "Page refreshes automatically every 30 seconds",
     "notFound": "Appointment Not Found",
-    "notFoundDesc": "We couldn't find an appointment with this booking number. Please check and try again."
+    "notFoundDesc": "We couldn't find an appointment with this booking number. Please check and try again.",
+    "trackBooking": "Track Booking"
   },
   "pages": {
     "forgotPassword": {
@@ -993,5 +998,40 @@
       "title": "Medical Specialties",
       "subtitle": "Choose the right specialty to find the best doctors"
     }
+  },
+  "statistics": {
+    "title": "Statistics",
+    "todayRevenue": "Today's Revenue",
+    "totalRevenue": "Total Revenue",
+    "cashRevenue": "Cash",
+    "cardRevenue": "Card",
+    "insuranceRevenue": "Insurance",
+    "pendingRevenue": "Pending",
+    "period": "Period",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "customPeriod": "Custom Period",
+    "appointments": "Appointments",
+    "totalAppointments": "Total Appointments",
+    "completedAppointments": "Completed",
+    "cancelledAppointments": "Cancelled",
+    "noShowAppointments": "No Show",
+    "completionRate": "Completion Rate",
+    "patients": "Patients",
+    "totalPatients": "Total Patients",
+    "newPatients": "New Patients",
+    "returningPatients": "Returning Patients",
+    "services": "Services",
+    "topServices": "Top Services",
+    "serviceBreakdown": "Service Breakdown",
+    "dailyBreakdown": "Daily Breakdown",
+    "patientHistory": "Patient History",
+    "searchPatient": "Search Patient",
+    "searchByNameOrPhone": "Search by name or phone",
+    "previousVisits": "Previous Visits",
+    "lastVisit": "Last Visit",
+    "canRevisit": "Can Revisit",
+    "noVisitHistory": "No visit history found"
   }
 }

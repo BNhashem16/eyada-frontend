@@ -178,7 +178,11 @@
       "specialties": "تخصص طبي",
       "appointments": "موعد محجوز",
       "rating": "تقييم المستخدمين"
-    }
+    },
+    "trackAppointment": "تتبع موعدك",
+    "trackAppointmentDesc": "أدخل رقم الحجز لمعرفة ترتيبك في الطابور",
+    "trackAppointmentPlaceholder": "أدخل رقم الحجز (مثال: APT-20250101-ABC123)",
+    "trackButton": "تتبع"
   },
   "doctors": {
     "title": "الأطباء",
@@ -971,7 +975,8 @@
     "refresh": "تحديث",
     "autoRefresh": "الصفحة تتحدث تلقائياً كل 30 ثانية",
     "notFound": "الموعد غير موجود",
-    "notFoundDesc": "لم نتمكن من إيجاد موعد بهذا الرقم. يرجى التحقق والمحاولة مرة أخرى."
+    "notFoundDesc": "لم نتمكن من إيجاد موعد بهذا الرقم. يرجى التحقق والمحاولة مرة أخرى.",
+    "trackBooking": "تتبع الحجز"
   },
   "pages": {
     "forgotPassword": {
@@ -993,5 +998,40 @@
       "title": "التخصصات الطبية",
       "subtitle": "اختر التخصص المناسب للعثور على أفضل الأطباء"
     }
+  },
+  "statistics": {
+    "title": "الإحصائيات",
+    "todayRevenue": "إيراد اليوم",
+    "totalRevenue": "إجمالي الإيرادات",
+    "cashRevenue": "نقداً",
+    "cardRevenue": "بطاقة",
+    "insuranceRevenue": "تأمين",
+    "pendingRevenue": "قيد الانتظار",
+    "period": "الفترة",
+    "today": "اليوم",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "customPeriod": "فترة مخصصة",
+    "appointments": "المواعيد",
+    "totalAppointments": "إجمالي المواعيد",
+    "completedAppointments": "مكتملة",
+    "cancelledAppointments": "ملغاة",
+    "noShowAppointments": "لم يحضر",
+    "completionRate": "نسبة الإتمام",
+    "patients": "المرضى",
+    "totalPatients": "إجمالي المرضى",
+    "newPatients": "مرضى جدد",
+    "returningPatients": "مرضى عائدون",
+    "services": "الخدمات",
+    "topServices": "أكثر الخدمات طلباً",
+    "serviceBreakdown": "توزيع الخدمات",
+    "dailyBreakdown": "التوزيع اليومي",
+    "patientHistory": "سجل المرضى",
+    "searchPatient": "ابحث عن مريض",
+    "searchByNameOrPhone": "البحث بالاسم أو رقم الهاتف",
+    "previousVisits": "زيارات سابقة",
+    "lastVisit": "آخر زيارة",
+    "canRevisit": "يمكنه إعادة الزيارة",
+    "noVisitHistory": "لا يوجد سجل زيارات سابقة"
   }
 }

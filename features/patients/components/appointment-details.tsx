@@ -20,6 +20,7 @@ import {
   Stethoscope,
   Pill,
   ClipboardList,
+  Navigation,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -146,6 +147,8 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
   const canCancel = [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED].includes(appointment.status);
   const canRate = appointment.status === AppointmentStatus.COMPLETED && !appointment.rating;
   const showMedicalNotes = appointment.status === AppointmentStatus.COMPLETED && medicalNotes;
+  const isUpcoming = !isPast(appointmentDate) && canCancel;
+  const canTrack = appointment.bookingNumber && isUpcoming;
 
   return (
     <div className="space-y-6">
@@ -173,7 +176,15 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
                 {t('appointments.bookingNumber')}: {appointment.bookingNumber}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              {canTrack && (
+                <Button variant="secondary" asChild>
+                  <Link href={`/track/${encodeURIComponent(appointment.bookingNumber!)}`}>
+                    <Navigation className="h-4 w-4 ms-2" />
+                    {t('track.trackBooking')}
+                  </Link>
+                </Button>
+              )}
               {canCancel && (
                 <Button variant="destructive" onClick={() => setShowCancelDialog(true)}>
                   <XCircle className="h-4 w-4 ms-2" />

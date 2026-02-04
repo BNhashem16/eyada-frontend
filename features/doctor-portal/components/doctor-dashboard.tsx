@@ -11,6 +11,8 @@ import {
   TrendingUp,
   CheckCircle2,
   AlertCircle,
+  Banknote,
+  XCircle,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useDoctorAppointments, useDoctorClinics, useDoctorProfile } from '../hooks/use-doctor-portal';
+import { useTodayOverview } from '../hooks/use-doctor-statistics';
 import { useAuthStore } from '@/lib/auth/store';
 import { AppointmentStatus } from '@/types/enums';
 import { formatDate, formatTime } from '@/lib/utils/date';
@@ -25,12 +28,15 @@ import { getInitials } from '@/lib/utils';
 import { useTranslation } from '@/lib/i18n';
 
 export function DoctorDashboard() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { user } = useAuthStore();
   const { data: profile, isLoading: profileLoading } = useDoctorProfile();
   const { data: clinics, isLoading: clinicsLoading } = useDoctorClinics();
 
-  // Get today's appointments
+  // Get today's overview stats from the new API
+  const { data: todayOverview, isLoading: overviewLoading } = useTodayOverview();
+
+  // Get today's appointments for the queue display
   const today = formatDate(new Date(), 'yyyy-MM-dd');
   const { data: todayAppointments, isLoading: appointmentsLoading } = useDoctorAppointments({
     date: today,
@@ -38,18 +44,30 @@ export function DoctorDashboard() {
   });
 
   const appointments = todayAppointments?.data ?? [];
-  const pendingCount = appointments.filter((a) => a.status === AppointmentStatus.PENDING).length;
-  const confirmedCount = appointments.filter((a) => a.status === AppointmentStatus.CONFIRMED).length;
-  const checkedInCount = appointments.filter((a) => a.status === AppointmentStatus.CHECKED_IN).length;
-  const completedCount = appointments.filter((a) => a.status === AppointmentStatus.COMPLETED).length;
 
-  // Queue - only confirmed and checked-in appointments
+  // Use the new API for stats, fallback to local calculation
+  const pendingCount = todayOverview?.pending ?? appointments.filter((a) => a.status === AppointmentStatus.PENDING || a.status === AppointmentStatus.CONFIRMED).length;
+  const waitingCount = todayOverview?.waiting ?? appointments.filter((a) => a.status === AppointmentStatus.CHECKED_IN).length;
+  const completedCount = todayOverview?.completed ?? appointments.filter((a) => a.status === AppointmentStatus.COMPLETED).length;
+  const todayRevenue = todayOverview?.todayRevenue ?? 0;
+  const totalAppointments = todayOverview?.totalAppointments ?? appointments.length;
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-EG', {
+      style: 'currency',
+      currency: 'EGP',
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  // Queue - only confirmed and checked-in appointments, sorted by queue number
   const queueAppointments = appointments
     .filter(
       (a) =>
         a.status === AppointmentStatus.CONFIRMED || a.status === AppointmentStatus.CHECKED_IN
     )
-    .sort((a, b) => (a.appointmentTime || '').localeCompare(b.appointmentTime || ''));
+    .sort((a, b) => (a.queueNumber || 0) - (b.queueNumber || 0));
 
   const getStatusLabel = (status: AppointmentStatus) => {
     const statusMap: Record<AppointmentStatus, string> = {
@@ -94,7 +112,7 @@ export function DoctorDashboard() {
       </div>
 
       {/* Today's Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -104,7 +122,7 @@ export function DoctorDashboard() {
               <div>
                 <p className="text-sm text-muted-foreground">{t('appointments.waitingForConfirmation')}</p>
                 <p className="text-2xl font-bold text-foreground">
-                  {appointmentsLoading ? '-' : pendingCount}
+                  {overviewLoading ? '-' : pendingCount}
                 </p>
               </div>
             </div>
@@ -120,7 +138,7 @@ export function DoctorDashboard() {
               <div>
                 <p className="text-sm text-muted-foreground">{t('appointments.inQueue')}</p>
                 <p className="text-2xl font-bold text-foreground">
-                  {appointmentsLoading ? '-' : confirmedCount + checkedInCount}
+                  {overviewLoading ? '-' : waitingCount}
                 </p>
               </div>
             </div>
@@ -136,7 +154,7 @@ export function DoctorDashboard() {
               <div>
                 <p className="text-sm text-muted-foreground">{t('appointments.completedToday')}</p>
                 <p className="text-2xl font-bold text-foreground">
-                  {appointmentsLoading ? '-' : completedCount}
+                  {overviewLoading ? '-' : completedCount}
                 </p>
               </div>
             </div>
@@ -152,7 +170,23 @@ export function DoctorDashboard() {
               <div>
                 <p className="text-sm text-muted-foreground">{t('appointments.todayTotal')}</p>
                 <p className="text-2xl font-bold text-foreground">
-                  {appointmentsLoading ? '-' : appointments.length}
+                  {overviewLoading ? '-' : totalAppointments}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/20 border-success-200 dark:border-success-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-success-200 dark:bg-success-900/50 flex items-center justify-center">
+                <Banknote className="h-6 w-6 text-success-700 dark:text-success-400" />
+              </div>
+              <div>
+                <p className="text-sm text-success-700 dark:text-success-400">{t('statistics.todayRevenue')}</p>
+                <p className="text-2xl font-bold text-success-800 dark:text-success-300" dir="ltr">
+                  {overviewLoading ? '-' : formatCurrency(todayRevenue)}
                 </p>
               </div>
             </div>

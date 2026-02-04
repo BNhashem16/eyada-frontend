@@ -95,6 +95,12 @@ export const DOCTOR_ENDPOINTS = {
   APPOINTMENT_MEDICAL_NOTES: (id: string) => `/doctors/appointments/${id}/medical-notes`,
   APPOINTMENT_PAYMENT: (id: string) => `/doctors/appointments/${id}/payment`,
 
+  // Statistics & Dashboard
+  TODAY_OVERVIEW: '/doctors/appointments/today-overview',
+  STATISTICS: '/doctors/appointments/statistics',
+  PATIENT_HISTORY: '/doctors/appointments/patient-history',
+  CHECK_REVISIT: '/doctors/appointments/check-revisit',
+
   // Ratings
   RATINGS: '/doctors/ratings',
 } as const;
@@ -109,6 +115,12 @@ export const SECRETARY_ENDPOINTS = {
   APPOINTMENT: (id: string) => `/secretary/appointments/${id}`,
   APPOINTMENT_STATUS: (id: string) => `/secretary/appointments/${id}/status`,
   APPOINTMENT_PAYMENT: (id: string) => `/secretary/appointments/${id}/payment`,
+
+  // Statistics & Dashboard
+  TODAY_OVERVIEW: '/secretary/appointments/today-overview',
+  STATISTICS: '/secretary/appointments/statistics',
+  PATIENT_HISTORY: '/secretary/appointments/patient-history',
+  CHECK_REVISIT: '/secretary/appointments/check-revisit',
 
   // Ratings
   RATINGS: '/secretary/ratings',

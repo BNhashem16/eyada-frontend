@@ -49,11 +49,31 @@ export default function TrackQueuePage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(
-        `${API_BASE_URL}${PUBLIC_TRACKING_ENDPOINTS.TRACK_QUEUE(bookingNumber)}`
-      );
+
+      // Decode URL-encoded booking number
+      const decodedBookingNumber = decodeURIComponent(bookingNumber);
+      const url = `${API_BASE_URL}${PUBLIC_TRACKING_ENDPOINTS.TRACK_QUEUE(decodedBookingNumber)}`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setData({ found: false } as QueueData);
+          return;
+        }
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+
       const result = await response.json();
-      setData(result);
+
+      // Handle wrapped response { success: true, data: {...} }
+      if (result.success && result.data) {
+        setData(result.data);
+      } else if (result.found !== undefined) {
+        setData(result);
+      } else {
+        setData({ found: true, ...result });
+      }
     } catch (err) {
       setError(t('errors.networkError'));
     } finally {
@@ -170,7 +190,15 @@ export default function TrackQueuePage() {
 
   const statusInfo = getStatusInfo(data.status);
   const StatusIcon = statusInfo.icon;
-  const showQueuePosition = data.positionInQueue !== null && data.positionInQueue <= 10;
+
+  // Check if appointment is for today and in waiting status
+  const isToday = data.appointmentDate === new Date().toISOString().split('T')[0];
+  const isWaiting = ['PENDING', 'CONFIRMED'].includes(data.status);
+
+  // Show position if available (less than 10 people ahead)
+  const hasExactPosition = data.positionInQueue !== null;
+  // Show "10+" if today and waiting but no exact position (means 10+ people ahead)
+  const showTenPlus = isToday && isWaiting && !hasExactPosition;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white dark:from-gray-900 dark:to-gray-800 p-4">
@@ -191,8 +219,8 @@ export default function TrackQueuePage() {
           </CardContent>
         </Card>
 
-        {/* Queue Position - Only show if position <= 10 */}
-        {showQueuePosition && (
+        {/* Queue Position - Show exact number if < 10 people ahead, or "10+" if more */}
+        {(hasExactPosition || showTenPlus) && (
           <Card className="border-primary bg-primary-50 dark:bg-primary-900/20">
             <CardContent className="pt-6">
               <div className="text-center">
@@ -201,9 +229,9 @@ export default function TrackQueuePage() {
                   <span className="text-sm font-medium text-primary">{t('track.yourPosition')}</span>
                 </div>
                 <p className="text-5xl font-bold text-primary mb-2">
-                  {data.positionInQueue}
+                  {hasExactPosition ? data.positionInQueue : '10+'}
                 </p>
-                {data.estimatedWaitMinutes !== null && (
+                {hasExactPosition && data.estimatedWaitMinutes !== null && (
                   <div className="flex items-center justify-center gap-2 text-muted-foreground">
                     <Timer className="h-4 w-4" />
                     <span>
