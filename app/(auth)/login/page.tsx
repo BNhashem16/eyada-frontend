@@ -10,7 +10,7 @@ export default function LoginPage() {
     <>
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-2xl font-bold text-foreground">
+        <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">
           {t('auth.loginTitle')}
         </h1>
         <p className="text-muted-foreground">

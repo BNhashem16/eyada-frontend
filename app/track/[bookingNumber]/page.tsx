@@ -205,8 +205,8 @@ export default function TrackQueuePage() {
       <div className="max-w-lg mx-auto pt-8 space-y-6">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">{t('track.title')}</h1>
-          <p className="text-muted-foreground">{t('track.subtitle')}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('track.title')}</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">{t('track.subtitle')}</p>
         </div>
 
         {/* Booking Number */}
@@ -228,7 +228,7 @@ export default function TrackQueuePage() {
                   <Users className="h-6 w-6 text-primary" />
                   <span className="text-sm font-medium text-primary">{t('track.yourPosition')}</span>
                 </div>
-                <p className="text-5xl font-bold text-primary mb-2">
+                <p className="text-4xl sm:text-5xl font-bold text-primary mb-2">
                   {hasExactPosition ? data.positionInQueue : '10+'}
                 </p>
                 {hasExactPosition && data.estimatedWaitMinutes !== null && (

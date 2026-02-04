@@ -15,7 +15,7 @@ interface ClinicCardProps {
 }
 
 export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   const dayNames: Record<DayOfWeek, string> = {
     [DayOfWeek.SUNDAY]: t('days.sunday'),
@@ -85,7 +85,7 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
               <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                 <Clock className="h-4 w-4" />
                 <span>
-                  {workingDays.join('، ')}
+                  {workingDays.join(locale === 'ar' ? '، ' : ', ')}
                   {clinic.schedules && clinic.schedules.length > 3 && '...'}
                 </span>
               </div>

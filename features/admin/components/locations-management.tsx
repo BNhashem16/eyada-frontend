@@ -373,7 +373,7 @@ export function LocationsManagement() {
                   onChange={(e) =>
                     setStateForm((f) => ({ ...f, nameAr: e.target.value }))
                   }
-                  placeholder="القاهرة"
+                  placeholder={t('placeholder.stateNameAr')}
                 />
               </div>
               <div>
@@ -383,7 +383,7 @@ export function LocationsManagement() {
                   onChange={(e) =>
                     setStateForm((f) => ({ ...f, nameEn: e.target.value }))
                   }
-                  placeholder="Cairo"
+                  placeholder={t('placeholder.stateNameEn')}
                   dir="ltr"
                 />
               </div>
@@ -395,7 +395,7 @@ export function LocationsManagement() {
                 onChange={(e) =>
                   setStateForm((f) => ({ ...f, code: e.target.value }))
                 }
-                placeholder="CAI"
+                placeholder={t('placeholder.stateCode')}
                 dir="ltr"
               />
             </div>
@@ -439,7 +439,7 @@ export function LocationsManagement() {
                   onChange={(e) =>
                     setCityForm((f) => ({ ...f, nameAr: e.target.value }))
                   }
-                  placeholder="مدينة نصر"
+                  placeholder={t('placeholder.cityNameAr')}
                 />
               </div>
               <div>
@@ -449,7 +449,7 @@ export function LocationsManagement() {
                   onChange={(e) =>
                     setCityForm((f) => ({ ...f, nameEn: e.target.value }))
                   }
-                  placeholder="Nasr City"
+                  placeholder={t('placeholder.cityNameEn')}
                   dir="ltr"
                 />
               </div>

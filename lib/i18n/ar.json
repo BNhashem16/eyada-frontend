@@ -1056,5 +1056,65 @@
     "lastVisit": "آخر زيارة",
     "canRevisit": "يمكنه إعادة الزيارة",
     "noVisitHistory": "لا يوجد سجل زيارات سابقة"
+  },
+  "meta": {
+    "defaultTitle": "عيادة - نظام حجز المواعيد الطبية",
+    "titleTemplate": "%s | عيادة",
+    "defaultDescription": "احجز موعدك مع أفضل الأطباء في مصر بسهولة وسرعة",
+    "keywords": "حجز مواعيد, أطباء, عيادات, طب, صحة, مصر",
+    "siteName": "عيادة",
+    "ogTitle": "عيادة - نظام حجز المواعيد الطبية",
+    "ogDescription": "احجز موعدك مع أفضل الأطباء في مصر بسهولة وسرعة",
+    "twitterTitle": "عيادة - نظام حجز المواعيد الطبية",
+    "twitterDescription": "احجز موعدك مع أفضل الأطباء في مصر بسهولة وسرعة",
+    "patientDashboard": {
+      "title": "لوحة التحكم - المريض",
+      "description": "لوحة تحكم المريض"
+    },
+    "patientAppointmentDetails": {
+      "title": "تفاصيل الموعد - المريض",
+      "description": "عرض تفاصيل الموعد"
+    },
+    "doctorDashboard": {
+      "title": "لوحة التحكم - الطبيب",
+      "description": "لوحة تحكم الطبيب"
+    },
+    "doctorAppointmentDetails": {
+      "title": "تفاصيل الموعد - الطبيب",
+      "description": "عرض وإدارة تفاصيل الموعد"
+    },
+    "doctorNewClinic": {
+      "title": "إضافة عيادة جديدة",
+      "description": "إضافة عيادة جديدة"
+    },
+    "secretaryAppointmentDetails": {
+      "title": "تفاصيل الموعد - السكرتير",
+      "description": "عرض وإدارة تفاصيل الموعد"
+    },
+    "clinicDetails": {
+      "title": "تفاصيل العيادة",
+      "description": "عرض تفاصيل العيادة وحجز موعد"
+    },
+    "doctorProfile": {
+      "title": "الملف الشخصي للطبيب",
+      "description": "عرض الملف الشخصي للطبيب وحجز موعد"
+    }
+  },
+  "placeholder": {
+    "email": "example@email.com",
+    "phone": "01012345678",
+    "whatsapp": "01xxxxxxxxx",
+    "password": "********",
+    "secretaryEmail": "secretary@example.com",
+    "bookingNumber": "APT-20260204-XXXXX",
+    "searchPatient": "ابحث بالاسم أو رقم الهاتف...",
+    "specialtyNameEn": "Dentistry",
+    "specialtyDescEn": "Dental specialty",
+    "specialtyIcon": "tooth",
+    "stateNameAr": "القاهرة",
+    "stateNameEn": "Cairo",
+    "stateCode": "CAI",
+    "cityNameAr": "مدينة نصر",
+    "cityNameEn": "Nasr City"
   }
 }

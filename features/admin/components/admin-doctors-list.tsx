@@ -200,7 +200,7 @@ export function AdminDoctorsList() {
               onValueChange={(value) => handleFilterChange('status', value || undefined)}
               placeholder={t('appointments.status')}
               showSearch={false}
-              className="w-40"
+              className="w-full sm:w-40"
             />
 
             {/* Specialty Filter */}
@@ -218,7 +218,7 @@ export function AdminDoctorsList() {
               placeholder={t('doctors.filterBySpecialty')}
               searchPlaceholder={t('common.search')}
               emptyMessage={t('common.noResults')}
-              className="w-40"
+              className="w-full sm:w-40"
             />
           </div>
         </CardContent>
@@ -311,7 +311,7 @@ export function AdminDoctorsList() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="flex gap-2 flex-wrap md:flex-nowrap mt-4 md:mt-0">
                       {doctor.status === DoctorStatus.PENDING && (
                         <>
                           <Button

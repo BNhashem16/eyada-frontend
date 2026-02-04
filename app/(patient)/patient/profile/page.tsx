@@ -15,13 +15,13 @@ export default function PatientProfilePage() {
           <User className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('patient.profilePage.title')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient.profilePage.title')}</h1>
           <p className="text-muted-foreground">{t('patient.profilePage.subtitle')}</p>
         </div>
       </div>
 
       {/* Profile Form */}
-      <div className="max-w-2xl">
+      <div className="w-full max-w-2xl">
         <PatientProfileForm />
       </div>
     </div>

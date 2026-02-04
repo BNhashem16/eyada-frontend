@@ -296,7 +296,7 @@ export function SpecialtiesManagement() {
                   onChange={(e) =>
                     setFormData((f) => ({ ...f, nameEn: e.target.value }))
                   }
-                  placeholder="Dentistry"
+                  placeholder={t('placeholder.specialtyNameEn')}
                   dir="ltr"
                 />
               </div>
@@ -322,7 +322,7 @@ export function SpecialtiesManagement() {
                   onChange={(e) =>
                     setFormData((f) => ({ ...f, descriptionEn: e.target.value }))
                   }
-                  placeholder="Dental specialty"
+                  placeholder={t('placeholder.specialtyDescEn')}
                   dir="ltr"
                 />
               </div>
@@ -336,7 +336,7 @@ export function SpecialtiesManagement() {
                 onChange={(e) =>
                   setFormData((f) => ({ ...f, icon: e.target.value }))
                 }
-                placeholder="tooth"
+                placeholder={t('placeholder.specialtyIcon')}
                 dir="ltr"
               />
               <p className="text-xs text-muted-foreground mt-1">

@@ -117,7 +117,7 @@ export function RegisterForm() {
         <Input
           id="email"
           type="email"
-          placeholder="example@email.com"
+          placeholder={t('placeholder.email')}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.email}
@@ -136,7 +136,7 @@ export function RegisterForm() {
         <Input
           id="phoneNumber"
           type="tel"
-          placeholder="01012345678"
+          placeholder={t('placeholder.phone')}
           icon={<Phone className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.phoneNumber}
@@ -156,7 +156,7 @@ export function RegisterForm() {
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
-            placeholder="********"
+            placeholder={t('placeholder.password')}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"
             error={!!errors.password}
@@ -189,7 +189,7 @@ export function RegisterForm() {
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
-            placeholder="********"
+            placeholder={t('placeholder.password')}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"
             error={!!errors.confirmPassword}

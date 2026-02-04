@@ -38,7 +38,7 @@ export default function SecretaryDashboardPage() {
       <DashboardStats />
 
       {/* Quick Actions & Assigned Clinics */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Assigned Clinics Card */}
         <Card>
           <CardHeader className="pb-3">

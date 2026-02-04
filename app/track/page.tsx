@@ -29,8 +29,8 @@ export default function TrackPage() {
           <div className="mx-auto w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mb-4">
             <Clock className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">{t('track.pageTitle')}</h1>
-          <p className="text-muted-foreground">{t('track.pageSubtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('track.pageTitle')}</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">{t('track.pageSubtitle')}</p>
         </div>
 
         {/* Search Form */}
@@ -50,8 +50,8 @@ export default function TrackPage() {
                   id="bookingNumber"
                   value={bookingNumber}
                   onChange={(e) => setBookingNumber(e.target.value)}
-                  placeholder="APT-20260204-XXXXX"
-                  className="font-mono text-center text-lg"
+                  placeholder={t('placeholder.bookingNumber')}
+                  className="font-mono text-center text-base sm:text-lg"
                   dir="ltr"
                 />
               </div>

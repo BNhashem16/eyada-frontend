@@ -193,7 +193,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden bg-gradient-to-b from-primary-50 to-background dark:from-primary-950/50 dark:to-background py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-6 text-4xl font-bold leading-tight text-foreground md:text-5xl lg:text-6xl">
+            <h1 className="mb-6 text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
               {t('home.heroTitle')}
               <span className="text-primary-600 dark:text-primary-400"> {t('home.heroTitleHighlight')}</span>
             </h1>
@@ -290,7 +290,7 @@ export default function HomePage() {
             <p className="text-muted-foreground">{t('home.selectSpecialty')}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {specialtiesLoading ? (
               // Skeleton loading state
               Array.from({ length: 6 }).map((_, index) => (
@@ -347,7 +347,7 @@ export default function HomePage() {
             <p className="text-muted-foreground">{t('home.howItWorksSubtitle')}</p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
             {features.map((feature, index) => (
               <div key={index} className="relative text-center">
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-100 dark:bg-primary-900/30">
@@ -512,7 +512,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-border bg-muted py-12">
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 md:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
             <div>
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-medical">

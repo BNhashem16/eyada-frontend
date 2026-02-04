@@ -15,7 +15,7 @@ export default function DoctorAppointmentsPage() {
           <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('doctor.appointmentsPage.title')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('doctor.appointmentsPage.title')}</h1>
           <p className="text-muted-foreground">{t('doctor.appointmentsPage.subtitle')}</p>
         </div>
       </div>

@@ -1056,5 +1056,65 @@
     "lastVisit": "Last Visit",
     "canRevisit": "Can Revisit",
     "noVisitHistory": "No visit history found"
+  },
+  "meta": {
+    "defaultTitle": "Eyada - Medical Appointment Booking System",
+    "titleTemplate": "%s | Eyada",
+    "defaultDescription": "Book your appointment with the best doctors in Egypt easily and quickly",
+    "keywords": "appointment booking, doctors, clinics, medicine, health, Egypt",
+    "siteName": "Eyada",
+    "ogTitle": "Eyada - Medical Appointment Booking System",
+    "ogDescription": "Book your appointment with the best doctors in Egypt easily and quickly",
+    "twitterTitle": "Eyada - Medical Appointment Booking System",
+    "twitterDescription": "Book your appointment with the best doctors in Egypt easily and quickly",
+    "patientDashboard": {
+      "title": "Dashboard - Patient",
+      "description": "Patient dashboard"
+    },
+    "patientAppointmentDetails": {
+      "title": "Appointment Details - Patient",
+      "description": "View appointment details"
+    },
+    "doctorDashboard": {
+      "title": "Dashboard - Doctor",
+      "description": "Doctor dashboard"
+    },
+    "doctorAppointmentDetails": {
+      "title": "Appointment Details - Doctor",
+      "description": "View and manage appointment details"
+    },
+    "doctorNewClinic": {
+      "title": "Add New Clinic",
+      "description": "Add a new clinic"
+    },
+    "secretaryAppointmentDetails": {
+      "title": "Appointment Details - Secretary",
+      "description": "View and manage appointment details"
+    },
+    "clinicDetails": {
+      "title": "Clinic Details",
+      "description": "View clinic details and book appointment"
+    },
+    "doctorProfile": {
+      "title": "Doctor Profile",
+      "description": "View doctor profile and book appointment"
+    }
+  },
+  "placeholder": {
+    "email": "example@email.com",
+    "phone": "01012345678",
+    "whatsapp": "01xxxxxxxxx",
+    "password": "********",
+    "secretaryEmail": "secretary@example.com",
+    "bookingNumber": "APT-20260204-XXXXX",
+    "searchPatient": "Search by name or phone...",
+    "specialtyNameEn": "Dentistry",
+    "specialtyDescEn": "Dental specialty",
+    "specialtyIcon": "tooth",
+    "stateNameAr": "القاهرة",
+    "stateNameEn": "Cairo",
+    "stateCode": "CAI",
+    "cityNameAr": "مدينة نصر",
+    "cityNameEn": "Nasr City"
   }
 }

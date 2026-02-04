@@ -194,7 +194,7 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
               {...register('phone')}
               icon={<Phone className="h-5 w-5" />}
               iconPosition="start"
-              placeholder="01xxxxxxxxx"
+              placeholder={t('placeholder.whatsapp')}
               error={!!errors.phone}
             />
             {errors.phone?.message && (
@@ -259,7 +259,7 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
               {...register('whatsappNumber')}
               icon={<Phone className="h-5 w-5" />}
               iconPosition="start"
-              placeholder="01xxxxxxxxx"
+              placeholder={t('placeholder.whatsapp')}
             />
           </div>
 

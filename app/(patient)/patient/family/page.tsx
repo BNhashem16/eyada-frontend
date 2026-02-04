@@ -17,7 +17,7 @@ export default function PatientFamilyPage() {
           <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
             {t('patient.familyPage.title')} {user?.fullName && `- ${user.fullName}`}
           </h1>
           <p className="text-muted-foreground">{t('patient.familyPage.subtitle')}</p>
@@ -25,7 +25,7 @@ export default function PatientFamilyPage() {
       </div>
 
       {/* Family List */}
-      <div className="max-w-2xl">
+      <div className="w-full max-w-2xl">
         <FamilyList />
       </div>
     </div>

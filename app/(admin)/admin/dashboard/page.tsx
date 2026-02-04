@@ -16,7 +16,7 @@ export default function AdminDashboardPage() {
             <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('admin.dashboard')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('admin.dashboard')}</h1>
             <p className="text-muted-foreground">{t('admin.dashboardSubtitle')}</p>
           </div>
         </div>

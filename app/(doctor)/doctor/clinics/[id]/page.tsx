@@ -75,7 +75,7 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="schedule">
-        <TabsList>
+        <TabsList className="w-full sm:w-auto overflow-x-auto">
           <TabsTrigger value="schedule">{t('app.workScheduleTab')}</TabsTrigger>
           <TabsTrigger value="services">{t('app.servicesAndPricesTab')}</TabsTrigger>
         </TabsList>

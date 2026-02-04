@@ -81,13 +81,13 @@ export default function NewSecretaryPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t('secretary.management.addSecretary')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{t('secretary.management.addSecretary')}</h1>
           <p className="text-muted-foreground">{t('secretary.management.addSecretaryDesc')}</p>
         </div>
       </div>
 
       {/* Form */}
-      <Card className="max-w-2xl">
+      <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5" />
@@ -117,7 +117,7 @@ export default function NewSecretaryPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="secretary@example.com"
+                placeholder={t('placeholder.secretaryEmail')}
                 {...register('email')}
                 className={errors.email ? 'border-destructive' : ''}
               />
@@ -133,7 +133,7 @@ export default function NewSecretaryPage() {
                 id="phoneNumber"
                 type="tel"
                 dir="ltr"
-                placeholder="01012345678"
+                placeholder={t('placeholder.phone')}
                 {...register('phoneNumber')}
                 className={errors.phoneNumber ? 'border-destructive' : ''}
               />
@@ -149,7 +149,7 @@ export default function NewSecretaryPage() {
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="********"
+                  placeholder={t('placeholder.password')}
                   {...register('password')}
                   className={errors.password ? 'border-destructive pe-10' : 'pe-10'}
                 />
@@ -193,7 +193,7 @@ export default function NewSecretaryPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
               <Button type="submit" disabled={isSubmitting || createSecretary.isPending}>
                 {isSubmitting || createSecretary.isPending ? t('common.saving') : t('common.save')}
               </Button>

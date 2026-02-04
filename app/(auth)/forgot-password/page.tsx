@@ -14,7 +14,7 @@ export default function ForgotPasswordPage() {
     <>
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-2xl font-bold text-foreground">
+        <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">
           {t('pages.forgotPassword.title')}
         </h1>
         <p className="text-muted-foreground">
@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
           <Input
             id="email"
             type="email"
-            placeholder="example@email.com"
+            placeholder={t('placeholder.email')}
             icon={<Mail className="h-5 w-5" />}
             iconPosition="start"
           />

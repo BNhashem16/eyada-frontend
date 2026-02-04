@@ -85,8 +85,8 @@ export function DoctorDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">
+      <div className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-4 sm:p-6 text-white">
+        <h1 className="text-xl sm:text-2xl font-bold mb-2">
           {t('doctor.greeting')} {user?.name?.split(' ')[0]}
         </h1>
         <p className="text-primary-100 mb-4">

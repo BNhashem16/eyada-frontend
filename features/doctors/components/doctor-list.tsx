@@ -41,7 +41,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Sidebar Filters */}
-      <aside className="w-full lg:w-72 flex-shrink-0">
+      <aside className="w-full lg:w-72 lg:flex-shrink-0">
         <DoctorFiltersComponent filters={filters} onFiltersChange={handleFiltersChange} />
       </aside>
 

@@ -44,7 +44,7 @@ export function LoginForm() {
         <Input
           id="email"
           type="email"
-          placeholder="example@email.com"
+          placeholder={t('placeholder.email')}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.email}
@@ -72,7 +72,7 @@ export function LoginForm() {
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
-            placeholder="********"
+            placeholder={t('placeholder.password')}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"
             error={!!errors.password}

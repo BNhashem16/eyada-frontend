@@ -149,17 +149,17 @@ export default function NewAppointmentPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <Plus className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('secretary.bookAppointment')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('secretary.bookAppointment')}</h1>
             <p className="text-muted-foreground">{t('secretary.bookAppointmentDesc')}</p>
           </div>
         </div>
-        <Button variant="outline" onClick={() => router.back()}>
+        <Button variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
           <ArrowRight className="h-4 w-4 ms-2" />
           {t('common.back')}
         </Button>
@@ -176,9 +176,9 @@ export default function NewAppointmentPage() {
         </Alert>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Main Form */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="md:col-span-1 lg:col-span-2 space-y-6">
           {/* Patient Selection */}
           <Card>
             <CardHeader>
@@ -228,7 +228,7 @@ export default function NewAppointmentPage() {
                       <Input
                         value={patientSearch}
                         onChange={(e) => setPatientSearch(e.target.value)}
-                        placeholder={t('secretary.searchPatientPlaceholder')}
+                        placeholder={t('placeholder.searchPatient')}
                         className="ps-9"
                       />
                     </div>
@@ -422,7 +422,7 @@ export default function NewAppointmentPage() {
 
         {/* Summary Sidebar */}
         <div className="space-y-6">
-          <Card className="sticky top-4">
+          <Card className="md:sticky md:top-4">
             <CardHeader>
               <CardTitle className="text-lg">{t('secretary.bookingSummary')}</CardTitle>
             </CardHeader>

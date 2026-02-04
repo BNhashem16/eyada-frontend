@@ -114,13 +114,13 @@ export default function EditSecretaryPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t('common.edit')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{t('common.edit')}</h1>
           <p className="text-muted-foreground">{secretary.fullName}</p>
         </div>
       </div>
 
       {/* Form */}
-      <Card className="max-w-2xl">
+      <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserCog className="h-5 w-5" />
@@ -158,7 +158,7 @@ export default function EditSecretaryPage() {
                 id="phoneNumber"
                 type="tel"
                 dir="ltr"
-                placeholder="01012345678"
+                placeholder={t('placeholder.phone')}
                 {...register('phoneNumber')}
                 className={errors.phoneNumber ? 'border-destructive' : ''}
               />
@@ -182,7 +182,7 @@ export default function EditSecretaryPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
               <Button type="submit" disabled={isSubmitting || updateSecretary.isPending}>
                 <Save className="h-4 w-4 me-2" />
                 {isSubmitting || updateSecretary.isPending ? t('common.saving') : t('common.save')}
