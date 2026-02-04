@@ -21,6 +21,9 @@ let onSessionInvalidated: (() => void) | null = null;
 // Callback for when doctor profile is incomplete
 let onDoctorProfileIncomplete: (() => void) | null = null;
 
+// Callback for clearing query cache (called on logout/login)
+let onClearQueryCache: (() => void) | null = null;
+
 // Token management functions
 export const tokenStorage = {
   getAccessToken: (): string | null => {
@@ -53,6 +56,18 @@ export const tokenStorage = {
   // Register callback for when doctor profile is incomplete
   onDoctorProfileIncomplete: (callback: () => void): void => {
     onDoctorProfileIncomplete = callback;
+  },
+
+  // Register callback for clearing query cache
+  onClearQueryCache: (callback: () => void): void => {
+    onClearQueryCache = callback;
+  },
+
+  // Call to clear query cache (on logout/user change)
+  clearQueryCache: (): void => {
+    if (onClearQueryCache) {
+      onClearQueryCache();
+    }
   },
 };
 

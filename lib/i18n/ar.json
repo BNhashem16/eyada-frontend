@@ -457,6 +457,8 @@
     "updatedSuccess": "تم تحديث بياناتك بنجاح",
     "saveError": "حدث خطأ أثناء حفظ البيانات",
     "createProfile": "إنشاء الملف الشخصي",
+    "pendingApprovalTitle": "حسابك قيد المراجعة",
+    "pendingApprovalMessage": "تم استلام طلبك وهو الآن قيد المراجعة من قبل فريق الإدارة. سيتم إشعارك فور الموافقة على حسابك.",
     "appointmentsPage": {
       "title": "مواعيدي",
       "subtitle": "إدارة ومتابعة مواعيدك الطبية"
@@ -765,6 +767,27 @@
       "suspendMessage": "سيتم إيقاف حساب الطبيب مؤقتاً ولن يظهر في نتائج البحث.",
       "approveMessage": "سيتم تفعيل حساب الطبيب وسيتمكن من إدارة عيادته واستقبال الحجوزات.",
       "rejectConfirmMessage": "سيتم رفض طلب الطبيب ولن يتمكن من استخدام المنصة."
+    },
+    "patients": {
+      "title": "إدارة المرضى",
+      "subtitle": "عرض وإدارة جميع المرضى المسجلين في المنصة",
+      "searchPlaceholder": "بحث بالاسم، الإيميل، أو الهاتف...",
+      "allStatuses": "كل الحالات",
+      "underReview": "قيد المراجعة",
+      "approved": "معتمد",
+      "rejected": "مرفوض",
+      "suspended": "موقوف",
+      "totalResults": "إجمالي النتائج:",
+      "pageOf": "صفحة {current} من {total}",
+      "noPatientsFound": "لا يوجد مرضى",
+      "noPatientsMatchFilters": "لم يتم العثور على مرضى بالفلاتر المحددة",
+      "reactivate": "إعادة تفعيل",
+      "confirmApprove": "تأكيد قبول المريض",
+      "confirmReject": "تأكيد رفض المريض",
+      "confirmSuspend": "تأكيد إيقاف المريض",
+      "approveMessage": "سيتم تفعيل حساب المريض وسيتمكن من حجز المواعيد.",
+      "rejectMessage": "سيتم رفض طلب المريض ولن يتمكن من استخدام المنصة.",
+      "suspendMessage": "سيتم إيقاف حساب المريض مؤقتاً ولن يتمكن من حجز المواعيد."
     },
     "locations": {
       "title": "إدارة المواقع",

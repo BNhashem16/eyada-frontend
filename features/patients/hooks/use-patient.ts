@@ -46,7 +46,7 @@ export function useUpdatePatientProfile() {
 
   return useMutation({
     mutationFn: async (data: Partial<PatientProfile>) => {
-      return apiPatch<PatientProfile>(PATIENT_ENDPOINTS.PROFILE, data);
+      return apiPatch<PatientProfile>(PATIENT_ENDPOINTS.UPDATE_PROFILE, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['patient-profile'] });

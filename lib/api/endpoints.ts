@@ -45,8 +45,9 @@ export const PUBLIC_ENDPOINTS = {
 // Patient endpoints (requires PATIENT role)
 export const PATIENT_ENDPOINTS = {
   // Profile
-  PROFILE: '/patients/profile',
-  CREATE_PROFILE: '/patients/profile',
+  PROFILE: '/patients/profile/me', // GET uses /me endpoint
+  CREATE_PROFILE: '/patients/profile', // POST
+  UPDATE_PROFILE: '/patients/profile', // PATCH
   MEDICAL: '/patients/profile/medical',
 
   // Family
@@ -148,6 +149,13 @@ export const ADMIN_ENDPOINTS = {
   APPROVE_DOCTOR: (id: string) => `/admin/doctors/${id}/approve`,
   REJECT_DOCTOR: (id: string) => `/admin/doctors/${id}/reject`,
   SUSPEND_DOCTOR: (id: string) => `/admin/doctors/${id}/suspend`,
+
+  // Patients management
+  PATIENTS: '/admin/patients',
+  PATIENT: (id: string) => `/admin/patients/${id}`,
+  APPROVE_PATIENT: (id: string) => `/admin/patients/${id}/approve`,
+  REJECT_PATIENT: (id: string) => `/admin/patients/${id}/reject`,
+  SUSPEND_PATIENT: (id: string) => `/admin/patients/${id}/suspend`,
 
   // Specialties (CRUD) - per Swagger: /admin/specialties
   SPECIALTIES: '/admin/specialties',

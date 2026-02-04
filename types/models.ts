@@ -6,6 +6,7 @@ import {
   ServiceType,
   DayOfWeek,
   DoctorStatus,
+  PatientStatus,
   RelationshipType,
 } from './enums';
 
@@ -37,9 +38,16 @@ export interface User extends Timestamps {
 }
 
 // Auth response from login/register
+// Backend may return tokens nested or flat depending on wrapper
 export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
+  // Nested format: { tokens: { accessToken, refreshToken }, user }
+  tokens?: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  // Flat format: { accessToken, refreshToken, user }
+  accessToken?: string;
+  refreshToken?: string;
   user: User;
 }
 
@@ -116,6 +124,10 @@ export interface PatientProfile extends Timestamps {
   allergies?: string[];
   familyHeadId?: string;
   relationshipToHead: RelationshipType;
+  // Approval Status
+  status?: PatientStatus;
+  approvedAt?: string;
+  approvedBy?: string;
   user: User;
   familyMembers?: FamilyMember[];
 }

@@ -13,11 +13,11 @@ import {
   ArrowRight,
   Building2,
   Stethoscope,
-  Phone,
-  Cake,
+  Search,
   CheckCircle2,
   Copy,
   ExternalLink,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,7 +42,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useSecretaryClinics, useCreateAppointment } from '@/features/secretary';
+import { useSecretaryPatients } from '@/features/secretary/hooks/use-secretary-patients';
 import { useClinicServices } from '@/features/clinics/hooks/use-clinics';
+import type { PatientProfile } from '@/types';
 
 export default function NewAppointmentPage() {
   const { t, locale } = useTranslation();
@@ -53,9 +55,8 @@ export default function NewAppointmentPage() {
   const [selectedClinic, setSelectedClinic] = useState<string>('');
   const [selectedService, setSelectedService] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [patientName, setPatientName] = useState<string>('');
-  const [patientDateOfBirth, setPatientDateOfBirth] = useState<Date | undefined>();
-  const [patientPhone, setPatientPhone] = useState<string>('');
+  const [selectedPatient, setSelectedPatient] = useState<PatientProfile | null>(null);
+  const [patientSearch, setPatientSearch] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [symptoms, setSymptoms] = useState<string>('');
 
@@ -68,6 +69,10 @@ export default function NewAppointmentPage() {
   // Data fetching
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
   const { data: services, isLoading: servicesLoading } = useClinicServices(selectedClinic);
+  const { data: patientsData, isLoading: patientsLoading } = useSecretaryPatients({
+    search: patientSearch,
+    limit: 10,
+  });
 
   const createAppointment = useCreateAppointment();
 
@@ -84,28 +89,25 @@ export default function NewAppointmentPage() {
     selectedClinic &&
     selectedService &&
     selectedDate &&
-    patientName.trim().length >= 2 &&
-    patientDateOfBirth;
+    selectedPatient;
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    if (!canSubmit || !selectedPatient) return;
 
     try {
       const result = await createAppointment.mutateAsync({
         clinicId: selectedClinic,
         serviceTypeId: selectedService,
         appointmentDate: format(selectedDate!, 'yyyy-MM-dd'),
-        patientName: patientName.trim(),
-        patientDateOfBirth: format(patientDateOfBirth!, 'yyyy-MM-dd'),
-        patientPhone: patientPhone.trim() || undefined,
+        patientProfileId: selectedPatient.id,
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
       });
 
       // Show success dialog with booking info
       setSuccessData({
-        bookingNumber: result.data?.bookingNumber || result.bookingNumber,
-        queueNumber: result.data?.queueNumber || result.queueNumber,
+        bookingNumber: result.bookingNumber,
+        queueNumber: result.queueNumber ?? 0,
       });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : t('errors.somethingWentWrong');
@@ -131,15 +133,18 @@ export default function NewAppointmentPage() {
   };
 
   // Calculate age from date of birth
-  const calculateAge = (dob: Date) => {
+  const calculateAge = (dob: string) => {
+    const birthDate = new Date(dob);
     const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const monthDiff = today.getMonth() - dob.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
     return age;
   };
+
+  const patients = patientsData?.data ?? [];
 
   return (
     <div className="space-y-6">
@@ -174,87 +179,104 @@ export default function NewAppointmentPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Form */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Patient Information */}
+          {/* Patient Selection */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t('secretary.patientInfo')}
+                {t('secretary.selectPatient')}
               </CardTitle>
               <CardDescription>
-                {t('secretary.walkInPatientHint')}
+                {t('secretary.searchPatientHint')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Patient Name */}
-              <div className="space-y-2">
-                <Label htmlFor="patientName">{t('auth.fullName')} *</Label>
-                <div className="relative">
-                  <User className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="patientName"
-                    value={patientName}
-                    onChange={(e) => setPatientName(e.target.value)}
-                    placeholder={t('auth.fullNamePlaceholder')}
-                    className="ps-9"
-                  />
-                </div>
-              </div>
-
-              {/* Patient Date of Birth */}
-              <div className="space-y-2">
-                <Label>{t('patient.dateOfBirth')} *</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
+              {/* Selected Patient Display */}
+              {selectedPatient ? (
+                <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center">
+                        <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{selectedPatient.user?.fullName || t('common.unknown')}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {selectedPatient.user?.phoneNumber || '-'}
+                          {selectedPatient.dateOfBirth && (
+                            <> • {calculateAge(selectedPatient.dateOfBirth)} {t('family.yearsOld')}</>
+                          )}
+                        </p>
+                      </div>
+                    </div>
                     <Button
-                      variant="outline"
-                      className={cn(
-                        'w-full justify-start',
-                        !patientDateOfBirth && 'text-muted-foreground'
-                      )}
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSelectedPatient(null)}
                     >
-                      <Cake className="me-2 h-4 w-4" />
-                      {patientDateOfBirth
-                        ? format(patientDateOfBirth, 'dd MMMM yyyy', { locale: ar })
-                        : t('patient.dateOfBirth')}
+                      <X className="h-4 w-4" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={patientDateOfBirth}
-                      onSelect={setPatientDateOfBirth}
-                      disabled={(date) => date > new Date()}
-                      defaultMonth={new Date(1990, 0)}
-                      captionLayout="dropdown"
-                      fromYear={1920}
-                      toYear={new Date().getFullYear()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                {patientDateOfBirth && (
-                  <p className="text-sm text-muted-foreground">
-                    {t('family.age')}: {calculateAge(patientDateOfBirth)} {t('family.yearsOld')}
-                  </p>
-                )}
-              </div>
-
-              {/* Patient Phone (Optional) */}
-              <div className="space-y-2">
-                <Label htmlFor="patientPhone">{t('auth.phoneNumber')} ({t('common.optional')})</Label>
-                <div className="relative">
-                  <Phone className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="patientPhone"
-                    value={patientPhone}
-                    onChange={(e) => setPatientPhone(e.target.value)}
-                    placeholder="01012345678"
-                    className="ps-9"
-                    dir="ltr"
-                  />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <>
+                  {/* Patient Search */}
+                  <div className="space-y-2">
+                    <Label>{t('secretary.searchPatient')}</Label>
+                    <div className="relative">
+                      <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        value={patientSearch}
+                        onChange={(e) => setPatientSearch(e.target.value)}
+                        placeholder={t('secretary.searchPatientPlaceholder')}
+                        className="ps-9"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Patient Search Results */}
+                  {patientSearch && (
+                    <div className="border rounded-lg divide-y max-h-60 overflow-y-auto">
+                      {patientsLoading ? (
+                        <div className="p-4 text-center">
+                          <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
+                        </div>
+                      ) : patients.length === 0 ? (
+                        <div className="p-4 text-center text-muted-foreground">
+                          {t('common.noResults')}
+                        </div>
+                      ) : (
+                        patients.map((patient) => (
+                          <button
+                            key={patient.id}
+                            type="button"
+                            className="w-full p-3 text-start hover:bg-muted/50 transition-colors flex items-center gap-3"
+                            onClick={() => {
+                              setSelectedPatient(patient);
+                              setPatientSearch('');
+                            }}
+                          >
+                            <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center">
+                              <User className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate">
+                                {patient.user?.fullName || t('common.unknown')}
+                              </p>
+                              <p className="text-sm text-muted-foreground truncate">
+                                {patient.user?.phoneNumber || '-'}
+                                {patient.dateOfBirth && (
+                                  <> • {calculateAge(patient.dateOfBirth)} {t('family.yearsOld')}</>
+                                )}
+                              </p>
+                            </div>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -409,7 +431,7 @@ export default function NewAppointmentPage() {
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm text-muted-foreground">{t('auth.fullName')}</span>
                 <span className="font-medium text-sm">
-                  {patientName.trim() || '-'}
+                  {selectedPatient?.user?.fullName || '-'}
                 </span>
               </div>
 
@@ -417,7 +439,9 @@ export default function NewAppointmentPage() {
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm text-muted-foreground">{t('family.age')}</span>
                 <span className="font-medium text-sm">
-                  {patientDateOfBirth ? `${calculateAge(patientDateOfBirth)} ${t('family.yearsOld')}` : '-'}
+                  {selectedPatient?.dateOfBirth
+                    ? `${calculateAge(selectedPatient.dateOfBirth)} ${t('family.yearsOld')}`
+                    : '-'}
                 </span>
               </div>
 

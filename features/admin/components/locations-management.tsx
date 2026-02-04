@@ -133,7 +133,7 @@ export function LocationsManagement() {
       );
     } else {
       createState.mutate(
-        { name, code: stateForm.code || undefined },
+        { name, code: stateForm.code },
         { onSuccess: () => { setStateDialogOpen(false); setStateForm(initialStateForm); } }
       );
     }

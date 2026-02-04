@@ -78,16 +78,15 @@ export function useSecretaryClinics() {
   });
 }
 
-// Create appointment for walk-in patient - per Swagger CreateSecretaryAppointmentDto
+// Create appointment for patient - per Swagger CreateSecretaryAppointmentDto
 export interface CreateSecretaryAppointmentData {
-  clinicId: string;
-  serviceTypeId: string;
-  appointmentDate: string; // YYYY-MM-DD format
-  patientName: string; // Patient full name (required)
-  patientDateOfBirth: string; // YYYY-MM-DD format (required)
-  patientPhone?: string; // Optional phone number
-  notes?: string;
-  symptoms?: string;
+  clinicId: string; // UUID, required
+  serviceTypeId: string; // UUID, required
+  appointmentDate: string; // YYYY-MM-DD format, required
+  appointmentTime?: string; // HH:mm format, optional
+  patientProfileId: string; // UUID of existing patient, required for secretary
+  notes?: string; // max 500 chars
+  symptoms?: string; // max 500 chars
 }
 
 export function useCreateAppointment() {

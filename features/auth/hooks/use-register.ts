@@ -24,8 +24,6 @@ export function useRegister() {
       await register(data);
     },
     onSuccess: () => {
-      toastSuccess('تم إنشاء الحساب بنجاح', 'مرحباً بك في عيادة!');
-
       // Get the user after registration
       const currentUser = useAuthStore.getState().user;
 
@@ -33,11 +31,23 @@ export function useRegister() {
       if (currentUser) {
         switch (currentUser.role) {
           case 'DOCTOR':
-            router.push('/doctor/dashboard');
+            // Show message that doctor needs to complete profile
+            toastSuccess(
+              'تم إنشاء الحساب بنجاح',
+              'يرجى إكمال بيانات ملفك الطبي لمراجعتها من قبل الإدارة'
+            );
+            // Redirect to profile page to complete registration
+            router.push('/doctor/profile');
             break;
           case 'PATIENT':
           default:
-            router.push('/patient/dashboard');
+            // Show message that patient needs to complete profile
+            toastSuccess(
+              'تم إنشاء الحساب بنجاح',
+              'يرجى إكمال بيانات ملفك الشخصي'
+            );
+            // Redirect to profile page to complete registration
+            router.push('/patient/profile');
         }
       } else {
         router.push('/');
@@ -50,11 +60,17 @@ export function useRegister() {
         // Network error or server is down
         message = 'لا يمكن الاتصال بالخادم. تأكد من اتصالك بالإنترنت.';
       } else if (error.response.status === 409) {
-        message = 'هذا البريد الإلكتروني مسجل بالفعل.';
+        message = 'هذا البريد الإلكتروني أو رقم الهاتف مسجل بالفعل.';
       } else if (error.response.status === 429) {
         message = 'محاولات كثيرة. حاول مرة أخرى لاحقاً.';
       } else {
-        message = error.response.data?.message || 'فشل إنشاء الحساب. حاول مرة أخرى.';
+        // Handle message that could be string or array
+        const errorMessage = error.response.data?.message;
+        if (Array.isArray(errorMessage)) {
+          message = errorMessage[0] || 'فشل إنشاء الحساب. حاول مرة أخرى.';
+        } else {
+          message = errorMessage || 'فشل إنشاء الحساب. حاول مرة أخرى.';
+        }
       }
 
       toastError('خطأ في إنشاء الحساب', message);

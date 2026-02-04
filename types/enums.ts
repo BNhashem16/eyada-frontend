@@ -66,6 +66,14 @@ export enum DoctorStatus {
   SUSPENDED = 'SUSPENDED',
 }
 
+// Patient approval status
+export enum PatientStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  SUSPENDED = 'SUSPENDED',
+}
+
 // Family relationship types
 export enum RelationshipType {
   SELF = 'SELF',

@@ -3,7 +3,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User as UserIcon, Phone, Mail, Calendar, Loader2, Droplets } from 'lucide-react';
+import { User as UserIcon, Phone, Mail, Calendar, Loader2, Droplets, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,7 @@ import { usePatientProfile, useUpdatePatientProfile, useCreatePatientProfile } f
 import { useAuthStore } from '@/lib/auth/store';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
-import { Gender } from '@/types/enums';
+import { Gender, PatientStatus } from '@/types/enums';
 import { User, PatientProfile } from '@/types/models';
 
 const getProfileSchema = (t: (key: string) => string) => z.object({
@@ -141,6 +141,26 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
           </p>
         </div>
       )}
+
+      {/* Pending Approval Banner */}
+      {!isNewProfile && profile?.status === PatientStatus.PENDING && (
+        <Card className="mb-4 border-warning-300 bg-warning-50 dark:border-warning-700 dark:bg-warning-900/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-full bg-warning-100 dark:bg-warning-800 flex items-center justify-center flex-shrink-0">
+                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-warning-800 dark:text-warning-200">{t('patient.pendingApprovalTitle')}</h3>
+                <p className="text-sm text-warning-700 dark:text-warning-300">
+                  {t('patient.pendingApprovalMessage')}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

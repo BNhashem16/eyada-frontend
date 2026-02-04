@@ -457,6 +457,8 @@
     "updatedSuccess": "Your data has been updated successfully",
     "saveError": "An error occurred while saving data",
     "createProfile": "Create Profile",
+    "pendingApprovalTitle": "Your account is under review",
+    "pendingApprovalMessage": "Your request has been received and is currently under review by our admin team. You will be notified once your account is approved.",
     "appointmentsPage": {
       "title": "My Appointments",
       "subtitle": "Manage and track your medical appointments"
@@ -765,6 +767,27 @@
       "suspendMessage": "The doctor's account will be temporarily suspended and won't appear in search results.",
       "approveMessage": "The doctor's account will be activated and they can manage their clinic and receive bookings.",
       "rejectConfirmMessage": "The doctor's request will be rejected and they won't be able to use the platform."
+    },
+    "patients": {
+      "title": "Manage Patients",
+      "subtitle": "View and manage all registered patients on the platform",
+      "searchPlaceholder": "Search by name, email, or phone...",
+      "allStatuses": "All Statuses",
+      "underReview": "Under Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "suspended": "Suspended",
+      "totalResults": "Total Results:",
+      "pageOf": "Page {current} of {total}",
+      "noPatientsFound": "No patients found",
+      "noPatientsMatchFilters": "No patients match the selected filters",
+      "reactivate": "Reactivate",
+      "confirmApprove": "Confirm Patient Approval",
+      "confirmReject": "Confirm Patient Rejection",
+      "confirmSuspend": "Confirm Patient Suspension",
+      "approveMessage": "The patient's account will be activated and they can book appointments.",
+      "rejectMessage": "The patient's request will be rejected and they won't be able to use the platform.",
+      "suspendMessage": "The patient's account will be temporarily suspended and they won't be able to book appointments."
     },
     "locations": {
       "title": "Manage Locations",

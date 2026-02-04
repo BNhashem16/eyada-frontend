@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { apiPatch } from '@/lib/api';
+import { apiPost } from '@/lib/api';
 import { AUTH_ENDPOINTS } from '@/lib/api/endpoints';
 import { toastSuccess, toastError } from '@/hooks/use-toast';
 import { AxiosError } from 'axios';
@@ -15,7 +15,7 @@ interface ChangePasswordData {
 export function useChangePassword() {
   return useMutation({
     mutationFn: async (data: ChangePasswordData) => {
-      return apiPatch(AUTH_ENDPOINTS.CHANGE_PASSWORD, data);
+      return apiPost(AUTH_ENDPOINTS.CHANGE_PASSWORD, data);
     },
     onSuccess: () => {
       toastSuccess('تم تغيير كلمة المرور', 'تم تحديث كلمة المرور بنجاح');

@@ -71,7 +71,8 @@ const initialFormData: SpecialtyFormData = {
 
 export function SpecialtiesManagement() {
   const { t } = useTranslation();
-  const { data: specialties, isLoading, isError, error } = useAdminSpecialties();
+  const { data: specialtiesResponse, isLoading, isError, error } = useAdminSpecialties();
+  const specialties = specialtiesResponse?.data;
   const createSpecialty = useCreateSpecialty();
   const updateSpecialty = useUpdateSpecialty();
   const deleteSpecialty = useDeleteSpecialty();

@@ -32,7 +32,7 @@ export function AdminDashboardStats() {
     },
     {
       label: t('admin.specialties'),
-      value: specialties?.length || 0,
+      value: specialties?.meta?.total || specialties?.data?.length || 0,
       icon: Grid3X3,
       color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
       href: '/admin/specialties',

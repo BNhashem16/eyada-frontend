@@ -53,12 +53,16 @@ export function useLogin() {
       if (!error.response) {
         // Network error or server is down
         message = 'لا يمكن الاتصال بالخادم. تأكد من اتصالك بالإنترنت.';
-      } else if (error.response.status === 401) {
-        message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
       } else if (error.response.status === 429) {
         message = 'محاولات كثيرة. حاول مرة أخرى لاحقاً.';
       } else {
-        message = error.response.data?.message || 'فشل تسجيل الدخول. حاول مرة أخرى.';
+        // Handle message that could be string or array
+        const errorMessage = error.response.data?.message;
+        if (Array.isArray(errorMessage)) {
+          message = errorMessage[0] || 'فشل تسجيل الدخول. حاول مرة أخرى.';
+        } else {
+          message = errorMessage || 'فشل تسجيل الدخول. حاول مرة أخرى.';
+        }
       }
 
       toastError('خطأ في تسجيل الدخول', message);

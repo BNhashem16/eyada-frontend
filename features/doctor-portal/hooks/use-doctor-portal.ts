@@ -45,7 +45,7 @@ export function useCreateDoctorProfile() {
 
   return useMutation({
     mutationFn: async (data: Partial<DoctorProfile> & { specialtyId: string }) => {
-      return apiPost<DoctorProfile>(DOCTOR_ENDPOINTS.UPDATE_PROFILE, data);
+      return apiPost<DoctorProfile>(DOCTOR_ENDPOINTS.CREATE_PROFILE, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['doctor-profile'] });

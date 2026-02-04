@@ -15,13 +15,7 @@ import { LanguageToggle } from '@/components/common/language-toggle';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/lib/auth/store';
 import { getInitials } from '@/lib/utils';
-import { LucideIcon } from 'lucide-react';
-
-export interface MenuItem {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-}
+import type { MenuItem } from './sidebar';
 
 export interface AdminLayoutProps {
   children: React.ReactNode;

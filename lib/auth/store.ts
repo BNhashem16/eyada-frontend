@@ -52,6 +52,9 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true });
 
+        // Clear previous user's cached data before login
+        tokenStorage.clearQueryCache();
+
         try {
           const response = await apiPost<AuthResponse>(
             AUTH_ENDPOINTS.LOGIN,
@@ -60,9 +63,11 @@ export const useAuthStore = create<AuthState>()(
 
           console.log('Login response (unwrapped):', response);
 
-          // Extract tokens - handle different naming conventions
-          const accessToken = response.accessToken || (response as any).access_token;
-          const refreshToken = response.refreshToken || (response as any).refresh_token;
+          // Extract tokens - handle both nested and flat structures
+          // Nested: { tokens: { accessToken, refreshToken }, user }
+          // Flat: { accessToken, refreshToken, user }
+          const accessToken = response.tokens?.accessToken || (response as any).accessToken;
+          const refreshToken = response.tokens?.refreshToken || (response as any).refreshToken;
 
           if (!accessToken) {
             throw new Error('Invalid login response - no access token');
@@ -95,6 +100,9 @@ export const useAuthStore = create<AuthState>()(
       register: async (data: RegisterData) => {
         set({ isLoading: true });
 
+        // Clear previous user's cached data before register
+        tokenStorage.clearQueryCache();
+
         try {
           const response = await apiPost<AuthResponse>(
             AUTH_ENDPOINTS.REGISTER,
@@ -103,9 +111,11 @@ export const useAuthStore = create<AuthState>()(
 
           console.log('Register response (unwrapped):', response);
 
-          // Extract tokens - handle different naming conventions
-          const accessToken = response.accessToken || (response as any).access_token;
-          const refreshToken = response.refreshToken || (response as any).refresh_token;
+          // Extract tokens - handle both nested and flat structures
+          // Nested: { tokens: { accessToken, refreshToken }, user }
+          // Flat: { accessToken, refreshToken, user }
+          const accessToken = response.tokens?.accessToken || (response as any).accessToken;
+          const refreshToken = response.tokens?.refreshToken || (response as any).refreshToken;
 
           if (!accessToken) {
             throw new Error('Invalid register response - no access token');
@@ -145,6 +155,8 @@ export const useAuthStore = create<AuthState>()(
           // Ignore errors during logout
         } finally {
           tokenStorage.clearTokens();
+          // Clear React Query cache to prevent data leakage between users
+          tokenStorage.clearQueryCache();
           set({
             user: null,
             isAuthenticated: false,
@@ -159,6 +171,8 @@ export const useAuthStore = create<AuthState>()(
           // Ignore errors
         } finally {
           tokenStorage.clearTokens();
+          // Clear React Query cache to prevent data leakage between users
+          tokenStorage.clearQueryCache();
           set({
             user: null,
             isAuthenticated: false,
@@ -233,6 +247,8 @@ export const useAuthStore = create<AuthState>()(
 // This is called when the refresh token fails, to clear the store
 if (typeof window !== 'undefined') {
   tokenStorage.onSessionInvalidated(() => {
+    // Clear query cache to prevent data leakage
+    tokenStorage.clearQueryCache();
     useAuthStore.setState({
       user: null,
       isAuthenticated: false,

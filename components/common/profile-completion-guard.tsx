@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { usePatientProfile } from '@/features/patients/hooks/use-patient';
 import { useDoctorProfile } from '@/features/doctor-portal/hooks/use-doctor-portal';
-import { Role } from '@/types';
+import { Role, DoctorStatus, PatientStatus } from '@/types';
 
 interface ProfileCompletionGuardProps {
   children: React.ReactNode;
@@ -38,7 +38,8 @@ export function ProfileCompletionGuard({ children, role }: ProfileCompletionGuar
       } else {
         const profile = patientProfile.data;
         const isIncomplete = !profile.dateOfBirth || !profile.gender;
-        if (isIncomplete) {
+        // Redirect to profile if incomplete OR if pending approval
+        if (isIncomplete || profile.status === PatientStatus.PENDING) {
           router.push('/patient/profile');
         }
       }
@@ -51,6 +52,11 @@ export function ProfileCompletionGuard({ children, role }: ProfileCompletionGuar
       // Check if doctor profile doesn't exist
       if (!doctorProfile.data) {
         router.push('/doctor/profile');
+      } else {
+        // Redirect to profile if pending approval
+        if (doctorProfile.data.status === DoctorStatus.PENDING) {
+          router.push('/doctor/profile');
+        }
       }
     }
   }, [

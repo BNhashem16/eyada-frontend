@@ -19,6 +19,7 @@ import {
   Plus,
   X,
   Stethoscope,
+  Clock,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -161,9 +162,10 @@ export function DoctorProfileForm() {
           specialtyId: data.specialtyId,
         });
         toast({
-          title: t('doctor.profileForm.createdTitle'),
-          description: t('doctor.profileForm.createdDescription'),
+          title: 'تم إنشاء الملف الطبي بنجاح',
+          description: 'ملفك الطبي الآن قيد المراجعة من قبل الإدارة. سيتم إشعارك عند الموافقة.',
           variant: 'success',
+          duration: 8000,
         });
       } else {
         // Update existing profile
@@ -229,6 +231,25 @@ export function DoctorProfileForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Pending Approval Alert */}
+      {!isNewProfile && profile?.status === DoctorStatus.PENDING && (
+        <Card className="border-warning-300 bg-warning-50 dark:border-warning-700 dark:bg-warning-900/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-full bg-warning-100 dark:bg-warning-800 flex items-center justify-center flex-shrink-0">
+                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-warning-800 dark:text-warning-200">حسابك قيد المراجعة</h3>
+                <p className="text-sm text-warning-700 dark:text-warning-300">
+                  تم استلام طلبك وهو الآن قيد المراجعة من قبل فريق الإدارة. سيتم إشعارك فور الموافقة على حسابك.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Profile Header Card */}
       <Card>
         <CardContent className="p-6">
