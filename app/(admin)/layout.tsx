@@ -4,6 +4,8 @@ import {
   LayoutDashboard,
   Users,
   UserCog,
+  UserRound,
+  Stethoscope,
   Grid3X3,
   MapPin,
   Percent,
@@ -22,7 +24,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
   const menuItems: MenuItem[] = [
     { href: '/admin/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
-    { href: '/admin/doctors', label: t('nav.doctors'), icon: Users },
+    { href: '/admin/doctors', label: t('nav.doctors'), icon: Stethoscope },
+    { href: '/admin/patients', label: t('admin.patients.title'), icon: UserRound },
     { href: '/admin/clinics', label: t('nav.clinics'), icon: Building },
     { href: '/admin/appointments', label: t('nav.appointments'), icon: CalendarDays },
     { href: '/admin/secretaries', label: t('nav.secretaries'), icon: UserCog },
