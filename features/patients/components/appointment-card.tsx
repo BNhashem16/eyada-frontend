@@ -65,8 +65,10 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
   const canRate =
     appointment.status === AppointmentStatus.COMPLETED && !appointment.rating;
 
-  const appointmentDate = new Date(appointment.appointmentDate);
-  const isUpcoming = !isPast(appointmentDate) && canCancel;
+  // Use parseISO for date-only strings to avoid timezone issues
+  // Pass the string directly to formatDate which handles it correctly
+  const appointmentDateStr = appointment.appointmentDate;
+  const isUpcoming = !isPast(new Date(appointmentDateStr + 'T12:00:00')) && canCancel;
 
   return (
     <Card className={`overflow-hidden ${isUpcoming ? 'border-primary-200 dark:border-primary-800' : ''}`}>
@@ -77,11 +79,11 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
             isUpcoming ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-muted'
           }`}>
             <span className={`text-3xl font-bold ${isUpcoming ? 'text-primary-600 dark:text-primary-400' : 'text-foreground'}`}>
-              {formatDate(appointmentDate, 'd')}
+              {formatDate(appointmentDateStr, 'd')}
             </span>
             <div className="text-sm text-muted-foreground">
-              <div>{formatDate(appointmentDate, 'MMM')}</div>
-              <div>{formatDate(appointmentDate, 'yyyy')}</div>
+              <div>{formatDate(appointmentDateStr, 'MMM')}</div>
+              <div>{formatDate(appointmentDateStr, 'yyyy')}</div>
             </div>
           </div>
 
@@ -119,7 +121,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                   <Clock className="h-4 w-4" />
                   <span dir="ltr">{formatTime(appointment.appointmentTime)}</span>
                   <span className="text-border">|</span>
-                  <span>{formatDate(appointmentDate, 'EEEE')}</span>
+                  <span>{formatDate(appointmentDateStr, 'EEEE')}</span>
                 </div>
 
                 {/* Clinic */}

@@ -161,8 +161,6 @@ export function PatientDashboard() {
           ) : upcomingAppointments.length > 0 ? (
             <div className="space-y-3">
               {upcomingAppointments.slice(0, 3).map((appointment) => {
-                const date = new Date(appointment.appointmentDate);
-
                 return (
                   <div
                     key={appointment.id}
@@ -181,7 +179,7 @@ export function PatientDashboard() {
                         {t('auth.doctor')}. {appointment.clinic?.doctorProfile?.user?.fullName}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {formatDate(date, 'EEEE, d MMMM')} -{' '}
+                        {formatDate(appointment.appointmentDate, 'EEEE, d MMMM')} -{' '}
                         <span dir="ltr">{formatTime(appointment.appointmentTime)}</span>
                       </p>
                     </div>
