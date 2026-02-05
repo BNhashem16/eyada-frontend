@@ -477,6 +477,8 @@
   "rating": {
     "title": "Rate Your Experience",
     "subtitle": "How was your experience with the doctor?",
+    "editTitle": "Edit Rating",
+    "editSubtitle": "Update your rating for the doctor",
     "selectRating": "Select your rating",
     "veryBad": "Very Bad",
     "bad": "Bad",
@@ -487,7 +489,20 @@
     "commentOptional": "Comment (optional)",
     "commentPlaceholder": "Share your experience with the doctor...",
     "submitRating": "Submit Rating",
-    "yourRating": "Your Rating"
+    "updateRating": "Update Rating",
+    "yourRating": "Your Rating",
+    "myRatings": "My Ratings",
+    "noRatingsYet": "You haven't submitted any ratings yet",
+    "edit": "Edit",
+    "pendingApproval": "Pending Approval",
+    "approved": "Approved",
+    "pendingApprovalNotice": "Note: Your rating will be reviewed by admin before being published",
+    "updateSuccess": "Rating updated successfully",
+    "deleteSuccess": "Rating deleted successfully",
+    "deleteConfirmTitle": "Delete Rating",
+    "deleteConfirmDescription": "Are you sure you want to delete this rating? This action cannot be undone.",
+    "filterByStars": "Filter by Stars",
+    "allRatings": "All Ratings"
   },
   "doctor": {
     "dashboard": "Doctor Dashboard",

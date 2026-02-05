@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import {
   Clock,
@@ -280,7 +280,7 @@ export default function TrackQueuePage() {
               <div>
                 <p className="text-sm text-muted-foreground">{t('appointments.date')}</p>
                 <p className="font-medium">
-                  {format(new Date(data.appointmentDate), 'EEEE, d MMMM yyyy', { locale: dateLocale })}
+                  {format(parseISO(data.appointmentDate), 'EEEE, d MMMM yyyy', { locale: dateLocale })}
                 </p>
               </div>
             </div>

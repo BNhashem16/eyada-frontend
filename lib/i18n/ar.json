@@ -477,6 +477,8 @@
   "rating": {
     "title": "قيّم تجربتك",
     "subtitle": "كيف كانت تجربتك مع الطبيب؟",
+    "editTitle": "تعديل التقييم",
+    "editSubtitle": "قم بتعديل تقييمك للطبيب",
     "selectRating": "اختر تقييمك",
     "veryBad": "سيء جداً",
     "bad": "سيء",
@@ -487,7 +489,20 @@
     "commentOptional": "تعليق (اختياري)",
     "commentPlaceholder": "شاركنا تجربتك مع الطبيب...",
     "submitRating": "إرسال التقييم",
-    "yourRating": "تقييمك"
+    "updateRating": "تحديث التقييم",
+    "yourRating": "تقييمك",
+    "myRatings": "تقييماتي",
+    "noRatingsYet": "لم تقم بأي تقييمات بعد",
+    "edit": "تعديل",
+    "pendingApproval": "قيد المراجعة",
+    "approved": "تمت الموافقة",
+    "pendingApprovalNotice": "ملاحظة: سيتم مراجعة تقييمك من قبل الإدارة قبل نشره",
+    "updateSuccess": "تم تحديث التقييم بنجاح",
+    "deleteSuccess": "تم حذف التقييم بنجاح",
+    "deleteConfirmTitle": "حذف التقييم",
+    "deleteConfirmDescription": "هل أنت متأكد من حذف هذا التقييم؟ لا يمكن التراجع عن هذا الإجراء.",
+    "filterByStars": "فلتر حسب النجوم",
+    "allRatings": "كل التقييمات"
   },
   "doctor": {
     "dashboard": "لوحة تحكم الطبيب",

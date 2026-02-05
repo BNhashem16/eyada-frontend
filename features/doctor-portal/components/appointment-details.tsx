@@ -172,7 +172,8 @@ export function DoctorAppointmentDetails({ appointmentId }: AppointmentDetailsPr
 
   const status = statusConfig[appointment.status];
   const paymentStatus = paymentStatusConfig[appointment.paymentStatus];
-  const appointmentDate = new Date(appointment.appointmentDate);
+  // Use string directly for formatting to avoid timezone issues
+  const appointmentDateStr = appointment.appointmentDate;
   const canEditMedicalNotes = [AppointmentStatus.CHECKED_IN, AppointmentStatus.COMPLETED].includes(appointment.status);
 
   const getAvailableActions = () => {
@@ -255,7 +256,7 @@ export function DoctorAppointmentDetails({ appointmentId }: AppointmentDetailsPr
               <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               <div>
                 <p className="text-sm text-muted-foreground">{t('appointments.date')}</p>
-                <p className="font-semibold">{formatDate(appointmentDate, 'EEEE, d MMMM yyyy')}</p>
+                <p className="font-semibold">{formatDate(appointmentDateStr, 'EEEE, d MMMM yyyy')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

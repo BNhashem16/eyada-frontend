@@ -57,15 +57,23 @@ export function useDoctor(doctorId: string) {
 }
 
 // Public doctor ratings - GET /doctors/{doctorId}/ratings
-// Swagger: limit/offset query params, returns ratings with average
-export function useDoctorRatings(doctorId: string, limit = 10, offset = 0) {
+// Swagger: limit/offset/rating query params, returns ratings with average
+export function useDoctorRatings(
+  doctorId: string,
+  limit = 10,
+  offset = 0,
+  ratingFilter?: number
+) {
   return useQuery({
-    queryKey: ['public-doctor-ratings', doctorId, limit, offset],
+    queryKey: ['public-doctor-ratings', doctorId, limit, offset, ratingFilter],
     queryFn: async () => {
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
       });
+      if (ratingFilter) {
+        params.append('rating', ratingFilter.toString());
+      }
       return apiGet<PublicDoctorRatingsResponse>(
         PUBLIC_ENDPOINTS.DOCTOR_RATINGS(doctorId) + `?${params}`
       );

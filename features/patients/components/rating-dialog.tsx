@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Star, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Star, Loader2, Trash2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,21 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Appointment } from '@/types';
-import { useSubmitRating } from '../hooks/use-patient';
+import { useSubmitRating, useUpdateRating, useDeleteRating, PatientRating } from '../hooks/use-patient';
 import { useToast } from '@/hooks/use-toast';
 import { getInitials } from '@/lib/utils';
 import { getLocalizedText } from '@/lib/utils/multilingual';
@@ -21,10 +32,11 @@ import { useTranslation } from '@/lib/i18n';
 
 interface RatingDialogProps {
   appointment: Appointment | null;
+  existingRating?: PatientRating | null;
   onClose: () => void;
 }
 
-export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
+export function RatingDialog({ appointment, existingRating, onClose }: RatingDialogProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [rating, setRating] = useState(0);
@@ -32,19 +44,69 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
   const [comment, setComment] = useState('');
 
   const submitMutation = useSubmitRating();
+  const updateMutation = useUpdateRating();
+  const deleteMutation = useDeleteRating();
+
+  const isEditMode = !!existingRating;
+
+  // Initialize form with existing rating data
+  useEffect(() => {
+    if (existingRating) {
+      setRating(existingRating.rating);
+      setComment(existingRating.review || '');
+    } else {
+      setRating(0);
+      setComment('');
+    }
+  }, [existingRating]);
 
   const handleSubmit = async () => {
-    if (!appointment || rating === 0) return;
+    if (rating === 0) return;
 
     try {
-      await submitMutation.mutateAsync({
-        appointmentId: appointment.id,
-        rating,
-        review: comment.trim() || undefined,
+      if (isEditMode && existingRating) {
+        await updateMutation.mutateAsync({
+          ratingId: existingRating.id,
+          data: {
+            rating,
+            review: comment.trim() || undefined,
+          },
+        });
+        toast({
+          title: t('common.success'),
+          description: t('rating.updateSuccess'),
+          variant: 'success',
+        });
+      } else if (appointment) {
+        await submitMutation.mutateAsync({
+          appointmentId: appointment.id,
+          rating,
+          review: comment.trim() || undefined,
+        });
+        toast({
+          title: t('common.success'),
+          description: t('toast.success'),
+          variant: 'success',
+        });
+      }
+      handleClose();
+    } catch (error) {
+      toast({
+        title: t('common.error'),
+        description: t('errors.somethingWentWrong'),
+        variant: 'error',
       });
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!existingRating) return;
+
+    try {
+      await deleteMutation.mutateAsync(existingRating.id);
       toast({
         title: t('common.success'),
-        description: t('toast.success'),
+        description: t('rating.deleteSuccess'),
         variant: 'success',
       });
       handleClose();
@@ -64,38 +126,51 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
     onClose();
   };
 
-  const doctorName = appointment?.clinic?.doctorProfile?.user?.fullName || '';
+  const doctorName = isEditMode
+    ? existingRating?.doctorProfile?.user?.fullName || ''
+    : appointment?.clinic?.doctorProfile?.user?.fullName || '';
+
+  const isOpen = isEditMode ? !!existingRating : !!appointment;
+  const isPending = submitMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+
+  const doctorProfilePicture = isEditMode
+    ? undefined
+    : appointment?.clinic?.doctorProfile?.user?.profilePicture;
+
+  const specialtyName = isEditMode
+    ? existingRating?.doctorProfile?.specialty?.name
+    : appointment?.clinic?.doctorProfile?.specialty?.name;
 
   return (
-    <Dialog open={!!appointment} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-center">{t('rating.title')}</DialogTitle>
+          <DialogTitle className="text-center">
+            {isEditMode ? t('rating.editTitle') : t('rating.title')}
+          </DialogTitle>
           <DialogDescription className="text-center">
-            {t('rating.subtitle')}
+            {isEditMode ? t('rating.editSubtitle') : t('rating.subtitle')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Doctor Info */}
-          {appointment?.clinic?.doctorProfile && (
-            <div className="flex items-center justify-center gap-3">
-              <Avatar className="h-12 w-12">
-                <AvatarImage
-                  src={appointment.clinic.doctorProfile.user?.profilePicture || undefined}
-                />
-                <AvatarFallback>
-                  {getInitials(doctorName)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold text-foreground">{t('auth.doctor')}. {doctorName}</p>
+          <div className="flex items-center justify-center gap-3">
+            <Avatar className="h-12 w-12">
+              <AvatarImage src={doctorProfilePicture || undefined} />
+              <AvatarFallback>{getInitials(doctorName)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-semibold text-foreground">
+                {t('auth.doctor')}. {doctorName}
+              </p>
+              {specialtyName && (
                 <p className="text-sm text-muted-foreground">
-                  {getLocalizedText(appointment.clinic.doctorProfile.specialty?.name, 'ar')}
+                  {getLocalizedText(specialtyName, 'ar')}
                 </p>
-              </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Star Rating */}
           <div className="flex justify-center gap-2">
@@ -107,6 +182,7 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
                 onMouseLeave={() => setHoveredRating(0)}
                 onClick={() => setRating(star)}
                 className="transition-transform hover:scale-110"
+                disabled={isPending}
               >
                 <Star
                   className={`h-10 w-10 transition-colors ${
@@ -143,24 +219,66 @@ export function RatingDialog({ appointment, onClose }: RatingDialogProps) {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder={t('rating.commentPlaceholder')}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
+              disabled={isPending}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none disabled:opacity-50"
             />
           </div>
+
+          {/* Pending approval notice for edit mode */}
+          {isEditMode && (
+            <p className="text-center text-xs text-muted-foreground bg-warning-50 dark:bg-warning-900/20 p-2 rounded-lg">
+              {t('rating.pendingApprovalNotice')}
+            </p>
+          )}
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={handleClose} disabled={submitMutation.isPending}>
+          {isEditMode && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="me-auto"
+                  disabled={isPending}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t('rating.deleteConfirmTitle')}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t('rating.deleteConfirmDescription')}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleteMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      t('common.delete')
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          <Button variant="outline" onClick={handleClose} disabled={isPending}>
             {t('common.cancel')}
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={rating === 0 || submitMutation.isPending}
-          >
-            {submitMutation.isPending ? (
+          <Button onClick={handleSubmit} disabled={rating === 0 || isPending}>
+            {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
                 {t('common.submitting')}
               </>
+            ) : isEditMode ? (
+              t('rating.updateRating')
             ) : (
               t('rating.submitRating')
             )}

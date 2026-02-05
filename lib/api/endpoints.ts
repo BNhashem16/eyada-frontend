@@ -62,6 +62,7 @@ export const PATIENT_ENDPOINTS = {
 
   // Ratings
   RATINGS: '/patients/ratings',
+  RATING: (id: string) => `/patients/ratings/${id}`,
 } as const;
 
 // Doctor endpoints (requires DOCTOR role)

@@ -1,11 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, MessageSquare, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useDoctorRatings } from '../hooks/use-doctors';
 import { Rating } from '@/types';
 import { formatRelativeDate, getInitials } from '@/lib/utils';
@@ -18,9 +25,15 @@ interface RatingsListProps {
 export function RatingsList({ doctorId }: RatingsListProps) {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
+  const [ratingFilter, setRatingFilter] = useState<number | undefined>(undefined);
   const limit = 10;
   const offset = (page - 1) * limit;
-  const { data, isLoading, isError } = useDoctorRatings(doctorId, limit, offset);
+  const { data, isLoading, isError } = useDoctorRatings(doctorId, limit, offset, ratingFilter);
+
+  const handleFilterChange = (value: string) => {
+    setRatingFilter(value === 'all' ? undefined : parseInt(value));
+    setPage(1); // Reset to first page when filter changes
+  };
 
   // Extract from PublicDoctorRatingsResponse
   const ratings: Rating[] = data?.ratings ?? [];
@@ -72,17 +85,58 @@ export function RatingsList({ doctorId }: RatingsListProps) {
 
   return (
     <div className="space-y-4">
-      {/* Summary with average rating */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          {t('doctors.ratingsCountLabel').replace('{count}', String(totalRatings))}
-        </p>
-        {averageRating > 0 && (
-          <div className="flex items-center gap-1.5">
-            <Star className="h-4 w-4 fill-warning-400 text-warning-400" />
-            <span className="font-medium text-foreground">{averageRating.toFixed(1)}</span>
-          </div>
-        )}
+      {/* Summary with average rating and filter */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">
+            {t('doctors.ratingsCountLabel').replace('{count}', String(totalRatings))}
+          </p>
+          {averageRating > 0 && (
+            <div className="flex items-center gap-1.5">
+              <Star className="h-4 w-4 fill-warning-400 text-warning-400" />
+              <span className="font-medium text-foreground">{averageRating.toFixed(1)}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Star Filter */}
+        <Select
+          value={ratingFilter?.toString() || 'all'}
+          onValueChange={handleFilterChange}
+        >
+          <SelectTrigger className="w-[160px] h-9">
+            <Filter className="h-4 w-4 me-2 text-muted-foreground" />
+            <SelectValue placeholder={t('rating.filterByStars')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t('rating.allRatings')}</SelectItem>
+            <SelectItem value="5">
+              <span className="flex items-center gap-1">
+                5 <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+              </span>
+            </SelectItem>
+            <SelectItem value="4">
+              <span className="flex items-center gap-1">
+                4 <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+              </span>
+            </SelectItem>
+            <SelectItem value="3">
+              <span className="flex items-center gap-1">
+                3 <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+              </span>
+            </SelectItem>
+            <SelectItem value="2">
+              <span className="flex items-center gap-1">
+                2 <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+              </span>
+            </SelectItem>
+            <SelectItem value="1">
+              <span className="flex items-center gap-1">
+                1 <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+              </span>
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Ratings */}

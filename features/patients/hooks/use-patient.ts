@@ -248,6 +248,50 @@ export interface CreateRatingData {
   review?: string; // max 1000 chars
 }
 
+export interface UpdateRatingData {
+  rating?: number; // 1-5
+  review?: string; // max 1000 chars
+}
+
+export interface PatientRating {
+  id: string;
+  rating: number;
+  review?: string;
+  isVisible: boolean;
+  createdAt: string;
+  updatedAt: string;
+  doctorProfile: {
+    id: string;
+    user: {
+      id: string;
+      fullName: string;
+    };
+    specialty?: {
+      id: string;
+      name: { en: string; ar: string };
+    };
+  };
+  appointment: {
+    id: string;
+    bookingNumber: string;
+    appointmentDate: string;
+    clinic: {
+      id: string;
+      name: { en: string; ar: string };
+    };
+  };
+}
+
+export function usePatientRatings() {
+  return useQuery({
+    queryKey: ['patient-ratings'],
+    queryFn: async () => {
+      return apiGet<PatientRating[]>(PATIENT_ENDPOINTS.RATINGS);
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
 export function useSubmitRating() {
   const queryClient = useQueryClient();
 
@@ -256,6 +300,34 @@ export function useSubmitRating() {
       return apiPost(PATIENT_ENDPOINTS.RATINGS, data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['patient-ratings'] });
+    },
+  });
+}
+
+export function useUpdateRating() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ ratingId, data }: { ratingId: string; data: UpdateRatingData }) => {
+      return apiPatch(PATIENT_ENDPOINTS.RATING(ratingId), data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-ratings'] });
+    },
+  });
+}
+
+export function useDeleteRating() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (ratingId: string) => {
+      return apiDelete(PATIENT_ENDPOINTS.RATING(ratingId));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patient-ratings'] });
       queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
     },
   });
