@@ -3,10 +3,14 @@
 import {
   LayoutDashboard,
   Users,
+  UserCog,
   Grid3X3,
   MapPin,
   Percent,
   Wallet,
+  CalendarDays,
+  Building,
+  Star,
 } from 'lucide-react';
 import { ProtectedRoute } from '@/lib/auth/guards';
 import { Role } from '@/types';
@@ -19,6 +23,10 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const menuItems: MenuItem[] = [
     { href: '/admin/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
     { href: '/admin/doctors', label: t('nav.doctors'), icon: Users },
+    { href: '/admin/clinics', label: t('nav.clinics'), icon: Building },
+    { href: '/admin/appointments', label: t('nav.appointments'), icon: CalendarDays },
+    { href: '/admin/secretaries', label: t('nav.secretaries'), icon: UserCog },
+    { href: '/admin/ratings', label: t('nav.ratings'), icon: Star },
     { href: '/admin/specialties', label: t('nav.specialties'), icon: Grid3X3 },
     { href: '/admin/locations', label: t('admin.locations.title'), icon: MapPin },
     { href: '/admin/commissions', label: t('nav.commissions'), icon: Percent },

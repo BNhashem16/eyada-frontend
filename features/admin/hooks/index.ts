@@ -3,3 +3,7 @@ export * from './use-admin-patients';
 export * from './use-admin-specialties';
 export * from './use-admin-locations';
 export * from './use-admin-commissions';
+export * from './use-admin-appointments';
+export * from './use-admin-clinics';
+export * from './use-admin-ratings';
+export * from './use-admin-secretaries';

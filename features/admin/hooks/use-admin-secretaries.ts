@@ -1,0 +1,153 @@
+'use client';
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
+import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
+import { PaginatedResponse } from '@/types';
+
+// ==================== Types ====================
+
+export interface AdminSecretary {
+  id: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  isActive: boolean;
+  createdAt: string;
+  assignments?: SecretaryAssignment[];
+}
+
+export interface SecretaryAssignment {
+  id: string;
+  isActive: boolean;
+  createdAt: string;
+  clinic: {
+    id: string;
+    name: { ar: string; en: string };
+    doctorProfile: {
+      id: string;
+      user: {
+        id: string;
+        fullName: string;
+      };
+    };
+  };
+}
+
+export interface AdminSecretaryFilters {
+  page?: number;
+  limit?: number;
+  doctorUserId?: string;
+  clinicId?: string;
+  isActive?: boolean;
+}
+
+export interface CreateSecretaryData {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  clinicId: string;
+}
+
+export interface AssignSecretaryData {
+  secretaryUserId: string;
+  clinicId: string;
+}
+
+export interface UpdateSecretaryData {
+  fullName?: string;
+  phoneNumber?: string;
+  isActive?: boolean;
+}
+
+// ==================== Hooks ====================
+
+export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
+  const {
+    page = 1,
+    limit = 30,
+    doctorUserId,
+    clinicId,
+    isActive,
+  } = filters;
+
+  return useQuery({
+    queryKey: [
+      'admin-secretaries',
+      {
+        page,
+        limit,
+        doctorUserId,
+        clinicId,
+        isActive,
+      },
+    ],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+
+      if (doctorUserId) params.append('doctorUserId', doctorUserId);
+      if (clinicId) params.append('clinicId', clinicId);
+      if (isActive !== undefined) params.append('isActive', isActive.toString());
+
+      return apiGet<PaginatedResponse<AdminSecretary>>(
+        `${ADMIN_ENDPOINTS.SECRETARIES}?${params.toString()}`
+      );
+    },
+    staleTime: 1000 * 30, // 30 seconds
+  });
+}
+
+export function useCreateAdminSecretary() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateSecretaryData) => {
+      return apiPost<AdminSecretary>(ADMIN_ENDPOINTS.SECRETARIES, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+    },
+  });
+}
+
+export function useAssignSecretary() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: AssignSecretaryData) => {
+      return apiPost<SecretaryAssignment>(ADMIN_ENDPOINTS.ASSIGN_SECRETARY, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+    },
+  });
+}
+
+export function useUpdateAdminSecretary() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...data }: UpdateSecretaryData & { id: string }) => {
+      return apiPatch<AdminSecretary>(ADMIN_ENDPOINTS.SECRETARY(id), data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+    },
+  });
+}
+
+export function useRemoveSecretaryAssignment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (assignmentId: string) => {
+      return apiDelete(ADMIN_ENDPOINTS.SECRETARY_ASSIGNMENT(assignmentId));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+    },
+  });
+}

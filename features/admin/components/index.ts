@@ -7,3 +7,7 @@ export * from './locations-management';
 export * from './commissions-management';
 export * from './doctor-balances';
 export * from './doctor-report';
+export * from './admin-appointments-list';
+export * from './admin-clinics-list';
+export * from './admin-ratings-list';
+export * from './admin-secretaries-list';

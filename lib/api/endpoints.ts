@@ -173,6 +173,21 @@ export const ADMIN_ENDPOINTS = {
   ASSIGN_SECRETARY: '/admin/secretaries/assign',
   SECRETARY_ASSIGNMENT: (assignmentId: string) => `/admin/secretaries/assignment/${assignmentId}`,
 
+  // Appointments management
+  APPOINTMENTS: '/admin/appointments',
+  APPOINTMENT: (id: string) => `/admin/appointments/${id}`,
+  APPOINTMENTS_STATISTICS: '/admin/appointments/statistics',
+
+  // Clinics management
+  CLINICS: '/admin/clinics',
+  CLINIC: (id: string) => `/admin/clinics/${id}`,
+  CLINICS_STATISTICS: '/admin/clinics/statistics',
+
+  // Ratings management
+  RATINGS: '/admin/ratings',
+  RATING: (id: string) => `/admin/ratings/${id}`,
+  RATINGS_STATISTICS: '/admin/ratings/statistics',
+
   // Commissions management
   COMMISSIONS: '/admin/commissions',
   COMMISSION: (id: string) => `/admin/commissions/${id}`,
