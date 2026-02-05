@@ -1,6 +1,7 @@
 'use client';
 
 import { useForm, Controller } from 'react-hook-form';
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { User as UserIcon, Phone, Mail, Calendar, Loader2, Droplets, Clock } from 'lucide-react';
@@ -81,6 +82,7 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isDirty },
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -93,6 +95,20 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
       bloodType: profile?.bloodType || '',
     },
   });
+
+  // Reset form when profile data changes (after save/refetch)
+  useEffect(() => {
+    if (profile) {
+      reset({
+        name: profile.user?.fullName || profile.user?.name || user?.fullName || user?.name || '',
+        phone: profile.user?.phoneNumber || user?.phoneNumber || '',
+        dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
+        gender: profile.gender || undefined,
+        whatsappNumber: profile.whatsappNumber || '',
+        bloodType: profile.bloodType || '',
+      });
+    }
+  }, [profile, user, reset]);
 
   const onSubmit = async (data: ProfileFormData) => {
     try {

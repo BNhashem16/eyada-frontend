@@ -4,3 +4,6 @@ export * from './admin-doctors-list';
 export * from './admin-patients-list';
 export * from './specialties-management';
 export * from './locations-management';
+export * from './commissions-management';
+export * from './doctor-balances';
+export * from './doctor-report';

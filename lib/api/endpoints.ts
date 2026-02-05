@@ -172,4 +172,13 @@ export const ADMIN_ENDPOINTS = {
   SECRETARY: (id: string) => `/admin/secretaries/${id}`,
   ASSIGN_SECRETARY: '/admin/secretaries/assign',
   SECRETARY_ASSIGNMENT: (assignmentId: string) => `/admin/secretaries/assignment/${assignmentId}`,
+
+  // Commissions management
+  COMMISSIONS: '/admin/commissions',
+  COMMISSION: (id: string) => `/admin/commissions/${id}`,
+  COMMISSION_SUMMARY: '/admin/commissions/summary',
+  COMMISSION_BALANCES: '/admin/commissions/balances',
+  COMMISSION_DOCTOR_REPORT: (doctorId: string) => `/admin/commissions/balances/${doctorId}/report`,
+  COMMISSION_PAYMENTS: '/admin/commissions/payments',
+  COMMISSION_PAYMENT_HISTORY: (doctorId: string) => `/admin/commissions/payments/${doctorId}`,
 } as const;

@@ -276,7 +276,7 @@ export function SpecialtiesManagement() {
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="nameAr">{t('admin.nameAr')} *</Label>
                 <Input
@@ -302,7 +302,7 @@ export function SpecialtiesManagement() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="descriptionAr">{t('admin.descriptionAr')}</Label>
                 <Input
@@ -345,7 +345,7 @@ export function SpecialtiesManagement() {
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               {t('common.cancel')}
             </Button>

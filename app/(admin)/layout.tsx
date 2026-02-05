@@ -5,6 +5,8 @@ import {
   Users,
   Grid3X3,
   MapPin,
+  Percent,
+  Wallet,
 } from 'lucide-react';
 import { ProtectedRoute } from '@/lib/auth/guards';
 import { Role } from '@/types';
@@ -19,6 +21,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     { href: '/admin/doctors', label: t('nav.doctors'), icon: Users },
     { href: '/admin/specialties', label: t('nav.specialties'), icon: Grid3X3 },
     { href: '/admin/locations', label: t('admin.locations.title'), icon: MapPin },
+    { href: '/admin/commissions', label: t('nav.commissions'), icon: Percent },
+    { href: '/admin/collections', label: t('nav.collections'), icon: Wallet },
   ];
 
   return (

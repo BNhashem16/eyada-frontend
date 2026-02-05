@@ -365,7 +365,7 @@ export function LocationsManagement() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label>{t('admin.locations.nameArRequired')}</Label>
                 <Input
@@ -400,7 +400,7 @@ export function LocationsManagement() {
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setStateDialogOpen(false)}>
               {t('common.cancel')}
             </Button>
@@ -431,7 +431,7 @@ export function LocationsManagement() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label>{t('admin.locations.nameArRequired')}</Label>
                 <Input
@@ -455,7 +455,7 @@ export function LocationsManagement() {
               </div>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setCityDialogOpen(false)}>
               {t('common.cancel')}
             </Button>

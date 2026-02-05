@@ -313,7 +313,7 @@ export function FamilyList() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label className="text-muted-foreground">{t('family.gender')}</Label>
                   <p className="font-medium">{selectedMember.gender ? genderLabels[selectedMember.gender] : t('family.notSpecified')}</p>
