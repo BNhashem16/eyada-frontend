@@ -10,12 +10,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { registerSchemaWithConfirm, type RegisterFormData } from '../schemas';
+import { createRegisterSchemaWithConfirm, type RegisterFormData } from '../schemas';
 import { useRegister } from '../hooks';
 import { useTranslation } from '@/lib/i18n';
 
 export function RegisterForm() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
   const roleParam = searchParams.get('role');
   const defaultRole = roleParam === 'doctor' ? 'DOCTOR' : 'PATIENT';
@@ -30,7 +30,7 @@ export function RegisterForm() {
     watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchemaWithConfirm),
+    resolver: zodResolver(createRegisterSchemaWithConfirm(locale)),
     defaultValues: {
       fullName: '',
       email: '',

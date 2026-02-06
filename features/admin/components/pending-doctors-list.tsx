@@ -93,7 +93,7 @@ export function PendingDoctorsList() {
             {t('admin.loadError')}
           </p>
           <p className="text-sm text-error-500 dark:text-error-400 mt-2">
-            {error instanceof Error ? error.message : 'Unknown error'}
+            {error instanceof Error ? error.message : t('common.unknownError')}
           </p>
         </CardContent>
       </Card>

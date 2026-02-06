@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/lib/i18n";
 
 export interface SearchableSelectOption {
   value: string;
@@ -63,9 +64,9 @@ export function SearchableSelect({
   options,
   value,
   onValueChange,
-  placeholder = "اختر...",
-  searchPlaceholder = "ابحث...",
-  emptyMessage = "لا توجد نتائج",
+  placeholder,
+  searchPlaceholder,
+  emptyMessage,
   className,
   disabled = false,
   loading = false,
@@ -74,6 +75,10 @@ export function SearchableSelect({
   maxHeight = 280,
   renderOption,
 }: SearchableSelectProps) {
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t('common.select');
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t('common.searchDots');
+  const resolvedEmptyMessage = emptyMessage ?? t('common.noResultsFound');
   const [open, setOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -270,7 +275,7 @@ export function SearchableSelect({
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>جاري التحميل...</span>
+                <span>{t('common.loadingDots')}</span>
               </>
             ) : selectedOption ? (
               <>
@@ -280,7 +285,7 @@ export function SearchableSelect({
                 <span className="truncate">{selectedOption.label}</span>
               </>
             ) : (
-              placeholder
+              resolvedPlaceholder
             )}
           </span>
 
@@ -315,7 +320,7 @@ export function SearchableSelect({
             <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Input
               ref={inputRef}
-              placeholder={searchPlaceholder}
+              placeholder={resolvedSearchPlaceholder}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -338,8 +343,8 @@ export function SearchableSelect({
         {showSearch && searchQuery && (
           <div className="px-3 py-1.5 text-xs text-muted-foreground border-b border-border bg-muted/20">
             {filteredOptions.length === 0
-              ? emptyMessage
-              : `${filteredOptions.length} نتيجة`
+              ? resolvedEmptyMessage
+              : t('common.resultsCount', { count: filteredOptions.length })
             }
           </div>
         )}
@@ -353,10 +358,10 @@ export function SearchableSelect({
           {filteredOptions.length === 0 ? (
             <div className="py-8 text-center">
               <Search className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+              <p className="text-sm text-muted-foreground">{resolvedEmptyMessage}</p>
               {searchQuery && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  جرب البحث بكلمات مختلفة
+                  {t('common.tryDifferentSearch')}
                 </p>
               )}
             </div>
@@ -391,7 +396,7 @@ export function SearchableSelect({
         {/* Footer with count */}
         {filteredOptions.length > 5 && (
           <div className="px-3 py-2 text-xs text-muted-foreground border-t border-border bg-muted/20 flex items-center justify-between">
-            <span>استخدم الأسهم للتنقل</span>
+            <span>{t('common.useArrowsToNavigate')}</span>
             <Badge variant="secondary" className="text-[10px] h-5">
               {filteredOptions.length}
             </Badge>

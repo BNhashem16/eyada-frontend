@@ -107,7 +107,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
                     </Avatar>
                     <div>
                       <p className="font-semibold text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                        د. {appointment.clinic.doctorProfile.user?.name}
+                        {t('doctors.doctorPrefix')} {appointment.clinic.doctorProfile.user?.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {getLocalizedText(appointment.clinic.doctorProfile.specialty?.name, 'ar')}

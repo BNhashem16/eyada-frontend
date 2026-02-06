@@ -53,7 +53,7 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
                 href={`/doctors/${doctor.id}`}
                 className="inline-block text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
-                د. {doctor.user?.fullName}
+                {t('doctors.doctorPrefix')} {doctor.user?.fullName}
               </Link>
               <p className="text-sm text-muted-foreground mt-0.5">
                 {doctor.specialty?.name?.ar || doctor.specialty?.name?.en}

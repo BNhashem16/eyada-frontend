@@ -1,14 +1,21 @@
 import { z } from 'zod';
+import { getTranslation, type Locale } from '@/lib/i18n';
 
-export const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'البريد الإلكتروني مطلوب')
-    .email('البريد الإلكتروني غير صالح'),
-  password: z
-    .string()
-    .min(1, 'كلمة المرور مطلوبة')
-    .min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'),
-});
+export const createLoginSchema = (locale: Locale = 'ar') => {
+  const t = (key: string) => getTranslation(key, locale);
 
-export type LoginFormData = z.infer<typeof loginSchema>;
+  return z.object({
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    password: z
+      .string()
+      .min(1, t('validation.passwordRequired'))
+      .min(8, t('validation.passwordMinLength')),
+  });
+};
+
+export const loginSchema = createLoginSchema();
+
+export type LoginFormData = z.infer<ReturnType<typeof createLoginSchema>>;

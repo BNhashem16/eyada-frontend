@@ -6,6 +6,7 @@ import { useAuthStore } from '@/lib/auth';
 import { toastSuccess, toastError } from '@/hooks/use-toast';
 import { AxiosError } from 'axios';
 import type { ApiError, Role } from '@/types';
+import { useTranslation } from '@/lib/i18n';
 
 interface RegisterData {
   email: string;
@@ -18,6 +19,7 @@ interface RegisterData {
 export function useRegister() {
   const router = useRouter();
   const register = useAuthStore((state) => state.register);
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: RegisterData) => {
@@ -33,8 +35,8 @@ export function useRegister() {
           case 'DOCTOR':
             // Show message that doctor needs to complete profile
             toastSuccess(
-              'تم إنشاء الحساب بنجاح',
-              'يرجى إكمال بيانات ملفك الطبي لمراجعتها من قبل الإدارة'
+              t('auth.registerSuccessTitle'),
+              t('auth.registerSuccessDoctorDesc')
             );
             // Redirect to profile page to complete registration
             router.push('/doctor/profile');
@@ -43,8 +45,8 @@ export function useRegister() {
           default:
             // Show message that patient needs to complete profile
             toastSuccess(
-              'تم إنشاء الحساب بنجاح',
-              'يرجى إكمال بيانات ملفك الشخصي'
+              t('auth.registerSuccessTitle'),
+              t('auth.registerSuccessPatientDesc')
             );
             // Redirect to profile page to complete registration
             router.push('/patient/profile');
@@ -58,22 +60,22 @@ export function useRegister() {
 
       if (!error.response) {
         // Network error or server is down
-        message = 'لا يمكن الاتصال بالخادم. تأكد من اتصالك بالإنترنت.';
+        message = t('auth.registerNetworkError');
       } else if (error.response.status === 409) {
-        message = 'هذا البريد الإلكتروني أو رقم الهاتف مسجل بالفعل.';
+        message = t('auth.registerConflictError');
       } else if (error.response.status === 429) {
-        message = 'محاولات كثيرة. حاول مرة أخرى لاحقاً.';
+        message = t('auth.registerRateLimitError');
       } else {
         // Handle message that could be string or array
         const errorMessage = error.response.data?.message;
         if (Array.isArray(errorMessage)) {
-          message = errorMessage[0] || 'فشل إنشاء الحساب. حاول مرة أخرى.';
+          message = errorMessage[0] || t('auth.registerFailedDefault');
         } else {
-          message = errorMessage || 'فشل إنشاء الحساب. حاول مرة أخرى.';
+          message = errorMessage || t('auth.registerFailedDefault');
         }
       }
 
-      toastError('خطأ في إنشاء الحساب', message);
+      toastError(t('auth.registerErrorTitle'), message);
     },
   });
 }

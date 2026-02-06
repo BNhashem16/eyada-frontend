@@ -1,40 +1,52 @@
 import { z } from 'zod';
+import { getTranslation, type Locale } from '@/lib/i18n';
 
 // Egyptian phone number regex
 const egyptianPhoneRegex = /^01[0125][0-9]{8}$/;
 
-export const registerSchema = z.object({
-  fullName: z
-    .string()
-    .min(1, 'الاسم الكامل مطلوب')
-    .min(2, 'الاسم يجب أن يكون حرفين على الأقل')
-    .max(100, 'الاسم لا يجب أن يتجاوز 100 حرف'),
-  email: z
-    .string()
-    .min(1, 'البريد الإلكتروني مطلوب')
-    .email('البريد الإلكتروني غير صالح'),
-  phoneNumber: z
-    .string()
-    .min(1, 'رقم الهاتف مطلوب')
-    .regex(egyptianPhoneRegex, 'رقم الهاتف غير صالح (مثال: 01012345678)'),
-  password: z
-    .string()
-    .min(1, 'كلمة المرور مطلوبة')
-    .min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل')
-    .max(50, 'كلمة المرور لا يجب أن تتجاوز 50 حرف'),
-  confirmPassword: z.string().min(1, 'تأكيد كلمة المرور مطلوب'),
-  role: z.enum(['PATIENT', 'DOCTOR']),
-  agreeTerms: z.boolean().refine((val) => val === true, {
-    message: 'يجب الموافقة على الشروط والأحكام',
-  }),
-});
+export const createRegisterSchema = (locale: Locale = 'ar') => {
+  const t = (key: string) => getTranslation(key, locale);
 
-export const registerSchemaWithConfirm = registerSchema.refine(
-  (data) => data.password === data.confirmPassword,
-  {
-    message: 'كلمات المرور غير متطابقة',
-    path: ['confirmPassword'],
-  }
-);
+  return z.object({
+    fullName: z
+      .string()
+      .min(1, t('validation.fullNameRequired'))
+      .min(2, t('validation.fullNameMinLength'))
+      .max(100, t('validation.fullNameMaxLength')),
+    email: z
+      .string()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    phoneNumber: z
+      .string()
+      .min(1, t('validation.phoneRequired'))
+      .regex(egyptianPhoneRegex, t('validation.phoneInvalid')),
+    password: z
+      .string()
+      .min(1, t('validation.passwordRequired'))
+      .min(8, t('validation.passwordMinLength'))
+      .max(50, t('validation.passwordMaxLength')),
+    confirmPassword: z.string().min(1, t('validation.confirmPasswordRequired')),
+    role: z.enum(['PATIENT', 'DOCTOR']),
+    agreeTerms: z.boolean().refine((val) => val === true, {
+      message: t('validation.termsRequired'),
+    }),
+  });
+};
 
-export type RegisterFormData = z.infer<typeof registerSchema>;
+export const createRegisterSchemaWithConfirm = (locale: Locale = 'ar') => {
+  const t = (key: string) => getTranslation(key, locale);
+
+  return createRegisterSchema(locale).refine(
+    (data) => data.password === data.confirmPassword,
+    {
+      message: t('validation.passwordMismatch'),
+      path: ['confirmPassword'],
+    }
+  );
+};
+
+export const registerSchema = createRegisterSchema();
+export const registerSchemaWithConfirm = createRegisterSchemaWithConfirm();
+
+export type RegisterFormData = z.infer<ReturnType<typeof createRegisterSchema>>;

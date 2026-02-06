@@ -162,8 +162,8 @@ export function DoctorProfileForm() {
           specialtyId: data.specialtyId,
         });
         toast({
-          title: 'تم إنشاء الملف الطبي بنجاح',
-          description: 'ملفك الطبي الآن قيد المراجعة من قبل الإدارة. سيتم إشعارك عند الموافقة.',
+          title: t('doctor.profileForm.createdDescription'),
+          description: t('patient.pendingApprovalMessage'),
           variant: 'success',
           duration: 8000,
         });
@@ -240,9 +240,9 @@ export function DoctorProfileForm() {
                 <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-warning-800 dark:text-warning-200">حسابك قيد المراجعة</h3>
+                <h3 className="font-semibold text-warning-800 dark:text-warning-200">{t('patient.pendingApprovalTitle')}</h3>
                 <p className="text-sm text-warning-700 dark:text-warning-300">
-                  تم استلام طلبك وهو الآن قيد المراجعة من قبل فريق الإدارة. سيتم إشعارك فور الموافقة على حسابك.
+                  {t('patient.pendingApprovalMessage')}
                 </p>
               </div>
             </div>
@@ -274,7 +274,7 @@ export function DoctorProfileForm() {
             <div className="flex-1 text-center sm:text-start">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
                 <h2 className="text-xl font-bold text-foreground">
-                  د. {profile?.user?.fullName || user?.fullName}
+                  {t('doctors.doctorPrefix')} {profile?.user?.fullName || user?.fullName}
                 </h2>
                 {isNewProfile ? (
                   <Badge variant="warning">{t('doctor.profileForm.newProfile')}</Badge>

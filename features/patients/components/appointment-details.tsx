@@ -243,7 +243,7 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">
-                  د. {appointment.clinic.doctorProfile.user?.fullName}
+                  {t('doctors.doctorPrefix')} {appointment.clinic.doctorProfile.user?.fullName}
                 </p>
                 <p className="text-muted-foreground">
                   {getLocalizedText(appointment.clinic.doctorProfile.specialty?.name, 'ar')}

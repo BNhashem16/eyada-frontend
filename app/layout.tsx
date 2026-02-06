@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Cairo, Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/providers';
+import { getTranslation } from '@/lib/i18n';
 
 // Arabic font (Primary) - Cairo from Google Fonts
 const cairo = Cairo({
@@ -21,25 +22,25 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'عيادة - نظام حجز المواعيد الطبية',
-    template: '%s | عيادة',
+    default: getTranslation('meta.defaultTitle'),
+    template: getTranslation('meta.titleTemplate'),
   },
-  description: 'احجز موعدك مع أفضل الأطباء في مصر بسهولة وسرعة',
-  keywords: ['حجز مواعيد', 'أطباء', 'عيادات', 'طب', 'صحة', 'مصر'],
+  description: getTranslation('meta.defaultDescription'),
+  keywords: getTranslation('meta.keywords').split(', '),
   authors: [{ name: 'Eyada Team' }],
   creator: 'Eyada',
   openGraph: {
     type: 'website',
     locale: 'ar_EG',
     alternateLocale: 'en_US',
-    siteName: 'عيادة',
-    title: 'عيادة - نظام حجز المواعيد الطبية',
-    description: 'احجز موعدك مع أفضل الأطباء في مصر بسهولة وسرعة',
+    siteName: getTranslation('meta.siteName'),
+    title: getTranslation('meta.ogTitle'),
+    description: getTranslation('meta.ogDescription'),
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'عيادة - نظام حجز المواعيد الطبية',
-    description: 'احجز موعدك مع أفضل الأطباء في مصر بسهولة وسرعة',
+    title: getTranslation('meta.twitterTitle'),
+    description: getTranslation('meta.twitterDescription'),
   },
   robots: {
     index: true,

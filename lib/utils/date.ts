@@ -2,6 +2,7 @@ import { format, parseISO, isValid, formatDistance, isToday, isBefore, isSameDay
 
 export { isToday, isBefore, isSameDay, addDays, isPast };
 import { ar, enUS } from 'date-fns/locale';
+import { getTranslation } from '@/lib/i18n';
 
 export type SupportedLocale = 'ar' | 'en';
 
@@ -273,11 +274,8 @@ export function getDayName(
   dayIndex: number,
   locale: SupportedLocale = 'ar'
 ): string {
-  const days = {
-    ar: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-    en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  };
-  return days[locale][dayIndex] || '';
+  const dayKeys = ['days.sunday', 'days.monday', 'days.tuesday', 'days.wednesday', 'days.thursday', 'days.friday', 'days.saturday'];
+  return getTranslation(dayKeys[dayIndex], locale) || '';
 }
 
 /**

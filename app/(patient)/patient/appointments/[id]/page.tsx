@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import { AppointmentDetails } from '@/features/patients/components/appointment-details';
+import { getTranslation } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'تفاصيل الموعد - المريض',
-  description: 'عرض تفاصيل الموعد',
+  title: getTranslation('meta.patientAppointmentDetails.title'),
+  description: getTranslation('meta.patientAppointmentDetails.description'),
 };
 
 interface PageProps {

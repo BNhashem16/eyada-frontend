@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import { DoctorAppointmentDetails } from '@/features/doctor-portal/components/appointment-details';
+import { getTranslation } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'تفاصيل الموعد - الطبيب',
-  description: 'عرض وإدارة تفاصيل الموعد',
+  title: getTranslation('meta.doctorAppointmentDetails.title'),
+  description: getTranslation('meta.doctorAppointmentDetails.description'),
 };
 
 interface PageProps {

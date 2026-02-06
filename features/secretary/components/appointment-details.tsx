@@ -312,7 +312,7 @@ export function SecretaryAppointmentDetails({ appointmentId }: AppointmentDetail
               </Avatar>
               <div>
                 <p className="font-semibold">
-                  د. {appointment.clinic.doctorProfile.user?.fullName}
+                  {t('doctors.doctorPrefix')} {appointment.clinic.doctorProfile.user?.fullName}
                 </p>
               </div>
             </div>

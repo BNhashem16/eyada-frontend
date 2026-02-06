@@ -150,7 +150,7 @@ export function AdminPatientsList() {
           <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
           <p className="text-error-600 dark:text-error-400">{t('admin.loadError')}</p>
           <p className="text-sm text-error-500 mt-2">
-            {error instanceof Error ? error.message : 'Unknown error'}
+            {error instanceof Error ? error.message : t('common.unknownError')}
           </p>
         </CardContent>
       </Card>

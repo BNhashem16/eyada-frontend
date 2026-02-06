@@ -83,7 +83,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-2xl font-bold text-foreground">
-                    د. {doctor.user?.fullName || doctor.user?.name}
+                    {t('doctors.doctorPrefix')} {doctor.user?.fullName || doctor.user?.name}
                   </h1>
                 </div>
                 <p className="text-muted-foreground mt-1">

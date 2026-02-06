@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import { SecretaryAppointmentDetails } from '@/features/secretary/components/appointment-details';
+import { getTranslation } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'تفاصيل الموعد - السكرتير',
-  description: 'عرض وإدارة تفاصيل الموعد',
+  title: getTranslation('meta.secretaryAppointmentDetails.title'),
+  description: getTranslation('meta.secretaryAppointmentDetails.description'),
 };
 
 interface PageProps {

@@ -5,6 +5,7 @@ import { format, parse, isValid } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import { Calendar as CalendarIcon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -50,6 +51,7 @@ function DatePickerInput({
   disabledDates,
   clearable = true,
 }: DatePickerInputProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
 
   const dateValue = React.useMemo(() => {
@@ -106,7 +108,7 @@ function DatePickerInput({
         >
           <CalendarIcon className="h-4 w-4 shrink-0 opacity-60" />
           <span className="flex-1 truncate">
-            {displayText || placeholder || 'اختر تاريخ'}
+            {displayText || placeholder || t('common.selectDate')}
           </span>
           {clearable && dateValue && !disabled && (
             <X

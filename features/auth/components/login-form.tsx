@@ -9,12 +9,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { loginSchema, type LoginFormData } from '../schemas';
+import { createLoginSchema, type LoginFormData } from '../schemas';
 import { useLogin } from '../hooks';
 import { useTranslation } from '@/lib/i18n';
 
 export function LoginForm() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: login, isPending } = useLogin();
 
@@ -23,7 +23,7 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(createLoginSchema(locale)),
     defaultValues: {
       email: '',
       password: '',
