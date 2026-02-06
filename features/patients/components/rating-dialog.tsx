@@ -218,10 +218,12 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              maxLength={1000}
               placeholder={t('rating.commentPlaceholder')}
               disabled={isPending}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none disabled:opacity-50"
             />
+            <p className="text-xs text-muted-foreground text-end mt-1">{comment.length}/1000</p>
           </div>
 
           {/* Pending approval notice for edit mode */}

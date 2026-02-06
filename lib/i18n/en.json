@@ -1159,7 +1159,9 @@
     "clinicNameArRequired": "Clinic name in Arabic is required (min 2 characters)",
     "clinicNameEnRequired": "Clinic name in English is required (min 2 characters)",
     "addressArRequired": "Address in Arabic is required",
-    "addressEnRequired": "Address in English is required"
+    "addressEnRequired": "Address in English is required",
+    "maxWhatsappNumbers": "Cannot add more than 5 WhatsApp numbers",
+    "reviewMaxLength": "Review cannot exceed 1000 characters"
   },
   "toast": {
     "updated": "Updated",

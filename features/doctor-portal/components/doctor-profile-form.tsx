@@ -43,7 +43,7 @@ import { useTranslation } from '@/lib/i18n';
 // Schema factory for creating new profile (specialty required)
 const getCreateProfileSchema = (t: (key: string) => string) => z.object({
   specialtyId: z.string().min(1, t('validation.specialtyRequired')),
-  licenseNumber: z.string().optional(),
+  licenseNumber: z.string().max(50).optional(),
   yearsOfExperience: z.coerce.number().min(0).max(70).optional(),
   qualificationsAr: z.string().optional(),
   qualificationsEn: z.string().optional(),
@@ -188,10 +188,19 @@ export function DoctorProfileForm() {
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   const addWhatsappNumber = () => {
-    if (newWhatsappNumber && !whatsappNumbers.includes(newWhatsappNumber)) {
-      setWhatsappNumbers([...whatsappNumbers, newWhatsappNumber]);
-      setNewWhatsappNumber('');
+    const egyptianPhoneRegex = /^01[0125][0-9]{8}$/;
+    if (!newWhatsappNumber) return;
+    if (!egyptianPhoneRegex.test(newWhatsappNumber)) {
+      toast({ title: t('validation.phoneInvalid'), variant: 'error' });
+      return;
     }
+    if (whatsappNumbers.length >= 5) {
+      toast({ title: t('validation.maxWhatsappNumbers'), variant: 'error' });
+      return;
+    }
+    if (whatsappNumbers.includes(newWhatsappNumber)) return;
+    setWhatsappNumbers([...whatsappNumbers, newWhatsappNumber]);
+    setNewWhatsappNumber('');
   };
 
   const removeWhatsappNumber = (number: string) => {
@@ -432,13 +441,17 @@ export function DoctorProfileForm() {
             <textarea
               id="bioAr"
               rows={3}
+              maxLength={500}
               placeholder={t('doctor.profileForm.bioArPlaceholder')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('bioAr')}
             />
-            {errors.bioAr && (
-              <p className="text-sm text-error-500">{errors.bioAr.message}</p>
-            )}
+            <div className="flex justify-between">
+              {errors.bioAr ? (
+                <p className="text-sm text-error-500">{errors.bioAr.message}</p>
+              ) : <span />}
+              <p className="text-xs text-muted-foreground">{(watch('bioAr') || '').length}/500</p>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -446,13 +459,17 @@ export function DoctorProfileForm() {
             <textarea
               id="bioEn"
               rows={3}
+              maxLength={500}
               placeholder={t('doctor.profileForm.bioEnPlaceholder')}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none"
               {...register('bioEn')}
             />
-            {errors.bioEn && (
-              <p className="text-sm text-error-500">{errors.bioEn.message}</p>
-            )}
+            <div className="flex justify-between">
+              {errors.bioEn ? (
+                <p className="text-sm text-error-500">{errors.bioEn.message}</p>
+              ) : <span />}
+              <p className="text-xs text-muted-foreground">{(watch('bioEn') || '').length}/500</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -526,6 +543,7 @@ export function DoctorProfileForm() {
                   placeholder={t('placeholder.phone')}
                   value={newWhatsappNumber}
                   onChange={(e) => setNewWhatsappNumber(e.target.value)}
+                  maxLength={11}
                   className="flex-1"
                 />
                 <Button

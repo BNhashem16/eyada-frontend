@@ -418,6 +418,7 @@ export function FamilyList() {
                 value={watch('dateOfBirth') || ''}
                 onChange={(val) => setValue('dateOfBirth', val, { shouldDirty: true })}
                 placeholder={t('family.dateOfBirth')}
+                disableAfter={new Date()}
               />
             </div>
 

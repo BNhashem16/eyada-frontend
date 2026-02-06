@@ -29,7 +29,10 @@
       "Bash(xargs:*)",
       "Bash(npm run lint)",
       "Bash(npm uninstall:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx nest build)",
+      "Bash(node:*)",
+      "Bash(npx.cmd nest build:*)"
     ]
   }
 }

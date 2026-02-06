@@ -20,13 +20,13 @@ import { Gender, PatientStatus } from '@/types/enums';
 import { User, PatientProfile } from '@/types/models';
 
 const getProfileSchema = (t: (key: string) => string) => z.object({
-  name: z.string().min(3, t('validation.fullNameMinLength')),
+  name: z.string().min(3, t('validation.fullNameMinLength')).max(100, t('validation.fullNameMaxLength')),
   phone: z
     .string()
     .regex(/^01[0125][0-9]{8}$/, t('validation.phoneInvalid')),
   dateOfBirth: z.string().optional(),
   gender: z.nativeEnum(Gender).optional(),
-  whatsappNumber: z.string().optional(),
+  whatsappNumber: z.string().regex(/^01[0125][0-9]{8}$/, t('validation.phoneInvalid')).optional().or(z.literal('')),
   bloodType: z.string().optional(),
 });
 
@@ -244,6 +244,7 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
                   value={field.value || ''}
                   onChange={field.onChange}
                   placeholder={t('patient.dateOfBirth')}
+                  disableAfter={new Date()}
                 />
               )}
             />

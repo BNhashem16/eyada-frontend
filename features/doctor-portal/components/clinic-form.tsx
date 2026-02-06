@@ -28,7 +28,7 @@ const getClinicSchema = (t: (key: string) => string) => z.object({
   addressEn: z.string().min(2, t('validation.addressEnRequired')).max(200),
   stateId: z.string().min(1, t('validation.stateRequired')),
   cityId: z.string().min(1, t('validation.cityRequired')),
-  phoneNumber: z.string().max(20).optional().or(z.literal('')),
+  phoneNumber: z.string().max(20).regex(/^01[0125][0-9]{8}$/, t('validation.phoneInvalid')).optional().or(z.literal('')),
   latitude: z.coerce.number().min(-90).max(90).optional().or(z.literal('')),
   longitude: z.coerce.number().min(-180).max(180).optional().or(z.literal('')),
   slotDurationMinutes: z.coerce.number().min(1).max(60).optional(),
@@ -419,6 +419,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               id="phoneNumber"
               {...register('phoneNumber')}
               placeholder={t('clinics.phonePlaceholder')}
+              maxLength={11}
               dir="ltr"
               className="bg-background text-foreground"
             />

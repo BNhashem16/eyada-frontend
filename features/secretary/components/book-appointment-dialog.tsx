@@ -315,7 +315,9 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setSymptoms(e.target.value)}
                 placeholder={t('secretary.symptomsPlaceholder')}
                 rows={2}
+                maxLength={500}
               />
+              <p className="text-xs text-muted-foreground text-end mt-1">{symptoms.length}/500</p>
             </div>
 
             <div className="space-y-2">
@@ -326,7 +328,9 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
                 placeholder={t('secretary.notesPlaceholder')}
                 rows={2}
+                maxLength={500}
               />
+              <p className="text-xs text-muted-foreground text-end mt-1">{notes.length}/500</p>
             </div>
           </div>
 

@@ -1159,7 +1159,9 @@
     "clinicNameArRequired": "اسم العيادة بالعربي مطلوب (٢ حروف على الأقل)",
     "clinicNameEnRequired": "اسم العيادة بالإنجليزية مطلوب (٢ حروف على الأقل)",
     "addressArRequired": "العنوان بالعربي مطلوب",
-    "addressEnRequired": "العنوان بالإنجليزية مطلوب"
+    "addressEnRequired": "العنوان بالإنجليزية مطلوب",
+    "maxWhatsappNumbers": "لا يمكن إضافة أكثر من 5 أرقام واتساب",
+    "reviewMaxLength": "التقييم لا يمكن أن يتجاوز 1000 حرف"
   },
   "toast": {
     "updated": "تم التحديث",

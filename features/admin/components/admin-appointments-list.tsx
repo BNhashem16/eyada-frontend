@@ -693,6 +693,7 @@ export function AdminAppointmentsList() {
                 value={cancellationReason}
                 onChange={(e) => setCancellationReason(e.target.value)}
                 placeholder={t('admin.appointments.cancellationReasonPlaceholder')}
+                maxLength={500}
               />
             </div>
           </div>
