@@ -53,6 +53,7 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>('');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [bookDialogOpen, setBookDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -110,14 +111,29 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
             {/* Primary Filters */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-4">
               {/* Search */}
-              <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={t('secretary.searchPlaceholder')}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="ps-9"
-                />
+              <div className="relative flex-1 min-w-[200px] flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={t('secretary.searchPlaceholder')}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setSearchQuery(searchInput);
+                        setPage(1);
+                      }
+                    }}
+                    onBlur={() => {
+                      setSearchQuery(searchInput);
+                      setPage(1);
+                    }}
+                    className="ps-9"
+                  />
+                </div>
+                <Button variant="outline" size="icon" onClick={() => { setSearchQuery(searchInput); setPage(1); }}>
+                  <Search className="h-4 w-4" />
+                </Button>
               </div>
 
               {/* Clinic Filter */}

@@ -25,7 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SearchableSelect } from '@/components/ui/searchable-select';
-import { Input } from '@/components/ui/input';
+import { DatePickerInput } from '@/components/ui/date-picker-input';
 import {
   useDoctorAppointments,
   useDoctorClinics,
@@ -138,11 +138,11 @@ export function AppointmentQueue() {
               <Button variant="outline" className="text-xs" onClick={goToPreviousDay}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
-              <Input
-                type="date"
+              <DatePickerInput
                 value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-40"
+                onChange={(val) => setSelectedDate(val)}
+                clearable={false}
+                className="w-44"
               />
               <Button variant="outline" className="text-xs" onClick={goToNextDay}>
                 <ChevronLeft className="h-4 w-4" />

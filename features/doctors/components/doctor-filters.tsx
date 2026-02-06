@@ -112,7 +112,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
 
   const activeFiltersCount = Object.values(filters).filter(Boolean).length;
 
-  const FiltersContent = () => (
+  const filtersContent = (
     <div className="space-y-4">
       {/* Search */}
       <div className="flex gap-2">
@@ -244,7 +244,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       <div className="hidden lg:block">
         <div className="sticky top-24 rounded-xl border border-border bg-muted p-5">
           <h3 className="mb-4 font-bold text-foreground">{t('common.filterResults')}</h3>
-          <FiltersContent />
+          {filtersContent}
         </div>
       </div>
 
@@ -286,7 +286,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            <FiltersContent />
+            {filtersContent}
             <div className="mt-4 pt-4 border-t">
               <Button
                 className="w-full"

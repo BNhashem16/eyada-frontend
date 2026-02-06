@@ -18,8 +18,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DatePickerInput } from '@/components/ui/date-picker-input';
 import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
@@ -313,26 +313,24 @@ export function AdminRatingsList() {
             <div className="flex gap-4 mt-4 pt-4 border-t">
               <div className="flex-1">
                 <Label>{t('admin.ratings.dateFrom')}</Label>
-                <Input
-                  type="date"
+                <DatePickerInput
                   value={dateFrom}
-                  onChange={(e) => {
-                    setDateFrom(e.target.value);
+                  onChange={(val) => {
+                    setDateFrom(val);
                     setPage(1);
                   }}
-                  dir="ltr"
+                  placeholder={t('admin.ratings.dateFrom')}
                 />
               </div>
               <div className="flex-1">
                 <Label>{t('admin.ratings.dateTo')}</Label>
-                <Input
-                  type="date"
+                <DatePickerInput
                   value={dateTo}
-                  onChange={(e) => {
-                    setDateTo(e.target.value);
+                  onChange={(val) => {
+                    setDateTo(val);
                     setPage(1);
                   }}
-                  dir="ltr"
+                  placeholder={t('admin.ratings.dateTo')}
                 />
               </div>
             </div>

@@ -34,6 +34,33 @@ export interface SecretaryAssignment {
   };
 }
 
+// Raw API response type (clinicSecretary records with user nested)
+interface RawSecretaryAssignment {
+  id: string;
+  isActive: boolean;
+  createdAt: string;
+  clinic: {
+    id: string;
+    name: { ar: string; en: string };
+    doctorProfile: {
+      id: string;
+      user: {
+        id: string;
+        fullName: string;
+      };
+    };
+  };
+  user: {
+    id: string;
+    email: string;
+    phoneNumber: string;
+    fullName: string;
+    role: string;
+    isActive: boolean;
+    createdAt: string;
+  };
+}
+
 export interface AdminSecretaryFilters {
   page?: number;
   limit?: number;
@@ -59,6 +86,38 @@ export interface UpdateSecretaryData {
   fullName?: string;
   phoneNumber?: string;
   isActive?: boolean;
+}
+
+// Transform raw API response to group by secretary
+function transformSecretariesResponse(
+  rawData: RawSecretaryAssignment[]
+): AdminSecretary[] {
+  const secretariesMap = new Map<string, AdminSecretary>();
+
+  for (const assignment of rawData) {
+    const userId = assignment.user.id;
+
+    if (!secretariesMap.has(userId)) {
+      secretariesMap.set(userId, {
+        id: userId,
+        fullName: assignment.user.fullName,
+        email: assignment.user.email,
+        phoneNumber: assignment.user.phoneNumber,
+        isActive: assignment.user.isActive,
+        createdAt: assignment.user.createdAt,
+        assignments: [],
+      });
+    }
+
+    secretariesMap.get(userId)!.assignments!.push({
+      id: assignment.id,
+      isActive: assignment.isActive,
+      createdAt: assignment.createdAt,
+      clinic: assignment.clinic,
+    });
+  }
+
+  return Array.from(secretariesMap.values());
 }
 
 // ==================== Hooks ====================
@@ -92,9 +151,20 @@ export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
       if (clinicId) params.append('clinicId', clinicId);
       if (isActive !== undefined) params.append('isActive', isActive.toString());
 
-      return apiGet<PaginatedResponse<AdminSecretary>>(
+      const response = await apiGet<PaginatedResponse<RawSecretaryAssignment>>(
         `${ADMIN_ENDPOINTS.SECRETARIES}?${params.toString()}`
       );
+
+      // Transform the data to group by secretary
+      const transformedData = transformSecretariesResponse(response.data);
+
+      return {
+        data: transformedData,
+        meta: {
+          ...response.meta,
+          total: transformedData.length,
+        },
+      };
     },
     staleTime: 1000 * 30, // 30 seconds
   });

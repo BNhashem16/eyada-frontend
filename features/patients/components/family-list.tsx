@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Users, Plus, Trash2, User, Calendar, Loader2, Edit, Eye, Heart, Droplets } from 'lucide-react';
+import { Users, Plus, Trash2, User, Loader2, Edit, Eye, Heart, Droplets } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/ui/searchable-select';
+import { DatePickerInput } from '@/components/ui/date-picker-input';
 import {
   Dialog,
   DialogContent,
@@ -412,13 +413,11 @@ export function FamilyList() {
 
             {/* Date of Birth */}
             <div className="space-y-2">
-              <Label htmlFor="member-dob">{t('family.dateOfBirth')}</Label>
-              <Input
-                id="member-dob"
-                type="date"
-                {...register('dateOfBirth')}
-                icon={<Calendar className="h-5 w-5" />}
-                iconPosition="start"
+              <Label>{t('family.dateOfBirth')}</Label>
+              <DatePickerInput
+                value={watch('dateOfBirth') || ''}
+                onChange={(val) => setValue('dateOfBirth', val, { shouldDirty: true })}
+                placeholder={t('family.dateOfBirth')}
               />
             </div>
 

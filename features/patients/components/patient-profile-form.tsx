@@ -4,12 +4,13 @@ import { useForm, Controller } from 'react-hook-form';
 import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User as UserIcon, Phone, Mail, Calendar, Loader2, Droplets, Clock } from 'lucide-react';
+import { User as UserIcon, Phone, Mail, Loader2, Droplets, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/ui/searchable-select';
+import { DatePickerInput } from '@/components/ui/date-picker-input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePatientProfile, useUpdatePatientProfile, useCreatePatientProfile } from '../hooks/use-patient';
 import { useAuthStore } from '@/lib/auth/store';
@@ -234,13 +235,17 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
 
           {/* Date of Birth */}
           <div className="space-y-2">
-            <Label htmlFor="dateOfBirth">{t('patient.dateOfBirth')}</Label>
-            <Input
-              id="dateOfBirth"
-              type="date"
-              {...register('dateOfBirth')}
-              icon={<Calendar className="h-5 w-5" />}
-              iconPosition="start"
+            <Label>{t('patient.dateOfBirth')}</Label>
+            <Controller
+              name="dateOfBirth"
+              control={control}
+              render={({ field }) => (
+                <DatePickerInput
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  placeholder={t('patient.dateOfBirth')}
+                />
+              )}
             />
           </div>
 

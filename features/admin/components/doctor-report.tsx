@@ -24,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePickerInput } from '@/components/ui/date-picker-input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
@@ -329,20 +330,18 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
               <>
                 <div>
                   <Label>{t('admin.collections.dateFrom')}</Label>
-                  <Input
-                    type="date"
+                  <DatePickerInput
                     value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    dir="ltr"
+                    onChange={setDateFrom}
+                    placeholder={t('admin.collections.dateFrom')}
                   />
                 </div>
                 <div>
                   <Label>{t('admin.collections.dateTo')}</Label>
-                  <Input
-                    type="date"
+                  <DatePickerInput
                     value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                    dir="ltr"
+                    onChange={setDateTo}
+                    placeholder={t('admin.collections.dateTo')}
                   />
                 </div>
               </>

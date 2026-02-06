@@ -48,7 +48,7 @@ export function SpecialtyCard({ specialty }: SpecialtyCardProps) {
     : '';
 
   return (
-    <Link href={`/doctors?specialtyId=${specialty.id}`}>
+    <Link href={`/doctors?specialty=${specialty.id}`}>
       <Card className="group h-full hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800 transition-all duration-200 cursor-pointer">
         <CardContent className="p-6 flex flex-col items-center text-center">
           <div className="h-16 w-16 rounded-2xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mb-4 group-hover:bg-primary-200 dark:group-hover:bg-primary-800/40 transition-colors">
