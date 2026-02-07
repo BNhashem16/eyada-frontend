@@ -60,6 +60,7 @@ import {
   CommissionType,
 } from '../hooks';
 import { useAdminDoctors } from '../hooks';
+import { DoctorStatus } from '@/types/enums';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useTranslation } from '@/lib/i18n';
 
@@ -84,7 +85,7 @@ export function CommissionsManagement() {
 
   const { data: commissionsResponse, isLoading, isError } = useCommissions({ search });
   const commissions = commissionsResponse?.data || [];
-  const { data: doctorsResponse } = useAdminDoctors({ limit: 100, status: 'APPROVED' });
+  const { data: doctorsResponse } = useAdminDoctors({ limit: 100, status: DoctorStatus.APPROVED });
   const doctors = doctorsResponse?.data || [];
 
   const createCommission = useCreateCommission();
