@@ -11,3 +11,4 @@ export * from './dialog';
 export * from './select';
 export * from './tabs';
 export * from './toast';
+export * from './pagination-controls';

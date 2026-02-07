@@ -39,14 +39,14 @@ export function AdminDashboardStats() {
     },
     {
       label: t('admin.states'),
-      value: states?.length || 0,
+      value: states?.meta?.total || 0,
       icon: MapPin,
       color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
       href: '/admin/locations',
     },
     {
       label: t('admin.cities'),
-      value: cities?.length || 0,
+      value: cities?.meta?.total || 0,
       icon: Building2,
       color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
       href: '/admin/locations',

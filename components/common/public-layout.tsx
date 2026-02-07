@@ -7,20 +7,12 @@ import {
   Stethoscope,
   Building2,
   Grid3X3,
-  Menu,
-  X,
   LogIn,
+  MessageSquareHeart,
 } from 'lucide-react';
-import { Header } from './header';
+import { Header, NavLinkItem } from './header';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
-import { LucideIcon } from 'lucide-react';
-
-interface NavLink {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-}
 
 export interface PublicLayoutProps {
   children: React.ReactNode;
@@ -33,51 +25,26 @@ export function PublicLayout({ children }: PublicLayoutProps) {
   const { isAuthenticated } = useAuthStore();
   const isHydrated = useIsHydrated();
 
-  const navLinks: NavLink[] = [
+  const navLinks: NavLinkItem[] = [
     { href: '/specialties', label: t('nav.specialties'), icon: Grid3X3 },
     { href: '/doctors', label: t('nav.doctors'), icon: Stethoscope },
     { href: '/clinics', label: t('nav.clinics'), icon: Building2 },
+    { href: '/feedback', label: t('nav.complaintsAndSuggestions'), icon: MessageSquareHeart },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Header with integrated nav */}
       <Header
         variant="public"
+        navLinks={navLinks}
         onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)}
       />
 
-      {/* Desktop Nav */}
-      <div className="hidden md:block sticky top-16 z-30 bg-card border-b border-border">
-        <div className="container mx-auto px-4">
-          <nav className="flex items-center gap-6 h-12">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              const isActive = pathname.startsWith(link.href);
-
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'text-primary-600 dark:text-primary-400'
-                      : 'text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
-
       {/* Mobile Nav */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-card">
-          <nav className="container mx-auto px-4 py-4 space-y-2">
+        <div className="md:hidden border-t border-border/50 bg-card/95 backdrop-blur-lg shadow-lg">
+          <nav className="container mx-auto px-4 py-3 space-y-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname.startsWith(link.href);
@@ -87,14 +54,14 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                      : 'text-muted-foreground hover:bg-accent'
+                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 shadow-sm'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
-                  {link.label}
+                  <span className="font-medium">{link.label}</span>
                 </Link>
               );
             })}
@@ -102,10 +69,10 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-accent"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-200"
               >
                 <LogIn className="h-5 w-5" />
-                {t('nav.login')}
+                <span className="font-medium">{t('nav.login')}</span>
               </Link>
             )}
           </nav>
@@ -160,6 +127,12 @@ function Footer() {
                   {t('nav.joinAsDoctor')}
                 </Link>
               </li>
+              <li>
+                <Link href="/feedback" className="inline-flex items-center gap-2 hover:text-white transition-colors">
+                  <MessageSquareHeart className="h-4 w-4" />
+                  {t('nav.complaintsAndSuggestions')}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -174,8 +147,24 @@ function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-800 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 text-sm">
-          <p>© {new Date().getFullYear()} {t('app.name')}. {t('app.copyright')}.</p>
+        {/* Feedback CTA */}
+        <div className="mt-8 pt-8 border-t border-gray-800 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+            <p className="text-gray-400 dark:text-gray-500 text-sm">
+              {t('feedback.subtitle')}
+            </p>
+            <Link
+              href="/feedback"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors"
+            >
+              <MessageSquareHeart className="h-4 w-4" />
+              {t('nav.complaintsAndSuggestions')}
+            </Link>
+          </div>
+
+          <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
+            <p>© {new Date().getFullYear()} {t('app.name')}. {t('app.copyright')}.</p>
+          </div>
         </div>
       </div>
     </footer>

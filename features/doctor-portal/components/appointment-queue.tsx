@@ -32,6 +32,7 @@ import {
   useUpdateAppointmentStatus,
 } from '../hooks/use-doctor-portal';
 import { useToast } from '@/hooks/use-toast';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 import { Appointment } from '@/types';
 import { AppointmentStatus } from '@/types/enums';
@@ -64,6 +65,8 @@ export function AppointmentQueue() {
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date(), 'yyyy-MM-dd'));
   const [selectedClinic, setSelectedClinic] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<AppointmentStatus | ''>('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const statusLabels = getStatusLabels(t);
 
@@ -72,12 +75,14 @@ export function AppointmentQueue() {
     date: selectedDate,
     clinicId: selectedClinic || undefined,
     status: statusFilter || undefined,
-    limit: 50,
+    page,
+    limit,
   });
 
   const updateStatusMutation = useUpdateAppointmentStatus();
 
   const appointments = appointmentsData?.data ?? [];
+  const meta = appointmentsData?.meta;
 
   const handleStatusUpdate = async (appointmentId: string, newStatus: AppointmentStatus) => {
     try {
@@ -99,11 +104,13 @@ export function AppointmentQueue() {
   const goToPreviousDay = () => {
     const date = new Date(selectedDate);
     setSelectedDate(formatDate(addDays(date, -1), 'yyyy-MM-dd'));
+    setPage(1);
   };
 
   const goToNextDay = () => {
     const date = new Date(selectedDate);
     setSelectedDate(formatDate(addDays(date, 1), 'yyyy-MM-dd'));
+    setPage(1);
   };
 
   const getAvailableActions = (status: AppointmentStatus) => {
@@ -140,7 +147,7 @@ export function AppointmentQueue() {
               </Button>
               <DatePickerInput
                 value={selectedDate}
-                onChange={(val) => setSelectedDate(val)}
+                onChange={(val) => { setSelectedDate(val); setPage(1); }}
                 clearable={false}
                 className="w-44"
               />
@@ -160,7 +167,7 @@ export function AppointmentQueue() {
                 })) || []),
               ]}
               value={selectedClinic || 'all'}
-              onValueChange={(v) => setSelectedClinic(v === 'all' ? '' : v)}
+              onValueChange={(v) => { setSelectedClinic(v === 'all' ? '' : v); setPage(1); }}
               placeholder={t('appointments.allClinics')}
               searchPlaceholder={t('common.search')}
               emptyMessage={t('common.noResults')}
@@ -180,7 +187,7 @@ export function AppointmentQueue() {
                 { value: AppointmentStatus.NO_SHOW, label: statusLabels[AppointmentStatus.NO_SHOW], icon: <Ban className="h-4 w-4 text-muted-foreground" /> },
               ]}
               value={statusFilter || 'all'}
-              onValueChange={(v) => setStatusFilter(v === 'all' ? '' : v as AppointmentStatus)}
+              onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v as AppointmentStatus); setPage(1); }}
               placeholder={t('appointments.allStatuses')}
               showSearch={false}
               className="w-full sm:w-40"
@@ -195,7 +202,7 @@ export function AppointmentQueue() {
         <h2 className="text-xl font-bold text-foreground">
           {formatDate(new Date(selectedDate), 'EEEE, d MMMM yyyy')}
         </h2>
-        <Badge variant="outline">{appointments.length} {t('appointments.appointmentCount')}</Badge>
+        <Badge variant="outline">{meta?.total || appointments.length} {t('appointments.appointmentCount')}</Badge>
       </div>
 
       {/* Loading */}
@@ -347,6 +354,8 @@ export function AppointmentQueue() {
             })}
         </div>
       )}
+
+      <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
     </div>
   );
 }

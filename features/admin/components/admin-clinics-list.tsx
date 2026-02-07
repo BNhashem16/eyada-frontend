@@ -67,8 +67,11 @@ import {
   useUpdateAdminClinic,
   useDeleteAdminClinic,
   AdminClinic,
+  useAdminSpecialties,
 } from '../hooks';
+import { useStates, useCities } from '@/features/locations/hooks/use-locations';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 import { ScheduleManager } from '@/features/doctor-portal/components/schedule-manager';
 import {
@@ -82,13 +85,21 @@ export function AdminClinicsList() {
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
+  const [specialtyId, setSpecialtyId] = useState<string | undefined>(undefined);
+  const [stateId, setStateId] = useState<string | undefined>(undefined);
+  const [cityId, setCityId] = useState<string | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const filters = {
     page,
+    limit,
     search,
     isActive,
+    specialtyId,
+    stateId,
+    cityId,
   };
 
   const { data: clinicsResponse, isLoading, isError } = useAdminClinics(filters);
@@ -96,6 +107,12 @@ export function AdminClinicsList() {
   const meta = clinicsResponse?.meta;
 
   const { data: statistics } = useAdminClinicStatistics();
+  const { data: specialtiesData } = useAdminSpecialties({ limit: 100 });
+  const specialties = specialtiesData?.data || [];
+  const { data: statesData } = useStates();
+  const states = statesData || [];
+  const { data: citiesData } = useCities(stateId);
+  const cities = citiesData || [];
 
   const updateClinic = useUpdateAdminClinic();
   const deleteClinic = useDeleteAdminClinic();
@@ -267,8 +284,19 @@ export function AdminClinicsList() {
 
               <Button
                 variant="outline"
+                size="icon"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <Filter className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="outline"
                 onClick={() => {
                   setIsActive(undefined);
+                  setSpecialtyId(undefined);
+                  setStateId(undefined);
+                  setCityId(undefined);
                   setSearch('');
                   setSearchInput('');
                   setPage(1);
@@ -278,6 +306,71 @@ export function AdminClinicsList() {
               </Button>
             </div>
           </div>
+
+          {showFilters && (
+            <div className="flex gap-4 mt-4 pt-4 border-t flex-wrap">
+              <Select
+                value={specialtyId || 'all'}
+                onValueChange={(value) => {
+                  setSpecialtyId(value === 'all' ? undefined : value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder={t('admin.clinics.filterBySpecialty')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('admin.clinics.allSpecialties')}</SelectItem>
+                  {specialties.map((specialty) => (
+                    <SelectItem key={specialty.id} value={specialty.id}>
+                      {getLocalizedText(specialty.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={stateId || 'all'}
+                onValueChange={(value) => {
+                  setStateId(value === 'all' ? undefined : value);
+                  setCityId(undefined);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder={t('admin.clinics.filterByState')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('admin.clinics.allStates')}</SelectItem>
+                  {states.map((state) => (
+                    <SelectItem key={state.id} value={state.id}>
+                      {getLocalizedText(state.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={cityId || 'all'}
+                onValueChange={(value) => {
+                  setCityId(value === 'all' ? undefined : value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder={t('admin.clinics.filterByCity')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('admin.clinics.allCities')}</SelectItem>
+                  {cities.map((city) => (
+                    <SelectItem key={city.id} value={city.id}>
+                      {getLocalizedText(city.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -398,30 +491,7 @@ export function AdminClinicsList() {
                 </TableBody>
               </Table>
 
-              {/* Pagination */}
-              {meta && meta.totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page - 1)}
-                    disabled={page === 1}
-                  >
-                    {t('common.previous')}
-                  </Button>
-                  <span className="flex items-center px-4 text-sm text-muted-foreground">
-                    {page} / {meta.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page + 1)}
-                    disabled={page === meta.totalPages}
-                  >
-                    {t('common.next')}
-                  </Button>
-                </div>
-              )}
+              <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
             </>
           )}
         </CardContent>

@@ -64,15 +64,23 @@ import {
 } from '../hooks';
 import { useAdminClinics } from '../hooks/use-admin-clinics';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 export function AdminSecretariesList() {
   const { t, locale } = useTranslation();
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState<string | undefined>(undefined);
+  const [clinicId, setClinicId] = useState<string | undefined>(undefined);
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const filters = {
     page,
+    limit,
+    search,
+    clinicId,
     isActive,
   };
 
@@ -101,6 +109,11 @@ export function AdminSecretariesList() {
     password: '',
     clinicId: '',
   });
+
+  const handleSearch = () => {
+    setSearch(searchInput || undefined);
+    setPage(1);
+  };
 
   const handleViewDetails = (secretary: AdminSecretary) => {
     setSelectedSecretary(secretary);
@@ -196,7 +209,37 @@ export function AdminSecretariesList() {
       <Card className="mb-6">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap flex-1">
+              <div className="flex gap-2 flex-1">
+                <Input
+                  placeholder={t('admin.secretaries.searchPlaceholder')}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  className="max-w-sm"
+                />
+                <Button variant="outline" size="icon" onClick={handleSearch}>
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <Select
+                value={clinicId || 'all'}
+                onValueChange={(value) => { setClinicId(value === 'all' ? undefined : value); setPage(1); }}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder={t('admin.secretaries.filterByClinic')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('admin.secretaries.allClinics')}</SelectItem>
+                  {clinics.map((clinic) => (
+                    <SelectItem key={clinic.id} value={clinic.id}>
+                      {getLocalizedText(clinic.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               <Select
                 value={isActive === undefined ? 'all' : isActive.toString()}
                 onValueChange={(value) => {
@@ -217,6 +260,9 @@ export function AdminSecretariesList() {
               <Button
                 variant="outline"
                 onClick={() => {
+                  setSearchInput('');
+                  setSearch(undefined);
+                  setClinicId(undefined);
                   setIsActive(undefined);
                   setPage(1);
                 }}
@@ -325,30 +371,7 @@ export function AdminSecretariesList() {
                 </TableBody>
               </Table>
 
-              {/* Pagination */}
-              {meta && meta.totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page - 1)}
-                    disabled={page === 1}
-                  >
-                    {t('common.previous')}
-                  </Button>
-                  <span className="flex items-center px-4 text-sm text-muted-foreground">
-                    {page} / {meta.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page + 1)}
-                    disabled={page === meta.totalPages}
-                  >
-                    {t('common.next')}
-                  </Button>
-                </div>
-              )}
+              <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
             </>
           )}
         </CardContent>

@@ -62,6 +62,7 @@ import {
 import { useAdminDoctors } from '../hooks';
 import { DoctorStatus } from '@/types/enums';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 interface CommissionFormData {
@@ -82,9 +83,12 @@ export function CommissionsManagement() {
   const { t, locale } = useTranslation();
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
-  const { data: commissionsResponse, isLoading, isError } = useCommissions({ search });
+  const { data: commissionsResponse, isLoading, isError } = useCommissions({ search, page, limit });
   const commissions = commissionsResponse?.data || [];
+  const meta = commissionsResponse?.meta;
   const { data: doctorsResponse } = useAdminDoctors({ limit: 100, status: DoctorStatus.APPROVED });
   const doctors = doctorsResponse?.data || [];
 
@@ -104,6 +108,7 @@ export function CommissionsManagement() {
 
   const handleSearch = () => {
     setSearch(searchInput);
+    setPage(1);
   };
 
   const handleOpenCreate = () => {
@@ -216,7 +221,7 @@ export function CommissionsManagement() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <h3 className="text-lg font-semibold text-foreground">
-              {t('admin.commissions.list')} ({commissions.length})
+              {t('admin.commissions.list')} ({meta?.total || 0})
             </h3>
             <div className="flex gap-2">
               <div className="flex gap-2">
@@ -323,6 +328,8 @@ export function CommissionsManagement() {
               </TableBody>
             </Table>
           )}
+
+          <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
         </CardContent>
       </Card>
 

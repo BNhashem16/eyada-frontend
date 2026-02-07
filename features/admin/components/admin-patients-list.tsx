@@ -24,6 +24,13 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { SearchableSelect } from '@/components/ui/searchable-select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   AlertDialog,
@@ -43,6 +50,7 @@ import {
   AdminPatientsFilters,
 } from '../hooks';
 import { getInitials, formatDate } from '@/lib/utils';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 import { PatientStatus } from '@/types/enums';
 
@@ -195,6 +203,21 @@ export function AdminPatientsList() {
               showSearch={false}
               className="w-40"
             />
+
+            {/* Active Status Filter */}
+            <Select
+              value={filters.isActive === undefined ? 'all' : filters.isActive.toString()}
+              onValueChange={(value) => handleFilterChange('isActive', value === 'all' ? undefined : value === 'true')}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder={t('admin.patients.activeStatus')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('common.all')}</SelectItem>
+                <SelectItem value="true">{t('common.active')}</SelectItem>
+                <SelectItem value="false">{t('common.inactive')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -338,32 +361,13 @@ export function AdminPatientsList() {
         </div>
       )}
 
-      {/* Pagination */}
-      {meta && meta.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <Button
-            variant="outline"
-            className="text-xs"
-            disabled={!meta.hasPreviousPage}
-            onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) - 1 }))}
-          >
-            <ChevronRight className="h-4 w-4" />
-            {t('common.previous')}
-          </Button>
-          <span className="px-4 text-sm text-muted-foreground">
-            {meta.page} / {meta.totalPages}
-          </span>
-          <Button
-            variant="outline"
-            className="text-xs"
-            disabled={!meta.hasNextPage}
-            onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) + 1 }))}
-          >
-            {t('common.next')}
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
+      <PaginationControls
+        meta={meta}
+        page={filters.page || 1}
+        onPageChange={(p) => setFilters(prev => ({ ...prev, page: p }))}
+        limit={filters.limit || 30}
+        onLimitChange={(l) => setFilters(prev => ({ ...prev, limit: l, page: 1 }))}
+      />
 
       {/* Confirmation Dialog */}
       <AlertDialog

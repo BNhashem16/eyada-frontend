@@ -11,11 +11,16 @@ import { usePatientRatings, PatientRating } from '../hooks/use-patient';
 import { RatingDialog } from './rating-dialog';
 import { formatRelativeDate, getInitials } from '@/lib/utils';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 export function MyRatings() {
   const { t } = useTranslation();
-  const { data: ratings, isLoading, isError } = usePatientRatings();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data: ratingsResponse, isLoading, isError } = usePatientRatings({ page, limit });
+  const ratings = ratingsResponse?.data || [];
+  const meta = ratingsResponse?.meta;
   const [editingRating, setEditingRating] = useState<PatientRating | null>(null);
 
   if (isLoading) {
@@ -49,7 +54,7 @@ export function MyRatings() {
     );
   }
 
-  if (!ratings || ratings.length === 0) {
+  if (ratings.length === 0) {
     return (
       <Card>
         <CardContent className="py-10 text-center">
@@ -161,6 +166,8 @@ export function MyRatings() {
             ))}
           </CardContent>
         </Card>
+
+        <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
       </div>
 
       {/* Edit Rating Dialog */}

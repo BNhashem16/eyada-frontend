@@ -26,6 +26,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/ui/searchable-select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   AlertDialog,
@@ -45,8 +52,10 @@ import {
   useAdminSpecialties,
   AdminDoctorsFilters,
 } from '../hooks';
+import { useStates, useCities } from '@/features/locations/hooks/use-locations';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { getInitials } from '@/lib/utils';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 import { DoctorStatus } from '@/types/enums';
 
@@ -58,7 +67,7 @@ const getStatusConfig = (t: (key: string) => string): Record<DoctorStatus, { lab
 });
 
 export function AdminDoctorsList() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const statusConfig = getStatusConfig(t);
 
   // Filters state
@@ -67,11 +76,16 @@ export function AdminDoctorsList() {
     limit: 30,
   });
   const [searchInput, setSearchInput] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Queries
   const { data, isLoading, isError, error } = useAdminDoctors(filters);
   const { data: specialtiesData } = useAdminSpecialties();
   const specialties = specialtiesData?.data || [];
+  const { data: statesData } = useStates();
+  const statesList = statesData || [];
+  const { data: citiesData } = useCities(filters.stateId);
+  const citiesList = citiesData || [];
 
   // Mutations
   const approveDoctor = useApproveDoctor();
@@ -220,7 +234,70 @@ export function AdminDoctorsList() {
               emptyMessage={t('common.noResults')}
               className="w-full sm:w-40"
             />
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+            >
+              <Filter className="h-4 w-4" />
+            </Button>
           </div>
+
+          {showAdvanced && (
+            <div className="flex gap-4 mt-4 pt-4 border-t flex-wrap">
+              <Select
+                value={filters.stateId || 'all'}
+                onValueChange={(value) => {
+                  handleFilterChange('stateId', value === 'all' ? undefined : value);
+                  handleFilterChange('cityId', undefined);
+                }}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder={t('admin.doctors.filterByState')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('admin.doctors.allStates')}</SelectItem>
+                  {statesList.map((state) => (
+                    <SelectItem key={state.id} value={state.id}>
+                      {getLocalizedText(state.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={filters.cityId || 'all'}
+                onValueChange={(value) => handleFilterChange('cityId', value === 'all' ? undefined : value)}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder={t('admin.doctors.filterByCity')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('admin.doctors.allCities')}</SelectItem>
+                  {citiesList.map((city) => (
+                    <SelectItem key={city.id} value={city.id}>
+                      {getLocalizedText(city.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={filters.isActive === undefined ? 'all' : filters.isActive.toString()}
+                onValueChange={(value) => handleFilterChange('isActive', value === 'all' ? undefined : value === 'true')}
+              >
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder={t('admin.doctors.activeStatus')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('common.all')}</SelectItem>
+                  <SelectItem value="true">{t('common.active')}</SelectItem>
+                  <SelectItem value="false">{t('common.inactive')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -375,32 +452,13 @@ export function AdminDoctorsList() {
         </div>
       )}
 
-      {/* Pagination */}
-      {meta && meta.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <Button
-            variant="outline"
-            className="text-xs"
-            disabled={!meta.hasPreviousPage}
-            onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) - 1 }))}
-          >
-            <ChevronRight className="h-4 w-4" />
-            {t('common.previous')}
-          </Button>
-          <span className="px-4 text-sm text-muted-foreground">
-            {meta.page} / {meta.totalPages}
-          </span>
-          <Button
-            variant="outline"
-            className="text-xs"
-            disabled={!meta.hasNextPage}
-            onClick={() => setFilters(prev => ({ ...prev, page: (prev.page || 1) + 1 }))}
-          >
-            {t('common.next')}
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
+      <PaginationControls
+        meta={meta}
+        page={filters.page || 1}
+        onPageChange={(p) => setFilters(prev => ({ ...prev, page: p }))}
+        limit={filters.limit || 30}
+        onLimitChange={(l) => setFilters(prev => ({ ...prev, limit: l, page: 1 }))}
+      />
 
       {/* Confirmation Dialog */}
       <AlertDialog

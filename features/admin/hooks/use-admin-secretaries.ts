@@ -64,6 +64,7 @@ interface RawSecretaryAssignment {
 export interface AdminSecretaryFilters {
   page?: number;
   limit?: number;
+  search?: string;
   doctorUserId?: string;
   clinicId?: string;
   isActive?: boolean;
@@ -126,6 +127,7 @@ export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
   const {
     page = 1,
     limit = 30,
+    search,
     doctorUserId,
     clinicId,
     isActive,
@@ -137,6 +139,7 @@ export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
       {
         page,
         limit,
+        search,
         doctorUserId,
         clinicId,
         isActive,
@@ -147,6 +150,7 @@ export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 
+      if (search) params.append('search', search);
       if (doctorUserId) params.append('doctorUserId', doctorUserId);
       if (clinicId) params.append('clinicId', clinicId);
       if (isActive !== undefined) params.append('isActive', isActive.toString());

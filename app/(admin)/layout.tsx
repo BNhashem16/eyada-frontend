@@ -13,6 +13,7 @@ import {
   CalendarDays,
   Building,
   Star,
+  MessageSquareHeart,
 } from 'lucide-react';
 import { ProtectedRoute } from '@/lib/auth/guards';
 import { Role } from '@/types';
@@ -34,6 +35,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     { href: '/admin/locations', label: t('admin.locations.title'), icon: MapPin },
     { href: '/admin/commissions', label: t('nav.commissions'), icon: Percent },
     { href: '/admin/collections', label: t('nav.collections'), icon: Wallet },
+    { href: '/admin/feedbacks', label: t('nav.feedbacks'), icon: MessageSquareHeart },
   ];
 
   return (

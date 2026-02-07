@@ -54,6 +54,7 @@ import {
   DateFilterPeriod,
 } from '../hooks';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 interface PaymentFormData {
@@ -93,6 +94,8 @@ export function DoctorBalances() {
   const [dateTo, setDateTo] = useState('');
   const [hasBalance, setHasBalance] = useState<boolean | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const filters = {
     search,
@@ -100,10 +103,13 @@ export function DoctorBalances() {
     dateFrom: period === 'CUSTOM' ? dateFrom : undefined,
     dateTo: period === 'CUSTOM' ? dateTo : undefined,
     hasBalance,
+    page,
+    limit,
   };
 
   const { data: balancesResponse, isLoading, isError } = useDoctorBalances(filters);
   const balances = balancesResponse?.data || [];
+  const meta = balancesResponse?.meta;
   const { data: summary } = useBalanceSummary(filters);
 
   const recordPayment = useRecordPayment();
@@ -113,6 +119,7 @@ export function DoctorBalances() {
 
   const handleSearch = () => {
     setSearch(searchInput);
+    setPage(1);
   };
 
   const handleOpenPayment = (doctor: DoctorBalance) => {
@@ -265,7 +272,7 @@ export function DoctorBalances() {
             <div className="flex gap-2">
               <Select
                 value={period || 'all'}
-                onValueChange={(value) => setPeriod(value === 'all' ? undefined : value as DateFilterPeriod)}
+                onValueChange={(value) => { setPeriod(value === 'all' ? undefined : value as DateFilterPeriod); setPage(1); }}
               >
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder={t('admin.collections.period')} />
@@ -282,9 +289,10 @@ export function DoctorBalances() {
 
               <Select
                 value={hasBalance === undefined ? 'all' : hasBalance ? 'true' : 'false'}
-                onValueChange={(value) =>
-                  setHasBalance(value === 'all' ? undefined : value === 'true')
-                }
+                onValueChange={(value) => {
+                  setHasBalance(value === 'all' ? undefined : value === 'true');
+                  setPage(1);
+                }}
               >
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder={t('admin.collections.balanceFilter')} />
@@ -310,7 +318,7 @@ export function DoctorBalances() {
                 <Label>{t('admin.collections.dateFrom')}</Label>
                 <DatePickerInput
                   value={dateFrom}
-                  onChange={setDateFrom}
+                  onChange={(v) => { setDateFrom(v); setPage(1); }}
                   placeholder={t('admin.collections.dateFrom')}
                 />
               </div>
@@ -318,7 +326,7 @@ export function DoctorBalances() {
                 <Label>{t('admin.collections.dateTo')}</Label>
                 <DatePickerInput
                   value={dateTo}
-                  onChange={setDateTo}
+                  onChange={(v) => { setDateTo(v); setPage(1); }}
                   placeholder={t('admin.collections.dateTo')}
                 />
               </div>
@@ -331,7 +339,7 @@ export function DoctorBalances() {
       <Card>
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">
-            {t('admin.collections.doctorBalances')} ({balances.length})
+            {t('admin.collections.doctorBalances')} ({meta?.total || 0})
           </h3>
 
           {balances.length === 0 ? (
@@ -409,6 +417,8 @@ export function DoctorBalances() {
               </TableBody>
             </Table>
           )}
+
+          <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
         </CardContent>
       </Card>
 

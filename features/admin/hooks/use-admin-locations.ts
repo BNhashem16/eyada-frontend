@@ -3,16 +3,31 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
 import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { State, City, Multilingual } from '@/types';
+import { State, City, Multilingual, PaginatedResponse } from '@/types';
 
-// States - per Swagger: GET /admin/states returns all states (active and inactive)
-export function useAdminStates() {
+export interface AdminStatesFilters {
+  page?: number;
+  limit?: number;
+  search?: string;
+  isActive?: boolean;
+}
+
+// States - with filters and pagination
+export function useAdminStates(filters: AdminStatesFilters = {}) {
+  const { page = 1, limit = 50, search, isActive } = filters;
+
   return useQuery({
-    queryKey: ['admin-states'],
+    queryKey: ['admin-states', { page, limit, search, isActive }],
     queryFn: async () => {
-      return apiGet<State[]>(ADMIN_ENDPOINTS.STATES);
+      const params = new URLSearchParams();
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+      if (search) params.append('search', search);
+      if (isActive !== undefined) params.append('isActive', isActive.toString());
+
+      return apiGet<PaginatedResponse<State>>(`${ADMIN_ENDPOINTS.STATES}?${params.toString()}`);
     },
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 5,
   });
 }
 
@@ -71,15 +86,31 @@ export function useDeleteState() {
   });
 }
 
-// Cities - per Swagger: GET /admin/cities returns all cities (active and inactive)
-export function useAdminCities(stateId?: string) {
+export interface AdminCitiesFilters {
+  page?: number;
+  limit?: number;
+  search?: string;
+  isActive?: boolean;
+  stateId?: string;
+}
+
+// Cities - with filters and pagination
+export function useAdminCities(filters: AdminCitiesFilters = {}) {
+  const { page = 1, limit = 50, search, isActive, stateId } = filters;
+
   return useQuery({
-    queryKey: ['admin-cities', stateId],
+    queryKey: ['admin-cities', { page, limit, search, isActive, stateId }],
     queryFn: async () => {
-      const params = stateId ? `?stateId=${stateId}` : '';
-      return apiGet<City[]>(`${ADMIN_ENDPOINTS.CITIES}${params}`);
+      const params = new URLSearchParams();
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+      if (search) params.append('search', search);
+      if (isActive !== undefined) params.append('isActive', isActive.toString());
+      if (stateId) params.append('stateId', stateId);
+
+      return apiGet<PaginatedResponse<City>>(`${ADMIN_ENDPOINTS.CITIES}?${params.toString()}`);
     },
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 5,
   });
 }
 

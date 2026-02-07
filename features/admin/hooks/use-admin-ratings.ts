@@ -55,6 +55,7 @@ export interface RatingStatistics {
 export interface AdminRatingFilters {
   page?: number;
   limit?: number;
+  search?: string;
   doctorProfileId?: string;
   patientProfileId?: string;
   rating?: number;
@@ -69,6 +70,7 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
   const {
     page = 1,
     limit = 30,
+    search,
     doctorProfileId,
     patientProfileId,
     rating,
@@ -83,6 +85,7 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
       {
         page,
         limit,
+        search,
         doctorProfileId,
         patientProfileId,
         rating,
@@ -96,6 +99,7 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
       params.append('page', page.toString());
       params.append('limit', limit.toString());
 
+      if (search) params.append('search', search);
       if (doctorProfileId) params.append('doctorProfileId', doctorProfileId);
       if (patientProfileId) params.append('patientProfileId', patientProfileId);
       if (rating) params.append('rating', rating.toString());

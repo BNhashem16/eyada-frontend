@@ -9,6 +9,9 @@ import {
   Loader2,
   Check,
   X,
+  Search,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +20,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -51,6 +61,7 @@ import {
 } from '../hooks';
 import { Specialty, Multilingual } from '@/types';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 interface SpecialtyFormData {
@@ -71,8 +82,19 @@ const initialFormData: SpecialtyFormData = {
 
 export function SpecialtiesManagement() {
   const { t } = useTranslation();
-  const { data: specialtiesResponse, isLoading, isError, error } = useAdminSpecialties();
-  const specialties = specialtiesResponse?.data;
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState<string | undefined>();
+  const [isActiveFilter, setIsActiveFilter] = useState<boolean | undefined>();
+  const { data: specialtiesResponse, isLoading, isError, error } = useAdminSpecialties({ page, limit, search, isActive: isActiveFilter });
+  const specialties = specialtiesResponse?.data || [];
+  const meta = specialtiesResponse?.meta;
+
+  const handleSearch = () => {
+    setSearch(searchInput || undefined);
+    setPage(1);
+  };
   const createSpecialty = useCreateSpecialty();
   const updateSpecialty = useUpdateSpecialty();
   const deleteSpecialty = useDeleteSpecialty();
@@ -186,15 +208,47 @@ export function SpecialtiesManagement() {
     <>
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-foreground">{t('admin.specialties')} ({specialties?.length || 0})</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-foreground">{t('admin.specialties')} ({meta?.total || 0})</h3>
             <Button onClick={handleOpenCreate}>
               <Plus className="h-4 w-4 me-2" />
               {t('admin.addSpecialty')}
             </Button>
           </div>
 
-          {!specialties || specialties.length === 0 ? (
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex-1 flex gap-2">
+              <Input
+                placeholder={t('admin.specialtiesPage.searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="flex-1"
+              />
+              <Button onClick={handleSearch} variant="outline">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+            <Select
+              value={isActiveFilter === undefined ? 'all' : isActiveFilter.toString()}
+              onValueChange={(value) => {
+                setIsActiveFilter(value === 'all' ? undefined : value === 'true');
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder={t('table.status')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('common.all')}</SelectItem>
+                <SelectItem value="true">{t('common.active')}</SelectItem>
+                <SelectItem value="false">{t('common.inactive')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {specialties.length === 0 ? (
             <div className="text-center py-10">
               <Frown className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
               <p className="text-muted-foreground">{t('admin.noSpecialties')}</p>
@@ -260,6 +314,8 @@ export function SpecialtiesManagement() {
               </TableBody>
             </Table>
           )}
+
+          <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
         </CardContent>
       </Card>
 

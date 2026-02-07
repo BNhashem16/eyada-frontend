@@ -24,6 +24,9 @@
     "back": "Back",
     "next": "Next",
     "previous": "Previous",
+    "rowsPerPage": "Rows per page",
+    "page": "Page",
+    "of": "of",
     "close": "Close",
     "view": "View",
     "viewAll": "View All",
@@ -65,7 +68,10 @@
     "tryDifferentSearch": "Try different search terms",
     "useArrowsToNavigate": "Use arrows to navigate",
     "loadingDots": "Loading...",
-    "selectDate": "Select date"
+    "selectDate": "Select date",
+    "advancedFilters": "Advanced Filters",
+    "showFilters": "Show Filters",
+    "hideFilters": "Hide Filters"
   },
   "app": {
     "name": "Eyada",
@@ -117,7 +123,9 @@
     "secretaries": "Secretaries",
     "commissions": "Commissions",
     "collections": "Collections",
-    "schedules": "Schedules"
+    "schedules": "Schedules",
+    "feedbacks": "Complaints & Suggestions",
+    "complaintsAndSuggestions": "Complaints & Suggestions"
   },
   "auth": {
     "login": "Login",
@@ -663,7 +671,7 @@
     "appointmentStatus": "Appointment Status",
     "allStatuses": "All Statuses",
     "appointmentsCount": "{count} appointments on {date}",
-    "loadError": "Error loading appointments. Please try again.",
+    "loadError": "Error loading secretaries. Please try again.",
     "noAppointments": "No appointments",
     "noAppointmentsOnDay": "No appointments on this day",
     "pageOf": "Page {page} of {total}",
@@ -762,7 +770,6 @@
     },
     "assignmentUpdated": "Assignment updated successfully",
     "removedFromClinic": "Secretary removed from clinic",
-    "loadError": "Error loading secretaries. Please try again.",
     "linkCopied": "Link copied",
     "trackingLinkHint": "Share this link with the patient to track their appointment",
     "openTrackingPage": "Open Tracking Page",
@@ -824,7 +831,12 @@
       "confirmSuspend": "Confirm Suspension",
       "suspendMessage": "The doctor's account will be temporarily suspended and won't appear in search results.",
       "approveMessage": "The doctor's account will be activated and they can manage their clinic and receive bookings.",
-      "rejectConfirmMessage": "The doctor's request will be rejected and they won't be able to use the platform."
+      "rejectConfirmMessage": "The doctor's request will be rejected and they won't be able to use the platform.",
+      "filterByState": "Filter by state",
+      "filterByCity": "Filter by city",
+      "activeStatus": "Active status",
+      "allStates": "All States",
+      "allCities": "All Cities"
     },
     "patients": {
       "title": "Manage Patients",
@@ -845,7 +857,8 @@
       "confirmSuspend": "Confirm Patient Suspension",
       "approveMessage": "The patient's account will be activated and they can book appointments.",
       "rejectMessage": "The patient's request will be rejected and they won't be able to use the platform.",
-      "suspendMessage": "The patient's account will be temporarily suspended and they won't be able to book appointments."
+      "suspendMessage": "The patient's account will be temporarily suspended and they won't be able to book appointments.",
+      "activeStatus": "Active status"
     },
     "locations": {
       "title": "Manage Locations",
@@ -862,11 +875,14 @@
       "deleteStateConfirm": "All cities in this state will be deleted. Are you sure?",
       "deleteCity": "Delete City",
       "deleteCityConfirm": "Are you sure you want to delete this city?",
-      "cityCount": "city"
+      "cityCount": "city",
+      "searchStates": "Search states...",
+      "searchCities": "Search cities..."
     },
     "specialtiesPage": {
       "title": "Manage Specialties",
-      "subtitle": "Add, edit, and delete medical specialties"
+      "subtitle": "Add, edit, and delete medical specialties",
+      "searchPlaceholder": "Search specialties..."
     },
     "commissionsPage": {
       "title": "Manage Commissions",
@@ -911,7 +927,10 @@
       "details": "Secretary Details",
       "assignedClinics": "Assigned Clinics",
       "removeTitle": "Remove from Clinic",
-      "removeConfirm": "Are you sure you want to remove the secretary from {clinic} clinic?"
+      "removeConfirm": "Are you sure you want to remove the secretary from {clinic} clinic?",
+      "searchPlaceholder": "Search by name, email, or phone...",
+      "filterByClinic": "Filter by clinic",
+      "allClinics": "All Clinics"
     },
     "ratings": {
       "total": "Total Ratings",
@@ -942,7 +961,8 @@
       "appointmentDate": "Appointment Date",
       "clinic": "Clinic",
       "deleteTitle": "Delete Rating",
-      "deleteConfirm": "Are you sure you want to delete this rating? This action cannot be undone."
+      "deleteConfirm": "Are you sure you want to delete this rating? This action cannot be undone.",
+      "searchPlaceholder": "Search by doctor, patient, or review..."
     },
     "clinics": {
       "total": "Total Clinics",
@@ -968,7 +988,13 @@
       "schedules": "Schedules",
       "secretaries": "Secretaries",
       "deleteTitle": "Delete Clinic",
-      "deleteConfirm": "Are you sure you want to delete {name} clinic? This action cannot be undone."
+      "deleteConfirm": "Are you sure you want to delete {name} clinic? This action cannot be undone.",
+      "filterBySpecialty": "Filter by specialty",
+      "filterByState": "Filter by state",
+      "filterByCity": "Filter by city",
+      "allSpecialties": "All Specialties",
+      "allStates": "All States",
+      "allCities": "All Cities"
     },
     "appointments": {
       "total": "Total Appointments",
@@ -995,7 +1021,8 @@
       "cancelConfirm": "Are you sure you want to cancel this appointment?",
       "cancellationReason": "Cancellation Reason",
       "cancellationReasonPlaceholder": "Enter cancellation reason...",
-      "confirmCancel": "Confirm Cancellation"
+      "confirmCancel": "Confirm Cancellation",
+      "filterBySpecialty": "Filter by specialty"
     },
     "collectionsPage": {
       "title": "Collections & Balances",
@@ -1083,6 +1110,44 @@
       "commission": "Commission",
       "date": "Date",
       "paymentDate": "Payment Date"
+    },
+    "feedbacksPage": {
+      "title": "Complaints & Suggestions",
+      "subtitle": "View and manage all complaints and suggestions"
+    },
+    "feedbacks": {
+      "total": "Total",
+      "complaints": "Complaints",
+      "suggestions": "Suggestions",
+      "newCount": "New",
+      "list": "Feedbacks List",
+      "noFeedbacks": "No complaints or suggestions found",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "type": "Type",
+      "status": "Status",
+      "date": "Date",
+      "content": "Message",
+      "complaint": "Complaint",
+      "suggestion": "Suggestion",
+      "new": "New",
+      "inReview": "In Review",
+      "resolved": "Resolved",
+      "rejected": "Rejected",
+      "allTypes": "All Types",
+      "allStatuses": "All Statuses",
+      "details": "Feedback Details",
+      "contactInfo": "Contact Information",
+      "adminNotes": "Admin Notes",
+      "adminNotesPlaceholder": "Add notes about this feedback...",
+      "changeStatus": "Change Status",
+      "updateStatus": "Update Status",
+      "confirmStatusChange": "Confirm Status Change",
+      "statusChangeMessage": "Are you sure you want to change the status to \"{status}\"?",
+      "noContact": "No contact info",
+      "filterByType": "Filter by type",
+      "filterByStatus": "Filter by status"
     }
   },
   "table": {
@@ -1393,5 +1458,29 @@
     "stateCode": "CAI",
     "cityNameAr": "مدينة نصر",
     "cityNameEn": "Nasr City"
+  },
+  "feedback": {
+    "title": "Complaints & Suggestions",
+    "subtitle": "We value your feedback and are always happy to hear from you",
+    "type": "Type",
+    "complaint": "Complaint",
+    "suggestion": "Suggestion",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "content": "Your Message",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "success": "Your feedback has been submitted successfully. Thank you!",
+    "emailOrPhoneRequired": "Please provide at least an email or phone number",
+    "namePlaceholder": "Enter your full name",
+    "emailPlaceholder": "Enter your email address",
+    "phonePlaceholder": "e.g. 01012345678",
+    "contentPlaceholder": "Describe your complaint or suggestion in detail...",
+    "selectType": "Select the type of your feedback",
+    "contactInfo": "Contact Information",
+    "contactInfoHint": "Please provide at least an email or phone number so we can get back to you",
+    "contentMinLength": "Message must be at least 10 characters",
+    "contentMaxLength": "Message cannot exceed 2000 characters"
   }
 }

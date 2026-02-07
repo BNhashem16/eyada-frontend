@@ -18,14 +18,12 @@ import {
   Baby,
   LayoutDashboard,
   CalendarCheck,
-  User,
   Navigation,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ThemeToggle } from '@/components/common/theme-toggle';
-import { LanguageToggle } from '@/components/common/language-toggle';
+import { PublicLayout } from '@/components/common';
 import { useTranslation } from '@/lib/i18n';
 import { useSpecialties } from '@/features/specialties';
 import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
@@ -140,55 +138,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-medical">
-              <Stethoscope className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-primary-700 dark:text-primary-400">{t('app.name')}</span>
-          </Link>
-
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link href="/doctors" className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400">
-              {t('nav.doctors')}
-            </Link>
-            <Link href="/clinics" className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400">
-              {t('nav.clinics')}
-            </Link>
-            <Link href="/specialties" className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-400">
-              {t('nav.specialties')}
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <LanguageToggle />
-            <ThemeToggle />
-            {!isHydrated ? (
-              <Skeleton className="h-9 w-16 sm:w-20" />
-            ) : isAuthenticated && user ? (
-              <Link href={getDashboardPath()}>
-                <Button size="sm" className="sm:size-default">
-                  <LayoutDashboard className="h-4 w-4 sm:ms-2" />
-                  <span className="hidden sm:inline">{t('nav.dashboard')}</span>
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/login">
-                  <Button variant="ghost" size="sm" className="sm:size-default">{t('nav.login')}</Button>
-                </Link>
-                <Link href="/register" className="hidden sm:block">
-                  <Button size="sm" className="sm:size-default">{t('nav.register')}</Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-
+    <PublicLayout>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-primary-50 to-background dark:from-primary-950/50 dark:to-background py-20">
         <div className="container mx-auto px-4">
@@ -509,73 +459,6 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-muted py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-            <div>
-              <div className="mb-4 flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-medical">
-                  <Stethoscope className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-xl font-bold text-primary-700 dark:text-primary-400">{t('app.name')}</span>
-              </div>
-              <p className="text-muted-foreground">
-                {t('app.footerText')}
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-semibold text-foreground">{t('nav.quickLinks')}</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="/doctors" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    {t('nav.findDoctor')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/clinics" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    {t('nav.clinics')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/specialties" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    {t('nav.specialties')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-semibold text-foreground">{t('nav.forDoctors')}</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="/register?role=doctor" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    {t('nav.joinAsDoctor')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/login" className="hover:text-primary-600 dark:hover:text-primary-400">
-                    {t('nav.doctorLogin')}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-semibold text-foreground">{t('nav.contactUs')}</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>{t('nav.email')}: support@eyada.com</li>
-                <li>{t('nav.phone')}: 01000000000</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-8 border-t border-border pt-8 text-center text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} {t('app.name')}. {t('app.copyright')}</p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </PublicLayout>
   );
 }

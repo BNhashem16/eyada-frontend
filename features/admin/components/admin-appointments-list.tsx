@@ -56,8 +56,10 @@ import {
   AdminAppointment,
   AppointmentStatus,
   PaymentStatus,
+  useAdminSpecialties,
 } from '../hooks';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 const statusOptions: AppointmentStatus[] = [
@@ -81,14 +83,18 @@ export function AdminAppointmentsList() {
   const [date, setDate] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [specialtyId, setSpecialtyId] = useState<string | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const filters = {
     page,
+    limit,
     search,
     status,
     paymentStatus,
+    specialtyId,
     date: date || undefined,
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
@@ -102,6 +108,9 @@ export function AdminAppointmentsList() {
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
   });
+
+  const { data: specialtiesData } = useAdminSpecialties({ limit: 100 });
+  const specialties = specialtiesData?.data || [];
 
   const updateAppointment = useUpdateAdminAppointment();
 
@@ -374,8 +383,8 @@ export function AdminAppointmentsList() {
           </div>
 
           {showFilters && (
-            <div className="flex gap-4 mt-4 pt-4 border-t">
-              <div className="flex-1">
+            <div className="flex gap-4 mt-4 pt-4 border-t flex-wrap">
+              <div className="flex-1 min-w-[180px]">
                 <Label>{t('admin.appointments.dateFrom')}</Label>
                 <DatePickerInput
                   value={dateFrom}
@@ -387,7 +396,7 @@ export function AdminAppointmentsList() {
                   placeholder={t('admin.appointments.dateFrom')}
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-[180px]">
                 <Label>{t('admin.appointments.dateTo')}</Label>
                 <DatePickerInput
                   value={dateTo}
@@ -399,6 +408,28 @@ export function AdminAppointmentsList() {
                   placeholder={t('admin.appointments.dateTo')}
                 />
               </div>
+              <div className="flex-1 min-w-[180px]">
+                <Label>{t('admin.appointments.filterBySpecialty')}</Label>
+                <Select
+                  value={specialtyId || 'all'}
+                  onValueChange={(value) => {
+                    setSpecialtyId(value === 'all' ? undefined : value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('admin.appointments.filterBySpecialty')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('admin.clinics.allSpecialties')}</SelectItem>
+                    {specialties.map((specialty) => (
+                      <SelectItem key={specialty.id} value={specialty.id}>
+                        {getLocalizedText(specialty.name, locale)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="flex items-end">
                 <Button
                   variant="outline"
@@ -408,6 +439,7 @@ export function AdminAppointmentsList() {
                     setDate('');
                     setStatus(undefined);
                     setPaymentStatus(undefined);
+                    setSpecialtyId(undefined);
                     setSearch('');
                     setSearchInput('');
                     setPage(1);
@@ -551,30 +583,7 @@ export function AdminAppointmentsList() {
                 </TableBody>
               </Table>
 
-              {/* Pagination */}
-              {meta && meta.totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page - 1)}
-                    disabled={page === 1}
-                  >
-                    {t('common.previous')}
-                  </Button>
-                  <span className="flex items-center px-4 text-sm text-muted-foreground">
-                    {page} / {meta.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page + 1)}
-                    disabled={page === meta.totalPages}
-                  >
-                    {t('common.next')}
-                  </Button>
-                </div>
-              )}
+              <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
             </>
           )}
         </CardContent>

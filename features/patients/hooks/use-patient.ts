@@ -282,11 +282,17 @@ export interface PatientRating {
   };
 }
 
-export function usePatientRatings() {
+export function usePatientRatings(filters: { page?: number; limit?: number } = {}) {
+  const { page = 1, limit = 10 } = filters;
   return useQuery({
-    queryKey: ['patient-ratings'],
+    queryKey: ['patient-ratings', { page, limit }],
     queryFn: async () => {
-      return apiGet<PatientRating[]>(PATIENT_ENDPOINTS.RATINGS);
+      const params = new URLSearchParams();
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+      return apiGet<PaginatedResponse<PatientRating>>(
+        `${PATIENT_ENDPOINTS.RATINGS}?${params.toString()}`
+      );
     },
     staleTime: 1000 * 60,
   });

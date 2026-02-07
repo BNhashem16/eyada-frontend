@@ -10,6 +10,7 @@ import {
   MapPin,
   ChevronDown,
   ChevronRight,
+  Search,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,7 @@ import {
   useDeleteCity,
 } from '../hooks';
 import { State, City, Multilingual } from '@/types';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 interface StateFormData {
@@ -70,8 +72,27 @@ const initialCityForm: CityFormData = { stateId: '', nameAr: '', nameEn: '' };
 
 export function LocationsManagement() {
   const { t } = useTranslation();
-  const { data: states, isLoading: statesLoading } = useAdminStates();
-  const { data: cities } = useAdminCities();
+
+  const [searchStates, setSearchStates] = useState('');
+  const [searchCities, setSearchCities] = useState('');
+  const [statesPage, setStatesPage] = useState(1);
+  const [statesLimit, setStatesLimit] = useState(50);
+  const [citiesPage, setCitiesPage] = useState(1);
+
+  const { data: statesResponse, isLoading: statesLoading } = useAdminStates({
+    search: searchStates || undefined,
+    page: statesPage,
+    limit: statesLimit,
+  });
+  const { data: citiesResponse } = useAdminCities({
+    search: searchCities || undefined,
+    page: citiesPage,
+    limit: 100,
+  });
+
+  const states = statesResponse?.data || [];
+  const statesMeta = statesResponse?.meta;
+  const cities = citiesResponse?.data || [];
 
   const createState = useCreateState();
   const updateState = useUpdateState();
@@ -214,7 +235,16 @@ export function LocationsManagement() {
             </Button>
           </div>
 
-          {!states || states.length === 0 ? (
+          <div className="flex gap-2 mb-4">
+            <Input
+              placeholder={t('admin.locations.searchStates')}
+              value={searchStates}
+              onChange={(e) => { setSearchStates(e.target.value); setStatesPage(1); }}
+              className="max-w-sm"
+            />
+          </div>
+
+          {states.length === 0 ? (
             <div className="text-center py-10">
               <MapPin className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
               <p className="text-muted-foreground">{t('admin.locations.noStates')}</p>
@@ -297,6 +327,15 @@ export function LocationsManagement() {
                               </Button>
                             </div>
 
+                            <div className="flex gap-2 mb-3">
+                              <Input
+                                placeholder={t('admin.locations.searchCities')}
+                                value={searchCities}
+                                onChange={(e) => { setSearchCities(e.target.value); setCitiesPage(1); }}
+                                className="max-w-sm"
+                              />
+                            </div>
+
                             {stateCities.length === 0 ? (
                               <p className="text-sm text-muted-foreground text-center py-4">
                                 {t('admin.locations.noCities')}
@@ -353,6 +392,8 @@ export function LocationsManagement() {
                 })}
             </div>
           )}
+
+          <PaginationControls meta={statesMeta} page={statesPage} onPageChange={setStatesPage} limit={statesLimit} onLimitChange={(v) => { setStatesLimit(v); setStatesPage(1); }} />
         </CardContent>
       </Card>
 

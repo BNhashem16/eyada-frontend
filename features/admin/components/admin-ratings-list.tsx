@@ -18,6 +18,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DatePickerInput } from '@/components/ui/date-picker-input';
 import { Switch } from '@/components/ui/switch';
@@ -62,19 +63,30 @@ import {
   AdminRating,
 } from '../hooks';
 import { getLocalizedText } from '@/lib/utils/multilingual';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 export function AdminRatingsList() {
   const { t, locale } = useTranslation();
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState<string | undefined>(undefined);
   const [ratingFilter, setRatingFilter] = useState<number | undefined>(undefined);
   const [isVisible, setIsVisible] = useState<boolean | undefined>(undefined);
   const [showFilters, setShowFilters] = useState(false);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  const handleSearch = () => {
+    setSearch(searchInput || undefined);
+    setPage(1);
+  };
 
   const filters = {
     page,
+    limit,
+    search,
     rating: ratingFilter,
     isVisible,
     dateFrom: dateFrom || undefined,
@@ -248,6 +260,19 @@ export function AdminRatingsList() {
       <Card className="mb-6">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex gap-2 flex-1">
+              <Input
+                placeholder={t('admin.ratings.searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="max-w-sm"
+              />
+              <Button variant="outline" size="icon" onClick={handleSearch}>
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+
             <div className="flex gap-2 flex-wrap flex-1">
               <Select
                 value={ratingFilter?.toString() || 'all'}
@@ -298,6 +323,8 @@ export function AdminRatingsList() {
             <Button
               variant="outline"
               onClick={() => {
+                setSearchInput('');
+                setSearch(undefined);
                 setRatingFilter(undefined);
                 setIsVisible(undefined);
                 setDateFrom('');
@@ -440,30 +467,7 @@ export function AdminRatingsList() {
                 </TableBody>
               </Table>
 
-              {/* Pagination */}
-              {meta && meta.totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page - 1)}
-                    disabled={page === 1}
-                  >
-                    {t('common.previous')}
-                  </Button>
-                  <span className="flex items-center px-4 text-sm text-muted-foreground">
-                    {page} / {meta.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(page + 1)}
-                    disabled={page === meta.totalPages}
-                  >
-                    {t('common.next')}
-                  </Button>
-                </div>
-              )}
+              <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
             </>
           )}
         </CardContent>

@@ -22,8 +22,15 @@ import { getInitials } from '@/lib/utils';
 import { useState } from 'react';
 import { LucideIcon } from 'lucide-react';
 
+export interface NavLinkItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+}
+
 export interface HeaderProps {
   variant?: 'public' | 'auth' | 'dashboard';
+  navLinks?: NavLinkItem[];
   userRole?: string;
   userRoleLabel?: string;
   showDoctorPrefix?: boolean;
@@ -33,6 +40,7 @@ export interface HeaderProps {
 
 export function Header({
   variant = 'public',
+  navLinks = [],
   userRole,
   userRoleLabel,
   showDoctorPrefix = false,
@@ -40,6 +48,7 @@ export function Header({
   rightContent,
 }: HeaderProps) {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const { isAuthenticated, user, logout } = useAuthStore();
   const isHydrated = useIsHydrated();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -140,19 +149,46 @@ export function Header({
 
   // Public variant - with navigation
   return (
-    <header className="sticky top-0 z-40 bg-card border-b border-border">
+    <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-lg border-b border-border/50 shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
-              <Stethoscope className="h-6 w-6 text-white" />
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
+            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-md shadow-primary-500/20">
+              <Stethoscope className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">{t('app.name')}</span>
+            <span className="text-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-400 dark:to-primary-300 bg-clip-text text-transparent">
+              {t('app.name')}
+            </span>
           </Link>
 
-          {/* Auth Buttons / User Menu */}
-          <div className="flex items-center gap-2">
+          {/* Desktop Nav Links */}
+          {navLinks.length > 0 && (
+            <nav className="hidden md:flex items-center gap-1">
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                const isActive = pathname.startsWith(link.href);
+
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                      isActive
+                        ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400'
+                        : 'text-foreground hover:text-primary-600 dark:hover:text-primary-400 hover:bg-accent'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
+
+          {/* Right Side: Auth + Toggles */}
+          <div className="flex items-center gap-1.5">
             <LanguageToggle />
             <ThemeToggle />
 
@@ -162,18 +198,18 @@ export function Header({
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-accent transition-colors"
+                  className="flex items-center gap-2 p-1.5 rounded-full hover:bg-accent transition-colors"
                 >
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 ring-2 ring-primary-100 dark:ring-primary-900/50">
                     <AvatarImage src={user.profilePicture || undefined} />
-                    <AvatarFallback className="text-xs">
+                    <AvatarFallback className="text-xs bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
                       {getInitials(user.name || '')}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:block text-sm font-medium text-foreground max-w-[120px] truncate">
+                  <span className="hidden lg:block text-sm font-medium text-foreground max-w-[120px] truncate">
                     {user.name}
                   </span>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden lg:block" />
                 </button>
 
                 {/* User Dropdown */}
@@ -183,8 +219,8 @@ export function Header({
                       className="fixed inset-0 z-40"
                       onClick={() => setUserMenuOpen(false)}
                     />
-                    <div className="absolute end-0 mt-2 w-56 rounded-lg bg-card border border-border shadow-lg z-50 py-1">
-                      <div className="px-4 py-3 border-b border-border">
+                    <div className="absolute end-0 mt-2 w-56 rounded-xl bg-card border border-border shadow-xl z-50 py-1 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-border bg-muted/30">
                         <p className="text-sm font-medium text-foreground">
                           {user.name}
                         </p>
@@ -193,7 +229,7 @@ export function Header({
                       <Link
                         href={getDashboardLink()}
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-accent"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                       >
                         <LayoutDashboard className="h-4 w-4" />
                         {t('nav.dashboard')}
@@ -203,7 +239,7 @@ export function Header({
                           logout();
                           setUserMenuOpen(false);
                         }}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 w-full"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 w-full transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
                         {t('nav.logout')}
@@ -213,28 +249,29 @@ export function Header({
                 )}
               </div>
             ) : (
-              <>
-                <Button variant="ghost" asChild className="hidden sm:flex">
+              <div className="flex items-center gap-2 ms-1">
+                <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
                   <Link href="/login">
-                    <LogIn className="h-4 w-4 ms-2" />
+                    <LogIn className="h-4 w-4 ms-1.5" />
                     {t('nav.login')}
                   </Link>
                 </Button>
-                <Button asChild>
+                <Button size="sm" asChild className="shadow-sm shadow-primary-500/20">
                   <Link href="/register">
-                    <UserPlus className="h-4 w-4 ms-2" />
-                    {t('nav.register')}
+                    <UserPlus className="h-4 w-4 ms-1.5" />
+                    <span className="hidden sm:inline">{t('nav.register')}</span>
+                    <span className="sm:hidden">{t('nav.login')}</span>
                   </Link>
                 </Button>
-              </>
+              </div>
             )}
 
             {onMenuClick && (
               <button
-                className="md:hidden p-2 text-muted-foreground hover:text-foreground"
+                className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 onClick={onMenuClick}
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-5 w-5" />
               </button>
             )}
           </div>

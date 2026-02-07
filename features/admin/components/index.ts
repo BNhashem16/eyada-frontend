@@ -11,3 +11,4 @@ export * from './admin-appointments-list';
 export * from './admin-clinics-list';
 export * from './admin-ratings-list';
 export * from './admin-secretaries-list';
+export * from './admin-feedbacks-list';

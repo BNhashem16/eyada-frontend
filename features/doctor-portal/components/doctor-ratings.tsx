@@ -1,12 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { Star, MessageSquare, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDoctorOwnRatings } from '../hooks/use-doctor-portal';
 import { Rating } from '@/types';
 import { formatRelativeDate, getInitials } from '@/lib/utils';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 // Rating distribution bar component
@@ -30,7 +33,9 @@ function RatingBar({ rating, count, total }: { rating: number; count: number; to
 
 export function DoctorRatings() {
   const { t } = useTranslation();
-  const { data, isLoading, isError } = useDoctorOwnRatings();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data, isLoading, isError } = useDoctorOwnRatings({ page, limit });
 
   if (isLoading) {
     return (
@@ -74,7 +79,8 @@ export function DoctorRatings() {
     );
   }
 
-  const ratings = data?.ratings ?? [];
+  const ratings = data?.data ?? [];
+  const meta = data?.meta;
   const statistics = data?.statistics ?? {
     averageRating: 0,
     totalRatings: 0,
@@ -199,6 +205,8 @@ export function DoctorRatings() {
               ))}
             </div>
           )}
+
+          <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
         </CardContent>
       </Card>
     </div>

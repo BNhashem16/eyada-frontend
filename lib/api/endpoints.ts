@@ -6,6 +6,11 @@ export const PUBLIC_TRACKING_ENDPOINTS = {
   TRACK_QUEUE: (bookingNumber: string) => `/appointments/track/${bookingNumber}`,
 } as const;
 
+// Public feedback endpoints
+export const PUBLIC_FEEDBACK_ENDPOINTS = {
+  CREATE: '/feedbacks',
+} as const;
+
 // Authentication endpoints
 export const AUTH_ENDPOINTS = {
   LOGIN: '/auth/login',
@@ -198,6 +203,11 @@ export const ADMIN_ENDPOINTS = {
   RATINGS: '/admin/ratings',
   RATING: (id: string) => `/admin/ratings/${id}`,
   RATINGS_STATISTICS: '/admin/ratings/statistics',
+
+  // Feedbacks management
+  FEEDBACKS: '/admin/feedbacks',
+  FEEDBACK: (id: string) => `/admin/feedbacks/${id}`,
+  FEEDBACK_STATUS: (id: string) => `/admin/feedbacks/${id}/status`,
 
   // Commissions management
   COMMISSIONS: '/admin/commissions',

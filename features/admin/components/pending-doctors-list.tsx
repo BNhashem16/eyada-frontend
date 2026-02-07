@@ -26,14 +26,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { usePendingDoctors, useApproveDoctor, useRejectDoctor } from '../hooks';
+import { useAdminDoctors, useApproveDoctor, useRejectDoctor } from '../hooks';
+import { DoctorStatus } from '@/types/enums';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { getInitials } from '@/lib/utils';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useTranslation } from '@/lib/i18n';
 
 export function PendingDoctorsList() {
   const { t } = useTranslation();
-  const { data: doctors, isLoading, isError, error } = usePendingDoctors();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data: doctors, isLoading, isError, error } = useAdminDoctors({ status: DoctorStatus.PENDING, page, limit });
   const approveDoctor = useApproveDoctor();
   const rejectDoctor = useRejectDoctor();
 
@@ -101,8 +105,9 @@ export function PendingDoctorsList() {
   }
 
   const doctorsList = doctors?.data || [];
+  const meta = doctors?.meta;
 
-  if (!doctorsList || doctorsList.length === 0) {
+  if (doctorsList.length === 0) {
     return (
       <Card>
         <CardContent className="py-16 text-center">
@@ -203,6 +208,8 @@ export function PendingDoctorsList() {
           </Card>
         ))}
       </div>
+
+      <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
 
       {/* Confirmation Dialog */}
       <AlertDialog
