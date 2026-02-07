@@ -7,3 +7,4 @@ export * from './use-admin-appointments';
 export * from './use-admin-clinics';
 export * from './use-admin-ratings';
 export * from './use-admin-secretaries';
+export * from './use-admin-schedules';

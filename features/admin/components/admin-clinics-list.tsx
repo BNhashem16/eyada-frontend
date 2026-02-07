@@ -19,6 +19,7 @@ import {
   ToggleRight,
   Calendar,
   Users,
+  Clock,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -69,6 +70,12 @@ import {
 } from '../hooks';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useTranslation } from '@/lib/i18n';
+import { ScheduleManager } from '@/features/doctor-portal/components/schedule-manager';
+import {
+  useAdminClinicSchedules,
+  useAdminCreateSchedule,
+  useAdminUpdateSchedule,
+} from '../hooks';
 
 export function AdminClinicsList() {
   const { t, locale } = useTranslation();
@@ -96,6 +103,8 @@ export function AdminClinicsList() {
   const [selectedClinic, setSelectedClinic] = useState<AdminClinic | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [scheduleClinic, setScheduleClinic] = useState<AdminClinic | null>(null);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
 
   const handleSearch = () => {
     setSearch(searchInput);
@@ -105,6 +114,11 @@ export function AdminClinicsList() {
   const handleViewDetails = (clinic: AdminClinic) => {
     setSelectedClinic(clinic);
     setIsDetailsOpen(true);
+  };
+
+  const handleManageSchedule = (clinic: AdminClinic) => {
+    setScheduleClinic(clinic);
+    setIsScheduleOpen(true);
   };
 
   const handleOpenDelete = (clinic: AdminClinic) => {
@@ -357,8 +371,17 @@ export function AdminClinicsList() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleViewDetails(clinic)}
+                            title={t('admin.clinics.details')}
                           >
                             <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleManageSchedule(clinic)}
+                            title={t('nav.schedules')}
+                          >
+                            <Clock className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -535,6 +558,30 @@ export function AdminClinicsList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Schedule Management Dialog */}
+      <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              {t('nav.schedules')}
+            </DialogTitle>
+            <DialogDescription>
+              {scheduleClinic && getLocalizedText(scheduleClinic.name, locale)}
+            </DialogDescription>
+          </DialogHeader>
+
+          {scheduleClinic && (
+            <ScheduleManager
+              clinicId={scheduleClinic.id}
+              schedulesHook={useAdminClinicSchedules}
+              createHook={useAdminCreateSchedule}
+              updateHook={useAdminUpdateSchedule}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

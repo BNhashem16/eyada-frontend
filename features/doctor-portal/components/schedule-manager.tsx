@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Clock, Save, Loader2 } from 'lucide-react';
+import { Clock, Save, Loader2, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,9 @@ import { ClinicSchedule } from '@/types';
 
 interface ScheduleManagerProps {
   clinicId: string;
+  schedulesHook?: (clinicId: string) => ReturnType<typeof useClinicSchedules>;
+  createHook?: () => ReturnType<typeof useCreateSchedule>;
+  updateHook?: () => ReturnType<typeof useUpdateSchedule>;
 }
 
 const dayOrder: DayOfWeek[] = [
@@ -48,15 +51,27 @@ interface DaySchedule {
   endTime: string;
   breakTime?: string;
   slotDuration: number;
+  maxPatients?: number;
   id?: string;
 }
 
-export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
+export function ScheduleManager({
+  clinicId,
+  schedulesHook,
+  createHook,
+  updateHook,
+}: ScheduleManagerProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
-  const { data: schedules, isLoading } = useClinicSchedules(clinicId);
-  const createMutation = useCreateSchedule();
-  const updateMutation = useUpdateSchedule();
+
+  // Use provided hooks or default to doctor hooks
+  const useSchedules = schedulesHook || useClinicSchedules;
+  const useCreate = createHook || useCreateSchedule;
+  const useUpdate = updateHook || useUpdateSchedule;
+
+  const { data: schedules, isLoading } = useSchedules(clinicId);
+  const createMutation = useCreate();
+  const updateMutation = useUpdate();
 
   const dayNames = getDayNames(t);
   const [localSchedules, setLocalSchedules] = useState<DaySchedule[]>([]);
@@ -77,6 +92,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
           endTime: firstShift?.endTime ?? '17:00',
           breakTime: firstShift?.breakTime,
           slotDuration: existing?.slotDuration ?? 30,
+          maxPatients: existing?.maxPatients ?? undefined,
           id: existing?.id,
         };
       });
@@ -124,6 +140,18 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
     setHasChanges(true);
   };
 
+  const handleMaxPatientsChange = (dayIndex: number, value: string) => {
+    setLocalSchedules((prev) => {
+      const updated = [...prev];
+      updated[dayIndex] = {
+        ...updated[dayIndex],
+        maxPatients: value === '' ? undefined : Number(value),
+      };
+      return updated;
+    });
+    setHasChanges(true);
+  };
+
   const handleSave = async () => {
     try {
       const promises = localSchedules.map(async (schedule) => {
@@ -143,6 +171,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
               isActive: schedule.isActive,
               shifts,
               slotDuration: schedule.slotDuration,
+              maxPatients: schedule.maxPatients,
             },
           });
         } else {
@@ -154,6 +183,7 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
               isActive: schedule.isActive,
               shifts,
               slotDuration: schedule.slotDuration,
+              maxPatients: schedule.maxPatients,
             },
           });
         }
@@ -301,6 +331,21 @@ export function ScheduleManager({ clinicId }: ScheduleManagerProps) {
                       <option value={45}>{t('common.duration45')}</option>
                       <option value={60}>{t('common.duration60')}</option>
                     </select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap flex items-center gap-1">
+                      <Users className="h-3.5 w-3.5" />
+                      {t('clinics.maxPatients')}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={schedule.maxPatients ?? ''}
+                      onChange={(e) => handleMaxPatientsChange(index, e.target.value)}
+                      className="w-24"
+                      placeholder={t('clinics.maxPatientsPlaceholder')}
+                      dir="ltr"
+                    />
                   </div>
                 </div>
               )}

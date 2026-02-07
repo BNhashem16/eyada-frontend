@@ -116,7 +116,8 @@
     "ratings": "Ratings",
     "secretaries": "Secretaries",
     "commissions": "Commissions",
-    "collections": "Collections"
+    "collections": "Collections",
+    "schedules": "Schedules"
   },
   "auth": {
     "login": "Login",
@@ -270,7 +271,9 @@
     "scheduleTitle": "Work Schedule",
     "scheduleSaved": "Schedule saved successfully",
     "scheduleSaveFailed": "Failed to save schedule",
-    "scheduleHint": "You can enable or disable work days and set start/end times and slot duration",
+    "scheduleHint": "You can enable or disable work days, set start/end times, slot duration, and max patients per day",
+    "maxPatients": "Max Patients",
+    "maxPatientsPlaceholder": "Unlimited",
     "services": "Available Services",
     "availableSlots": "Available Slots",
     "selectDate": "Select Date",
@@ -731,6 +734,10 @@
       "needsImprovement": "Needs Improvement",
       "basedOnRatings": "Based on patient ratings",
       "reviewsDesc": "Recent reviews from patients"
+    },
+    "schedulesPage": {
+      "title": "Manage Schedules",
+      "subtitle": "Manage work schedules and max patients for assigned clinics"
     },
     "management": {
       "title": "Secretary Management",

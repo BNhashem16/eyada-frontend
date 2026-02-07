@@ -32,7 +32,8 @@
       "Bash(grep:*)",
       "Bash(npx nest build)",
       "Bash(node:*)",
-      "Bash(npx.cmd nest build:*)"
+      "Bash(npx.cmd nest build:*)",
+      "Bash(npx next dev:*)"
     ]
   }
 }

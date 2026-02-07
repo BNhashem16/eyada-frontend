@@ -112,6 +112,11 @@ export const SECRETARY_ENDPOINTS = {
   // Clinics
   CLINICS: '/secretary/appointments/clinics',
 
+  // Schedules
+  CLINIC_SCHEDULES: (clinicId: string) => `/secretary/clinics/${clinicId}/schedules`,
+  CLINIC_SCHEDULE: (clinicId: string, scheduleId: string) =>
+    `/secretary/clinics/${clinicId}/schedules/${scheduleId}`,
+
   // Appointments
   APPOINTMENTS: '/secretary/appointments',
   APPOINTMENT: (id: string) => `/secretary/appointments/${id}`,
@@ -183,6 +188,11 @@ export const ADMIN_ENDPOINTS = {
   CLINICS: '/admin/clinics',
   CLINIC: (id: string) => `/admin/clinics/${id}`,
   CLINICS_STATISTICS: '/admin/clinics/statistics',
+
+  // Clinic Schedules
+  CLINIC_SCHEDULES: (clinicId: string) => `/admin/clinics/${clinicId}/schedules`,
+  CLINIC_SCHEDULE: (clinicId: string, scheduleId: string) =>
+    `/admin/clinics/${clinicId}/schedules/${scheduleId}`,
 
   // Ratings management
   RATINGS: '/admin/ratings',
