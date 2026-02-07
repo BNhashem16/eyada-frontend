@@ -172,14 +172,14 @@ export function AdminAppointmentsList() {
   };
 
   const getStatusBadge = (status: AppointmentStatus) => {
-    const variants: Record<AppointmentStatus, 'default' | 'secondary' | 'success' | 'warning' | 'destructive' | 'outline'> = {
+    const variants: Record<AppointmentStatus, 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'outline'> = {
       PENDING: 'warning',
       CONFIRMED: 'default',
       CHECKED_IN: 'secondary',
       IN_PROGRESS: 'default',
       COMPLETED: 'success',
-      CANCELLED: 'destructive',
-      NO_SHOW: 'destructive',
+      CANCELLED: 'error',
+      NO_SHOW: 'error',
     };
     return (
       <Badge variant={variants[status]}>
@@ -189,10 +189,10 @@ export function AdminAppointmentsList() {
   };
 
   const getPaymentStatusBadge = (status: PaymentStatus) => {
-    const variants: Record<PaymentStatus, 'default' | 'success' | 'warning' | 'destructive'> = {
+    const variants: Record<PaymentStatus, 'default' | 'success' | 'warning' | 'error'> = {
       PENDING: 'warning',
       PAID: 'success',
-      REFUNDED: 'destructive',
+      REFUNDED: 'error',
     };
     return (
       <Badge variant={variants[status]}>
