@@ -317,7 +317,7 @@ export function AdminFeedbacksList() {
             </div>
           ) : (
             <>
-              <Table>
+              <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('admin.feedbacks.type')}</TableHead>

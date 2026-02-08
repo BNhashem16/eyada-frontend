@@ -139,7 +139,7 @@ export function AppointmentQueue() {
       {/* Filters */}
       <Card>
         <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4">
             {/* Date Navigation */}
             <div className="flex items-center gap-2">
               <Button variant="outline" className="text-xs" onClick={goToPreviousDay}>
@@ -149,49 +149,50 @@ export function AppointmentQueue() {
                 value={selectedDate}
                 onChange={(val) => { setSelectedDate(val); setPage(1); }}
                 clearable={false}
-                className="w-44"
+                className="flex-1 sm:w-44 sm:flex-none"
               />
               <Button variant="outline" className="text-xs" onClick={goToNextDay}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
 
-            {/* Clinic Filter */}
-            <SearchableSelect
-              options={[
-                { value: 'all', label: t('appointments.allClinics'), icon: <Building2 className="h-4 w-4" /> },
-                ...(clinics?.map((clinic) => ({
-                  value: clinic.id,
-                  label: clinic.name?.ar || clinic.name?.en || '',
-                  icon: <Building2 className="h-4 w-4" />,
-                })) || []),
-              ]}
-              value={selectedClinic || 'all'}
-              onValueChange={(v) => { setSelectedClinic(v === 'all' ? '' : v); setPage(1); }}
-              placeholder={t('appointments.allClinics')}
-              searchPlaceholder={t('common.search')}
-              emptyMessage={t('common.noResults')}
-              className="w-full sm:w-48"
-            />
+            {/* Clinic & Status Filters */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <SearchableSelect
+                options={[
+                  { value: 'all', label: t('appointments.allClinics'), icon: <Building2 className="h-4 w-4" /> },
+                  ...(clinics?.map((clinic) => ({
+                    value: clinic.id,
+                    label: clinic.name?.ar || clinic.name?.en || '',
+                    icon: <Building2 className="h-4 w-4" />,
+                  })) || []),
+                ]}
+                value={selectedClinic || 'all'}
+                onValueChange={(v) => { setSelectedClinic(v === 'all' ? '' : v); setPage(1); }}
+                placeholder={t('appointments.allClinics')}
+                searchPlaceholder={t('common.search')}
+                emptyMessage={t('common.noResults')}
+                className="w-full sm:w-48"
+              />
 
-            {/* Status Filter */}
-            <SearchableSelect
-              options={[
-                { value: 'all', label: t('appointments.allStatuses'), icon: <Clock className="h-4 w-4" /> },
-                { value: AppointmentStatus.PENDING, label: statusLabels[AppointmentStatus.PENDING], icon: <Clock className="h-4 w-4 text-warning-500" /> },
-                { value: AppointmentStatus.CONFIRMED, label: statusLabels[AppointmentStatus.CONFIRMED], icon: <CheckCircle className="h-4 w-4 text-success-500" /> },
-                { value: AppointmentStatus.CHECKED_IN, label: statusLabels[AppointmentStatus.CHECKED_IN], icon: <UserCheck className="h-4 w-4 text-primary-500" /> },
-                { value: AppointmentStatus.IN_PROGRESS, label: statusLabels[AppointmentStatus.IN_PROGRESS], icon: <Play className="h-4 w-4 text-info-500" /> },
-                { value: AppointmentStatus.COMPLETED, label: statusLabels[AppointmentStatus.COMPLETED], icon: <CheckCircle className="h-4 w-4 text-muted-foreground" /> },
-                { value: AppointmentStatus.CANCELLED, label: statusLabels[AppointmentStatus.CANCELLED], icon: <XCircle className="h-4 w-4 text-error-500" /> },
-                { value: AppointmentStatus.NO_SHOW, label: statusLabels[AppointmentStatus.NO_SHOW], icon: <Ban className="h-4 w-4 text-muted-foreground" /> },
-              ]}
-              value={statusFilter || 'all'}
-              onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v as AppointmentStatus); setPage(1); }}
-              placeholder={t('appointments.allStatuses')}
-              showSearch={false}
-              className="w-full sm:w-40"
-            />
+              <SearchableSelect
+                options={[
+                  { value: 'all', label: t('appointments.allStatuses'), icon: <Clock className="h-4 w-4" /> },
+                  { value: AppointmentStatus.PENDING, label: statusLabels[AppointmentStatus.PENDING], icon: <Clock className="h-4 w-4 text-warning-500" /> },
+                  { value: AppointmentStatus.CONFIRMED, label: statusLabels[AppointmentStatus.CONFIRMED], icon: <CheckCircle className="h-4 w-4 text-success-500" /> },
+                  { value: AppointmentStatus.CHECKED_IN, label: statusLabels[AppointmentStatus.CHECKED_IN], icon: <UserCheck className="h-4 w-4 text-primary-500" /> },
+                  { value: AppointmentStatus.IN_PROGRESS, label: statusLabels[AppointmentStatus.IN_PROGRESS], icon: <Play className="h-4 w-4 text-info-500" /> },
+                  { value: AppointmentStatus.COMPLETED, label: statusLabels[AppointmentStatus.COMPLETED], icon: <CheckCircle className="h-4 w-4 text-muted-foreground" /> },
+                  { value: AppointmentStatus.CANCELLED, label: statusLabels[AppointmentStatus.CANCELLED], icon: <XCircle className="h-4 w-4 text-error-500" /> },
+                  { value: AppointmentStatus.NO_SHOW, label: statusLabels[AppointmentStatus.NO_SHOW], icon: <Ban className="h-4 w-4 text-muted-foreground" /> },
+                ]}
+                value={statusFilter || 'all'}
+                onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v as AppointmentStatus); setPage(1); }}
+                placeholder={t('appointments.allStatuses')}
+                showSearch={false}
+                className="w-full sm:w-40"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
