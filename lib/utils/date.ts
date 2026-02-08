@@ -1,10 +1,20 @@
-import { format, parseISO, isValid, formatDistance, isToday, isBefore, isSameDay, addDays, isPast } from 'date-fns';
+import {
+  format,
+  parseISO,
+  isValid,
+  formatDistance,
+  isToday,
+  isBefore,
+  isSameDay,
+  addDays,
+  isPast,
+} from "date-fns";
 
 export { isToday, isBefore, isSameDay, addDays, isPast };
-import { ar, enUS } from 'date-fns/locale';
-import { getTranslation } from '@/lib/i18n';
+import { ar, enUS } from "date-fns/locale";
+import { getTranslation } from "@/lib/i18n";
 
-export type SupportedLocale = 'ar' | 'en';
+export type SupportedLocale = "ar" | "en";
 
 const locales = {
   ar,
@@ -32,7 +42,7 @@ export function getUserTimezone(): string {
  * The backend sends UTC, we add/subtract offset to get local time
  */
 export function toLocalTime(date: Date | string): Date {
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     // Parse the ISO string - JavaScript automatically converts to local time
     // when using new Date() with ISO string
     return new Date(date);
@@ -46,24 +56,26 @@ export function toLocalTime(date: Date | string): Date {
  * @param dateContext - Optional date for accurate DST handling
  */
 export function utcTimeToLocal(utcTime: string, dateContext?: Date): string {
-  if (!utcTime || !utcTime.includes(':')) return utcTime;
+  if (!utcTime || !utcTime.includes(":")) return utcTime;
 
-  const [hours, minutes] = utcTime.split(':').map(Number);
+  const [hours, minutes] = utcTime.split(":").map(Number);
 
   // Create a UTC date with the given time
   const baseDate = dateContext || new Date();
-  const utcDate = new Date(Date.UTC(
-    baseDate.getFullYear(),
-    baseDate.getMonth(),
-    baseDate.getDate(),
-    hours,
-    minutes,
-    0
-  ));
+  const utcDate = new Date(
+    Date.UTC(
+      baseDate.getFullYear(),
+      baseDate.getMonth(),
+      baseDate.getDate(),
+      hours,
+      minutes,
+      0,
+    ),
+  );
 
   // The Date object automatically converts to local time
-  const localHours = utcDate.getHours().toString().padStart(2, '0');
-  const localMinutes = utcDate.getMinutes().toString().padStart(2, '0');
+  const localHours = utcDate.getHours().toString().padStart(2, "0");
+  const localMinutes = utcDate.getMinutes().toString().padStart(2, "0");
 
   return `${localHours}:${localMinutes}`;
 }
@@ -74,9 +86,9 @@ export function utcTimeToLocal(utcTime: string, dateContext?: Date): string {
  * @param dateContext - Optional date for accurate DST handling
  */
 export function localTimeToUtc(localTime: string, dateContext?: Date): string {
-  if (!localTime || !localTime.includes(':')) return localTime;
+  if (!localTime || !localTime.includes(":")) return localTime;
 
-  const [hours, minutes] = localTime.split(':').map(Number);
+  const [hours, minutes] = localTime.split(":").map(Number);
 
   // Create a local date with the given time
   const baseDate = dateContext || new Date();
@@ -86,12 +98,12 @@ export function localTimeToUtc(localTime: string, dateContext?: Date): string {
     baseDate.getDate(),
     hours,
     minutes,
-    0
+    0,
   );
 
   // Get UTC time
-  const utcHours = localDate.getUTCHours().toString().padStart(2, '0');
-  const utcMinutes = localDate.getUTCMinutes().toString().padStart(2, '0');
+  const utcHours = localDate.getUTCHours().toString().padStart(2, "0");
+  const utcMinutes = localDate.getUTCMinutes().toString().padStart(2, "0");
 
   return `${utcHours}:${utcMinutes}`;
 }
@@ -101,16 +113,19 @@ export function localTimeToUtc(localTime: string, dateContext?: Date): string {
  */
 export function formatDate(
   date: string | Date | undefined | null,
-  formatStr: string = 'PPP',
-  locale: SupportedLocale = 'ar'
+  formatStr: string = "PPP",
+  locale: SupportedLocale = "ar",
 ): string {
-  if (!date) return '';
+  if (!date) return "";
 
   let dateObj: Date;
 
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     // If ISO string with timezone indicator (Z or +/-), convert to local
-    if (date.includes('T') && (date.includes('Z') || date.match(/[+-]\d{2}:\d{2}$/))) {
+    if (
+      date.includes("T") &&
+      (date.includes("Z") || date.match(/[+-]\d{2}:\d{2}$/))
+    ) {
       dateObj = toLocalTime(date);
     } else {
       // Plain date string (YYYY-MM-DD) - parse as local date
@@ -120,7 +135,7 @@ export function formatDate(
     dateObj = date;
   }
 
-  if (!isValid(dateObj)) return '';
+  if (!isValid(dateObj)) return "";
 
   return format(dateObj, formatStr, { locale: locales[locale] });
 }
@@ -134,15 +149,15 @@ export function formatDate(
  */
 export function formatTime(
   time: string | undefined | null,
-  locale: SupportedLocale = 'ar',
-  isUtc: boolean = true
+  locale: SupportedLocale = "ar",
+  isUtc: boolean = true,
 ): string {
-  if (!time) return '';
+  if (!time) return "";
 
   let date: Date;
 
   // Check if it's an ISO datetime string
-  if (time.includes('T')) {
+  if (time.includes("T")) {
     // ISO datetime - JavaScript handles UTC to local conversion automatically
     date = new Date(time);
   } else {
@@ -150,18 +165,18 @@ export function formatTime(
     if (isUtc) {
       // Convert UTC time to local time
       const localTime = utcTimeToLocal(time);
-      const [hours, minutes] = localTime.split(':').map(Number);
+      const [hours, minutes] = localTime.split(":").map(Number);
       date = new Date();
       date.setHours(hours, minutes, 0, 0);
     } else {
       // Already local time
-      const [hours, minutes] = time.split(':').map(Number);
+      const [hours, minutes] = time.split(":").map(Number);
       date = new Date();
       date.setHours(hours, minutes, 0, 0);
     }
   }
 
-  return format(date, 'p', { locale: locales[locale] });
+  return format(date, "p", { locale: locales[locale] });
 }
 
 /**
@@ -169,32 +184,32 @@ export function formatTime(
  */
 export function formatTimeFromDatetime(
   datetime: string | Date | undefined | null,
-  locale: SupportedLocale = 'ar'
+  locale: SupportedLocale = "ar",
 ): string {
-  if (!datetime) return '';
+  if (!datetime) return "";
 
   // new Date() with ISO string automatically converts to local time
-  const dateObj = typeof datetime === 'string' ? new Date(datetime) : datetime;
+  const dateObj = typeof datetime === "string" ? new Date(datetime) : datetime;
 
-  if (!isValid(dateObj)) return '';
+  if (!isValid(dateObj)) return "";
 
-  return format(dateObj, 'p', { locale: locales[locale] });
+  return format(dateObj, "p", { locale: locales[locale] });
 }
 
 /**
  * Get local time string (HH:mm) from ISO datetime or UTC time
  */
 export function getLocalTimeString(datetime: string | Date): string {
-  if (typeof datetime === 'string') {
+  if (typeof datetime === "string") {
     // If ISO datetime
-    if (datetime.includes('T')) {
+    if (datetime.includes("T")) {
       const dateObj = new Date(datetime);
-      return format(dateObj, 'HH:mm');
+      return format(dateObj, "HH:mm");
     }
     // If HH:mm format (UTC), convert to local
     return utcTimeToLocal(datetime);
   }
-  return format(datetime, 'HH:mm');
+  return format(datetime, "HH:mm");
 }
 
 /**
@@ -202,15 +217,18 @@ export function getLocalTimeString(datetime: string | Date): string {
  */
 export function getRelativeTime(
   date: string | Date | undefined | null,
-  locale: SupportedLocale = 'ar'
+  locale: SupportedLocale = "ar",
 ): string {
-  if (!date) return '';
+  if (!date) return "";
 
   let dateObj: Date;
 
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     // If ISO string with timezone indicator, convert to local
-    if (date.includes('T') && (date.includes('Z') || date.match(/[+-]\d{2}:\d{2}$/))) {
+    if (
+      date.includes("T") &&
+      (date.includes("Z") || date.match(/[+-]\d{2}:\d{2}$/))
+    ) {
       dateObj = toLocalTime(date);
     } else {
       dateObj = parseISO(date);
@@ -219,7 +237,7 @@ export function getRelativeTime(
     dateObj = date;
   }
 
-  if (!isValid(dateObj)) return '';
+  if (!isValid(dateObj)) return "";
 
   return formatDistance(dateObj, new Date(), {
     addSuffix: true,
@@ -231,7 +249,7 @@ export function getRelativeTime(
  * Format date for API (YYYY-MM-DD) - uses local date
  */
 export function toApiDate(date: Date): string {
-  return format(date, 'yyyy-MM-dd');
+  return format(date, "yyyy-MM-dd");
 }
 
 /**
@@ -245,7 +263,7 @@ export function toApiDatetime(date: Date): string {
  * Create a datetime from local date and local time
  */
 export function createLocalDatetime(date: Date, time: string): Date {
-  const [hours, minutes] = time.split(':').map(Number);
+  const [hours, minutes] = time.split(":").map(Number);
   const localDate = new Date(date);
   localDate.setHours(hours, minutes, 0, 0);
   return localDate;
@@ -256,15 +274,17 @@ export function createLocalDatetime(date: Date, time: string): Date {
  * Useful when user selects a time slot that's in UTC
  */
 export function createDatetimeFromUtcTime(date: Date, utcTime: string): Date {
-  const [hours, minutes] = utcTime.split(':').map(Number);
-  return new Date(Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    hours,
-    minutes,
-    0
-  ));
+  const [hours, minutes] = utcTime.split(":").map(Number);
+  return new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hours,
+      minutes,
+      0,
+    ),
+  );
 }
 
 /**
@@ -272,10 +292,18 @@ export function createDatetimeFromUtcTime(date: Date, utcTime: string): Date {
  */
 export function getDayName(
   dayIndex: number,
-  locale: SupportedLocale = 'ar'
+  locale: SupportedLocale = "ar",
 ): string {
-  const dayKeys = ['days.sunday', 'days.monday', 'days.tuesday', 'days.wednesday', 'days.thursday', 'days.friday', 'days.saturday'];
-  return getTranslation(dayKeys[dayIndex], locale) || '';
+  const dayKeys = [
+    "days.sunday",
+    "days.monday",
+    "days.tuesday",
+    "days.wednesday",
+    "days.thursday",
+    "days.friday",
+    "days.saturday",
+  ];
+  return getTranslation(dayKeys[dayIndex], locale) || "";
 }
 
 /**

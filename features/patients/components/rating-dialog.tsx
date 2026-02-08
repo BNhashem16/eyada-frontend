@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Star, Loader2, Trash2 } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Star, Loader2, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,15 +20,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Appointment } from '@/types';
-import { useSubmitRating, useUpdateRating, useDeleteRating, PatientRating } from '../hooks/use-patient';
-import { useToast } from '@/hooks/use-toast';
-import { getInitials } from '@/lib/utils';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { useTranslation } from '@/lib/i18n';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Appointment } from "@/types";
+import {
+  useSubmitRating,
+  useUpdateRating,
+  useDeleteRating,
+  PatientRating,
+} from "../hooks/use-patient";
+import { useToast } from "@/hooks/use-toast";
+import { getInitials } from "@/lib/utils";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { useTranslation } from "@/lib/i18n";
 
 interface RatingDialogProps {
   appointment: Appointment | null;
@@ -36,12 +41,16 @@ interface RatingDialogProps {
   onClose: () => void;
 }
 
-export function RatingDialog({ appointment, existingRating, onClose }: RatingDialogProps) {
+export function RatingDialog({
+  appointment,
+  existingRating,
+  onClose,
+}: RatingDialogProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
 
   const submitMutation = useSubmitRating();
   const updateMutation = useUpdateRating();
@@ -53,10 +62,10 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
   useEffect(() => {
     if (existingRating) {
       setRating(existingRating.rating);
-      setComment(existingRating.review || '');
+      setComment(existingRating.review || "");
     } else {
       setRating(0);
-      setComment('');
+      setComment("");
     }
   }, [existingRating]);
 
@@ -73,9 +82,9 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
           },
         });
         toast({
-          title: t('common.success'),
-          description: t('rating.updateSuccess'),
-          variant: 'success',
+          title: t("common.success"),
+          description: t("rating.updateSuccess"),
+          variant: "success",
         });
       } else if (appointment) {
         await submitMutation.mutateAsync({
@@ -84,17 +93,17 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
           review: comment.trim() || undefined,
         });
         toast({
-          title: t('common.success'),
-          description: t('toast.success'),
-          variant: 'success',
+          title: t("common.success"),
+          description: t("toast.success"),
+          variant: "success",
         });
       }
       handleClose();
     } catch (error) {
       toast({
-        title: t('common.error'),
-        description: t('errors.somethingWentWrong'),
-        variant: 'error',
+        title: t("common.error"),
+        description: t("errors.somethingWentWrong"),
+        variant: "error",
       });
     }
   };
@@ -105,16 +114,16 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
     try {
       await deleteMutation.mutateAsync(existingRating.id);
       toast({
-        title: t('common.success'),
-        description: t('rating.deleteSuccess'),
-        variant: 'success',
+        title: t("common.success"),
+        description: t("rating.deleteSuccess"),
+        variant: "success",
       });
       handleClose();
     } catch (error) {
       toast({
-        title: t('common.error'),
-        description: t('errors.somethingWentWrong'),
-        variant: 'error',
+        title: t("common.error"),
+        description: t("errors.somethingWentWrong"),
+        variant: "error",
       });
     }
   };
@@ -122,16 +131,19 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
   const handleClose = () => {
     setRating(0);
     setHoveredRating(0);
-    setComment('');
+    setComment("");
     onClose();
   };
 
   const doctorName = isEditMode
-    ? existingRating?.doctorProfile?.user?.fullName || ''
-    : appointment?.clinic?.doctorProfile?.user?.fullName || '';
+    ? existingRating?.doctorProfile?.user?.fullName || ""
+    : appointment?.clinic?.doctorProfile?.user?.fullName || "";
 
   const isOpen = isEditMode ? !!existingRating : !!appointment;
-  const isPending = submitMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+  const isPending =
+    submitMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending;
 
   const doctorProfilePicture = isEditMode
     ? undefined
@@ -146,10 +158,10 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center">
-            {isEditMode ? t('rating.editTitle') : t('rating.title')}
+            {isEditMode ? t("rating.editTitle") : t("rating.title")}
           </DialogTitle>
           <DialogDescription className="text-center">
-            {isEditMode ? t('rating.editSubtitle') : t('rating.subtitle')}
+            {isEditMode ? t("rating.editSubtitle") : t("rating.subtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -162,11 +174,11 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
             </Avatar>
             <div>
               <p className="font-semibold text-foreground">
-                {t('auth.doctor')}. {doctorName}
+                {t("auth.doctor")}. {doctorName}
               </p>
               {specialtyName && (
                 <p className="text-sm text-muted-foreground">
-                  {getLocalizedText(specialtyName, 'ar')}
+                  {getLocalizedText(specialtyName, "ar")}
                 </p>
               )}
             </div>
@@ -187,8 +199,8 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
                 <Star
                   className={`h-10 w-10 transition-colors ${
                     star <= (hoveredRating || rating)
-                      ? 'fill-warning-400 text-warning-400'
-                      : 'text-muted-foreground/30'
+                      ? "fill-warning-400 text-warning-400"
+                      : "text-muted-foreground/30"
                   }`}
                 />
               </button>
@@ -197,12 +209,12 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
 
           {/* Rating Label */}
           <p className="text-center text-sm text-muted-foreground">
-            {rating === 0 && t('rating.selectRating')}
-            {rating === 1 && t('rating.veryBad')}
-            {rating === 2 && t('rating.bad')}
-            {rating === 3 && t('rating.okay')}
-            {rating === 4 && t('rating.good')}
-            {rating === 5 && t('rating.excellent')}
+            {rating === 0 && t("rating.selectRating")}
+            {rating === 1 && t("rating.veryBad")}
+            {rating === 2 && t("rating.bad")}
+            {rating === 3 && t("rating.okay")}
+            {rating === 4 && t("rating.good")}
+            {rating === 5 && t("rating.excellent")}
           </p>
 
           {/* Comment */}
@@ -211,7 +223,7 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
               htmlFor="comment"
               className="block text-sm font-medium text-foreground mb-2"
             >
-              {t('rating.commentOptional')}
+              {t("rating.commentOptional")}
             </label>
             <textarea
               id="comment"
@@ -219,17 +231,19 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               maxLength={1000}
-              placeholder={t('rating.commentPlaceholder')}
+              placeholder={t("rating.commentPlaceholder")}
               disabled={isPending}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none resize-none disabled:opacity-50"
             />
-            <p className="text-xs text-muted-foreground text-end mt-1">{comment.length}/1000</p>
+            <p className="text-xs text-muted-foreground text-end mt-1">
+              {comment.length}/1000
+            </p>
           </div>
 
           {/* Pending approval notice for edit mode */}
           {isEditMode && (
             <p className="text-center text-xs text-muted-foreground bg-warning-50 dark:bg-warning-900/20 p-2 rounded-lg">
-              {t('rating.pendingApprovalNotice')}
+              {t("rating.pendingApprovalNotice")}
             </p>
           )}
         </div>
@@ -249,13 +263,15 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{t('rating.deleteConfirmTitle')}</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    {t("rating.deleteConfirmTitle")}
+                  </AlertDialogTitle>
                   <AlertDialogDescription>
-                    {t('rating.deleteConfirmDescription')}
+                    {t("rating.deleteConfirmDescription")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                  <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -263,7 +279,7 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
                     {deleteMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      t('common.delete')
+                      t("common.delete")
                     )}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -271,18 +287,18 @@ export function RatingDialog({ appointment, existingRating, onClose }: RatingDia
             </AlertDialog>
           )}
           <Button variant="outline" onClick={handleClose} disabled={isPending}>
-            {t('common.cancel')}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={rating === 0 || isPending}>
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                {t('common.submitting')}
+                {t("common.submitting")}
               </>
             ) : isEditMode ? (
-              t('rating.updateRating')
+              t("rating.updateRating")
             ) : (
-              t('rating.submitRating')
+              t("rating.submitRating")
             )}
           </Button>
         </DialogFooter>

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import Link from 'next/link';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from '@/lib/i18n';
+import { useEffect } from "react";
+import Link from "next/link";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n";
 
 export default function Error({
   error,
@@ -27,24 +27,24 @@ export default function Error({
           <AlertTriangle className="h-10 w-10 text-error-600 dark:text-error-400" />
         </div>
         <h1 className="text-2xl font-bold text-foreground mb-2">
-          {t('errors.unexpectedError')}
+          {t("errors.unexpectedError")}
         </h1>
         <p className="text-muted-foreground mb-6">
-          {t('errors.unexpectedErrorDesc')}
+          {t("errors.unexpectedErrorDesc")}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button onClick={reset} variant="default">
             <RefreshCw className="h-4 w-4 ms-2" />
-            {t('errors.tryAgain')}
+            {t("errors.tryAgain")}
           </Button>
           <Button asChild variant="outline">
             <Link href="/">
               <Home className="h-4 w-4 ms-2" />
-              {t('errors.goHome')}
+              {t("errors.goHome")}
             </Link>
           </Button>
         </div>
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === "development" && (
           <div className="mt-6 p-4 bg-muted rounded-lg text-start">
             <p className="text-xs font-mono text-error-600 dark:text-error-400 break-all">
               {error.message}

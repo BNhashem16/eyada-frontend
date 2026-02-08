@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
 import {
   Star,
   MapPin,
@@ -12,20 +12,20 @@ import {
   ChevronLeft,
   Building2,
   Stethoscope,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useDoctor, useDoctorRatings } from '../hooks/use-doctors';
-import { ClinicCard } from '@/features/clinics/components/clinic-card';
-import { RatingsList } from './ratings-list';
-import { getInitials } from '@/lib/utils';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { useTranslation } from '@/lib/i18n';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDoctor, useDoctorRatings } from "../hooks/use-doctors";
+import { ClinicCard } from "@/features/clinics/components/clinic-card";
+import { RatingsList } from "./ratings-list";
+import { getInitials } from "@/lib/utils";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { useTranslation } from "@/lib/i18n";
 
 interface DoctorProfileProps {
   doctorId: string;
@@ -34,7 +34,7 @@ interface DoctorProfileProps {
 export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
   const { t } = useTranslation();
   const { data: doctor, isLoading, isError } = useDoctor(doctorId);
-  const [activeTab, setActiveTab] = useState('about');
+  const [activeTab, setActiveTab] = useState("about");
 
   if (isLoading) {
     return <DoctorProfileSkeleton />;
@@ -45,10 +45,10 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
           <p className="text-error-600 dark:text-error-400">
-            {t('doctors.loadError')}
+            {t("doctors.loadError")}
           </p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/doctors">{t('doctors.backToSearch')}</Link>
+            <Link href="/doctors">{t("doctors.backToSearch")}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -72,7 +72,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                 alt={doctor.user?.name}
               />
               <AvatarFallback className="text-3xl bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400">
-                {getInitials(doctor.user?.name || '')}
+                {getInitials(doctor.user?.name || "")}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -83,11 +83,12 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-2xl font-bold text-foreground">
-                    {t('doctors.doctorPrefix')} {doctor.user?.fullName || doctor.user?.name}
+                    {t("doctors.doctorPrefix")}{" "}
+                    {doctor.user?.fullName || doctor.user?.name}
                   </h1>
                 </div>
                 <p className="text-muted-foreground mt-1">
-                  {getLocalizedText(doctor.specialty?.name, 'ar')}
+                  {getLocalizedText(doctor.specialty?.name, "ar")}
                 </p>
 
                 {/* Rating */}
@@ -98,15 +99,17 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                         key={i}
                         className={`h-5 w-5 ${
                           i < Math.round(averageRating)
-                            ? 'fill-warning-400 text-warning-400'
-                            : 'text-muted-foreground/30'
+                            ? "fill-warning-400 text-warning-400"
+                            : "text-muted-foreground/30"
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="font-semibold">{averageRating.toFixed(1)}</span>
+                  <span className="font-semibold">
+                    {averageRating.toFixed(1)}
+                  </span>
                   <span className="text-sm text-muted-foreground">
-                    ({totalRatings} {t('doctors.reviews')})
+                    ({totalRatings} {t("doctors.reviews")})
                   </span>
                 </div>
               </div>
@@ -118,14 +121,18 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                     <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       {doctor.yearsOfExperience}+
                     </div>
-                    <div className="text-sm text-muted-foreground">{t('doctors.yearsExp')}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {t("doctors.yearsExp")}
+                    </div>
                   </div>
                 )}
                 <div>
                   <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                     {doctor.clinics?.length || 0}
                   </div>
-                  <div className="text-sm text-muted-foreground">{t('clinics.clinicCount')}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {t("clinics.clinicCount")}
+                  </div>
                 </div>
               </div>
             </div>
@@ -136,9 +143,9 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start overflow-x-auto">
-          <TabsTrigger value="about">{t('doctors.about')}</TabsTrigger>
-          <TabsTrigger value="clinics">{t('clinics.title')}</TabsTrigger>
-          <TabsTrigger value="ratings">{t('doctors.ratings')}</TabsTrigger>
+          <TabsTrigger value="about">{t("doctors.about")}</TabsTrigger>
+          <TabsTrigger value="clinics">{t("clinics.title")}</TabsTrigger>
+          <TabsTrigger value="ratings">{t("doctors.ratings")}</TabsTrigger>
         </TabsList>
 
         {/* About Tab */}
@@ -147,11 +154,13 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
           {doctor.bio && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">{t('doctors.aboutDoctor')}</CardTitle>
+                <CardTitle className="text-lg">
+                  {t("doctors.aboutDoctor")}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-foreground whitespace-pre-line">
-                  {getLocalizedText(doctor.bio, 'ar')}
+                  {getLocalizedText(doctor.bio, "ar")}
                 </p>
               </CardContent>
             </Card>
@@ -163,12 +172,12 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <GraduationCap className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                  {t('doctors.qualifications')}
+                  {t("doctors.qualifications")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-foreground whitespace-pre-line">
-                  {getLocalizedText(doctor.qualifications, 'ar')}
+                  {getLocalizedText(doctor.qualifications, "ar")}
                 </p>
               </CardContent>
             </Card>
@@ -180,7 +189,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Phone className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                  {t('doctors.contactInfo')}
+                  {t("doctors.contactInfo")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -204,7 +213,9 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
             <Card>
               <CardContent className="py-10 text-center">
                 <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                <p className="text-muted-foreground">{t('clinics.noClinicsRegistered')}</p>
+                <p className="text-muted-foreground">
+                  {t("clinics.noClinicsRegistered")}
+                </p>
               </CardContent>
             </Card>
           )}

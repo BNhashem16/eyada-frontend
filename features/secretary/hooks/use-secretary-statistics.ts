@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { apiGet } from '@/lib/api';
-import { SECRETARY_ENDPOINTS } from '@/lib/api/endpoints';
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api";
+import { SECRETARY_ENDPOINTS } from "@/lib/api/endpoints";
 
 // Types for statistics
 export interface TodayOverview {
@@ -80,7 +80,7 @@ export interface RevisitEligibility {
   } | null;
 }
 
-export type StatisticsPeriodType = 'today' | 'week' | 'month' | 'custom';
+export type StatisticsPeriodType = "today" | "week" | "month" | "custom";
 
 export interface StatisticsFilterOptions {
   period?: StatisticsPeriodType;
@@ -99,13 +99,13 @@ export interface PatientHistoryFilterOptions {
 // Hook: Get today's overview
 export function useSecretaryTodayOverview(clinicId?: string) {
   return useQuery({
-    queryKey: ['secretary-today-overview', clinicId],
+    queryKey: ["secretary-today-overview", clinicId],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (clinicId) params.append('clinicId', clinicId);
+      if (clinicId) params.append("clinicId", clinicId);
       const query = params.toString();
       return apiGet<TodayOverview>(
-        `${SECRETARY_ENDPOINTS.TODAY_OVERVIEW}${query ? `?${query}` : ''}`
+        `${SECRETARY_ENDPOINTS.TODAY_OVERVIEW}${query ? `?${query}` : ""}`,
       );
     },
     staleTime: 1000 * 30,
@@ -115,19 +115,19 @@ export function useSecretaryTodayOverview(clinicId?: string) {
 
 // Hook: Get statistics for period
 export function useSecretaryStatistics(options: StatisticsFilterOptions = {}) {
-  const { period = 'month', dateFrom, dateTo, clinicId } = options;
+  const { period = "month", dateFrom, dateTo, clinicId } = options;
 
   return useQuery({
-    queryKey: ['secretary-statistics', { period, dateFrom, dateTo, clinicId }],
+    queryKey: ["secretary-statistics", { period, dateFrom, dateTo, clinicId }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('period', period);
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
-      if (clinicId) params.append('clinicId', clinicId);
+      params.append("period", period);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
+      if (clinicId) params.append("clinicId", clinicId);
 
       return apiGet<SecretaryStatistics>(
-        `${SECRETARY_ENDPOINTS.STATISTICS}?${params.toString()}`
+        `${SECRETARY_ENDPOINTS.STATISTICS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 60 * 5,
@@ -135,20 +135,25 @@ export function useSecretaryStatistics(options: StatisticsFilterOptions = {}) {
 }
 
 // Hook: Get patient visit history
-export function useSecretaryPatientHistory(options: PatientHistoryFilterOptions = {}) {
+export function useSecretaryPatientHistory(
+  options: PatientHistoryFilterOptions = {},
+) {
   const { patientName, patientPhone, page = 1, limit = 20 } = options;
 
   return useQuery({
-    queryKey: ['secretary-patient-history', { patientName, patientPhone, page, limit }],
+    queryKey: [
+      "secretary-patient-history",
+      { patientName, patientPhone, page, limit },
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (patientName) params.append('patientName', patientName);
-      if (patientPhone) params.append('patientPhone', patientPhone);
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      if (patientName) params.append("patientName", patientName);
+      if (patientPhone) params.append("patientPhone", patientPhone);
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
       return apiGet<PatientHistoryResponse>(
-        `${SECRETARY_ENDPOINTS.PATIENT_HISTORY}?${params.toString()}`
+        `${SECRETARY_ENDPOINTS.PATIENT_HISTORY}?${params.toString()}`,
       );
     },
     enabled: !!(patientName || patientPhone),
@@ -157,16 +162,19 @@ export function useSecretaryPatientHistory(options: PatientHistoryFilterOptions 
 }
 
 // Hook: Check if patient can revisit
-export function useSecretaryCheckRevisit(clinicId: string, patientPhone?: string) {
+export function useSecretaryCheckRevisit(
+  clinicId: string,
+  patientPhone?: string,
+) {
   return useQuery({
-    queryKey: ['secretary-check-revisit', { clinicId, patientPhone }],
+    queryKey: ["secretary-check-revisit", { clinicId, patientPhone }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('clinicId', clinicId);
-      if (patientPhone) params.append('patientPhone', patientPhone);
+      params.append("clinicId", clinicId);
+      if (patientPhone) params.append("patientPhone", patientPhone);
 
       return apiGet<RevisitEligibility>(
-        `${SECRETARY_ENDPOINTS.CHECK_REVISIT}?${params.toString()}`
+        `${SECRETARY_ENDPOINTS.CHECK_REVISIT}?${params.toString()}`,
       );
     },
     enabled: !!clinicId && !!patientPhone,

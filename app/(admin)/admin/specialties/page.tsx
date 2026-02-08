@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Grid3X3 } from 'lucide-react';
-import { SpecialtiesManagement } from '@/features/admin';
-import { useTranslation } from '@/lib/i18n';
+import { Grid3X3 } from "lucide-react";
+import { SpecialtiesManagement } from "@/features/admin";
+import { useTranslation } from "@/lib/i18n";
 
 export default function AdminSpecialtiesPage() {
   const { t } = useTranslation();
@@ -16,8 +16,12 @@ export default function AdminSpecialtiesPage() {
             <Grid3X3 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('admin.specialtiesPage.title')}</h1>
-            <p className="text-muted-foreground">{t('admin.specialtiesPage.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("admin.specialtiesPage.title")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("admin.specialtiesPage.subtitle")}
+            </p>
           </div>
         </div>
       </div>

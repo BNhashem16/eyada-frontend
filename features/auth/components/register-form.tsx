@@ -1,25 +1,36 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff, User, Phone, Stethoscope } from 'lucide-react';
-import { useState } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  User,
+  Phone,
+  Stethoscope,
+} from "lucide-react";
+import { useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { createRegisterSchemaWithConfirm, type RegisterFormData } from '../schemas';
-import { useRegister } from '../hooks';
-import { useTranslation } from '@/lib/i18n';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  createRegisterSchemaWithConfirm,
+  type RegisterFormData,
+} from "../schemas";
+import { useRegister } from "../hooks";
+import { useTranslation } from "@/lib/i18n";
 
 export function RegisterForm() {
   const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
-  const roleParam = searchParams.get('role');
-  const defaultRole = roleParam === 'doctor' ? 'DOCTOR' : 'PATIENT';
+  const roleParam = searchParams.get("role");
+  const defaultRole = roleParam === "doctor" ? "DOCTOR" : "PATIENT";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,17 +45,17 @@ export function RegisterForm() {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(createRegisterSchemaWithConfirm(locale)),
     defaultValues: {
-      fullName: '',
-      email: '',
-      phoneNumber: '',
-      password: '',
-      confirmPassword: '',
-      role: defaultRole as 'PATIENT' | 'DOCTOR',
+      fullName: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      confirmPassword: "",
+      role: defaultRole as "PATIENT" | "DOCTOR",
       agreeTerms: false,
     },
   });
 
-  const selectedRole = watch('role');
+  const selectedRole = watch("role");
 
   const onSubmit = (data: RegisterFormData) => {
     const { confirmPassword, agreeTerms, ...registerData } = data;
@@ -55,39 +66,39 @@ export function RegisterForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {/* Role Selection */}
       <div className="space-y-2">
-        <Label>{t('auth.accountType')}</Label>
+        <Label>{t("auth.accountType")}</Label>
         <div className="grid grid-cols-2 gap-3">
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
-              selectedRole === 'PATIENT'
-                ? 'border-primary-500 bg-primary-100 dark:bg-primary-800/40 text-primary-700 dark:text-primary-300 shadow-sm'
-                : 'border-border bg-muted/30 dark:bg-muted/10 text-muted-foreground hover:border-primary-300 dark:hover:border-primary-700'
+              selectedRole === "PATIENT"
+                ? "border-primary-500 bg-primary-100 dark:bg-primary-800/40 text-primary-700 dark:text-primary-300 shadow-sm"
+                : "border-border bg-muted/30 dark:bg-muted/10 text-muted-foreground hover:border-primary-300 dark:hover:border-primary-700"
             }`}
           >
             <input
               type="radio"
               value="PATIENT"
-              {...registerField('role')}
+              {...registerField("role")}
               className="sr-only"
             />
             <User className="h-5 w-5" />
-            <span className="font-medium">{t('auth.patient')}</span>
+            <span className="font-medium">{t("auth.patient")}</span>
           </label>
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
-              selectedRole === 'DOCTOR'
-                ? 'border-primary-500 bg-primary-100 dark:bg-primary-800/40 text-primary-700 dark:text-primary-300 shadow-sm'
-                : 'border-border bg-muted/30 dark:bg-muted/10 text-muted-foreground hover:border-primary-300 dark:hover:border-primary-700'
+              selectedRole === "DOCTOR"
+                ? "border-primary-500 bg-primary-100 dark:bg-primary-800/40 text-primary-700 dark:text-primary-300 shadow-sm"
+                : "border-border bg-muted/30 dark:bg-muted/10 text-muted-foreground hover:border-primary-300 dark:hover:border-primary-700"
             }`}
           >
             <input
               type="radio"
               value="DOCTOR"
-              {...registerField('role')}
+              {...registerField("role")}
               className="sr-only"
             />
             <Stethoscope className="h-5 w-5" />
-            <span className="font-medium">{t('auth.doctor')}</span>
+            <span className="font-medium">{t("auth.doctor")}</span>
           </label>
         </div>
       </div>
@@ -95,16 +106,16 @@ export function RegisterForm() {
       {/* Full Name */}
       <div className="space-y-2">
         <Label htmlFor="fullName" required>
-          {t('auth.fullName')}
+          {t("auth.fullName")}
         </Label>
         <Input
           id="fullName"
           type="text"
-          placeholder={t('auth.fullNamePlaceholder')}
+          placeholder={t("auth.fullNamePlaceholder")}
           icon={<User className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.fullName}
-          {...registerField('fullName')}
+          {...registerField("fullName")}
         />
         {errors.fullName && (
           <p className="text-sm text-error-500">{errors.fullName.message}</p>
@@ -114,16 +125,16 @@ export function RegisterForm() {
       {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email" required>
-          {t('auth.email')}
+          {t("auth.email")}
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder={t('placeholder.email')}
+          placeholder={t("placeholder.email")}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.email}
-          {...registerField('email')}
+          {...registerField("email")}
         />
         {errors.email && (
           <p className="text-sm text-error-500">{errors.email.message}</p>
@@ -133,16 +144,16 @@ export function RegisterForm() {
       {/* Phone Number */}
       <div className="space-y-2">
         <Label htmlFor="phoneNumber" required>
-          {t('auth.phoneNumber')}
+          {t("auth.phoneNumber")}
         </Label>
         <Input
           id="phoneNumber"
           type="tel"
-          placeholder={t('placeholder.phone')}
+          placeholder={t("placeholder.phone")}
           icon={<Phone className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.phoneNumber}
-          {...registerField('phoneNumber')}
+          {...registerField("phoneNumber")}
         />
         {errors.phoneNumber && (
           <p className="text-sm text-error-500">{errors.phoneNumber.message}</p>
@@ -152,18 +163,18 @@ export function RegisterForm() {
       {/* Password */}
       <div className="space-y-2">
         <Label htmlFor="password" required>
-          {t('auth.password')}
+          {t("auth.password")}
         </Label>
         <div className="relative">
           <Input
             id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder={t('placeholder.password')}
+            type={showPassword ? "text" : "password"}
+            placeholder={t("placeholder.password")}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"
             error={!!errors.password}
             className="pe-10"
-            {...registerField('password')}
+            {...registerField("password")}
           />
           <button
             type="button"
@@ -185,18 +196,18 @@ export function RegisterForm() {
       {/* Confirm Password */}
       <div className="space-y-2">
         <Label htmlFor="confirmPassword" required>
-          {t('auth.confirmPassword')}
+          {t("auth.confirmPassword")}
         </Label>
         <div className="relative">
           <Input
             id="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder={t('placeholder.password')}
+            type={showConfirmPassword ? "text" : "password"}
+            placeholder={t("placeholder.password")}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"
             error={!!errors.confirmPassword}
             className="pe-10"
-            {...registerField('confirmPassword')}
+            {...registerField("confirmPassword")}
           />
           <button
             type="button"
@@ -221,18 +232,26 @@ export function RegisterForm() {
       <div className="flex items-start gap-3">
         <Checkbox
           id="agreeTerms"
-          checked={watch('agreeTerms')}
-          onCheckedChange={(checked) => setValue('agreeTerms', !!checked, { shouldValidate: true })}
+          checked={watch("agreeTerms")}
+          onCheckedChange={(checked) =>
+            setValue("agreeTerms", !!checked, { shouldValidate: true })
+          }
           className="mt-0.5"
         />
         <label htmlFor="agreeTerms" className="text-sm text-muted-foreground">
-          {t('auth.agreeToTerms')}{' '}
-          <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:underline">
-            {t('auth.termsAndConditions')}
-          </Link>{' '}
-          {t('common.and')}{' '}
-          <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:underline">
-            {t('auth.privacyPolicy')}
+          {t("auth.agreeToTerms")}{" "}
+          <Link
+            href="/terms"
+            className="text-primary-600 dark:text-primary-400 hover:underline"
+          >
+            {t("auth.termsAndConditions")}
+          </Link>{" "}
+          {t("common.and")}{" "}
+          <Link
+            href="/privacy"
+            className="text-primary-600 dark:text-primary-400 hover:underline"
+          >
+            {t("auth.privacyPolicy")}
           </Link>
         </label>
       </div>
@@ -242,14 +261,17 @@ export function RegisterForm() {
 
       {/* Submit Button */}
       <Button type="submit" className="w-full" size="lg" loading={isPending}>
-        {t('auth.registerButton')}
+        {t("auth.registerButton")}
       </Button>
 
       {/* Login Link */}
       <p className="text-center text-muted-foreground">
-        {t('auth.hasAccount')}{' '}
-        <Link href="/login" className="text-primary-600 dark:text-primary-400 hover:underline">
-          {t('auth.login')}
+        {t("auth.hasAccount")}{" "}
+        <Link
+          href="/login"
+          className="text-primary-600 dark:text-primary-400 hover:underline"
+        >
+          {t("auth.login")}
         </Link>
       </p>
     </form>

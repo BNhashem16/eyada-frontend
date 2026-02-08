@@ -1,19 +1,28 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Search, Filter, X, ChevronDown, Stethoscope, MapPin, Building2, Star } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import { Badge } from '@/components/ui/badge';
-import { Specialty, State, City } from '@/types';
-import { apiGet } from '@/lib/api';
-import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
-import { useTranslation } from '@/lib/i18n';
+import { useEffect, useState } from "react";
+import {
+  Search,
+  Filter,
+  X,
+  ChevronDown,
+  Stethoscope,
+  MapPin,
+  Building2,
+  Star,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { Badge } from "@/components/ui/badge";
+import { Specialty, State, City } from "@/types";
+import { apiGet } from "@/lib/api";
+import { PUBLIC_ENDPOINTS } from "@/lib/api/endpoints";
+import { useTranslation } from "@/lib/i18n";
 
 // Import and re-export from hook for backward compatibility
-import type { DoctorFilters } from '../hooks/use-doctors';
+import type { DoctorFilters } from "../hooks/use-doctors";
 export type { DoctorFilters };
 
 interface DoctorFiltersProps {
@@ -21,29 +30,36 @@ interface DoctorFiltersProps {
   onFiltersChange: (filters: DoctorFilters) => void;
 }
 
-export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFiltersProps) {
+export function DoctorFiltersComponent({
+  filters,
+  onFiltersChange,
+}: DoctorFiltersProps) {
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [searchInput, setSearchInput] = useState(filters.search || '');
-  const [priceMinInput, setPriceMinInput] = useState(filters.priceMin?.toString() || '');
-  const [priceMaxInput, setPriceMaxInput] = useState(filters.priceMax?.toString() || '');
+  const [searchInput, setSearchInput] = useState(filters.search || "");
+  const [priceMinInput, setPriceMinInput] = useState(
+    filters.priceMin?.toString() || "",
+  );
+  const [priceMaxInput, setPriceMaxInput] = useState(
+    filters.priceMax?.toString() || "",
+  );
   const { t } = useTranslation();
 
   // Sync local state with filters when they change externally
   useEffect(() => {
-    setSearchInput(filters.search || '');
-    setPriceMinInput(filters.priceMin?.toString() || '');
-    setPriceMaxInput(filters.priceMax?.toString() || '');
+    setSearchInput(filters.search || "");
+    setPriceMinInput(filters.priceMin?.toString() || "");
+    setPriceMaxInput(filters.priceMax?.toString() || "");
   }, [filters.search, filters.priceMin, filters.priceMax]);
 
   const handleSearch = () => {
-    handleFilterChange('search', searchInput || undefined);
+    handleFilterChange("search", searchInput || undefined);
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -60,14 +76,20 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
     const fetchData = async () => {
       try {
         const [specialtiesRes, statesRes] = await Promise.all([
-          apiGet<{ data: Specialty[] } | Specialty[]>(PUBLIC_ENDPOINTS.SPECIALTIES),
+          apiGet<{ data: Specialty[] } | Specialty[]>(
+            PUBLIC_ENDPOINTS.SPECIALTIES,
+          ),
           apiGet<{ data: State[] } | State[]>(PUBLIC_ENDPOINTS.STATES),
         ]);
         // Handle both { data: [...] } and [...] response formats
-        setSpecialties(Array.isArray(specialtiesRes) ? specialtiesRes : specialtiesRes.data || []);
+        setSpecialties(
+          Array.isArray(specialtiesRes)
+            ? specialtiesRes
+            : specialtiesRes.data || [],
+        );
         setStates(Array.isArray(statesRes) ? statesRes : statesRes.data || []);
       } catch (error) {
-        console.error('Failed to fetch filter data:', error);
+        console.error("Failed to fetch filter data:", error);
       }
     };
     fetchData();
@@ -79,11 +101,13 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       const fetchCities = async () => {
         try {
           const citiesRes = await apiGet<{ data: City[] } | City[]>(
-            `${PUBLIC_ENDPOINTS.CITIES}?stateId=${filters.stateId}`
+            `${PUBLIC_ENDPOINTS.CITIES}?stateId=${filters.stateId}`,
           );
-          setCities(Array.isArray(citiesRes) ? citiesRes : citiesRes.data || []);
+          setCities(
+            Array.isArray(citiesRes) ? citiesRes : citiesRes.data || [],
+          );
         } catch (error) {
-          console.error('Failed to fetch cities:', error);
+          console.error("Failed to fetch cities:", error);
         }
       };
       fetchCities();
@@ -92,11 +116,14 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
     }
   }, [filters.stateId]);
 
-  const handleFilterChange = (key: keyof DoctorFilters, value: string | number | undefined) => {
+  const handleFilterChange = (
+    key: keyof DoctorFilters,
+    value: string | number | undefined,
+  ) => {
     const newFilters = { ...filters, [key]: value };
 
     // Clear city when state changes
-    if (key === 'stateId') {
+    if (key === "stateId") {
       newFilters.cityId = undefined;
     }
 
@@ -104,9 +131,9 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
   };
 
   const clearFilters = () => {
-    setSearchInput('');
-    setPriceMinInput('');
-    setPriceMaxInput('');
+    setSearchInput("");
+    setPriceMinInput("");
+    setPriceMaxInput("");
     onFiltersChange({});
   };
 
@@ -117,7 +144,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       {/* Search */}
       <div className="flex gap-2">
         <Input
-          placeholder={t('doctors.searchPlaceholder')}
+          placeholder={t("doctors.searchPlaceholder")}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleSearchKeyDown}
@@ -135,54 +162,87 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       {/* Specialty */}
       <SearchableSelect
         options={[
-          { value: '', label: t('doctors.allSpecialties'), icon: <Stethoscope className="h-4 w-4" /> },
+          {
+            value: "",
+            label: t("doctors.allSpecialties"),
+            icon: <Stethoscope className="h-4 w-4" />,
+          },
           ...specialties.map((specialty) => ({
             value: specialty.id,
-            label: specialty.name?.ar || specialty.name?.en || (specialty as any).nameAr || (specialty as any).nameEn || '',
+            label:
+              specialty.name?.ar ||
+              specialty.name?.en ||
+              (specialty as any).nameAr ||
+              (specialty as any).nameEn ||
+              "",
             icon: <Stethoscope className="h-4 w-4" />,
           })),
         ]}
-        value={filters.specialtyId || ''}
-        onValueChange={(value) => handleFilterChange('specialtyId', value || undefined)}
-        placeholder={t('doctors.filterBySpecialty')}
-        searchPlaceholder={t('common.search')}
-        emptyMessage={t('common.noResults')}
+        value={filters.specialtyId || ""}
+        onValueChange={(value) =>
+          handleFilterChange("specialtyId", value || undefined)
+        }
+        placeholder={t("doctors.filterBySpecialty")}
+        searchPlaceholder={t("common.search")}
+        emptyMessage={t("common.noResults")}
         className="bg-background"
       />
 
       {/* State */}
       <SearchableSelect
         options={[
-          { value: '', label: t('doctors.allStates'), icon: <MapPin className="h-4 w-4" /> },
+          {
+            value: "",
+            label: t("doctors.allStates"),
+            icon: <MapPin className="h-4 w-4" />,
+          },
           ...states.map((state) => ({
             value: state.id,
-            label: state.name?.ar || state.name?.en || (state as any).nameAr || (state as any).nameEn || '',
+            label:
+              state.name?.ar ||
+              state.name?.en ||
+              (state as any).nameAr ||
+              (state as any).nameEn ||
+              "",
             icon: <MapPin className="h-4 w-4" />,
           })),
         ]}
-        value={filters.stateId || ''}
-        onValueChange={(value) => handleFilterChange('stateId', value || undefined)}
-        placeholder={t('doctors.filterByState')}
-        searchPlaceholder={t('common.search')}
-        emptyMessage={t('common.noResults')}
+        value={filters.stateId || ""}
+        onValueChange={(value) =>
+          handleFilterChange("stateId", value || undefined)
+        }
+        placeholder={t("doctors.filterByState")}
+        searchPlaceholder={t("common.search")}
+        emptyMessage={t("common.noResults")}
         className="bg-background"
       />
 
       {/* City */}
       <SearchableSelect
         options={[
-          { value: '', label: t('doctors.allCities'), icon: <Building2 className="h-4 w-4" /> },
+          {
+            value: "",
+            label: t("doctors.allCities"),
+            icon: <Building2 className="h-4 w-4" />,
+          },
           ...cities.map((city) => ({
             value: city.id,
-            label: city.name?.ar || city.name?.en || (city as any).nameAr || (city as any).nameEn || '',
+            label:
+              city.name?.ar ||
+              city.name?.en ||
+              (city as any).nameAr ||
+              (city as any).nameEn ||
+              "",
             icon: <Building2 className="h-4 w-4" />,
           })),
         ]}
-        value={filters.cityId || ''}
-        onValueChange={(value) => handleFilterChange('cityId', value || undefined)}
-        placeholder={t('doctors.filterByCity')}
-        searchPlaceholder={t('common.search')}
-        emptyMessage={t('common.noResults')}
+        value={filters.cityId || ""}
+        onValueChange={(value) =>
+          handleFilterChange("cityId", value || undefined)
+        }
+        placeholder={t("doctors.filterByCity")}
+        searchPlaceholder={t("common.search")}
+        emptyMessage={t("common.noResults")}
         disabled={!filters.stateId}
         className="bg-background"
       />
@@ -190,26 +250,52 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       {/* Rating */}
       <SearchableSelect
         options={[
-          { value: '', label: t('doctors.allRatings'), icon: <Star className="h-4 w-4" /> },
-          { value: '4', label: `4+ ${t('common.stars')}`, icon: <Star className="h-4 w-4 fill-warning-400 text-warning-400" /> },
-          { value: '3', label: `3+ ${t('common.stars')}`, icon: <Star className="h-4 w-4 fill-warning-400 text-warning-400" /> },
-          { value: '2', label: `2+ ${t('common.stars')}`, icon: <Star className="h-4 w-4 fill-warning-400 text-warning-400" /> },
+          {
+            value: "",
+            label: t("doctors.allRatings"),
+            icon: <Star className="h-4 w-4" />,
+          },
+          {
+            value: "4",
+            label: `4+ ${t("common.stars")}`,
+            icon: (
+              <Star className="h-4 w-4 fill-warning-400 text-warning-400" />
+            ),
+          },
+          {
+            value: "3",
+            label: `3+ ${t("common.stars")}`,
+            icon: (
+              <Star className="h-4 w-4 fill-warning-400 text-warning-400" />
+            ),
+          },
+          {
+            value: "2",
+            label: `2+ ${t("common.stars")}`,
+            icon: (
+              <Star className="h-4 w-4 fill-warning-400 text-warning-400" />
+            ),
+          },
         ]}
-        value={filters.minRating?.toString() || ''}
-        onValueChange={(value) => handleFilterChange('minRating', value ? Number(value) : undefined)}
-        placeholder={t('doctors.filterByRating')}
+        value={filters.minRating?.toString() || ""}
+        onValueChange={(value) =>
+          handleFilterChange("minRating", value ? Number(value) : undefined)
+        }
+        placeholder={t("doctors.filterByRating")}
         showSearch={false}
         className="bg-background"
       />
 
       {/* Price Range */}
       <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">{t('common.priceRange')}</Label>
+        <Label className="text-sm text-muted-foreground">
+          {t("common.priceRange")}
+        </Label>
         <div className="flex gap-2">
           <Input
             type="number"
             inputMode="decimal"
-            placeholder={t('common.from')}
+            placeholder={t("common.from")}
             value={priceMinInput}
             onChange={(e) => setPriceMinInput(e.target.value)}
             onBlur={handlePriceBlur}
@@ -218,7 +304,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           <Input
             type="number"
             inputMode="decimal"
-            placeholder={t('common.to')}
+            placeholder={t("common.to")}
             value={priceMaxInput}
             onChange={(e) => setPriceMaxInput(e.target.value)}
             onBlur={handlePriceBlur}
@@ -229,13 +315,9 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
 
       {/* Clear Filters */}
       {activeFiltersCount > 0 && (
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={clearFilters}
-        >
+        <Button variant="outline" className="w-full" onClick={clearFilters}>
           <X className="h-4 w-4 ms-2" />
-          {t('common.clearFilters')} ({activeFiltersCount})
+          {t("common.clearFilters")} ({activeFiltersCount})
         </Button>
       )}
     </div>
@@ -246,7 +328,9 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
       {/* Desktop Filters */}
       <div className="hidden lg:block">
         <div className="sticky top-24 rounded-xl border border-border bg-muted p-5">
-          <h3 className="mb-4 font-bold text-foreground">{t('common.filterResults')}</h3>
+          <h3 className="mb-4 font-bold text-foreground">
+            {t("common.filterResults")}
+          </h3>
           {filtersContent}
         </div>
       </div>
@@ -260,7 +344,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         >
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4" />
-            <span>{t('common.filters')}</span>
+            <span>{t("common.filters")}</span>
             {activeFiltersCount > 0 && (
               <Badge variant="default" className="text-xs">
                 {activeFiltersCount}
@@ -280,7 +364,9 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           />
           <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-card p-5 animate-slide-up">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-foreground">{t('common.filterResults')}</h3>
+              <h3 className="font-bold text-foreground">
+                {t("common.filterResults")}
+              </h3>
               <Button
                 variant="ghost"
                 className="text-xs"
@@ -295,7 +381,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
                 className="w-full"
                 onClick={() => setShowMobileFilters(false)}
               >
-                {t('common.viewResults')}
+                {t("common.viewResults")}
               </Button>
             </div>
           </div>

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { MessageSquareHeart } from 'lucide-react';
-import { FeedbackForm } from '@/features/feedback';
-import { useTranslation } from '@/lib/i18n';
+import { MessageSquareHeart } from "lucide-react";
+import { FeedbackForm } from "@/features/feedback";
+import { useTranslation } from "@/lib/i18n";
 
 export default function FeedbackPage() {
   const { t } = useTranslation();
@@ -16,10 +16,10 @@ export default function FeedbackPage() {
             <MessageSquareHeart className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-            {t('feedback.title')}
+            {t("feedback.title")}
           </h1>
         </div>
-        <p className="text-muted-foreground">{t('feedback.subtitle')}</p>
+        <p className="text-muted-foreground">{t("feedback.subtitle")}</p>
       </div>
 
       {/* Feedback Form */}

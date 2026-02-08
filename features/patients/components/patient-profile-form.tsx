@@ -1,34 +1,51 @@
-'use client';
+"use client";
 
-import { useForm, Controller } from 'react-hook-form';
-import { useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { User as UserIcon, Phone, Mail, Loader2, Droplets, Clock } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import { DatePickerInput } from '@/components/ui/date-picker-input';
-import { Skeleton } from '@/components/ui/skeleton';
-import { usePatientProfile, useUpdatePatientProfile, useCreatePatientProfile } from '../hooks/use-patient';
-import { useAuthStore } from '@/lib/auth/store';
-import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/i18n';
-import { Gender, PatientStatus } from '@/types/enums';
-import { User, PatientProfile } from '@/types/models';
+import { useForm, Controller } from "react-hook-form";
+import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  User as UserIcon,
+  Phone,
+  Mail,
+  Loader2,
+  Droplets,
+  Clock,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { DatePickerInput } from "@/components/ui/date-picker-input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  usePatientProfile,
+  useUpdatePatientProfile,
+  useCreatePatientProfile,
+} from "../hooks/use-patient";
+import { useAuthStore } from "@/lib/auth/store";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { Gender, PatientStatus } from "@/types/enums";
+import { User, PatientProfile } from "@/types/models";
 
-const getProfileSchema = (t: (key: string) => string) => z.object({
-  name: z.string().min(3, t('validation.fullNameMinLength')).max(100, t('validation.fullNameMaxLength')),
-  phone: z
-    .string()
-    .regex(/^01[0125][0-9]{8}$/, t('validation.phoneInvalid')),
-  dateOfBirth: z.string().optional(),
-  gender: z.nativeEnum(Gender).optional(),
-  whatsappNumber: z.string().regex(/^01[0125][0-9]{8}$/, t('validation.phoneInvalid')).optional().or(z.literal('')),
-  bloodType: z.string().optional(),
-});
+const getProfileSchema = (t: (key: string) => string) =>
+  z.object({
+    name: z
+      .string()
+      .min(3, t("validation.fullNameMinLength"))
+      .max(100, t("validation.fullNameMaxLength")),
+    phone: z.string().regex(/^01[0125][0-9]{8}$/, t("validation.phoneInvalid")),
+    dateOfBirth: z.string().optional(),
+    gender: z.nativeEnum(Gender).optional(),
+    whatsappNumber: z
+      .string()
+      .regex(/^01[0125][0-9]{8}$/, t("validation.phoneInvalid"))
+      .optional()
+      .or(z.literal("")),
+    bloodType: z.string().optional(),
+  });
 
 type ProfileFormData = z.infer<ReturnType<typeof getProfileSchema>>;
 
@@ -71,7 +88,11 @@ interface PatientProfileFormContentProps {
   isNewProfile: boolean;
 }
 
-function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfileFormContentProps) {
+function PatientProfileFormContent({
+  profile,
+  user,
+  isNewProfile,
+}: PatientProfileFormContentProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const updateMutation = useUpdatePatientProfile();
@@ -88,12 +109,19 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: profile?.user?.fullName || profile?.user?.name || user?.fullName || user?.name || '',
-      phone: profile?.user?.phoneNumber || user?.phoneNumber || '',
-      dateOfBirth: profile?.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
+      name:
+        profile?.user?.fullName ||
+        profile?.user?.name ||
+        user?.fullName ||
+        user?.name ||
+        "",
+      phone: profile?.user?.phoneNumber || user?.phoneNumber || "",
+      dateOfBirth: profile?.dateOfBirth
+        ? profile.dateOfBirth.split("T")[0]
+        : "",
       gender: profile?.gender || undefined,
-      whatsappNumber: profile?.whatsappNumber || '',
-      bloodType: profile?.bloodType || '',
+      whatsappNumber: profile?.whatsappNumber || "",
+      bloodType: profile?.bloodType || "",
     },
   });
 
@@ -101,12 +129,19 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
   useEffect(() => {
     if (profile) {
       reset({
-        name: profile.user?.fullName || profile.user?.name || user?.fullName || user?.name || '',
-        phone: profile.user?.phoneNumber || user?.phoneNumber || '',
-        dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '',
+        name:
+          profile.user?.fullName ||
+          profile.user?.name ||
+          user?.fullName ||
+          user?.name ||
+          "",
+        phone: profile.user?.phoneNumber || user?.phoneNumber || "",
+        dateOfBirth: profile.dateOfBirth
+          ? profile.dateOfBirth.split("T")[0]
+          : "",
         gender: profile.gender || undefined,
-        whatsappNumber: profile.whatsappNumber || '',
-        bloodType: profile.bloodType || '',
+        whatsappNumber: profile.whatsappNumber || "",
+        bloodType: profile.bloodType || "",
       });
     }
   }, [profile, user, reset]);
@@ -125,24 +160,24 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
         // Create new profile
         await createMutation.mutateAsync(payload);
         toast({
-          title: t('toast.created'),
-          description: t('patient.createdSuccess'),
-          variant: 'success',
+          title: t("toast.created"),
+          description: t("patient.createdSuccess"),
+          variant: "success",
         });
       } else {
         // Update existing profile
         await updateMutation.mutateAsync(payload as any);
         toast({
-          title: t('toast.saved'),
-          description: t('patient.updatedSuccess'),
-          variant: 'success',
+          title: t("toast.saved"),
+          description: t("patient.updatedSuccess"),
+          variant: "success",
         });
       }
     } catch (error) {
       toast({
-        title: t('toast.saveFailed'),
-        description: t('patient.saveError'),
-        variant: 'error',
+        title: t("toast.saveFailed"),
+        description: t("patient.saveError"),
+        variant: "error",
       });
     }
   };
@@ -154,7 +189,7 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
       {isNewProfile && (
         <div className="mb-4 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg">
           <p className="text-primary-700 dark:text-primary-300 font-medium">
-            {t('patient.completeDataMessage')}
+            {t("patient.completeDataMessage")}
           </p>
         </div>
       )}
@@ -168,9 +203,11 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
                 <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-warning-800 dark:text-warning-200">{t('patient.pendingApprovalTitle')}</h3>
+                <h3 className="font-semibold text-warning-800 dark:text-warning-200">
+                  {t("patient.pendingApprovalTitle")}
+                </h3>
                 <p className="text-sm text-warning-700 dark:text-warning-300">
-                  {t('patient.pendingApprovalMessage')}
+                  {t("patient.pendingApprovalMessage")}
                 </p>
               </div>
             </div>
@@ -182,16 +219,18 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            {t('patient.personalData')}
+            {t("patient.personalData")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" required>{t('patient.fullName')}</Label>
+            <Label htmlFor="name" required>
+              {t("patient.fullName")}
+            </Label>
             <Input
               id="name"
-              {...register('name')}
+              {...register("name")}
               icon={<UserIcon className="h-5 w-5" />}
               iconPosition="start"
               error={!!errors.name}
@@ -203,15 +242,17 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label htmlFor="phone" required>{t('patient.phoneNumber')}</Label>
+            <Label htmlFor="phone" required>
+              {t("patient.phoneNumber")}
+            </Label>
             <Input
               id="phone"
               type="tel"
               dir="ltr"
-              {...register('phone')}
+              {...register("phone")}
               icon={<Phone className="h-5 w-5" />}
               iconPosition="start"
-              placeholder={t('placeholder.whatsapp')}
+              placeholder={t("placeholder.whatsapp")}
               error={!!errors.phone}
             />
             {errors.phone?.message && (
@@ -221,29 +262,31 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
 
           {/* Email (read-only) */}
           <div className="space-y-2">
-            <Label htmlFor="email">{t('patient.email')}</Label>
+            <Label htmlFor="email">{t("patient.email")}</Label>
             <Input
               id="email"
               type="email"
-              value={profile?.user?.email || ''}
+              value={profile?.user?.email || ""}
               disabled
               icon={<Mail className="h-5 w-5" />}
               iconPosition="start"
             />
-            <p className="text-xs text-muted-foreground">{t('patient.emailCannotChange')}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("patient.emailCannotChange")}
+            </p>
           </div>
 
           {/* Date of Birth */}
           <div className="space-y-2">
-            <Label>{t('patient.dateOfBirth')}</Label>
+            <Label>{t("patient.dateOfBirth")}</Label>
             <Controller
               name="dateOfBirth"
               control={control}
               render={({ field }) => (
                 <DatePickerInput
-                  value={field.value || ''}
+                  value={field.value || ""}
                   onChange={field.onChange}
-                  placeholder={t('patient.dateOfBirth')}
+                  placeholder={t("patient.dateOfBirth")}
                   disableAfter={new Date()}
                 />
               )}
@@ -252,19 +295,27 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
 
           {/* Gender */}
           <div className="space-y-2">
-            <Label>{t('patient.gender')}</Label>
+            <Label>{t("patient.gender")}</Label>
             <Controller
               name="gender"
               control={control}
               render={({ field }) => (
                 <SearchableSelect
                   options={[
-                    { value: Gender.MALE, label: t('patient.male'), icon: <UserIcon className="h-4 w-4" /> },
-                    { value: Gender.FEMALE, label: t('patient.female'), icon: <UserIcon className="h-4 w-4" /> },
+                    {
+                      value: Gender.MALE,
+                      label: t("patient.male"),
+                      icon: <UserIcon className="h-4 w-4" />,
+                    },
+                    {
+                      value: Gender.FEMALE,
+                      label: t("patient.female"),
+                      icon: <UserIcon className="h-4 w-4" />,
+                    },
                   ]}
-                  value={field.value || ''}
+                  value={field.value || ""}
                   onValueChange={(value) => field.onChange(value as Gender)}
-                  placeholder={t('patient.selectGender')}
+                  placeholder={t("patient.selectGender")}
                   showSearch={false}
                 />
               )}
@@ -273,39 +324,73 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
 
           {/* WhatsApp Number */}
           <div className="space-y-2">
-            <Label htmlFor="whatsappNumber">{t('patient.whatsappNumber')}</Label>
+            <Label htmlFor="whatsappNumber">
+              {t("patient.whatsappNumber")}
+            </Label>
             <Input
               id="whatsappNumber"
               type="tel"
               dir="ltr"
-              {...register('whatsappNumber')}
+              {...register("whatsappNumber")}
               icon={<Phone className="h-5 w-5" />}
               iconPosition="start"
-              placeholder={t('placeholder.whatsapp')}
+              placeholder={t("placeholder.whatsapp")}
             />
           </div>
 
           {/* Blood Type */}
           <div className="space-y-2">
-            <Label>{t('patient.bloodType')}</Label>
+            <Label>{t("patient.bloodType")}</Label>
             <Controller
               name="bloodType"
               control={control}
               render={({ field }) => (
                 <SearchableSelect
                   options={[
-                    { value: 'A+', label: 'A+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
-                    { value: 'A-', label: 'A-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
-                    { value: 'B+', label: 'B+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
-                    { value: 'B-', label: 'B-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
-                    { value: 'AB+', label: 'AB+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
-                    { value: 'AB-', label: 'AB-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
-                    { value: 'O+', label: 'O+', icon: <Droplets className="h-4 w-4 text-error-500" /> },
-                    { value: 'O-', label: 'O-', icon: <Droplets className="h-4 w-4 text-error-500" /> },
+                    {
+                      value: "A+",
+                      label: "A+",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
+                    {
+                      value: "A-",
+                      label: "A-",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
+                    {
+                      value: "B+",
+                      label: "B+",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
+                    {
+                      value: "B-",
+                      label: "B-",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
+                    {
+                      value: "AB+",
+                      label: "AB+",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
+                    {
+                      value: "AB-",
+                      label: "AB-",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
+                    {
+                      value: "O+",
+                      label: "O+",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
+                    {
+                      value: "O-",
+                      label: "O-",
+                      icon: <Droplets className="h-4 w-4 text-error-500" />,
+                    },
                   ]}
-                  value={field.value || ''}
+                  value={field.value || ""}
                   onValueChange={field.onChange}
-                  placeholder={t('patient.selectBloodType')}
+                  placeholder={t("patient.selectBloodType")}
                   showSearch={false}
                 />
               )}
@@ -314,16 +399,19 @@ function PatientProfileFormContent({ profile, user, isNewProfile }: PatientProfi
 
           {/* Submit */}
           <div className="flex justify-end pt-4">
-            <Button type="submit" disabled={(!isDirty && !isNewProfile) || isPending}>
+            <Button
+              type="submit"
+              disabled={(!isDirty && !isNewProfile) || isPending}
+            >
               {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                  {t('common.saving')}
+                  {t("common.saving")}
                 </>
               ) : isNewProfile ? (
-                t('patient.createProfile')
+                t("patient.createProfile")
               ) : (
-                t('common.saveChanges')
+                t("common.saveChanges")
               )}
             </Button>
           </div>

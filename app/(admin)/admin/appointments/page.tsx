@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { CalendarDays } from 'lucide-react';
-import { AdminAppointmentsList } from '@/features/admin';
-import { useTranslation } from '@/lib/i18n';
+import { CalendarDays } from "lucide-react";
+import { AdminAppointmentsList } from "@/features/admin";
+import { useTranslation } from "@/lib/i18n";
 
 export default function AdminAppointmentsPage() {
   const { t } = useTranslation();
@@ -16,8 +16,12 @@ export default function AdminAppointmentsPage() {
             <CalendarDays className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('admin.appointmentsPage.title')}</h1>
-            <p className="text-muted-foreground">{t('admin.appointmentsPage.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("admin.appointmentsPage.title")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("admin.appointmentsPage.subtitle")}
+            </p>
           </div>
         </div>
       </div>

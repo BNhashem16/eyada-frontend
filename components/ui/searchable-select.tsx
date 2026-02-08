@@ -35,7 +35,10 @@ interface SearchableSelectProps {
   clearable?: boolean;
   showSearch?: boolean;
   maxHeight?: number;
-  renderOption?: (option: SearchableSelectOption, isSelected: boolean) => React.ReactNode;
+  renderOption?: (
+    option: SearchableSelectOption,
+    isSelected: boolean,
+  ) => React.ReactNode;
   /** When provided, search is delegated to the server (client-side filtering is disabled) */
   onSearchChange?: (search: string) => void;
   /** Whether there are more pages to load (shows load-more at bottom) */
@@ -50,19 +53,25 @@ interface SearchableSelectProps {
 function HighlightText({ text, query }: { text: string; query: string }) {
   if (!query.trim()) return <>{text}</>;
 
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const regex = new RegExp(
+    `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+    "gi",
+  );
   const parts = text.split(regex);
 
   return (
     <>
       {parts.map((part, i) =>
         regex.test(part) ? (
-          <mark key={i} className="bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded px-0.5">
+          <mark
+            key={i}
+            className="bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded px-0.5"
+          >
             {part}
           </mark>
         ) : (
           <span key={i}>{part}</span>
-        )
+        ),
       )}
     </>
   );
@@ -88,9 +97,9 @@ export function SearchableSelect({
   serverLoading,
 }: SearchableSelectProps) {
   const { t } = useTranslation();
-  const resolvedPlaceholder = placeholder ?? t('common.select');
-  const resolvedSearchPlaceholder = searchPlaceholder ?? t('common.searchDots');
-  const resolvedEmptyMessage = emptyMessage ?? t('common.noResultsFound');
+  const resolvedPlaceholder = placeholder ?? t("common.select");
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t("common.searchDots");
+  const resolvedEmptyMessage = emptyMessage ?? t("common.noResultsFound");
   const [open, setOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -101,16 +110,19 @@ export function SearchableSelect({
   const selectedOption = options.find((option) => option.value === value);
 
   // Debounced server-side search
-  const handleSearchInput = React.useCallback((value: string) => {
-    setSearchQuery(value);
-    setActiveIndex(-1);
-    if (onSearchChange) {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
-        onSearchChange(value);
-      }, 300);
-    }
-  }, [onSearchChange]);
+  const handleSearchInput = React.useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      setActiveIndex(-1);
+      if (onSearchChange) {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+          onSearchChange(value);
+        }, 300);
+      }
+    },
+    [onSearchChange],
+  );
 
   // Cleanup debounce on unmount
   React.useEffect(() => {
@@ -127,7 +139,7 @@ export function SearchableSelect({
     return options.filter(
       (option) =>
         option.label?.toLowerCase().includes(query) ||
-        option.description?.toLowerCase().includes(query)
+        option.description?.toLowerCase().includes(query),
     );
   }, [options, searchQuery, onSearchChange]);
 
@@ -146,7 +158,7 @@ export function SearchableSelect({
     const groups: Record<string, SearchableSelectOption[]> = {};
     const ungrouped: SearchableSelectOption[] = [];
 
-    filteredOptions.forEach(option => {
+    filteredOptions.forEach((option) => {
       if (option.group) {
         if (!groups[option.group]) groups[option.group] = [];
         groups[option.group].push(option);
@@ -178,19 +190,19 @@ export function SearchableSelect({
     if (!open) return;
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setActiveIndex(prev =>
-          prev < filteredOptions.length - 1 ? prev + 1 : 0
+        setActiveIndex((prev) =>
+          prev < filteredOptions.length - 1 ? prev + 1 : 0,
         );
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setActiveIndex(prev =>
-          prev > 0 ? prev - 1 : filteredOptions.length - 1
+        setActiveIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredOptions.length - 1,
         );
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (activeIndex >= 0 && filteredOptions[activeIndex]) {
           const option = filteredOptions[activeIndex];
@@ -200,7 +212,7 @@ export function SearchableSelect({
           }
         }
         break;
-      case 'Escape':
+      case "Escape":
         e.preventDefault();
         setOpen(false);
         break;
@@ -210,8 +222,10 @@ export function SearchableSelect({
   // Scroll active item into view
   React.useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
-      const activeItem = listRef.current.querySelector(`[data-index="${activeIndex}"]`);
-      activeItem?.scrollIntoView({ block: 'nearest' });
+      const activeItem = listRef.current.querySelector(
+        `[data-index="${activeIndex}"]`,
+      );
+      activeItem?.scrollIntoView({ block: "nearest" });
     }
   }, [activeIndex]);
 
@@ -239,7 +253,7 @@ export function SearchableSelect({
           disabled={option.disabled}
           className={cn(
             "w-full text-start",
-            option.disabled && "opacity-50 cursor-not-allowed"
+            option.disabled && "opacity-50 cursor-not-allowed",
           )}
         >
           {renderOption(option, isSelected)}
@@ -258,8 +272,10 @@ export function SearchableSelect({
           "hover:bg-primary-50 dark:hover:bg-primary-900/30",
           "focus:bg-primary-50 dark:focus:bg-primary-900/30",
           isSelected && "bg-primary-100 dark:bg-primary-900/50",
-          isActive && "bg-primary-50 dark:bg-primary-900/30 ring-2 ring-primary-500/20",
-          option.disabled && "opacity-50 cursor-not-allowed hover:bg-transparent"
+          isActive &&
+            "bg-primary-50 dark:bg-primary-900/30 ring-2 ring-primary-500/20",
+          option.disabled &&
+            "opacity-50 cursor-not-allowed hover:bg-transparent",
         )}
       >
         {/* Icon */}
@@ -271,10 +287,12 @@ export function SearchableSelect({
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <span className={cn(
-            "block truncate font-medium",
-            isSelected && "text-primary-700 dark:text-primary-300"
-          )}>
+          <span
+            className={cn(
+              "block truncate font-medium",
+              isSelected && "text-primary-700 dark:text-primary-300",
+            )}
+          >
             <HighlightText text={option.label} query={searchQuery} />
           </span>
           {option.description && (
@@ -290,7 +308,7 @@ export function SearchableSelect({
             "h-4 w-4 flex-shrink-0 transition-all duration-200",
             isSelected
               ? "opacity-100 scale-100 text-primary-600 dark:text-primary-400"
-              : "opacity-0 scale-75"
+              : "opacity-0 scale-75",
           )}
         />
       </button>
@@ -313,14 +331,14 @@ export function SearchableSelect({
             "transition-all duration-200",
             !value && "text-muted-foreground",
             open && "ring-2 ring-primary-500/20 border-primary-500",
-            className
+            className,
           )}
         >
           <span className="flex items-center gap-2 truncate">
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>{t('common.loadingDots')}</span>
+                <span>{t("common.loadingDots")}</span>
               </>
             ) : selectedOption ? (
               <>
@@ -346,10 +364,12 @@ export function SearchableSelect({
             )}
 
             {/* Chevron */}
-            <ChevronsUpDown className={cn(
-              "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-              open && "rotate-180"
-            )} />
+            <ChevronsUpDown
+              className={cn(
+                "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+                open && "rotate-180",
+              )}
+            />
           </div>
         </Button>
       </PopoverTrigger>
@@ -390,8 +410,7 @@ export function SearchableSelect({
           <div className="px-3 py-1.5 text-xs text-muted-foreground border-b border-border bg-muted/20">
             {filteredOptions.length === 0
               ? resolvedEmptyMessage
-              : t('common.resultsCount', { count: filteredOptions.length })
-            }
+              : t("common.resultsCount", { count: filteredOptions.length })}
           </div>
         )}
 
@@ -405,10 +424,12 @@ export function SearchableSelect({
           {filteredOptions.length === 0 ? (
             <div className="py-8 text-center">
               <Search className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">{resolvedEmptyMessage}</p>
+              <p className="text-sm text-muted-foreground">
+                {resolvedEmptyMessage}
+              </p>
               {searchQuery && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  {t('common.tryDifferentSearch')}
+                  {t("common.tryDifferentSearch")}
                 </p>
               )}
             </div>
@@ -422,21 +443,25 @@ export function SearchableSelect({
               })}
 
               {/* Grouped options */}
-              {Object.entries(groupedOptions.groups).map(([groupName, groupOptions]) => (
-                <div key={groupName} className="mt-2 first:mt-0">
-                  <div className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    {groupName}
+              {Object.entries(groupedOptions.groups).map(
+                ([groupName, groupOptions]) => (
+                  <div key={groupName} className="mt-2 first:mt-0">
+                    <div className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      {groupName}
+                    </div>
+                    {groupOptions.map((option) => {
+                      const element = renderOptionItem(option, flatIndex);
+                      flatIndex++;
+                      return element;
+                    })}
                   </div>
-                  {groupOptions.map((option) => {
-                    const element = renderOptionItem(option, flatIndex);
-                    flatIndex++;
-                    return element;
-                  })}
-                </div>
-              ))}
+                ),
+              )}
             </>
           ) : (
-            filteredOptions.map((option, index) => renderOptionItem(option, index))
+            filteredOptions.map((option, index) =>
+              renderOptionItem(option, index),
+            )
           )}
 
           {/* Load more indicator */}
@@ -449,7 +474,7 @@ export function SearchableSelect({
                   onClick={onLoadMore}
                   className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
                 >
-                  {t('common.loadMore')}
+                  {t("common.loadMore")}
                 </button>
               )}
             </div>
@@ -459,7 +484,7 @@ export function SearchableSelect({
         {/* Footer with count */}
         {filteredOptions.length > 5 && (
           <div className="px-3 py-2 text-xs text-muted-foreground border-t border-border bg-muted/20 flex items-center justify-between">
-            <span>{t('common.useArrowsToNavigate')}</span>
+            <span>{t("common.useArrowsToNavigate")}</span>
             <Badge variant="secondary" className="text-[10px] h-5">
               {filteredOptions.length}
             </Badge>

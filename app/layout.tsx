@@ -1,46 +1,46 @@
-import type { Metadata, Viewport } from 'next';
-import { Cairo, Inter } from 'next/font/google';
-import './globals.css';
-import { Providers } from '@/components/providers';
-import { getTranslation } from '@/lib/i18n';
+import type { Metadata, Viewport } from "next";
+import { Cairo, Inter } from "next/font/google";
+import "./globals.css";
+import { Providers } from "@/components/providers";
+import { getTranslation } from "@/lib/i18n";
 
 // Arabic font (Primary) - Cairo from Google Fonts
 const cairo = Cairo({
-  variable: '--font-cairo',
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 // English font - Inter from Google Fonts
 const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: getTranslation('meta.defaultTitle'),
-    template: getTranslation('meta.titleTemplate'),
+    default: getTranslation("meta.defaultTitle"),
+    template: getTranslation("meta.titleTemplate"),
   },
-  description: getTranslation('meta.defaultDescription'),
-  keywords: getTranslation('meta.keywords').split(', '),
-  authors: [{ name: 'Eyada Team' }],
-  creator: 'Eyada',
+  description: getTranslation("meta.defaultDescription"),
+  keywords: getTranslation("meta.keywords").split(", "),
+  authors: [{ name: "Eyada Team" }],
+  creator: "Eyada",
   openGraph: {
-    type: 'website',
-    locale: 'ar_EG',
-    alternateLocale: 'en_US',
-    siteName: getTranslation('meta.siteName'),
-    title: getTranslation('meta.ogTitle'),
-    description: getTranslation('meta.ogDescription'),
+    type: "website",
+    locale: "ar_EG",
+    alternateLocale: "en_US",
+    siteName: getTranslation("meta.siteName"),
+    title: getTranslation("meta.ogTitle"),
+    description: getTranslation("meta.ogDescription"),
   },
   twitter: {
-    card: 'summary_large_image',
-    title: getTranslation('meta.twitterTitle'),
-    description: getTranslation('meta.twitterDescription'),
+    card: "summary_large_image",
+    title: getTranslation("meta.twitterTitle"),
+    description: getTranslation("meta.twitterDescription"),
   },
   robots: {
     index: true,
@@ -49,12 +49,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#030712' },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#030712" },
   ],
 };
 

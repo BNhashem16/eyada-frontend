@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   User,
@@ -11,12 +11,12 @@ import {
   LogOut,
   Stethoscope,
   ChevronLeft,
-} from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/lib/auth/store';
-import { getInitials } from '@/lib/utils';
-import { useTranslation } from '@/lib/i18n';
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/lib/auth/store";
+import { getInitials } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 
 export function PatientSidebar() {
   const { t } = useTranslation();
@@ -25,23 +25,23 @@ export function PatientSidebar() {
 
   const menuItems = [
     {
-      href: '/patient/dashboard',
-      label: t('nav.dashboard'),
+      href: "/patient/dashboard",
+      label: t("nav.dashboard"),
       icon: LayoutDashboard,
     },
     {
-      href: '/patient/appointments',
-      label: t('appointments.myAppointments'),
+      href: "/patient/appointments",
+      label: t("appointments.myAppointments"),
       icon: Calendar,
     },
     {
-      href: '/patient/profile',
-      label: t('nav.profile'),
+      href: "/patient/profile",
+      label: t("nav.profile"),
       icon: User,
     },
     {
-      href: '/patient/family',
-      label: t('patient.family'),
+      href: "/patient/family",
+      label: t("patient.family"),
       icon: Users,
     },
   ];
@@ -53,11 +53,13 @@ export function PatientSidebar() {
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
             <AvatarImage src={user?.profilePicture || undefined} />
-            <AvatarFallback>{getInitials(user?.name || '')}</AvatarFallback>
+            <AvatarFallback>{getInitials(user?.name || "")}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground truncate">{user?.name}</p>
-            <p className="text-sm text-muted-foreground">{t('auth.patient')}</p>
+            <p className="font-semibold text-foreground truncate">
+              {user?.name}
+            </p>
+            <p className="text-sm text-muted-foreground">{t("auth.patient")}</p>
           </div>
         </div>
       </div>
@@ -74,8 +76,8 @@ export function PatientSidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
-                  : 'text-muted-foreground hover:bg-muted'
+                  ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                  : "text-muted-foreground hover:bg-muted"
               }`}
             >
               <Icon className="h-5 w-5" />
@@ -93,7 +95,7 @@ export function PatientSidebar() {
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
         >
           <Stethoscope className="h-5 w-5" />
-          {t('appointments.bookNew')}
+          {t("appointments.bookNew")}
           <ChevronLeft className="h-4 w-4 ms-auto" />
         </Link>
       </nav>
@@ -106,7 +108,7 @@ export function PatientSidebar() {
           onClick={() => logout()}
         >
           <LogOut className="h-5 w-5 ms-2" />
-          {t('nav.logout')}
+          {t("nav.logout")}
         </Button>
       </div>
     </aside>

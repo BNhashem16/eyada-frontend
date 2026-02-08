@@ -1,5 +1,5 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function DoctorLoading() {
   return (
@@ -32,7 +32,10 @@ export default function DoctorLoading() {
         </CardHeader>
         <CardContent className="space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
+            <div
+              key={i}
+              className="flex items-start gap-4 p-4 rounded-lg bg-muted/50"
+            >
               <div className="w-16 flex flex-col items-center gap-1">
                 <Skeleton className="h-8 w-10" />
                 <Skeleton className="h-3 w-8" />

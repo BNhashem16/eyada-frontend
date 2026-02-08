@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { ClinicSchedule } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { ClinicSchedule } from "@/types";
 
 export function useAdminClinicSchedules(clinicId: string) {
   return useQuery({
-    queryKey: ['admin-clinic-schedules', clinicId],
+    queryKey: ["admin-clinic-schedules", clinicId],
     queryFn: async () => {
-      return apiGet<ClinicSchedule[]>(ADMIN_ENDPOINTS.CLINIC_SCHEDULES(clinicId));
+      return apiGet<ClinicSchedule[]>(
+        ADMIN_ENDPOINTS.CLINIC_SCHEDULES(clinicId),
+      );
     },
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 5,
@@ -20,11 +22,22 @@ export function useAdminCreateSchedule() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ clinicId, data }: { clinicId: string; data: Partial<ClinicSchedule> }) => {
-      return apiPost<ClinicSchedule>(ADMIN_ENDPOINTS.CLINIC_SCHEDULES(clinicId), data);
+    mutationFn: async ({
+      clinicId,
+      data,
+    }: {
+      clinicId: string;
+      data: Partial<ClinicSchedule>;
+    }) => {
+      return apiPost<ClinicSchedule>(
+        ADMIN_ENDPOINTS.CLINIC_SCHEDULES(clinicId),
+        data,
+      );
     },
     onSuccess: (_, { clinicId }) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-clinic-schedules', clinicId] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-clinic-schedules", clinicId],
+      });
     },
   });
 }
@@ -44,11 +57,13 @@ export function useAdminUpdateSchedule() {
     }) => {
       return apiPatch<ClinicSchedule>(
         ADMIN_ENDPOINTS.CLINIC_SCHEDULE(clinicId, scheduleId),
-        data
+        data,
       );
     },
     onSuccess: (_, { clinicId }) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-clinic-schedules', clinicId] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-clinic-schedules", clinicId],
+      });
     },
   });
 }
@@ -57,11 +72,19 @@ export function useAdminDeleteSchedule() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ clinicId, scheduleId }: { clinicId: string; scheduleId: string }) => {
+    mutationFn: async ({
+      clinicId,
+      scheduleId,
+    }: {
+      clinicId: string;
+      scheduleId: string;
+    }) => {
       return apiDelete(ADMIN_ENDPOINTS.CLINIC_SCHEDULE(clinicId, scheduleId));
     },
     onSuccess: (_, { clinicId }) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-clinic-schedules', clinicId] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-clinic-schedules", clinicId],
+      });
     },
   });
 }

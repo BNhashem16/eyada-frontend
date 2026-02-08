@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   DollarSign,
   Plus,
@@ -16,53 +16,56 @@ import {
   Phone,
   Video,
   RefreshCw,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { SearchableSelect } from '@/components/ui/searchable-select';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import {
   useClinicServices,
   useCreateService,
   useUpdateService,
   useDeleteService,
-} from '../hooks/use-doctor-portal';
-import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/i18n';
-import { ServiceType } from '@/types/enums';
-import { ClinicServiceType } from '@/types';
+} from "../hooks/use-doctor-portal";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { ServiceType } from "@/types/enums";
+import { ClinicServiceType } from "@/types";
 
 interface ServiceManagerProps {
   clinicId: string;
 }
 
-const getServiceTypeLabels = (t: (key: string) => string): Record<ServiceType, string> => ({
-  [ServiceType.FIRST_VISIT]: t('services.firstVisit'),
-  [ServiceType.RE_VISIT]: t('services.reVisit'),
-  [ServiceType.CONSULTATION_PHONE]: t('services.phoneConsultation'),
-  [ServiceType.CONSULTATION_VIDEO]: t('services.videoConsultation'),
+const getServiceTypeLabels = (
+  t: (key: string) => string,
+): Record<ServiceType, string> => ({
+  [ServiceType.FIRST_VISIT]: t("services.firstVisit"),
+  [ServiceType.RE_VISIT]: t("services.reVisit"),
+  [ServiceType.CONSULTATION_PHONE]: t("services.phoneConsultation"),
+  [ServiceType.CONSULTATION_VIDEO]: t("services.videoConsultation"),
 });
 
-const getServiceSchema = (t: (key: string) => string) => z.object({
-  nameAr: z.string().min(3, t('validation.serviceNameArRequired')),
-  nameEn: z.string().optional(),
-  serviceType: z.nativeEnum(ServiceType),
-  price: z.number().min(1, t('validation.priceRequired')),
-  durationMinutes: z.number().min(5, t('validation.durationMin')),
-  reVisitValidityDays: z.number().min(1).optional(),
-  isActive: z.boolean(),
-});
+const getServiceSchema = (t: (key: string) => string) =>
+  z.object({
+    nameAr: z.string().min(3, t("validation.serviceNameArRequired")),
+    nameEn: z.string().optional(),
+    serviceType: z.nativeEnum(ServiceType),
+    price: z.number().min(1, t("validation.priceRequired")),
+    durationMinutes: z.number().min(5, t("validation.durationMin")),
+    reVisitValidityDays: z.number().min(1).optional(),
+    isActive: z.boolean(),
+  });
 
 type ServiceFormData = z.infer<ReturnType<typeof getServiceSchema>>;
 
@@ -70,7 +73,8 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [showDialog, setShowDialog] = useState(false);
-  const [editingService, setEditingService] = useState<ClinicServiceType | null>(null);
+  const [editingService, setEditingService] =
+    useState<ClinicServiceType | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const { data: services, isLoading } = useClinicServices(clinicId);
@@ -100,8 +104,8 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
   const openAddDialog = () => {
     setEditingService(null);
     reset({
-      nameAr: '',
-      nameEn: '',
+      nameAr: "",
+      nameEn: "",
       serviceType: ServiceType.FIRST_VISIT,
       price: 0,
       durationMinutes: 30,
@@ -114,10 +118,13 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
   const openEditDialog = (service: ClinicServiceType) => {
     setEditingService(service);
     reset({
-      nameAr: service.name?.ar || '',
-      nameEn: service.name?.en || '',
+      nameAr: service.name?.ar || "",
+      nameEn: service.name?.en || "",
       serviceType: service.serviceType,
-      price: typeof service.price === 'string' ? parseFloat(service.price) : service.price,
+      price:
+        typeof service.price === "string"
+          ? parseFloat(service.price)
+          : service.price,
       durationMinutes: service.duration,
       reVisitValidityDays: service.reVisitValidityDays || undefined,
       isActive: service.isActive,
@@ -147,25 +154,25 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
           data: payload,
         });
         toast({
-          title: t('toast.updated'),
-          description: t('services.serviceUpdated'),
-          variant: 'success',
+          title: t("toast.updated"),
+          description: t("services.serviceUpdated"),
+          variant: "success",
         });
       } else {
         await createMutation.mutateAsync({ clinicId, data: payload });
         toast({
-          title: t('toast.added'),
-          description: t('services.serviceAdded'),
-          variant: 'success',
+          title: t("toast.added"),
+          description: t("services.serviceAdded"),
+          variant: "success",
         });
       }
       setShowDialog(false);
       reset();
     } catch (error) {
       toast({
-        title: t('toast.error'),
-        description: t('services.serviceSaveFailed'),
-        variant: 'error',
+        title: t("toast.error"),
+        description: t("services.serviceSaveFailed"),
+        variant: "error",
       });
     }
   };
@@ -175,15 +182,15 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
     try {
       await deleteMutation.mutateAsync({ clinicId, serviceId });
       toast({
-        title: t('toast.deleted'),
-        description: t('services.serviceDeleted'),
-        variant: 'success',
+        title: t("toast.deleted"),
+        description: t("services.serviceDeleted"),
+        variant: "success",
       });
     } catch (error) {
       toast({
-        title: t('toast.error'),
-        description: t('services.serviceDeleteFailed'),
-        variant: 'error',
+        title: t("toast.error"),
+        description: t("services.serviceDeleteFailed"),
+        variant: "error",
       });
     } finally {
       setDeletingId(null);
@@ -213,11 +220,11 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-            {t('services.title')}
+            {t("services.title")}
           </CardTitle>
           <Button className="text-xs" onClick={openAddDialog}>
             <Plus className="h-4 w-4 ms-2" />
-            {t('services.addService')}
+            {t("services.addService")}
           </Button>
         </CardHeader>
         <CardContent>
@@ -227,33 +234,35 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 <div
                   key={service.id}
                   className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 rounded-lg ${
-                    service.isActive ? 'bg-muted' : 'bg-muted/50 opacity-60'
+                    service.isActive ? "bg-muted" : "bg-muted/50 opacity-60"
                   }`}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <h4 className="font-semibold text-foreground truncate">
-                        {service.name?.ar || service.name?.en || service.serviceType}
+                        {service.name?.ar ||
+                          service.name?.en ||
+                          service.serviceType}
                       </h4>
                       <Badge variant="secondary" className="text-xs shrink-0">
                         {serviceTypeLabels[service.serviceType]}
                       </Badge>
                       {!service.isActive && (
                         <Badge variant="outline" className="text-xs shrink-0">
-                          {t('common.inactive')}
+                          {t("common.inactive")}
                         </Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
-                        {service.duration} {t('services.minute')}
+                        {service.duration} {t("services.minute")}
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between sm:justify-end gap-4">
                     <p className="text-lg font-bold text-primary-600 dark:text-primary-400 whitespace-nowrap">
-                      {service.price} {t('common.currency')}
+                      {service.price} {t("common.currency")}
                     </p>
                     <div className="flex gap-1 sm:gap-2">
                       <Button
@@ -284,10 +293,12 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
           ) : (
             <div className="text-center py-8">
               <DollarSign className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">{t('services.noServices')}</p>
+              <p className="text-muted-foreground">
+                {t("services.noServices")}
+              </p>
               <Button className="mt-4" onClick={openAddDialog}>
                 <Plus className="h-4 w-4 ms-2" />
-                {t('services.addFirstService')}
+                {t("services.addFirstService")}
               </Button>
             </div>
           )}
@@ -299,7 +310,9 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingService ? t('services.editService') : t('services.addNewService')}
+              {editingService
+                ? t("services.editService")
+                : t("services.addNewService")}
             </DialogTitle>
           </DialogHeader>
 
@@ -307,40 +320,56 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             {/* Name Arabic */}
             <div className="space-y-2">
               <Label htmlFor="nameAr" required>
-                {t('services.serviceNameAr')}
+                {t("services.serviceNameAr")}
               </Label>
               <Input
                 id="nameAr"
-                {...register('nameAr')}
-                placeholder={t('services.serviceNameArPlaceholder')}
+                {...register("nameAr")}
+                placeholder={t("services.serviceNameArPlaceholder")}
                 error={!!errors.nameAr}
               />
             </div>
 
             {/* Name English */}
             <div className="space-y-2">
-              <Label htmlFor="nameEn">{t('services.serviceNameEn')}</Label>
+              <Label htmlFor="nameEn">{t("services.serviceNameEn")}</Label>
               <Input
                 id="nameEn"
-                {...register('nameEn')}
-                placeholder={t('services.serviceNameEnPlaceholder')}
+                {...register("nameEn")}
+                placeholder={t("services.serviceNameEnPlaceholder")}
                 dir="ltr"
               />
             </div>
 
             {/* Service Type */}
             <div className="space-y-2">
-              <Label required>{t('services.serviceType')}</Label>
+              <Label required>{t("services.serviceType")}</Label>
               <SearchableSelect
                 options={[
-                  { value: ServiceType.FIRST_VISIT, label: serviceTypeLabels[ServiceType.FIRST_VISIT], icon: <Stethoscope className="h-4 w-4" /> },
-                  { value: ServiceType.RE_VISIT, label: serviceTypeLabels[ServiceType.RE_VISIT], icon: <RefreshCw className="h-4 w-4" /> },
-                  { value: ServiceType.CONSULTATION_PHONE, label: serviceTypeLabels[ServiceType.CONSULTATION_PHONE], icon: <Phone className="h-4 w-4" /> },
-                  { value: ServiceType.CONSULTATION_VIDEO, label: serviceTypeLabels[ServiceType.CONSULTATION_VIDEO], icon: <Video className="h-4 w-4" /> },
+                  {
+                    value: ServiceType.FIRST_VISIT,
+                    label: serviceTypeLabels[ServiceType.FIRST_VISIT],
+                    icon: <Stethoscope className="h-4 w-4" />,
+                  },
+                  {
+                    value: ServiceType.RE_VISIT,
+                    label: serviceTypeLabels[ServiceType.RE_VISIT],
+                    icon: <RefreshCw className="h-4 w-4" />,
+                  },
+                  {
+                    value: ServiceType.CONSULTATION_PHONE,
+                    label: serviceTypeLabels[ServiceType.CONSULTATION_PHONE],
+                    icon: <Phone className="h-4 w-4" />,
+                  },
+                  {
+                    value: ServiceType.CONSULTATION_VIDEO,
+                    label: serviceTypeLabels[ServiceType.CONSULTATION_VIDEO],
+                    icon: <Video className="h-4 w-4" />,
+                  },
                 ]}
-                value={watch('serviceType')}
+                value={watch("serviceType")}
                 onValueChange={(value) =>
-                  setValue('serviceType', value as ServiceType)
+                  setValue("serviceType", value as ServiceType)
                 }
                 showSearch={false}
                 clearable={false}
@@ -351,26 +380,26 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="price" required>
-                  {t('services.servicePrice')}
+                  {t("services.servicePrice")}
                 </Label>
                 <Input
                   id="price"
                   type="number"
                   inputMode="decimal"
-                  {...register('price', { valueAsNumber: true })}
+                  {...register("price", { valueAsNumber: true })}
                   placeholder="0"
                   error={!!errors.price}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="durationMinutes" required>
-                  {t('services.serviceDuration')}
+                  {t("services.serviceDuration")}
                 </Label>
                 <Input
                   id="durationMinutes"
                   type="number"
                   inputMode="numeric"
-                  {...register('durationMinutes', { valueAsNumber: true })}
+                  {...register("durationMinutes", { valueAsNumber: true })}
                   placeholder="30"
                   error={!!errors.durationMinutes}
                 />
@@ -378,23 +407,23 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             </div>
 
             {/* Re-visit validity - only show for RE_VISIT type */}
-            {watch('serviceType') === ServiceType.RE_VISIT && (
+            {watch("serviceType") === ServiceType.RE_VISIT && (
               <div className="space-y-2">
                 <Label htmlFor="reVisitValidityDays">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    {t('services.reVisitValidity')}
+                    {t("services.reVisitValidity")}
                   </span>
                 </Label>
                 <Input
                   id="reVisitValidityDays"
                   type="number"
                   inputMode="numeric"
-                  {...register('reVisitValidityDays', { valueAsNumber: true })}
+                  {...register("reVisitValidityDays", { valueAsNumber: true })}
                   placeholder="14"
                 />
                 <p className="text-xs text-muted-foreground">
-                  {t('services.reVisitValidityHint')}
+                  {t("services.reVisitValidityHint")}
                 </p>
               </div>
             )}
@@ -403,11 +432,11 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
             <div className="flex items-center gap-3">
               <Checkbox
                 id="isActive"
-                checked={watch('isActive')}
-                onCheckedChange={(checked) => setValue('isActive', !!checked)}
+                checked={watch("isActive")}
+                onCheckedChange={(checked) => setValue("isActive", !!checked)}
               />
               <Label htmlFor="isActive" className="cursor-pointer">
-                {t('services.serviceActive')}
+                {t("services.serviceActive")}
               </Label>
             </div>
 
@@ -417,18 +446,18 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 variant="outline"
                 onClick={() => setShowDialog(false)}
               >
-                {t('common.cancel')}
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                    {t('common.saving')}
+                    {t("common.saving")}
                   </>
                 ) : editingService ? (
-                  t('common.saveChanges')
+                  t("common.saveChanges")
                 ) : (
-                  t('services.addService')
+                  t("services.addService")
                 )}
               </Button>
             </DialogFooter>

@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from './button';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "./button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './select';
-import { useTranslation } from '@/lib/i18n';
+} from "./select";
+import { useTranslation } from "@/lib/i18n";
 
 interface PaginationMeta {
   total: number;
@@ -48,7 +48,7 @@ export function PaginationControls({
       {/* Rows per page */}
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground whitespace-nowrap">
-          {t('common.rowsPerPage')}
+          {t("common.rowsPerPage")}
         </span>
         <Select
           value={limit.toString()}
@@ -70,7 +70,7 @@ export function PaginationControls({
       {/* Page info + navigation */}
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground whitespace-nowrap">
-          {t('common.page')} {meta.page} {t('common.of')} {meta.totalPages}
+          {t("common.page")} {meta.page} {t("common.of")} {meta.totalPages}
         </span>
         <Button
           variant="outline"

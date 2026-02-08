@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuthStore, useIsHydrated } from './store';
-import { Role } from '@/types';
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuthStore, useIsHydrated } from "./store";
+import { Role } from "@/types";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({
   children,
   allowedRoles,
-  fallbackPath = '/login',
+  fallbackPath = "/login",
 }: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -49,7 +49,16 @@ export function ProtectedRoute({
         router.replace(dashboardPath);
       }
     }
-  }, [isHydrated, isAuthenticated, isLoading, user, allowedRoles, router, pathname, fallbackPath]);
+  }, [
+    isHydrated,
+    isAuthenticated,
+    isLoading,
+    user,
+    allowedRoles,
+    router,
+    pathname,
+    fallbackPath,
+  ]);
 
   // Show nothing while checking auth
   if (!isHydrated || isLoading) {
@@ -113,14 +122,14 @@ export function GuestRoute({ children }: { children: React.ReactNode }) {
 function getRoleDashboard(role: Role): string {
   switch (role) {
     case Role.ADMIN:
-      return '/admin/dashboard';
+      return "/admin/dashboard";
     case Role.DOCTOR:
-      return '/doctor/dashboard';
+      return "/doctor/dashboard";
     case Role.SECRETARY:
-      return '/secretary/dashboard';
+      return "/secretary/dashboard";
     case Role.PATIENT:
     default:
-      return '/patient/dashboard';
+      return "/patient/dashboard";
   }
 }
 
@@ -142,7 +151,7 @@ export function useHasRole(roles: Role | Role[]): boolean {
 export function useUserDashboard(): string {
   const user = useAuthStore((state) => state.user);
 
-  if (!user) return '/login';
+  if (!user) return "/login";
 
   return getRoleDashboard(user.role);
 }

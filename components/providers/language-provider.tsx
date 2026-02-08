@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   createContext,
@@ -7,20 +7,27 @@ import {
   useState,
   useCallback,
   useMemo,
-} from 'react';
-import { type Locale, locales, defaultLocale, localeDirection } from '@/lib/i18n';
+} from "react";
+import {
+  type Locale,
+  locales,
+  defaultLocale,
+  localeDirection,
+} from "@/lib/i18n";
 
 interface LanguageContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  dir: 'rtl' | 'ltr';
+  dir: "rtl" | "ltr";
   isRtl: boolean;
   toggleLocale: () => void;
 }
 
-const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextValue | undefined>(
+  undefined,
+);
 
-const LOCALE_STORAGE_KEY = 'eyada-locale';
+const LOCALE_STORAGE_KEY = "eyada-locale";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
@@ -29,7 +36,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Load saved locale on mount
   useEffect(() => {
     setMounted(true);
-    const savedLocale = localStorage.getItem(LOCALE_STORAGE_KEY) as Locale | null;
+    const savedLocale = localStorage.getItem(
+      LOCALE_STORAGE_KEY,
+    ) as Locale | null;
     if (savedLocale && locales.includes(savedLocale)) {
       setLocaleState(savedLocale);
     }
@@ -44,10 +53,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.dir = dir;
 
     // Update font family based on locale
-    if (locale === 'ar') {
-      document.body.style.fontFamily = "var(--font-cairo, 'Cairo', 'Tajawal', system-ui, sans-serif)";
+    if (locale === "ar") {
+      document.body.style.fontFamily =
+        "var(--font-cairo, 'Cairo', 'Tajawal', system-ui, sans-serif)";
     } else {
-      document.body.style.fontFamily = "var(--font-inter, 'Inter', system-ui, sans-serif)";
+      document.body.style.fontFamily =
+        "var(--font-inter, 'Inter', system-ui, sans-serif)";
     }
   }, [locale, mounted]);
 
@@ -57,7 +68,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleLocale = useCallback(() => {
-    const newLocale = locale === 'ar' ? 'en' : 'ar';
+    const newLocale = locale === "ar" ? "en" : "ar";
     setLocale(newLocale);
   }, [locale, setLocale]);
 
@@ -66,10 +77,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       locale,
       setLocale,
       dir: localeDirection[locale],
-      isRtl: locale === 'ar',
+      isRtl: locale === "ar",
       toggleLocale,
     }),
-    [locale, setLocale, toggleLocale]
+    [locale, setLocale, toggleLocale],
   );
 
   return (
@@ -82,7 +93,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
 }

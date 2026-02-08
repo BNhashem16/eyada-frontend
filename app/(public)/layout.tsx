@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { PublicLayout } from '@/components/common';
+import { PublicLayout } from "@/components/common";
 
 export default function PublicLayoutWrapper({
   children,

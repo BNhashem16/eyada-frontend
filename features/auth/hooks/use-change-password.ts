@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useMutation } from '@tanstack/react-query';
-import { apiPost } from '@/lib/api';
-import { AUTH_ENDPOINTS } from '@/lib/api/endpoints';
-import { toastSuccess, toastError } from '@/hooks/use-toast';
-import { AxiosError } from 'axios';
-import type { ApiError } from '@/types';
-import { useTranslation } from '@/lib/i18n';
+import { useMutation } from "@tanstack/react-query";
+import { apiPost } from "@/lib/api";
+import { AUTH_ENDPOINTS } from "@/lib/api/endpoints";
+import { toastSuccess, toastError } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { useTranslation } from "@/lib/i18n";
 
 interface ChangePasswordData {
   currentPassword: string;
@@ -21,13 +21,15 @@ export function useChangePassword() {
       return apiPost(AUTH_ENDPOINTS.CHANGE_PASSWORD, data);
     },
     onSuccess: () => {
-      toastSuccess(t('auth.changePasswordSuccessTitle'), t('auth.changePasswordSuccessDesc'));
+      toastSuccess(
+        t("auth.changePasswordSuccessTitle"),
+        t("auth.changePasswordSuccessDesc"),
+      );
     },
     onError: (error: AxiosError<ApiError>) => {
       const message =
-        error.response?.data?.message ||
-        t('auth.changePasswordFailedDefault');
-      toastError(t('auth.changePasswordErrorTitle'), message);
+        error.response?.data?.message || t("auth.changePasswordFailedDefault");
+      toastError(t("auth.changePasswordErrorTitle"), message);
     },
   });
 }

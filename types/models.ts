@@ -8,7 +8,7 @@ import {
   DoctorStatus,
   PatientStatus,
   RelationshipType,
-} from './enums';
+} from "./enums";
 
 // Bilingual text support
 export interface Multilingual {

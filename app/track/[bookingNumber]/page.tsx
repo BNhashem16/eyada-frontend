@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { format, parseISO } from 'date-fns';
-import { ar, enUS } from 'date-fns/locale';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { format, parseISO } from "date-fns";
+import { ar, enUS } from "date-fns/locale";
 import {
   Clock,
   Calendar,
@@ -15,14 +15,20 @@ import {
   Loader2,
   Users,
   Timer,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useTranslation } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { PUBLIC_TRACKING_ENDPOINTS, API_BASE_URL } from '@/lib/api/endpoints';
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { PUBLIC_TRACKING_ENDPOINTS, API_BASE_URL } from "@/lib/api/endpoints";
 
 interface QueueData {
   found: boolean;
@@ -75,7 +81,7 @@ export default function TrackQueuePage() {
         setData({ found: true, ...result });
       }
     } catch (err) {
-      setError(t('errors.networkError'));
+      setError(t("errors.networkError"));
     } finally {
       setLoading(false);
     }
@@ -88,50 +94,55 @@ export default function TrackQueuePage() {
     return () => clearInterval(interval);
   }, [bookingNumber]);
 
-  const dateLocale = locale === 'ar' ? ar : enUS;
+  const dateLocale = locale === "ar" ? ar : enUS;
 
   const getStatusInfo = (status: string) => {
     switch (status) {
-      case 'PENDING':
+      case "PENDING":
         return {
-          label: t('status.pending'),
-          color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+          label: t("status.pending"),
+          color:
+            "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
           icon: Clock,
         };
-      case 'CONFIRMED':
+      case "CONFIRMED":
         return {
-          label: t('status.confirmed'),
-          color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+          label: t("status.confirmed"),
+          color:
+            "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
           icon: CheckCircle2,
         };
-      case 'CHECKED_IN':
+      case "CHECKED_IN":
         return {
-          label: t('status.checkedIn'),
-          color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+          label: t("status.checkedIn"),
+          color:
+            "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
           icon: Users,
         };
-      case 'COMPLETED':
+      case "COMPLETED":
         return {
-          label: t('status.completed'),
-          color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+          label: t("status.completed"),
+          color:
+            "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
           icon: CheckCircle2,
         };
-      case 'CANCELLED':
+      case "CANCELLED":
         return {
-          label: t('status.cancelled'),
-          color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+          label: t("status.cancelled"),
+          color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
           icon: XCircle,
         };
-      case 'NO_SHOW':
+      case "NO_SHOW":
         return {
-          label: t('status.noShow'),
-          color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+          label: t("status.noShow"),
+          color:
+            "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
           icon: AlertCircle,
         };
       default:
         return {
           label: status,
-          color: 'bg-gray-100 text-gray-800',
+          color: "bg-gray-100 text-gray-800",
           icon: Clock,
         };
     }
@@ -158,7 +169,7 @@ export default function TrackQueuePage() {
               <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
               <p className="text-destructive font-medium">{error}</p>
               <Button onClick={fetchQueuePosition} className="mt-4">
-                {t('common.tryAgain')}
+                {t("common.tryAgain")}
               </Button>
             </CardContent>
           </Card>
@@ -174,9 +185,9 @@ export default function TrackQueuePage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-xl font-bold mb-2">{t('track.notFound')}</h2>
+              <h2 className="text-xl font-bold mb-2">{t("track.notFound")}</h2>
               <p className="text-muted-foreground mb-4">
-                {t('track.notFoundDesc')}
+                {t("track.notFoundDesc")}
               </p>
               <p className="font-mono text-lg bg-muted p-2 rounded">
                 {bookingNumber}
@@ -192,8 +203,9 @@ export default function TrackQueuePage() {
   const StatusIcon = statusInfo.icon;
 
   // Check if appointment is for today and in waiting status
-  const isToday = data.appointmentDate === new Date().toISOString().split('T')[0];
-  const isWaiting = ['PENDING', 'CONFIRMED'].includes(data.status);
+  const isToday =
+    data.appointmentDate === new Date().toISOString().split("T")[0];
+  const isWaiting = ["PENDING", "CONFIRMED"].includes(data.status);
 
   // Show position if available (less than 10 people ahead)
   const hasExactPosition = data.positionInQueue !== null;
@@ -205,16 +217,24 @@ export default function TrackQueuePage() {
       <div className="max-w-lg mx-auto pt-8 space-y-6">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('track.title')}</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">{t('track.subtitle')}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            {t("track.title")}
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            {t("track.subtitle")}
+          </p>
         </div>
 
         {/* Booking Number */}
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-1">{t('appointments.bookingNumber')}</p>
-              <p className="font-mono text-xl font-bold text-primary">{data.bookingNumber}</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                {t("appointments.bookingNumber")}
+              </p>
+              <p className="font-mono text-xl font-bold text-primary">
+                {data.bookingNumber}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -226,16 +246,19 @@ export default function TrackQueuePage() {
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Users className="h-6 w-6 text-primary" />
-                  <span className="text-sm font-medium text-primary">{t('track.yourPosition')}</span>
+                  <span className="text-sm font-medium text-primary">
+                    {t("track.yourPosition")}
+                  </span>
                 </div>
                 <p className="text-4xl sm:text-5xl font-bold text-primary mb-2">
-                  {hasExactPosition ? data.positionInQueue : '10+'}
+                  {hasExactPosition ? data.positionInQueue : "10+"}
                 </p>
                 {hasExactPosition && data.estimatedWaitMinutes !== null && (
                   <div className="flex items-center justify-center gap-2 text-muted-foreground">
                     <Timer className="h-4 w-4" />
                     <span>
-                      {t('track.estimatedWait')}: ~{data.estimatedWaitMinutes} {t('appointments.minutes')}
+                      {t("track.estimatedWait")}: ~{data.estimatedWaitMinutes}{" "}
+                      {t("appointments.minutes")}
                     </span>
                   </div>
                 )}
@@ -247,7 +270,9 @@ export default function TrackQueuePage() {
         {/* Status */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{t('appointments.status')}</CardTitle>
+            <CardTitle className="text-lg">
+              {t("appointments.status")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-3">
@@ -258,7 +283,7 @@ export default function TrackQueuePage() {
                 <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
                 {data.queueNumber && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    {t('appointments.queueNumber')}: {data.queueNumber}
+                    {t("appointments.queueNumber")}: {data.queueNumber}
                   </p>
                 )}
               </div>
@@ -269,7 +294,9 @@ export default function TrackQueuePage() {
         {/* Appointment Details */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{t('track.appointmentDetails')}</CardTitle>
+            <CardTitle className="text-lg">
+              {t("track.appointmentDetails")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Date */}
@@ -278,9 +305,13 @@ export default function TrackQueuePage() {
                 <Calendar className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{t('appointments.date')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("appointments.date")}
+                </p>
                 <p className="font-medium">
-                  {format(parseISO(data.appointmentDate), 'EEEE, d MMMM yyyy', { locale: dateLocale })}
+                  {format(parseISO(data.appointmentDate), "EEEE, d MMMM yyyy", {
+                    locale: dateLocale,
+                  })}
                 </p>
               </div>
             </div>
@@ -291,8 +322,12 @@ export default function TrackQueuePage() {
                 <Building2 className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{t('appointments.clinic')}</p>
-                <p className="font-medium">{getLocalizedText(data.clinicName, locale)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("appointments.clinic")}
+                </p>
+                <p className="font-medium">
+                  {getLocalizedText(data.clinicName, locale)}
+                </p>
               </div>
             </div>
 
@@ -302,8 +337,12 @@ export default function TrackQueuePage() {
                 <Stethoscope className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{t('appointments.service')}</p>
-                <p className="font-medium">{getLocalizedText(data.serviceName, locale)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("appointments.service")}
+                </p>
+                <p className="font-medium">
+                  {getLocalizedText(data.serviceName, locale)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -311,15 +350,21 @@ export default function TrackQueuePage() {
 
         {/* Refresh Button */}
         <div className="text-center">
-          <Button variant="outline" onClick={fetchQueuePosition} disabled={loading}>
+          <Button
+            variant="outline"
+            onClick={fetchQueuePosition}
+            disabled={loading}
+          >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin me-2" />
             ) : (
               <Clock className="h-4 w-4 me-2" />
             )}
-            {t('track.refresh')}
+            {t("track.refresh")}
           </Button>
-          <p className="text-xs text-muted-foreground mt-2">{t('track.autoRefresh')}</p>
+          <p className="text-xs text-muted-foreground mt-2">
+            {t("track.autoRefresh")}
+          </p>
         </div>
       </div>
     </div>

@@ -1,31 +1,31 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Clock, Building2, Frown } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState } from "react";
+import { Clock, Building2, Frown } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { ScheduleManager } from '@/features/doctor-portal/components/schedule-manager';
+} from "@/components/ui/select";
+import { ScheduleManager } from "@/features/doctor-portal/components/schedule-manager";
 import {
   useSecretaryClinics,
   useSecretaryClinicSchedules,
   useSecretaryCreateSchedule,
   useSecretaryUpdateSchedule,
-} from '@/features/secretary';
-import { useTranslation } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils/multilingual';
+} from "@/features/secretary";
+import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 export default function SecretarySchedulesPage() {
   const { t, locale } = useTranslation();
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
-  const [selectedClinicId, setSelectedClinicId] = useState<string>('');
+  const [selectedClinicId, setSelectedClinicId] = useState<string>("");
 
   if (clinicsLoading) {
     return (
@@ -44,15 +44,23 @@ export default function SecretarySchedulesPage() {
             <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('secretary.schedulesPage.title')}</h1>
-            <p className="text-muted-foreground">{t('secretary.schedulesPage.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("secretary.schedulesPage.title")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("secretary.schedulesPage.subtitle")}
+            </p>
           </div>
         </div>
         <Card>
           <CardContent className="py-10 text-center">
             <Frown className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <p className="text-muted-foreground">{t('secretary.noClinicsAssigned')}</p>
-            <p className="text-sm text-muted-foreground mt-1">{t('secretary.contactAdmin')}</p>
+            <p className="text-muted-foreground">
+              {t("secretary.noClinicsAssigned")}
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t("secretary.contactAdmin")}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -67,8 +75,12 @@ export default function SecretarySchedulesPage() {
           <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('secretary.schedulesPage.title')}</h1>
-          <p className="text-muted-foreground">{t('secretary.schedulesPage.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            {t("secretary.schedulesPage.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("secretary.schedulesPage.subtitle")}
+          </p>
         </div>
       </div>
 
@@ -78,11 +90,14 @@ export default function SecretarySchedulesPage() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <Label className="flex items-center gap-2 whitespace-nowrap">
               <Building2 className="h-4 w-4" />
-              {t('secretary.selectClinic')}
+              {t("secretary.selectClinic")}
             </Label>
-            <Select value={selectedClinicId} onValueChange={setSelectedClinicId}>
+            <Select
+              value={selectedClinicId}
+              onValueChange={setSelectedClinicId}
+            >
               <SelectTrigger className="w-full sm:w-72">
-                <SelectValue placeholder={t('secretary.selectClinic')} />
+                <SelectValue placeholder={t("secretary.selectClinic")} />
               </SelectTrigger>
               <SelectContent>
                 {clinics.map((clinic) => (
@@ -108,7 +123,9 @@ export default function SecretarySchedulesPage() {
         <Card>
           <CardContent className="py-10 text-center">
             <Building2 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-            <p className="text-muted-foreground">{t('secretary.selectClinic')}</p>
+            <p className="text-muted-foreground">
+              {t("secretary.selectClinic")}
+            </p>
           </CardContent>
         </Card>
       )}

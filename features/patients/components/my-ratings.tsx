@@ -1,27 +1,33 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Star, MessageSquare, Clock, CheckCircle, Edit2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { usePatientRatings, PatientRating } from '../hooks/use-patient';
-import { RatingDialog } from './rating-dialog';
-import { formatRelativeDate, getInitials } from '@/lib/utils';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { useTranslation } from '@/lib/i18n';
+import { useState } from "react";
+import { Star, MessageSquare, Clock, CheckCircle, Edit2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { usePatientRatings, PatientRating } from "../hooks/use-patient";
+import { RatingDialog } from "./rating-dialog";
+import { formatRelativeDate, getInitials } from "@/lib/utils";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
 
 export function MyRatings() {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const { data: ratingsResponse, isLoading, isError } = usePatientRatings({ page, limit });
+  const {
+    data: ratingsResponse,
+    isLoading,
+    isError,
+  } = usePatientRatings({ page, limit });
   const ratings = ratingsResponse?.data || [];
   const meta = ratingsResponse?.meta;
-  const [editingRating, setEditingRating] = useState<PatientRating | null>(null);
+  const [editingRating, setEditingRating] = useState<PatientRating | null>(
+    null,
+  );
 
   if (isLoading) {
     return (
@@ -48,7 +54,7 @@ export function MyRatings() {
     return (
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-6 text-center text-error-600 dark:text-error-400">
-          {t('errors.somethingWentWrong')}
+          {t("errors.somethingWentWrong")}
         </CardContent>
       </Card>
     );
@@ -59,7 +65,7 @@ export function MyRatings() {
       <Card>
         <CardContent className="py-10 text-center">
           <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-muted-foreground">{t('rating.noRatingsYet')}</p>
+          <p className="text-muted-foreground">{t("rating.noRatingsYet")}</p>
         </CardContent>
       </Card>
     );
@@ -70,7 +76,7 @@ export function MyRatings() {
       <div className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">{t('rating.myRatings')}</CardTitle>
+            <CardTitle className="text-lg">{t("rating.myRatings")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {ratings.map((rating) => (
@@ -88,11 +94,14 @@ export function MyRatings() {
                     </Avatar>
                     <div>
                       <p className="font-semibold text-foreground">
-                        {t('auth.doctor')}. {rating.doctorProfile.user.fullName}
+                        {t("auth.doctor")}. {rating.doctorProfile.user.fullName}
                       </p>
                       {rating.doctorProfile.specialty && (
                         <p className="text-sm text-muted-foreground">
-                          {getLocalizedText(rating.doctorProfile.specialty.name, 'ar')}
+                          {getLocalizedText(
+                            rating.doctorProfile.specialty.name,
+                            "ar",
+                          )}
                         </p>
                       )}
                     </div>
@@ -105,7 +114,7 @@ export function MyRatings() {
                       className="bg-success-50 text-success-700 border-success-200 dark:bg-success-900/20 dark:text-success-400 dark:border-success-800"
                     >
                       <CheckCircle className="h-3 w-3 me-1" />
-                      {t('rating.approved')}
+                      {t("rating.approved")}
                     </Badge>
                   ) : (
                     <Badge
@@ -113,7 +122,7 @@ export function MyRatings() {
                       className="bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-900/20 dark:text-warning-400 dark:border-warning-800"
                     >
                       <Clock className="h-3 w-3 me-1" />
-                      {t('rating.pendingApproval')}
+                      {t("rating.pendingApproval")}
                     </Badge>
                   )}
                 </div>
@@ -126,8 +135,8 @@ export function MyRatings() {
                         key={i}
                         className={`h-4 w-4 ${
                           i < rating.rating
-                            ? 'fill-warning-400 text-warning-400'
-                            : 'text-muted-foreground/30'
+                            ? "fill-warning-400 text-warning-400"
+                            : "text-muted-foreground/30"
                         }`}
                       />
                     ))}
@@ -145,10 +154,14 @@ export function MyRatings() {
                 {/* Appointment Info */}
                 <div className="flex items-center justify-between pt-2 border-t border-border">
                   <div className="text-xs text-muted-foreground">
-                    <span>{getLocalizedText(rating.appointment.clinic.name, 'ar')}</span>
+                    <span>
+                      {getLocalizedText(rating.appointment.clinic.name, "ar")}
+                    </span>
                     <span className="mx-2">•</span>
                     <span>
-                      {new Date(rating.appointment.appointmentDate).toLocaleDateString('ar-EG')}
+                      {new Date(
+                        rating.appointment.appointmentDate,
+                      ).toLocaleDateString("ar-EG")}
                     </span>
                   </div>
 
@@ -159,7 +172,7 @@ export function MyRatings() {
                     className="text-primary-600 hover:text-primary-700"
                   >
                     <Edit2 className="h-4 w-4 me-1" />
-                    {t('rating.edit')}
+                    {t("rating.edit")}
                   </Button>
                 </div>
               </div>
@@ -167,7 +180,16 @@ export function MyRatings() {
           </CardContent>
         </Card>
 
-        <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
+        <PaginationControls
+          meta={meta}
+          page={page}
+          onPageChange={setPage}
+          limit={limit}
+          onLimitChange={(v) => {
+            setLimit(v);
+            setPage(1);
+          }}
+        />
       </div>
 
       {/* Edit Rating Dialog */}

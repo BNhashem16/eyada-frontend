@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 import {
   LayoutDashboard,
   Calendar,
@@ -8,29 +8,37 @@ import {
   Users,
   Stethoscope,
   ChevronLeft,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ProtectedRoute } from '@/lib/auth/guards';
-import { Role } from '@/types';
-import { ProfileCompletionGuard } from '@/components/common/profile-completion-guard';
-import { DashboardLayout, MenuItem } from '@/components/common';
-import { useTranslation } from '@/lib/i18n';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ProtectedRoute } from "@/lib/auth/guards";
+import { Role } from "@/types";
+import { ProfileCompletionGuard } from "@/components/common/profile-completion-guard";
+import { DashboardLayout, MenuItem } from "@/components/common";
+import { useTranslation } from "@/lib/i18n";
 
 function PatientLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
 
   const menuItems: MenuItem[] = [
-    { href: '/patient/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
-    { href: '/patient/appointments', label: t('nav.myAppointments'), icon: Calendar },
-    { href: '/patient/profile', label: t('nav.profile'), icon: User },
-    { href: '/patient/family', label: t('family.title'), icon: Users },
+    {
+      href: "/patient/dashboard",
+      label: t("nav.dashboard"),
+      icon: LayoutDashboard,
+    },
+    {
+      href: "/patient/appointments",
+      label: t("nav.myAppointments"),
+      icon: Calendar,
+    },
+    { href: "/patient/profile", label: t("nav.profile"), icon: User },
+    { href: "/patient/family", label: t("family.title"), icon: Users },
   ];
 
   const headerRightContent = (
     <Button asChild variant="outline" size="sm" className="hidden sm:flex">
       <Link href="/doctors">
         <Stethoscope className="h-4 w-4 ms-2" />
-        {t('doctors.bookAppointment')}
+        {t("doctors.bookAppointment")}
       </Link>
     </Button>
   );
@@ -41,7 +49,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
       className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
     >
       <Stethoscope className="h-5 w-5" />
-      {t('appointments.bookNew')}
+      {t("appointments.bookNew")}
       <ChevronLeft className="h-4 w-4 ms-auto" />
     </Link>
   );
@@ -49,7 +57,7 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <DashboardLayout
       menuItems={menuItems}
-      userRoleLabel={t('app.patientRole')}
+      userRoleLabel={t("app.patientRole")}
       basePath="/patient"
       headerRightContent={headerRightContent}
       mobileExtraContent={mobileExtraContent}

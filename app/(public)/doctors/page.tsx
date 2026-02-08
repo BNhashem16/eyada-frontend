@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Stethoscope } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { DoctorList } from '@/features/doctors';
-import { useMemo } from 'react';
-import { useTranslation } from '@/lib/i18n';
+import { Stethoscope } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { DoctorList } from "@/features/doctors";
+import { useMemo } from "react";
+import { useTranslation } from "@/lib/i18n";
 
 export default function DoctorsPage() {
   const { t } = useTranslation();
@@ -19,10 +19,10 @@ export default function DoctorsPage() {
       cityId?: string;
     } = {};
 
-    const search = searchParams.get('search');
-    const specialty = searchParams.get('specialty');
-    const state = searchParams.get('state');
-    const city = searchParams.get('city');
+    const search = searchParams.get("search");
+    const specialty = searchParams.get("specialty");
+    const state = searchParams.get("state");
+    const city = searchParams.get("city");
 
     if (search) filters.search = search;
     if (specialty) filters.specialtyId = specialty;
@@ -40,11 +40,11 @@ export default function DoctorsPage() {
           <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <Stethoscope className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{t('pages.doctors.title')}</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            {t("pages.doctors.title")}
+          </h1>
         </div>
-        <p className="text-muted-foreground">
-          {t('pages.doctors.subtitle')}
-        </p>
+        <p className="text-muted-foreground">{t("pages.doctors.subtitle")}</p>
       </div>
 
       {/* Doctor List with Filters */}

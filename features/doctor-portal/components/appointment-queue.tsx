@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
 import {
   Clock,
   ChevronLeft,
@@ -18,53 +18,57 @@ import {
   Eye,
   Building2,
   Ban,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Skeleton } from '@/components/ui/skeleton';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import { DatePickerInput } from '@/components/ui/date-picker-input';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { DatePickerInput } from "@/components/ui/date-picker-input";
 import {
   useDoctorAppointments,
   useDoctorClinics,
   useUpdateAppointmentStatus,
-} from '../hooks/use-doctor-portal';
-import { useToast } from '@/hooks/use-toast';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { useTranslation } from '@/lib/i18n';
-import { Appointment } from '@/types';
-import { AppointmentStatus } from '@/types/enums';
-import { formatDate, formatTime, addDays } from '@/lib/utils/date';
-import { getInitials } from '@/lib/utils';
+} from "../hooks/use-doctor-portal";
+import { useToast } from "@/hooks/use-toast";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
+import { Appointment } from "@/types";
+import { AppointmentStatus } from "@/types/enums";
+import { formatDate, formatTime, addDays } from "@/lib/utils/date";
+import { getInitials } from "@/lib/utils";
 
-const getStatusLabels = (t: (key: string) => string): Record<AppointmentStatus, string> => ({
-  [AppointmentStatus.PENDING]: t('status.pending'),
-  [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
-  [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
-  [AppointmentStatus.IN_PROGRESS]: t('status.inProgress'),
-  [AppointmentStatus.COMPLETED]: t('status.completed'),
-  [AppointmentStatus.CANCELLED]: t('status.cancelled'),
-  [AppointmentStatus.NO_SHOW]: t('status.noShow'),
+const getStatusLabels = (
+  t: (key: string) => string,
+): Record<AppointmentStatus, string> => ({
+  [AppointmentStatus.PENDING]: t("status.pending"),
+  [AppointmentStatus.CONFIRMED]: t("status.confirmed"),
+  [AppointmentStatus.CHECKED_IN]: t("status.checkedIn"),
+  [AppointmentStatus.IN_PROGRESS]: t("status.inProgress"),
+  [AppointmentStatus.COMPLETED]: t("status.completed"),
+  [AppointmentStatus.CANCELLED]: t("status.cancelled"),
+  [AppointmentStatus.NO_SHOW]: t("status.noShow"),
 });
 
 const statusColors: Record<AppointmentStatus, string> = {
-  [AppointmentStatus.PENDING]: 'bg-warning-100 text-warning-700',
-  [AppointmentStatus.CONFIRMED]: 'bg-success-100 text-success-700',
-  [AppointmentStatus.CHECKED_IN]: 'bg-primary-100 text-primary-700',
-  [AppointmentStatus.IN_PROGRESS]: 'bg-info-100 text-info-700',
-  [AppointmentStatus.COMPLETED]: 'bg-muted text-muted-foreground',
-  [AppointmentStatus.CANCELLED]: 'bg-error-100 text-error-700',
-  [AppointmentStatus.NO_SHOW]: 'bg-muted/70 text-muted-foreground',
+  [AppointmentStatus.PENDING]: "bg-warning-100 text-warning-700",
+  [AppointmentStatus.CONFIRMED]: "bg-success-100 text-success-700",
+  [AppointmentStatus.CHECKED_IN]: "bg-primary-100 text-primary-700",
+  [AppointmentStatus.IN_PROGRESS]: "bg-info-100 text-info-700",
+  [AppointmentStatus.COMPLETED]: "bg-muted text-muted-foreground",
+  [AppointmentStatus.CANCELLED]: "bg-error-100 text-error-700",
+  [AppointmentStatus.NO_SHOW]: "bg-muted/70 text-muted-foreground",
 };
 
 export function AppointmentQueue() {
   const { t } = useTranslation();
   const { toast } = useToast();
-  const [selectedDate, setSelectedDate] = useState(formatDate(new Date(), 'yyyy-MM-dd'));
-  const [selectedClinic, setSelectedClinic] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<AppointmentStatus | ''>('');
+  const [selectedDate, setSelectedDate] = useState(
+    formatDate(new Date(), "yyyy-MM-dd"),
+  );
+  const [selectedClinic, setSelectedClinic] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<AppointmentStatus | "">("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
@@ -84,32 +88,38 @@ export function AppointmentQueue() {
   const appointments = appointmentsData?.data ?? [];
   const meta = appointmentsData?.meta;
 
-  const handleStatusUpdate = async (appointmentId: string, newStatus: AppointmentStatus) => {
+  const handleStatusUpdate = async (
+    appointmentId: string,
+    newStatus: AppointmentStatus,
+  ) => {
     try {
-      await updateStatusMutation.mutateAsync({ appointmentId, status: newStatus });
+      await updateStatusMutation.mutateAsync({
+        appointmentId,
+        status: newStatus,
+      });
       toast({
-        title: t('toast.updated'),
-        description: t('appointments.statusUpdated'),
-        variant: 'success',
+        title: t("toast.updated"),
+        description: t("appointments.statusUpdated"),
+        variant: "success",
       });
     } catch (error) {
       toast({
-        title: t('appointments.updateFailed'),
-        description: t('appointments.statusUpdateFailed'),
-        variant: 'error',
+        title: t("appointments.updateFailed"),
+        description: t("appointments.statusUpdateFailed"),
+        variant: "error",
       });
     }
   };
 
   const goToPreviousDay = () => {
     const date = new Date(selectedDate);
-    setSelectedDate(formatDate(addDays(date, -1), 'yyyy-MM-dd'));
+    setSelectedDate(formatDate(addDays(date, -1), "yyyy-MM-dd"));
     setPage(1);
   };
 
   const goToNextDay = () => {
     const date = new Date(selectedDate);
-    setSelectedDate(formatDate(addDays(date, 1), 'yyyy-MM-dd'));
+    setSelectedDate(formatDate(addDays(date, 1), "yyyy-MM-dd"));
     setPage(1);
   };
 
@@ -117,17 +127,42 @@ export function AppointmentQueue() {
     switch (status) {
       case AppointmentStatus.PENDING:
         return [
-          { status: AppointmentStatus.CONFIRMED, label: t('appointments.actionConfirm'), icon: CheckCircle, color: 'success' },
-          { status: AppointmentStatus.CANCELLED, label: t('appointments.actionCancel'), icon: XCircle, color: 'destructive' },
+          {
+            status: AppointmentStatus.CONFIRMED,
+            label: t("appointments.actionConfirm"),
+            icon: CheckCircle,
+            color: "success",
+          },
+          {
+            status: AppointmentStatus.CANCELLED,
+            label: t("appointments.actionCancel"),
+            icon: XCircle,
+            color: "destructive",
+          },
         ];
       case AppointmentStatus.CONFIRMED:
         return [
-          { status: AppointmentStatus.CHECKED_IN, label: t('appointments.actionArrived'), icon: UserCheck, color: 'primary' },
-          { status: AppointmentStatus.NO_SHOW, label: t('appointments.actionNoShow'), icon: XCircle, color: 'secondary' },
+          {
+            status: AppointmentStatus.CHECKED_IN,
+            label: t("appointments.actionArrived"),
+            icon: UserCheck,
+            color: "primary",
+          },
+          {
+            status: AppointmentStatus.NO_SHOW,
+            label: t("appointments.actionNoShow"),
+            icon: XCircle,
+            color: "secondary",
+          },
         ];
       case AppointmentStatus.CHECKED_IN:
         return [
-          { status: AppointmentStatus.COMPLETED, label: t('appointments.actionComplete'), icon: CheckCircle, color: 'success' },
+          {
+            status: AppointmentStatus.COMPLETED,
+            label: t("appointments.actionComplete"),
+            icon: CheckCircle,
+            color: "success",
+          },
         ];
       default:
         return [];
@@ -142,16 +177,27 @@ export function AppointmentQueue() {
           <div className="flex flex-col gap-4">
             {/* Date Navigation */}
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="text-xs" onClick={goToPreviousDay}>
+              <Button
+                variant="outline"
+                className="text-xs"
+                onClick={goToPreviousDay}
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
               <DatePickerInput
                 value={selectedDate}
-                onChange={(val) => { setSelectedDate(val); setPage(1); }}
+                onChange={(val) => {
+                  setSelectedDate(val);
+                  setPage(1);
+                }}
                 clearable={false}
                 className="flex-1 sm:w-44 sm:flex-none"
               />
-              <Button variant="outline" className="text-xs" onClick={goToNextDay}>
+              <Button
+                variant="outline"
+                className="text-xs"
+                onClick={goToNextDay}
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
@@ -160,35 +206,79 @@ export function AppointmentQueue() {
             <div className="flex flex-col sm:flex-row gap-3">
               <SearchableSelect
                 options={[
-                  { value: 'all', label: t('appointments.allClinics'), icon: <Building2 className="h-4 w-4" /> },
+                  {
+                    value: "all",
+                    label: t("appointments.allClinics"),
+                    icon: <Building2 className="h-4 w-4" />,
+                  },
                   ...(clinics?.map((clinic) => ({
                     value: clinic.id,
-                    label: clinic.name?.ar || clinic.name?.en || '',
+                    label: clinic.name?.ar || clinic.name?.en || "",
                     icon: <Building2 className="h-4 w-4" />,
                   })) || []),
                 ]}
-                value={selectedClinic || 'all'}
-                onValueChange={(v) => { setSelectedClinic(v === 'all' ? '' : v); setPage(1); }}
-                placeholder={t('appointments.allClinics')}
-                searchPlaceholder={t('common.search')}
-                emptyMessage={t('common.noResults')}
+                value={selectedClinic || "all"}
+                onValueChange={(v) => {
+                  setSelectedClinic(v === "all" ? "" : v);
+                  setPage(1);
+                }}
+                placeholder={t("appointments.allClinics")}
+                searchPlaceholder={t("common.search")}
+                emptyMessage={t("common.noResults")}
                 className="w-full sm:w-48"
               />
 
               <SearchableSelect
                 options={[
-                  { value: 'all', label: t('appointments.allStatuses'), icon: <Clock className="h-4 w-4" /> },
-                  { value: AppointmentStatus.PENDING, label: statusLabels[AppointmentStatus.PENDING], icon: <Clock className="h-4 w-4 text-warning-500" /> },
-                  { value: AppointmentStatus.CONFIRMED, label: statusLabels[AppointmentStatus.CONFIRMED], icon: <CheckCircle className="h-4 w-4 text-success-500" /> },
-                  { value: AppointmentStatus.CHECKED_IN, label: statusLabels[AppointmentStatus.CHECKED_IN], icon: <UserCheck className="h-4 w-4 text-primary-500" /> },
-                  { value: AppointmentStatus.IN_PROGRESS, label: statusLabels[AppointmentStatus.IN_PROGRESS], icon: <Play className="h-4 w-4 text-info-500" /> },
-                  { value: AppointmentStatus.COMPLETED, label: statusLabels[AppointmentStatus.COMPLETED], icon: <CheckCircle className="h-4 w-4 text-muted-foreground" /> },
-                  { value: AppointmentStatus.CANCELLED, label: statusLabels[AppointmentStatus.CANCELLED], icon: <XCircle className="h-4 w-4 text-error-500" /> },
-                  { value: AppointmentStatus.NO_SHOW, label: statusLabels[AppointmentStatus.NO_SHOW], icon: <Ban className="h-4 w-4 text-muted-foreground" /> },
+                  {
+                    value: "all",
+                    label: t("appointments.allStatuses"),
+                    icon: <Clock className="h-4 w-4" />,
+                  },
+                  {
+                    value: AppointmentStatus.PENDING,
+                    label: statusLabels[AppointmentStatus.PENDING],
+                    icon: <Clock className="h-4 w-4 text-warning-500" />,
+                  },
+                  {
+                    value: AppointmentStatus.CONFIRMED,
+                    label: statusLabels[AppointmentStatus.CONFIRMED],
+                    icon: <CheckCircle className="h-4 w-4 text-success-500" />,
+                  },
+                  {
+                    value: AppointmentStatus.CHECKED_IN,
+                    label: statusLabels[AppointmentStatus.CHECKED_IN],
+                    icon: <UserCheck className="h-4 w-4 text-primary-500" />,
+                  },
+                  {
+                    value: AppointmentStatus.IN_PROGRESS,
+                    label: statusLabels[AppointmentStatus.IN_PROGRESS],
+                    icon: <Play className="h-4 w-4 text-info-500" />,
+                  },
+                  {
+                    value: AppointmentStatus.COMPLETED,
+                    label: statusLabels[AppointmentStatus.COMPLETED],
+                    icon: (
+                      <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                    ),
+                  },
+                  {
+                    value: AppointmentStatus.CANCELLED,
+                    label: statusLabels[AppointmentStatus.CANCELLED],
+                    icon: <XCircle className="h-4 w-4 text-error-500" />,
+                  },
+                  {
+                    value: AppointmentStatus.NO_SHOW,
+                    label: statusLabels[AppointmentStatus.NO_SHOW],
+                    icon: <Ban className="h-4 w-4 text-muted-foreground" />,
+                  },
                 ]}
-                value={statusFilter || 'all'}
-                onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v as AppointmentStatus); setPage(1); }}
-                placeholder={t('appointments.allStatuses')}
+                value={statusFilter || "all"}
+                onValueChange={(v) => {
+                  setStatusFilter(v === "all" ? "" : (v as AppointmentStatus));
+                  setPage(1);
+                }}
+                placeholder={t("appointments.allStatuses")}
                 showSearch={false}
                 className="w-full sm:w-40"
               />
@@ -201,9 +291,12 @@ export function AppointmentQueue() {
       <div className="flex items-center gap-3">
         <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         <h2 className="text-xl font-bold text-foreground">
-          {formatDate(new Date(selectedDate), 'EEEE, d MMMM yyyy')}
+          {formatDate(new Date(selectedDate), "EEEE, d MMMM yyyy")}
         </h2>
-        <Badge variant="outline">{meta?.total || appointments.length} {t('appointments.appointmentCount')}</Badge>
+        <Badge variant="outline">
+          {meta?.total || appointments.length}{" "}
+          {t("appointments.appointmentCount")}
+        </Badge>
       </div>
 
       {/* Loading */}
@@ -232,10 +325,10 @@ export function AppointmentQueue() {
           <CardContent className="py-16 text-center">
             <Calendar className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t('appointments.noAppointments')}
+              {t("appointments.noAppointments")}
             </h3>
             <p className="text-muted-foreground">
-              {t('appointments.noAppointmentsToday')}
+              {t("appointments.noAppointmentsToday")}
             </p>
           </CardContent>
         </Card>
@@ -245,7 +338,9 @@ export function AppointmentQueue() {
       {!isLoading && appointments.length > 0 && (
         <div className="space-y-3">
           {appointments
-            .sort((a, b) => (a.appointmentTime || '').localeCompare(b.appointmentTime || ''))
+            .sort((a, b) =>
+              (a.appointmentTime || "").localeCompare(b.appointmentTime || ""),
+            )
             .map((appointment) => {
               const actions = getAvailableActions(appointment.status);
               const isUpdating = updateStatusMutation.isPending;
@@ -255,8 +350,8 @@ export function AppointmentQueue() {
                   key={appointment.id}
                   className={
                     appointment.status === AppointmentStatus.CHECKED_IN
-                      ? 'border-primary-300 dark:border-primary-700 bg-primary-50/30 dark:bg-primary-900/20'
-                      : ''
+                      ? "border-primary-300 dark:border-primary-700 bg-primary-50/30 dark:bg-primary-900/20"
+                      : ""
                   }
                 >
                   <CardContent className="p-4">
@@ -273,10 +368,13 @@ export function AppointmentQueue() {
                       <div className="flex items-center gap-3 flex-1">
                         <Avatar className="h-10 w-10">
                           <AvatarImage
-                            src={appointment.patientProfile?.user?.profilePicture || undefined}
+                            src={
+                              appointment.patientProfile?.user
+                                ?.profilePicture || undefined
+                            }
                           />
                           <AvatarFallback>
-                            {getInitials(appointment.patientName || '')}
+                            {getInitials(appointment.patientName || "")}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
@@ -285,17 +383,25 @@ export function AppointmentQueue() {
                           </p>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>
-                              {appointment.serviceName?.ar || appointment.serviceName?.en}
+                              {appointment.serviceName?.ar ||
+                                appointment.serviceName?.en}
                             </span>
                             {appointment.patientProfile?.user?.phoneNumber && (
                               <>
-                                <span className="text-muted-foreground/50">|</span>
+                                <span className="text-muted-foreground/50">
+                                  |
+                                </span>
                                 <a
                                   href={`tel:${appointment.patientProfile.user.phoneNumber}`}
                                   className="flex items-center gap-1 hover:text-primary-600"
                                 >
                                   <Phone className="h-3 w-3" />
-                                  <span dir="ltr">{appointment.patientProfile.user.phoneNumber}</span>
+                                  <span dir="ltr">
+                                    {
+                                      appointment.patientProfile.user
+                                        .phoneNumber
+                                    }
+                                  </span>
                                 </a>
                               </>
                             )}
@@ -313,14 +419,10 @@ export function AppointmentQueue() {
                           {statusLabels[appointment.status]}
                         </span>
 
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="text-xs"
-                        >
+                        <Button asChild variant="outline" className="text-xs">
                           <Link href={`/doctor/appointments/${appointment.id}`}>
                             <Eye className="h-4 w-4 ms-1" />
-                            {t('common.viewDetails')}
+                            {t("common.viewDetails")}
                           </Link>
                         </Button>
 
@@ -332,7 +434,10 @@ export function AppointmentQueue() {
                               variant={action.color as any}
                               className="text-xs"
                               onClick={() =>
-                                handleStatusUpdate(appointment.id, action.status)
+                                handleStatusUpdate(
+                                  appointment.id,
+                                  action.status,
+                                )
                               }
                               disabled={isUpdating}
                             >
@@ -356,7 +461,16 @@ export function AppointmentQueue() {
         </div>
       )}
 
-      <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
+      <PaginationControls
+        meta={meta}
+        page={page}
+        onPageChange={setPage}
+        limit={limit}
+        onLimitChange={(v) => {
+          setLimit(v);
+          setPage(1);
+        }}
+      />
     </div>
   );
 }

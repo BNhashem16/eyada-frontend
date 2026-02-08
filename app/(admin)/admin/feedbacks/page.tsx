@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { MessageSquareHeart } from 'lucide-react';
-import { AdminFeedbacksList } from '@/features/admin';
-import { useTranslation } from '@/lib/i18n';
+import { MessageSquareHeart } from "lucide-react";
+import { AdminFeedbacksList } from "@/features/admin";
+import { useTranslation } from "@/lib/i18n";
 
 export default function AdminFeedbacksPage() {
   const { t } = useTranslation();
@@ -16,8 +16,12 @@ export default function AdminFeedbacksPage() {
             <MessageSquareHeart className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('admin.feedbacksPage.title')}</h1>
-            <p className="text-muted-foreground">{t('admin.feedbacksPage.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("admin.feedbacksPage.title")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("admin.feedbacksPage.subtitle")}
+            </p>
           </div>
         </div>
       </div>

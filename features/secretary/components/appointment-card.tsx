@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
+import React, { useState, useMemo } from "react";
+import Link from "next/link";
+import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 import {
   Clock,
   User,
@@ -15,76 +15,97 @@ import {
   MoreVertical,
   Eye,
   Stethoscope,
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Appointment } from '@/types';
-import { AppointmentStatus, PaymentStatus } from '@/types/enums';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { formatTime } from '@/lib/utils/date';
-import { useUpdateAppointmentStatus, useUpdatePayment } from '../hooks';
-import { useTranslation } from '@/lib/i18n';
+} from "@/components/ui/dropdown-menu";
+import { Appointment } from "@/types";
+import { AppointmentStatus, PaymentStatus } from "@/types/enums";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { formatTime } from "@/lib/utils/date";
+import { useUpdateAppointmentStatus, useUpdatePayment } from "../hooks";
+import { useTranslation } from "@/lib/i18n";
 
 interface AppointmentCardProps {
   appointment: Appointment;
 }
 
-const getStatusConfig = (t: (key: string) => string): Record<
+const getStatusConfig = (
+  t: (key: string) => string,
+): Record<
   AppointmentStatus,
   { label: string; color: string; icon: React.ReactNode }
 > => ({
   [AppointmentStatus.PENDING]: {
-    label: t('secretary.waiting'),
-    color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
+    label: t("secretary.waiting"),
+    color:
+      "bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400",
     icon: <AlertCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CONFIRMED]: {
-    label: t('secretary.confirmed'),
-    color: 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400',
+    label: t("secretary.confirmed"),
+    color:
+      "bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400",
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CHECKED_IN]: {
-    label: t('secretary.attended'),
-    color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400',
+    label: t("secretary.attended"),
+    color:
+      "bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400",
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.IN_PROGRESS]: {
-    label: t('secretary.inProgress'),
-    color: 'bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-400',
+    label: t("secretary.inProgress"),
+    color: "bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-400",
     icon: <Stethoscope className="h-4 w-4" />,
   },
   [AppointmentStatus.COMPLETED]: {
-    label: t('secretary.completed'),
-    color: 'bg-muted text-muted-foreground',
+    label: t("secretary.completed"),
+    color: "bg-muted text-muted-foreground",
     icon: <CheckCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.CANCELLED]: {
-    label: t('secretary.cancelled'),
-    color: 'bg-error-100 text-error-800 dark:bg-error-900/30 dark:text-error-400',
+    label: t("secretary.cancelled"),
+    color:
+      "bg-error-100 text-error-800 dark:bg-error-900/30 dark:text-error-400",
     icon: <XCircle className="h-4 w-4" />,
   },
   [AppointmentStatus.NO_SHOW]: {
-    label: t('secretary.noShow'),
-    color: 'bg-muted text-muted-foreground',
+    label: t("secretary.noShow"),
+    color: "bg-muted text-muted-foreground",
     icon: <XCircle className="h-4 w-4" />,
   },
 });
 
-const getPaymentStatusConfig = (t: (key: string) => string): Record<PaymentStatus, { label: string; color: string }> => ({
-  [PaymentStatus.PENDING]: { label: t('secretary.unpaid'), color: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400' },
-  [PaymentStatus.PAID]: { label: t('secretary.paid'), color: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' },
-  [PaymentStatus.REFUNDED]: { label: t('secretary.refunded'), color: 'bg-muted text-muted-foreground' },
+const getPaymentStatusConfig = (
+  t: (key: string) => string,
+): Record<PaymentStatus, { label: string; color: string }> => ({
+  [PaymentStatus.PENDING]: {
+    label: t("secretary.unpaid"),
+    color:
+      "bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400",
+  },
+  [PaymentStatus.PAID]: {
+    label: t("secretary.paid"),
+    color:
+      "bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400",
+  },
+  [PaymentStatus.REFUNDED]: {
+    label: t("secretary.refunded"),
+    color: "bg-muted text-muted-foreground",
+  },
 });
 
-export const AppointmentCard = React.memo(function AppointmentCard({ appointment }: AppointmentCardProps) {
+export const AppointmentCard = React.memo(function AppointmentCard({
+  appointment,
+}: AppointmentCardProps) {
   const { t } = useTranslation();
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const updateStatus = useUpdateAppointmentStatus();
@@ -95,7 +116,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({ appointment
 
   const status = statusConfig[appointment.status];
   const paymentStatus = paymentStatusConfig[appointment.paymentStatus];
-  const serviceName = getLocalizedText(appointment.serviceName, 'ar');
+  const serviceName = getLocalizedText(appointment.serviceName, "ar");
 
   const handleStatusChange = (newStatus: AppointmentStatus) => {
     updateStatus.mutate({
@@ -104,7 +125,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({ appointment
     });
   };
 
-  const handlePayment = (method: 'CASH' | 'CARD' | 'INSURANCE') => {
+  const handlePayment = (method: "CASH" | "CARD" | "INSURANCE") => {
     updatePayment.mutate({
       appointmentId: appointment.id,
       paymentStatus: PaymentStatus.PAID,
@@ -129,13 +150,15 @@ export const AppointmentCard = React.memo(function AppointmentCard({ appointment
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
-                {appointment.queueNumber ? `#${appointment.queueNumber}` : '--'}
+                {appointment.queueNumber ? `#${appointment.queueNumber}` : "--"}
               </span>
               <Badge className={status.color}>
                 {status.icon}
                 <span className="ms-1">{status.label}</span>
               </Badge>
-              <Badge className={paymentStatus.color}>{paymentStatus.label}</Badge>
+              <Badge className={paymentStatus.color}>
+                {paymentStatus.label}
+              </Badge>
             </div>
 
             <h3 className="font-semibold text-foreground mb-1 truncate">
@@ -153,7 +176,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({ appointment
               </span>
               <span className="flex items-center gap-1">
                 <CreditCard className="h-4 w-4" />
-                {appointment.price} {t('common.egp')}
+                {appointment.price} {t("common.egp")}
               </span>
             </div>
 
@@ -175,50 +198,56 @@ export const AppointmentCard = React.memo(function AppointmentCard({ appointment
               <DropdownMenuItem asChild>
                 <Link href={`/secretary/appointments/${appointment.id}`}>
                   <Eye className="h-4 w-4 me-2" />
-                  {t('secretary.viewDetails')}
+                  {t("secretary.viewDetails")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {canConfirm && (
                 <DropdownMenuItem
-                  onClick={() => handleStatusChange(AppointmentStatus.CONFIRMED)}
+                  onClick={() =>
+                    handleStatusChange(AppointmentStatus.CONFIRMED)
+                  }
                 >
                   <CheckCircle className="h-4 w-4 me-2 text-blue-600" />
-                  {t('secretary.confirmAppointment')}
+                  {t("secretary.confirmAppointment")}
                 </DropdownMenuItem>
               )}
               {canCheckIn && (
                 <DropdownMenuItem
-                  onClick={() => handleStatusChange(AppointmentStatus.CHECKED_IN)}
+                  onClick={() =>
+                    handleStatusChange(AppointmentStatus.CHECKED_IN)
+                  }
                 >
                   <CheckCircle className="h-4 w-4 me-2 text-green-600" />
-                  {t('secretary.checkIn')}
+                  {t("secretary.checkIn")}
                 </DropdownMenuItem>
               )}
               {canCancel && (
                 <DropdownMenuItem
-                  onClick={() => handleStatusChange(AppointmentStatus.CANCELLED)}
+                  onClick={() =>
+                    handleStatusChange(AppointmentStatus.CANCELLED)
+                  }
                   className="text-error-600"
                 >
                   <XCircle className="h-4 w-4 me-2" />
-                  {t('secretary.cancelAppointment')}
+                  {t("secretary.cancelAppointment")}
                 </DropdownMenuItem>
               )}
 
               {canMarkPayment && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handlePayment('CASH')}>
+                  <DropdownMenuItem onClick={() => handlePayment("CASH")}>
                     <CreditCard className="h-4 w-4 me-2" />
-                    {t('secretary.cashPayment')}
+                    {t("secretary.cashPayment")}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handlePayment('CARD')}>
+                  <DropdownMenuItem onClick={() => handlePayment("CARD")}>
                     <CreditCard className="h-4 w-4 me-2" />
-                    {t('secretary.cardPayment')}
+                    {t("secretary.cardPayment")}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handlePayment('INSURANCE')}>
+                  <DropdownMenuItem onClick={() => handlePayment("INSURANCE")}>
                     <CreditCard className="h-4 w-4 me-2" />
-                    {t('secretary.insurance')}
+                    {t("secretary.insurance")}
                   </DropdownMenuItem>
                 </>
               )}

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { LoginForm } from '@/features/auth/components';
-import { useTranslation } from '@/lib/i18n';
+import { LoginForm } from "@/features/auth/components";
+import { useTranslation } from "@/lib/i18n";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -11,11 +11,9 @@ export default function LoginPage() {
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">
-          {t('auth.loginTitle')}
+          {t("auth.loginTitle")}
         </h1>
-        <p className="text-muted-foreground">
-          {t('auth.loginSubtitle')}
-        </p>
+        <p className="text-muted-foreground">{t("auth.loginSubtitle")}</p>
       </div>
 
       {/* Form */}

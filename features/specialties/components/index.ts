@@ -1,2 +1,2 @@
-export * from './specialty-card';
-export * from './specialty-list';
+export * from "./specialty-card";
+export * from "./specialty-list";

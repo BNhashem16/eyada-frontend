@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Plus,
   Edit2,
@@ -10,14 +10,14 @@ import {
   Search,
   Percent,
   DollarSign,
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +35,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -43,14 +43,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   useCommissions,
   useCreateCommission,
@@ -58,12 +58,12 @@ import {
   useDeleteCommission,
   Commission,
   CommissionType,
-} from '../hooks';
-import { useAdminDoctors } from '../hooks';
-import { DoctorStatus } from '@/types/enums';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { useTranslation } from '@/lib/i18n';
+} from "../hooks";
+import { useAdminDoctors } from "../hooks";
+import { DoctorStatus } from "@/types/enums";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
 
 interface CommissionFormData {
   doctorProfileId: string;
@@ -73,23 +73,30 @@ interface CommissionFormData {
 }
 
 const initialFormData: CommissionFormData = {
-  doctorProfileId: '',
-  commissionType: 'PERCENTAGE',
-  commissionValue: '',
+  doctorProfileId: "",
+  commissionType: "PERCENTAGE",
+  commissionValue: "",
   isActive: true,
 };
 
 export function CommissionsManagement() {
   const { t, locale } = useTranslation();
-  const [search, setSearch] = useState('');
-  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const { data: commissionsResponse, isLoading, isError } = useCommissions({ search, page, limit });
+  const {
+    data: commissionsResponse,
+    isLoading,
+    isError,
+  } = useCommissions({ search, page, limit });
   const commissions = commissionsResponse?.data || [];
   const meta = commissionsResponse?.meta;
-  const { data: doctorsResponse } = useAdminDoctors({ limit: 100, status: DoctorStatus.APPROVED });
+  const { data: doctorsResponse } = useAdminDoctors({
+    limit: 100,
+    status: DoctorStatus.APPROVED,
+  });
   const doctors = doctorsResponse?.data || [];
 
   const createCommission = useCreateCommission();
@@ -97,13 +104,15 @@ export function CommissionsManagement() {
   const deleteCommission = useDeleteCommission();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingCommission, setEditingCommission] = useState<Commission | null>(null);
+  const [editingCommission, setEditingCommission] = useState<Commission | null>(
+    null,
+  );
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<CommissionFormData>(initialFormData);
 
   // Filter out doctors who already have commission
   const availableDoctors = doctors.filter(
-    (doctor) => !commissions.some((c) => c.doctorProfileId === doctor.id)
+    (doctor) => !commissions.some((c) => c.doctorProfileId === doctor.id),
   );
 
   const handleSearch = () => {
@@ -146,7 +155,7 @@ export function CommissionsManagement() {
             setEditingCommission(null);
             setFormData(initialFormData);
           },
-        }
+        },
       );
     } else {
       createCommission.mutate(
@@ -161,7 +170,7 @@ export function CommissionsManagement() {
             setIsDialogOpen(false);
             setFormData(initialFormData);
           },
-        }
+        },
       );
     }
   };
@@ -181,8 +190,8 @@ export function CommissionsManagement() {
   };
 
   const formatCommissionValue = (commission: Commission) => {
-    if (commission.commissionType === 'FIXED') {
-      return `${commission.commissionValue} ${t('common.currency')}`;
+    if (commission.commissionType === "FIXED") {
+      return `${commission.commissionValue} ${t("common.currency")}`;
     }
     return `${commission.commissionValue}%`;
   };
@@ -209,7 +218,9 @@ export function CommissionsManagement() {
     return (
       <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600 dark:text-error-400">{t('errors.loadError')}</p>
+          <p className="text-error-600 dark:text-error-400">
+            {t("errors.loadError")}
+          </p>
         </CardContent>
       </Card>
     );
@@ -221,15 +232,15 @@ export function CommissionsManagement() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <h3 className="text-lg font-semibold text-foreground">
-              {t('admin.commissions.list')} ({meta?.total || 0})
+              {t("admin.commissions.list")} ({meta?.total || 0})
             </h3>
             <div className="flex gap-2">
               <div className="flex gap-2">
                 <Input
-                  placeholder={t('admin.commissions.searchDoctor')}
+                  placeholder={t("admin.commissions.searchDoctor")}
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   inputMode="search"
                   className="w-48"
                 />
@@ -239,7 +250,7 @@ export function CommissionsManagement() {
               </div>
               <Button onClick={handleOpenCreate}>
                 <Plus className="h-4 w-4 me-2" />
-                {t('admin.commissions.add')}
+                {t("admin.commissions.add")}
               </Button>
             </div>
           </div>
@@ -247,44 +258,51 @@ export function CommissionsManagement() {
           {commissions.length === 0 ? (
             <div className="text-center py-10">
               <Frown className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">{t('admin.commissions.noCommissions')}</p>
+              <p className="text-muted-foreground">
+                {t("admin.commissions.noCommissions")}
+              </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('admin.commissions.doctor')}</TableHead>
-                  <TableHead>{t('admin.commissions.specialty')}</TableHead>
-                  <TableHead>{t('admin.commissions.type')}</TableHead>
-                  <TableHead>{t('admin.commissions.value')}</TableHead>
-                  <TableHead>{t('table.status')}</TableHead>
-                  <TableHead>{t('table.actions')}</TableHead>
+                  <TableHead>{t("admin.commissions.doctor")}</TableHead>
+                  <TableHead>{t("admin.commissions.specialty")}</TableHead>
+                  <TableHead>{t("admin.commissions.type")}</TableHead>
+                  <TableHead>{t("admin.commissions.value")}</TableHead>
+                  <TableHead>{t("table.status")}</TableHead>
+                  <TableHead>{t("table.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {commissions.map((commission) => (
                   <TableRow
                     key={commission.id}
-                    className={!commission.isActive ? 'opacity-60 bg-muted/30' : ''}
+                    className={
+                      !commission.isActive ? "opacity-60 bg-muted/30" : ""
+                    }
                   >
                     <TableCell className="font-medium">
-                      {commission.doctorProfile?.user.fullName || '-'}
+                      {commission.doctorProfile?.user.fullName || "-"}
                     </TableCell>
                     <TableCell>
                       {commission.doctorProfile?.specialty
-                        ? getLocalizedText(commission.doctorProfile.specialty.name, locale)
-                        : '-'}
+                        ? getLocalizedText(
+                            commission.doctorProfile.specialty.name,
+                            locale,
+                          )
+                        : "-"}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="gap-1">
-                        {commission.commissionType === 'FIXED' ? (
+                        {commission.commissionType === "FIXED" ? (
                           <DollarSign className="h-3 w-3" />
                         ) : (
                           <Percent className="h-3 w-3" />
                         )}
-                        {commission.commissionType === 'FIXED'
-                          ? t('admin.commissions.fixed')
-                          : t('admin.commissions.percentage')}
+                        {commission.commissionType === "FIXED"
+                          ? t("admin.commissions.fixed")
+                          : t("admin.commissions.percentage")}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-semibold">
@@ -298,10 +316,14 @@ export function CommissionsManagement() {
                           disabled={updateCommission.isPending}
                         />
                         <Badge
-                          variant={commission.isActive ? 'success' : 'secondary'}
+                          variant={
+                            commission.isActive ? "success" : "secondary"
+                          }
                           className="text-xs"
                         >
-                          {commission.isActive ? t('common.active') : t('common.inactive')}
+                          {commission.isActive
+                            ? t("common.active")
+                            : t("common.inactive")}
                         </Badge>
                       </div>
                     </TableCell>
@@ -330,7 +352,16 @@ export function CommissionsManagement() {
             </Table>
           )}
 
-          <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
+          <PaginationControls
+            meta={meta}
+            page={page}
+            onPageChange={setPage}
+            limit={limit}
+            onLimitChange={(v) => {
+              setLimit(v);
+              setPage(1);
+            }}
+          />
         </CardContent>
       </Card>
 
@@ -340,18 +371,18 @@ export function CommissionsManagement() {
           <DialogHeader>
             <DialogTitle>
               {editingCommission
-                ? t('admin.commissions.edit')
-                : t('admin.commissions.addNew')}
+                ? t("admin.commissions.edit")
+                : t("admin.commissions.addNew")}
             </DialogTitle>
             <DialogDescription>
-              {t('admin.commissions.formDesc')}
+              {t("admin.commissions.formDesc")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             {!editingCommission && (
               <div>
-                <Label>{t('admin.commissions.selectDoctor')} *</Label>
+                <Label>{t("admin.commissions.selectDoctor")} *</Label>
                 <Select
                   value={formData.doctorProfileId}
                   onValueChange={(value) =>
@@ -359,12 +390,16 @@ export function CommissionsManagement() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('admin.commissions.selectDoctorPlaceholder')} />
+                    <SelectValue
+                      placeholder={t(
+                        "admin.commissions.selectDoctorPlaceholder",
+                      )}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {availableDoctors.map((doctor) => (
                       <SelectItem key={doctor.id} value={doctor.id}>
-                        {doctor.user.fullName} -{' '}
+                        {doctor.user.fullName} -{" "}
                         {getLocalizedText(doctor.specialty.name, locale)}
                       </SelectItem>
                     ))}
@@ -374,7 +409,7 @@ export function CommissionsManagement() {
             )}
 
             <div>
-              <Label>{t('admin.commissions.type')} *</Label>
+              <Label>{t("admin.commissions.type")} *</Label>
               <Select
                 value={formData.commissionType}
                 onValueChange={(value: CommissionType) =>
@@ -388,13 +423,13 @@ export function CommissionsManagement() {
                   <SelectItem value="FIXED">
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
-                      {t('admin.commissions.fixed')}
+                      {t("admin.commissions.fixed")}
                     </div>
                   </SelectItem>
                   <SelectItem value="PERCENTAGE">
                     <div className="flex items-center gap-2">
                       <Percent className="h-4 w-4" />
-                      {t('admin.commissions.percentage')}
+                      {t("admin.commissions.percentage")}
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -403,30 +438,33 @@ export function CommissionsManagement() {
 
             <div>
               <Label>
-                {formData.commissionType === 'FIXED'
-                  ? t('admin.commissions.fixedValue')
-                  : t('admin.commissions.percentageValue')}{' '}
+                {formData.commissionType === "FIXED"
+                  ? t("admin.commissions.fixedValue")
+                  : t("admin.commissions.percentageValue")}{" "}
                 *
               </Label>
               <Input
                 type="number"
                 inputMode="decimal"
                 min="0"
-                step={formData.commissionType === 'FIXED' ? '1' : '0.1'}
+                step={formData.commissionType === "FIXED" ? "1" : "0.1"}
                 value={formData.commissionValue}
                 onChange={(e) =>
-                  setFormData((f) => ({ ...f, commissionValue: e.target.value }))
+                  setFormData((f) => ({
+                    ...f,
+                    commissionValue: e.target.value,
+                  }))
                 }
                 placeholder={
-                  formData.commissionType === 'FIXED'
-                    ? t('admin.commissions.fixedPlaceholder')
-                    : t('admin.commissions.percentagePlaceholder')
+                  formData.commissionType === "FIXED"
+                    ? t("admin.commissions.fixedPlaceholder")
+                    : t("admin.commissions.percentagePlaceholder")
                 }
                 dir="ltr"
               />
-              {formData.commissionType === 'PERCENTAGE' && (
+              {formData.commissionType === "PERCENTAGE" && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  {t('admin.commissions.percentageHint')}
+                  {t("admin.commissions.percentageHint")}
                 </p>
               )}
             </div>
@@ -438,13 +476,13 @@ export function CommissionsManagement() {
                   setFormData((f) => ({ ...f, isActive: checked }))
                 }
               />
-              <Label>{t('admin.commissions.activeLabel')}</Label>
+              <Label>{t("admin.commissions.activeLabel")}</Label>
             </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              {t('common.cancel')}
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -459,7 +497,7 @@ export function CommissionsManagement() {
               {(createCommission.isPending || updateCommission.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {editingCommission ? t('common.update') : t('common.add')}
+              {editingCommission ? t("common.update") : t("common.add")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -469,13 +507,13 @@ export function CommissionsManagement() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.commissions.delete')}</AlertDialogTitle>
+            <AlertDialogTitle>{t("admin.commissions.delete")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.commissions.deleteConfirm')}
+              {t("admin.commissions.deleteConfirm")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-error-600 hover:bg-error-700"
@@ -484,7 +522,7 @@ export function CommissionsManagement() {
               {deleteCommission.isPending && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {t('common.delete')}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

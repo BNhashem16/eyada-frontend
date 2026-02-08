@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Clock, Save, Loader2, Users } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useEffect } from "react";
+import { Clock, Save, Loader2, Users } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useClinicSchedules,
   useCreateSchedule,
   useUpdateSchedule,
-} from '../hooks/use-doctor-portal';
-import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/i18n';
-import { DayOfWeek } from '@/types/enums';
-import { ClinicSchedule } from '@/types';
+} from "../hooks/use-doctor-portal";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { DayOfWeek } from "@/types/enums";
+import { ClinicSchedule } from "@/types";
 
 interface ScheduleManagerProps {
   clinicId: string;
@@ -35,14 +35,16 @@ const dayOrder: DayOfWeek[] = [
   DayOfWeek.FRIDAY,
 ];
 
-const getDayNames = (t: (key: string) => string): Record<DayOfWeek, string> => ({
-  [DayOfWeek.SUNDAY]: t('days.sunday'),
-  [DayOfWeek.MONDAY]: t('days.monday'),
-  [DayOfWeek.TUESDAY]: t('days.tuesday'),
-  [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
-  [DayOfWeek.THURSDAY]: t('days.thursday'),
-  [DayOfWeek.FRIDAY]: t('days.friday'),
-  [DayOfWeek.SATURDAY]: t('days.saturday'),
+const getDayNames = (
+  t: (key: string) => string,
+): Record<DayOfWeek, string> => ({
+  [DayOfWeek.SUNDAY]: t("days.sunday"),
+  [DayOfWeek.MONDAY]: t("days.monday"),
+  [DayOfWeek.TUESDAY]: t("days.tuesday"),
+  [DayOfWeek.WEDNESDAY]: t("days.wednesday"),
+  [DayOfWeek.THURSDAY]: t("days.thursday"),
+  [DayOfWeek.FRIDAY]: t("days.friday"),
+  [DayOfWeek.SATURDAY]: t("days.saturday"),
 });
 
 interface DaySchedule {
@@ -89,8 +91,8 @@ export function ScheduleManager({
         return {
           dayOfWeek: day,
           isActive: existing?.isActive ?? false,
-          startTime: firstShift?.startTime ?? '09:00',
-          endTime: firstShift?.endTime ?? '17:00',
+          startTime: firstShift?.startTime ?? "09:00",
+          endTime: firstShift?.endTime ?? "17:00",
           breakTime: firstShift?.breakTime,
           slotDuration: existing?.slotDuration ?? 30,
           maxPatients: existing?.maxPatients ?? undefined,
@@ -115,8 +117,8 @@ export function ScheduleManager({
 
   const handleTimeChange = (
     dayIndex: number,
-    field: 'startTime' | 'endTime' | 'breakTime',
-    value: string
+    field: "startTime" | "endTime" | "breakTime",
+    value: string,
   ) => {
     setLocalSchedules((prev) => {
       const updated = [...prev];
@@ -146,7 +148,7 @@ export function ScheduleManager({
       const updated = [...prev];
       updated[dayIndex] = {
         ...updated[dayIndex],
-        maxPatients: value === '' ? undefined : Number(value),
+        maxPatients: value === "" ? undefined : Number(value),
       };
       return updated;
     });
@@ -157,11 +159,13 @@ export function ScheduleManager({
     try {
       const promises = localSchedules.map(async (schedule) => {
         // Convert to shifts array format (matching backend ShiftDto)
-        const shifts = [{
-          startTime: schedule.startTime,
-          endTime: schedule.endTime,
-          breakTime: schedule.breakTime || undefined,
-        }];
+        const shifts = [
+          {
+            startTime: schedule.startTime,
+            endTime: schedule.endTime,
+            breakTime: schedule.breakTime || undefined,
+          },
+        ];
 
         if (schedule.id) {
           // Update existing schedule
@@ -193,16 +197,16 @@ export function ScheduleManager({
       await Promise.all(promises);
 
       toast({
-        title: t('toast.updated'),
-        description: t('clinics.scheduleSaved'),
-        variant: 'success',
+        title: t("toast.updated"),
+        description: t("clinics.scheduleSaved"),
+        variant: "success",
       });
       setHasChanges(false);
     } catch (error) {
       toast({
-        title: t('toast.error'),
-        description: t('clinics.scheduleSaveFailed'),
-        variant: 'error',
+        title: t("toast.error"),
+        description: t("clinics.scheduleSaveFailed"),
+        variant: "error",
       });
     }
   };
@@ -229,19 +233,23 @@ export function ScheduleManager({
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-          {t('clinics.scheduleTitle')}
+          {t("clinics.scheduleTitle")}
         </CardTitle>
         {hasChanges && (
-          <Button onClick={handleSave} disabled={isPending} className="w-full sm:w-auto">
+          <Button
+            onClick={handleSave}
+            disabled={isPending}
+            className="w-full sm:w-auto"
+          >
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                {t('common.saving')}
+                {t("common.saving")}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4 ms-2" />
-                {t('common.saveChanges')}
+                {t("common.saveChanges")}
               </>
             )}
           </Button>
@@ -253,7 +261,7 @@ export function ScheduleManager({
             <div
               key={schedule.dayOfWeek}
               className={`flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-lg transition-colors ${
-                schedule.isActive ? 'bg-muted' : 'bg-muted/50'
+                schedule.isActive ? "bg-muted" : "bg-muted/50"
               }`}
             >
               {/* Day Toggle */}
@@ -266,7 +274,9 @@ export function ScheduleManager({
                 <Label
                   htmlFor={`day-${schedule.dayOfWeek}`}
                   className={`cursor-pointer font-medium ${
-                    schedule.isActive ? 'text-foreground' : 'text-muted-foreground'
+                    schedule.isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground"
                   }`}
                 >
                   {dayNames[schedule.dayOfWeek]}
@@ -277,36 +287,42 @@ export function ScheduleManager({
               {schedule.isActive && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap lg:items-center gap-3 lg:gap-4 flex-1">
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('common.from')}</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
+                      {t("common.from")}
+                    </Label>
                     <Input
                       type="time"
                       value={schedule.startTime}
                       onChange={(e) =>
-                        handleTimeChange(index, 'startTime', e.target.value)
+                        handleTimeChange(index, "startTime", e.target.value)
                       }
                       className="w-full lg:w-32"
                       dir="ltr"
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('common.to')}</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
+                      {t("common.to")}
+                    </Label>
                     <Input
                       type="time"
                       value={schedule.endTime}
                       onChange={(e) =>
-                        handleTimeChange(index, 'endTime', e.target.value)
+                        handleTimeChange(index, "endTime", e.target.value)
                       }
                       className="w-full lg:w-32"
                       dir="ltr"
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('common.break')}</Label>
+                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
+                      {t("common.break")}
+                    </Label>
                     <Input
                       type="time"
-                      value={schedule.breakTime || ''}
+                      value={schedule.breakTime || ""}
                       onChange={(e) =>
-                        handleTimeChange(index, 'breakTime', e.target.value)
+                        handleTimeChange(index, "breakTime", e.target.value)
                       }
                       className="w-full lg:w-32"
                       dir="ltr"
@@ -315,7 +331,7 @@ export function ScheduleManager({
                   </div>
                   <div className="flex items-center gap-2">
                     <Label className="text-sm text-muted-foreground whitespace-nowrap">
-                      {t('clinics.slotDuration')}
+                      {t("clinics.slotDuration")}
                     </Label>
                     <select
                       value={schedule.slotDuration}
@@ -324,26 +340,28 @@ export function ScheduleManager({
                       }
                       className="w-full lg:w-auto rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                     >
-                      <option value={15}>{t('common.duration15')}</option>
-                      <option value={20}>{t('common.duration20')}</option>
-                      <option value={30}>{t('common.duration30')}</option>
-                      <option value={45}>{t('common.duration45')}</option>
-                      <option value={60}>{t('common.duration60')}</option>
+                      <option value={15}>{t("common.duration15")}</option>
+                      <option value={20}>{t("common.duration20")}</option>
+                      <option value={30}>{t("common.duration30")}</option>
+                      <option value={45}>{t("common.duration45")}</option>
+                      <option value={60}>{t("common.duration60")}</option>
                     </select>
                   </div>
                   <div className="flex items-center gap-2">
                     <Label className="text-sm text-muted-foreground whitespace-nowrap flex items-center gap-1">
                       <Users className="h-3.5 w-3.5" />
-                      {t('clinics.maxPatients')}
+                      {t("clinics.maxPatients")}
                     </Label>
                     <Input
                       type="number"
                       inputMode="numeric"
                       min={1}
-                      value={schedule.maxPatients ?? ''}
-                      onChange={(e) => handleMaxPatientsChange(index, e.target.value)}
+                      value={schedule.maxPatients ?? ""}
+                      onChange={(e) =>
+                        handleMaxPatientsChange(index, e.target.value)
+                      }
                       className="w-full lg:w-24"
-                      placeholder={t('clinics.maxPatientsPlaceholder')}
+                      placeholder={t("clinics.maxPatientsPlaceholder")}
                       dir="ltr"
                     />
                   </div>
@@ -351,14 +369,16 @@ export function ScheduleManager({
               )}
 
               {!schedule.isActive && (
-                <span className="text-sm text-muted-foreground">{t('common.closed')}</span>
+                <span className="text-sm text-muted-foreground">
+                  {t("common.closed")}
+                </span>
               )}
             </div>
           ))}
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          * {t('clinics.scheduleHint')}
+          * {t("clinics.scheduleHint")}
         </p>
       </CardContent>
     </Card>

@@ -4,7 +4,15 @@
  * DO NOT add fields that are not documented in Swagger.
  */
 
-import { Gender, RelationshipType, ServiceType, DayOfWeek, AppointmentStatus, PaymentStatus, PaymentMethod } from './enums';
+import {
+  Gender,
+  RelationshipType,
+  ServiceType,
+  DayOfWeek,
+  AppointmentStatus,
+  PaymentStatus,
+  PaymentMethod,
+} from "./enums";
 
 // ============================================
 // COMMON DTOs
@@ -36,7 +44,7 @@ export interface RegisterDto {
   phoneNumber: string; // Egyptian mobile: /^01[0125][0-9]{8}$/
   password: string; // minLength: 8, maxLength: 50
   fullName: string; // minLength: 2, maxLength: 100
-  role?: 'PATIENT' | 'DOCTOR'; // default: PATIENT
+  role?: "PATIENT" | "DOCTOR"; // default: PATIENT
 }
 
 export interface RefreshTokenDto {

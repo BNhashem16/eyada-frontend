@@ -1,16 +1,16 @@
-import type { Multilingual } from '@/types';
-import type { SupportedLocale } from './date';
+import type { Multilingual } from "@/types";
+import type { SupportedLocale } from "./date";
 
 /**
  * Get localized text from a Multilingual object
  */
 export function getLocalizedText(
   text: Multilingual | string | undefined | null,
-  locale: SupportedLocale
+  locale: SupportedLocale,
 ): string {
-  if (!text) return '';
-  if (typeof text === 'string') return text;
-  return text[locale] || text.ar || text.en || '';
+  if (!text) return "";
+  if (typeof text === "string") return text;
+  return text[locale] || text.ar || text.en || "";
 }
 
 /**
@@ -25,7 +25,7 @@ export function createMultilingual(ar: string, en: string): Multilingual {
  */
 export function hasLocalizedContent(
   text: Multilingual | undefined | null,
-  locale: SupportedLocale
+  locale: SupportedLocale,
 ): boolean {
   if (!text) return false;
   return Boolean(text[locale]?.trim());
@@ -35,7 +35,7 @@ export function hasLocalizedContent(
  * Get initials from a name (supports Arabic and English)
  */
 export function getInitials(name: string | undefined | null): string {
-  if (!name) return '';
+  if (!name) return "";
 
   const words = name.trim().split(/\s+/);
   if (words.length === 1) {
@@ -45,6 +45,6 @@ export function getInitials(name: string | undefined | null): string {
   return words
     .slice(0, 2)
     .map((word) => word.charAt(0))
-    .join('')
+    .join("")
     .toUpperCase();
 }

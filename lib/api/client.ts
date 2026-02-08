@@ -1,21 +1,21 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { API_BASE_URL, AUTH_ENDPOINTS } from './endpoints';
-import type { ApiError, AuthTokens } from '@/types';
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { API_BASE_URL, AUTH_ENDPOINTS } from "./endpoints";
+import type { ApiError, AuthTokens } from "@/types";
 
 // Create axios instance
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache',
-    'Pragma': 'no-cache',
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
   },
   timeout: 30000,
 });
 
 // Token storage keys
-const ACCESS_TOKEN_KEY = 'eyada_access_token';
-const REFRESH_TOKEN_KEY = 'eyada_refresh_token';
+const ACCESS_TOKEN_KEY = "eyada_access_token";
+const REFRESH_TOKEN_KEY = "eyada_refresh_token";
 
 // Callback for when session is invalidated (refresh token fails)
 let onSessionInvalidated: (() => void) | null = null;
@@ -29,23 +29,23 @@ let onClearQueryCache: (() => void) | null = null;
 // Token management functions
 export const tokenStorage = {
   getAccessToken: (): string | null => {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     return localStorage.getItem(ACCESS_TOKEN_KEY);
   },
 
   getRefreshToken: (): string | null => {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     return localStorage.getItem(REFRESH_TOKEN_KEY);
   },
 
   setTokens: (tokens: AuthTokens): void => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
   },
 
   clearTokens: (): void => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
   },
@@ -98,16 +98,16 @@ apiClient.interceptors.request.use(
     }
 
     // Add Accept-Language header
-    if (typeof window !== 'undefined' && config.headers) {
-      const locale = localStorage.getItem('eyada-locale') || 'ar';
-      config.headers['Accept-Language'] = locale;
+    if (typeof window !== "undefined" && config.headers) {
+      const locale = localStorage.getItem("eyada-locale") || "ar";
+      config.headers["Accept-Language"] = locale;
     }
 
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Extended config type for retry flag
@@ -131,7 +131,7 @@ apiClient.interceptors.response.use(
       const errorData = error.response.data as any;
       const errorCode = errorData?.error || errorData?.errorCode;
 
-      if (errorCode === 'DOCTOR_PROFILE_INCOMPLETE') {
+      if (errorCode === "DOCTOR_PROFILE_INCOMPLETE") {
         if (onDoctorProfileIncomplete) {
           onDoctorProfileIncomplete();
         }
@@ -178,7 +178,7 @@ apiClient.interceptors.response.use(
       try {
         const response = await axios.post<AuthTokens>(
           `${API_BASE_URL}${AUTH_ENDPOINTS.REFRESH}`,
-          { refreshToken }
+          { refreshToken },
         );
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
@@ -200,7 +200,7 @@ apiClient.interceptors.response.use(
         isRefreshing = false;
         // Clear tokens and notify the app
         tokenStorage.clearTokens();
-        onTokenRefreshed('');
+        onTokenRefreshed("");
         // Notify auth store that session is invalidated
         if (onSessionInvalidated) {
           onSessionInvalidated();
@@ -210,20 +210,28 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // Helper to unwrap API response { success: true, data: {...} }
 function unwrapResponse<T>(responseData: any): T {
   // If response has success/data structure, unwrap it
-  if (responseData && typeof responseData === 'object' && 'success' in responseData && 'data' in responseData) {
+  if (
+    responseData &&
+    typeof responseData === "object" &&
+    "success" in responseData &&
+    "data" in responseData
+  ) {
     return responseData.data;
   }
   return responseData;
 }
 
 // Helper function for API calls
-export async function apiGet<T>(url: string, params?: Record<string, unknown>): Promise<T> {
+export async function apiGet<T>(
+  url: string,
+  params?: Record<string, unknown>,
+): Promise<T> {
   const response = await apiClient.get<T>(url, { params });
   return unwrapResponse<T>(response.data);
 }

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Spinner } from '@/components/ui/spinner';
-import { useTranslation } from '@/lib/i18n';
+import { Spinner } from "@/components/ui/spinner";
+import { useTranslation } from "@/lib/i18n";
 
 export default function Loading() {
   const { t } = useTranslation();
@@ -10,7 +10,7 @@ export default function Loading() {
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
         <Spinner size="lg" className="mx-auto mb-4" />
-        <p className="text-muted-foreground">{t('common.loading')}</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useParams } from 'next/navigation';
-import { FileText } from 'lucide-react';
-import { DoctorReport } from '@/features/admin';
-import { useTranslation } from '@/lib/i18n';
+import { useParams } from "next/navigation";
+import { FileText } from "lucide-react";
+import { DoctorReport } from "@/features/admin";
+import { useTranslation } from "@/lib/i18n";
 
 export default function DoctorReportPage() {
   const { t } = useTranslation();
@@ -19,8 +19,12 @@ export default function DoctorReportPage() {
             <FileText className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('admin.doctorReportPage.title')}</h1>
-            <p className="text-muted-foreground">{t('admin.doctorReportPage.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("admin.doctorReportPage.title")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("admin.doctorReportPage.subtitle")}
+            </p>
           </div>
         </div>
       </div>

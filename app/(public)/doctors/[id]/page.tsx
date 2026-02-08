@@ -1,14 +1,14 @@
-import { Metadata } from 'next';
-import { DoctorProfileComponent } from '@/features/doctors';
-import { getTranslation } from '@/lib/i18n';
+import { Metadata } from "next";
+import { DoctorProfileComponent } from "@/features/doctors";
+import { getTranslation } from "@/lib/i18n";
 
 interface DoctorPageProps {
   params: Promise<{ id: string }>;
 }
 
 export const metadata: Metadata = {
-  title: getTranslation('meta.doctorProfile.title'),
-  description: getTranslation('meta.doctorProfile.description'),
+  title: getTranslation("meta.doctorProfile.title"),
+  description: getTranslation("meta.doctorProfile.description"),
 };
 
 export default async function DoctorPage({ params }: DoctorPageProps) {

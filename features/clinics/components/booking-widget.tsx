@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -11,20 +11,20 @@ import {
   Loader2,
   User,
   Users,
-} from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import type { ApiError } from '@/types/models';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import { useClinicServices } from '../hooks/use-clinics';
-import { usePatientFamily } from '@/features/patients/hooks/use-patient';
-import { useAuthStore } from '@/lib/auth/store';
-import { apiPost } from '@/lib/api';
-import { PATIENT_ENDPOINTS } from '@/lib/api/endpoints';
-import { useToast } from '@/hooks/use-toast';
+} from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types/models";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { useClinicServices } from "../hooks/use-clinics";
+import { usePatientFamily } from "@/features/patients/hooks/use-patient";
+import { useAuthStore } from "@/lib/auth/store";
+import { apiPost } from "@/lib/api";
+import { PATIENT_ENDPOINTS } from "@/lib/api/endpoints";
+import { useToast } from "@/hooks/use-toast";
 import {
   formatDate,
   getWeekDays,
@@ -32,8 +32,8 @@ import {
   isSameDay,
   isToday,
   isBefore,
-} from '@/lib/utils/date';
-import { useTranslation } from '@/lib/i18n';
+} from "@/lib/utils/date";
+import { useTranslation } from "@/lib/i18n";
 
 interface BookingWidgetProps {
   clinicId: string;
@@ -57,24 +57,26 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     return saturday;
   });
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedServiceId, setSelectedServiceId] = useState<string>('');
-  const [bookingFor, setBookingFor] = useState<'self' | 'family'>('self');
-  const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState<string>('');
+  const [selectedServiceId, setSelectedServiceId] = useState<string>("");
+  const [bookingFor, setBookingFor] = useState<"self" | "family">("self");
+  const [selectedFamilyMemberId, setSelectedFamilyMemberId] =
+    useState<string>("");
 
   // Queries
-  const { data: services, isLoading: servicesLoading } = useClinicServices(clinicId);
+  const { data: services, isLoading: servicesLoading } =
+    useClinicServices(clinicId);
   const { data: familyMembers, isLoading: familyLoading } = usePatientFamily();
 
   // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({
     mutationFn: async () => {
       if (!selectedDate || !selectedServiceId) {
-        throw new Error(t('booking.selectAllRequired'));
+        throw new Error(t("booking.selectAllRequired"));
       }
 
       // Validate family member selection
-      if (bookingFor === 'family' && !selectedFamilyMemberId) {
-        throw new Error(t('booking.selectPatient'));
+      if (bookingFor === "family" && !selectedFamilyMemberId) {
+        throw new Error(t("booking.selectPatient"));
       }
 
       // Per Swagger: appointmentDate is YYYY-MM-DD format only
@@ -87,11 +89,11 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       } = {
         clinicId,
         serviceTypeId: selectedServiceId,
-        appointmentDate: formatDate(selectedDate, 'yyyy-MM-dd'),
+        appointmentDate: formatDate(selectedDate, "yyyy-MM-dd"),
       };
 
       // Add patientProfileId if booking for family member
-      if (bookingFor === 'family' && selectedFamilyMemberId) {
+      if (bookingFor === "family" && selectedFamilyMemberId) {
         payload.patientProfileId = selectedFamilyMemberId;
       }
 
@@ -99,19 +101,20 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     },
     onSuccess: () => {
       toast({
-        title: t('booking.bookingSuccessTitle'),
-        description: t('booking.bookingSuccessDesc'),
-        variant: 'success',
+        title: t("booking.bookingSuccessTitle"),
+        description: t("booking.bookingSuccessDesc"),
+        variant: "success",
       });
-      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
-      router.push('/patient/appointments');
+      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+      router.push("/patient/appointments");
     },
     onError: (error: AxiosError<ApiError>) => {
-      const message = error.response?.data?.message || t('booking.bookingFailedDesc');
+      const message =
+        error.response?.data?.message || t("booking.bookingFailedDesc");
       toast({
-        title: t('booking.bookingFailedTitle'),
+        title: t("booking.bookingFailedTitle"),
         description: message,
-        variant: 'error',
+        variant: "error",
       });
     },
   });
@@ -150,11 +153,11 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       return;
     }
 
-    if (user?.role !== 'PATIENT') {
+    if (user?.role !== "PATIENT") {
       toast({
-        title: t('booking.notAllowed'),
-        description: t('booking.patientRequired'),
-        variant: 'error',
+        title: t("booking.notAllowed"),
+        description: t("booking.patientRequired"),
+        variant: "error",
       });
       return;
     }
@@ -163,7 +166,10 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
   };
 
   // Check if can go to previous week
-  const canGoPrevious = !isBefore(addDays(weekStart, -7), addDays(new Date(), -1));
+  const canGoPrevious = !isBefore(
+    addDays(weekStart, -7),
+    addDays(new Date(), -1),
+  );
 
   // Selected service details
   const selectedService = services?.find((s) => s.id === selectedServiceId);
@@ -173,14 +179,14 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-          {t('booking.title')}
+          {t("booking.title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Service Selection */}
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
-            {t('booking.selectService')}
+            {t("booking.selectService")}
           </label>
           {servicesLoading ? (
             <Skeleton className="h-10 w-full" />
@@ -188,56 +194,60 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             <SearchableSelect
               options={services.map((service) => ({
                 value: service.id,
-                label: `${service.name?.ar || service.name?.en || service.serviceType} - ${service.price} ${t('common.egp')}`,
-                description: service.duration ? `${service.duration} ${t('services.minute')}` : undefined,
+                label: `${service.name?.ar || service.name?.en || service.serviceType} - ${service.price} ${t("common.egp")}`,
+                description: service.duration
+                  ? `${service.duration} ${t("services.minute")}`
+                  : undefined,
               }))}
               value={selectedServiceId}
               onValueChange={setSelectedServiceId}
-              placeholder={t('booking.selectServiceType')}
-              searchPlaceholder={t('common.search')}
-              emptyMessage={t('common.noResults')}
+              placeholder={t("booking.selectServiceType")}
+              searchPlaceholder={t("common.search")}
+              emptyMessage={t("common.noResults")}
               showSearch={services.length > 5}
               clearable={false}
             />
           ) : (
-            <p className="text-sm text-muted-foreground">{t('booking.noServicesAvailable')}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("booking.noServicesAvailable")}
+            </p>
           )}
         </div>
 
         {/* Patient Selection - Only show for authenticated patients */}
-        {isAuthenticated && user?.role === 'PATIENT' && (
+        {isAuthenticated && user?.role === "PATIENT" && (
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              {t('booking.bookingFor')}
+              {t("booking.bookingFor")}
             </label>
             <div className="flex gap-2 mb-3">
               <Button
                 type="button"
-                variant={bookingFor === 'self' ? 'default' : 'outline'}
+                variant={bookingFor === "self" ? "default" : "outline"}
                 size="sm"
                 className="flex-1"
                 onClick={() => {
-                  setBookingFor('self');
-                  setSelectedFamilyMemberId('');
+                  setBookingFor("self");
+                  setSelectedFamilyMemberId("");
                 }}
               >
                 <User className="h-4 w-4 ms-2" />
-                {t('booking.bookForSelf')}
+                {t("booking.bookForSelf")}
               </Button>
               <Button
                 type="button"
-                variant={bookingFor === 'family' ? 'default' : 'outline'}
+                variant={bookingFor === "family" ? "default" : "outline"}
                 size="sm"
                 className="flex-1"
-                onClick={() => setBookingFor('family')}
+                onClick={() => setBookingFor("family")}
               >
                 <Users className="h-4 w-4 ms-2" />
-                {t('booking.bookForFamily')}
+                {t("booking.bookForFamily")}
               </Button>
             </div>
 
             {/* Family Member Selection */}
-            {bookingFor === 'family' && (
+            {bookingFor === "family" && (
               <>
                 {familyLoading ? (
                   <Skeleton className="h-10 w-full" />
@@ -245,22 +255,32 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                   <SearchableSelect
                     options={familyMembers.map((member) => ({
                       value: member.id,
-                      label: member.fullName || member.user?.fullName || member.user?.name || '',
-                      description: member.relationship ? t(`family.${member.relationship?.toLowerCase()}`) : undefined,
+                      label:
+                        member.fullName ||
+                        member.user?.fullName ||
+                        member.user?.name ||
+                        "",
+                      description: member.relationship
+                        ? t(`family.${member.relationship?.toLowerCase()}`)
+                        : undefined,
                     }))}
                     value={selectedFamilyMemberId}
                     onValueChange={setSelectedFamilyMemberId}
-                    placeholder={t('booking.selectPatient')}
-                    searchPlaceholder={t('common.search')}
-                    emptyMessage={t('common.noResults')}
+                    placeholder={t("booking.selectPatient")}
+                    searchPlaceholder={t("common.search")}
+                    emptyMessage={t("common.noResults")}
                   />
                 ) : (
                   <div className="text-center py-3 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-2">{t('booking.noFamilyMembers')}</p>
-                    <p className="text-xs text-muted-foreground mb-2">{t('booking.addFamilyFirst')}</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {t("booking.noFamilyMembers")}
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {t("booking.addFamilyFirst")}
+                    </p>
                     <Link href="/patient/family">
                       <Button variant="link" size="sm" className="text-primary">
-                        {t('booking.goToFamily')}
+                        {t("booking.goToFamily")}
                       </Button>
                     </Link>
                   </div>
@@ -273,7 +293,9 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         {/* Date Selection */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <label className="text-sm font-medium text-foreground">{t('booking.selectDay')}</label>
+            <label className="text-sm font-medium text-foreground">
+              {t("booking.selectDay")}
+            </label>
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
@@ -284,9 +306,13 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                 <ChevronRight className="h-4 w-4" />
               </Button>
               <span className="text-sm text-muted-foreground">
-                {formatDate(weekStart, 'MMM yyyy')}
+                {formatDate(weekStart, "MMM yyyy")}
               </span>
-              <Button variant="ghost" className="text-xs" onClick={goToNextWeek}>
+              <Button
+                variant="ghost"
+                className="text-xs"
+                onClick={goToNextWeek}
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
@@ -305,16 +331,16 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                   disabled={isPast}
                   className={`
                     flex flex-col items-center justify-center p-2 rounded-lg text-center transition-all
-                    ${isPast ? 'opacity-40 cursor-not-allowed' : 'hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer'}
-                    ${isSelected ? 'bg-primary-500 text-white hover:bg-primary-600' : ''}
-                    ${today && !isSelected ? 'border-2 border-primary-500' : ''}
+                    ${isPast ? "opacity-40 cursor-not-allowed" : "hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer"}
+                    ${isSelected ? "bg-primary-500 text-white hover:bg-primary-600" : ""}
+                    ${today && !isSelected ? "border-2 border-primary-500" : ""}
                   `}
                 >
                   <span className="text-xs font-medium">
-                    {formatDate(date, 'EEE')}
+                    {formatDate(date, "EEE")}
                   </span>
                   <span className="text-lg font-bold">
-                    {formatDate(date, 'd')}
+                    {formatDate(date, "d")}
                   </span>
                 </button>
               );
@@ -326,39 +352,57 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         {selectedDate && selectedServiceId && (
           <div className="border-t pt-4 space-y-4">
             <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
-              <h4 className="font-semibold text-foreground mb-2">{t('booking.summary')}</h4>
+              <h4 className="font-semibold text-foreground mb-2">
+                {t("booking.summary")}
+              </h4>
               <div className="space-y-2 text-sm">
                 {/* Show patient name when booking for family */}
-                {isAuthenticated && user?.role === 'PATIENT' && (
+                {isAuthenticated && user?.role === "PATIENT" && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('booking.bookingFor')}</span>
+                    <span className="text-muted-foreground">
+                      {t("booking.bookingFor")}
+                    </span>
                     <span className="font-medium">
-                      {bookingFor === 'self'
-                        ? t('booking.bookForSelf')
+                      {bookingFor === "self"
+                        ? t("booking.bookForSelf")
                         : (() => {
-                            const member = familyMembers?.find(m => m.id === selectedFamilyMemberId);
-                            return member?.fullName || member?.user?.fullName || member?.user?.name || t('booking.selectPatient');
-                          })()
-                      }
+                            const member = familyMembers?.find(
+                              (m) => m.id === selectedFamilyMemberId,
+                            );
+                            return (
+                              member?.fullName ||
+                              member?.user?.fullName ||
+                              member?.user?.name ||
+                              t("booking.selectPatient")
+                            );
+                          })()}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('booking.serviceLabel')}</span>
+                  <span className="text-muted-foreground">
+                    {t("booking.serviceLabel")}
+                  </span>
                   <span className="font-medium">
-                    {selectedService?.name?.ar || selectedService?.name?.en || selectedService?.serviceType}
+                    {selectedService?.name?.ar ||
+                      selectedService?.name?.en ||
+                      selectedService?.serviceType}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('booking.dateLabel')}</span>
+                  <span className="text-muted-foreground">
+                    {t("booking.dateLabel")}
+                  </span>
                   <span className="font-medium">
-                    {formatDate(selectedDate, 'EEEE, d MMMM yyyy')}
+                    {formatDate(selectedDate, "EEEE, d MMMM yyyy")}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-primary-100 dark:border-primary-800">
-                  <span className="text-muted-foreground">{t('booking.priceLabel')}</span>
+                  <span className="text-muted-foreground">
+                    {t("booking.priceLabel")}
+                  </span>
                   <span className="font-bold text-primary-600 dark:text-primary-400">
-                    {selectedService?.price} {t('common.egp')}
+                    {selectedService?.price} {t("common.egp")}
                   </span>
                 </div>
               </div>
@@ -368,17 +412,22 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               className="w-full"
               size="lg"
               onClick={handleBooking}
-              disabled={bookingMutation.isPending || (bookingFor === 'family' && !selectedFamilyMemberId)}
+              disabled={
+                bookingMutation.isPending ||
+                (bookingFor === "family" && !selectedFamilyMemberId)
+              }
             >
               {bookingMutation.isPending ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin ms-2" />
-                  {t('booking.bookingInProgress')}
+                  {t("booking.bookingInProgress")}
                 </>
               ) : (
                 <>
                   <Check className="h-5 w-5 ms-2" />
-                  {isAuthenticated ? t('booking.confirmBooking') : t('booking.loginToBook')}
+                  {isAuthenticated
+                    ? t("booking.confirmBooking")
+                    : t("booking.loginToBook")}
                 </>
               )}
             </Button>

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/auth';
-import { toastSuccess, toastError } from '@/hooks/use-toast';
-import { AxiosError } from 'axios';
-import type { ApiError } from '@/types';
-import { useTranslation } from '@/lib/i18n';
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/lib/auth";
+import { toastSuccess, toastError } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { useTranslation } from "@/lib/i18n";
 
 interface LoginCredentials {
   email: string;
@@ -24,7 +24,7 @@ export function useLogin() {
       await login(credentials);
     },
     onSuccess: () => {
-      toastSuccess(t('auth.loginSuccessTitle'), t('auth.loginSuccessDesc'));
+      toastSuccess(t("auth.loginSuccessTitle"), t("auth.loginSuccessDesc"));
 
       // Get the user after login
       const currentUser = useAuthStore.getState().user;
@@ -32,21 +32,21 @@ export function useLogin() {
       // Redirect based on role
       if (currentUser) {
         switch (currentUser.role) {
-          case 'ADMIN':
-            router.push('/admin/dashboard');
+          case "ADMIN":
+            router.push("/admin/dashboard");
             break;
-          case 'DOCTOR':
-            router.push('/doctor/dashboard');
+          case "DOCTOR":
+            router.push("/doctor/dashboard");
             break;
-          case 'SECRETARY':
-            router.push('/secretary/dashboard');
+          case "SECRETARY":
+            router.push("/secretary/dashboard");
             break;
-          case 'PATIENT':
+          case "PATIENT":
           default:
-            router.push('/patient/dashboard');
+            router.push("/patient/dashboard");
         }
       } else {
-        router.push('/');
+        router.push("/");
       }
     },
     onError: (error: AxiosError<ApiError>) => {
@@ -54,20 +54,20 @@ export function useLogin() {
 
       if (!error.response) {
         // Network error or server is down
-        message = t('auth.loginNetworkError');
+        message = t("auth.loginNetworkError");
       } else if (error.response.status === 429) {
-        message = t('auth.loginRateLimitError');
+        message = t("auth.loginRateLimitError");
       } else {
         // Handle message that could be string or array
         const errorMessage = error.response.data?.message;
         if (Array.isArray(errorMessage)) {
-          message = errorMessage[0] || t('auth.loginFailedDefault');
+          message = errorMessage[0] || t("auth.loginFailedDefault");
         } else {
-          message = errorMessage || t('auth.loginFailedDefault');
+          message = errorMessage || t("auth.loginFailedDefault");
         }
       }
 
-      toastError(t('auth.loginErrorTitle'), message);
+      toastError(t("auth.loginErrorTitle"), message);
     },
   });
 }

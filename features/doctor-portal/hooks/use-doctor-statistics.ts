@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { apiGet } from '@/lib/api';
-import { DOCTOR_ENDPOINTS } from '@/lib/api/endpoints';
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api";
+import { DOCTOR_ENDPOINTS } from "@/lib/api/endpoints";
 
 // Types for statistics
 export interface TodayOverview {
@@ -109,7 +109,7 @@ export interface RevisitEligibility {
   } | null;
 }
 
-export type StatisticsPeriodType = 'today' | 'week' | 'month' | 'custom';
+export type StatisticsPeriodType = "today" | "week" | "month" | "custom";
 
 export interface StatisticsFilterOptions {
   period?: StatisticsPeriodType;
@@ -129,13 +129,13 @@ export interface PatientHistoryFilterOptions {
 // Hook: Get today's overview
 export function useTodayOverview(clinicId?: string) {
   return useQuery({
-    queryKey: ['doctor-today-overview', clinicId],
+    queryKey: ["doctor-today-overview", clinicId],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (clinicId) params.append('clinicId', clinicId);
+      if (clinicId) params.append("clinicId", clinicId);
       const query = params.toString();
       return apiGet<TodayOverview>(
-        `${DOCTOR_ENDPOINTS.TODAY_OVERVIEW}${query ? `?${query}` : ''}`
+        `${DOCTOR_ENDPOINTS.TODAY_OVERVIEW}${query ? `?${query}` : ""}`,
       );
     },
     staleTime: 1000 * 30, // Refresh every 30 seconds
@@ -145,19 +145,19 @@ export function useTodayOverview(clinicId?: string) {
 
 // Hook: Get statistics for period
 export function useDoctorStatistics(options: StatisticsFilterOptions = {}) {
-  const { period = 'month', dateFrom, dateTo, clinicId } = options;
+  const { period = "month", dateFrom, dateTo, clinicId } = options;
 
   return useQuery({
-    queryKey: ['doctor-statistics', { period, dateFrom, dateTo, clinicId }],
+    queryKey: ["doctor-statistics", { period, dateFrom, dateTo, clinicId }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('period', period);
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
-      if (clinicId) params.append('clinicId', clinicId);
+      params.append("period", period);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
+      if (clinicId) params.append("clinicId", clinicId);
 
       return apiGet<DoctorStatistics>(
-        `${DOCTOR_ENDPOINTS.STATISTICS}?${params.toString()}`
+        `${DOCTOR_ENDPOINTS.STATISTICS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -166,20 +166,29 @@ export function useDoctorStatistics(options: StatisticsFilterOptions = {}) {
 
 // Hook: Get patient visit history
 export function usePatientHistory(options: PatientHistoryFilterOptions = {}) {
-  const { patientProfileId, patientName, patientPhone, page = 1, limit = 20 } = options;
+  const {
+    patientProfileId,
+    patientName,
+    patientPhone,
+    page = 1,
+    limit = 20,
+  } = options;
 
   return useQuery({
-    queryKey: ['doctor-patient-history', { patientProfileId, patientName, patientPhone, page, limit }],
+    queryKey: [
+      "doctor-patient-history",
+      { patientProfileId, patientName, patientPhone, page, limit },
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (patientProfileId) params.append('patientProfileId', patientProfileId);
-      if (patientName) params.append('patientName', patientName);
-      if (patientPhone) params.append('patientPhone', patientPhone);
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      if (patientProfileId) params.append("patientProfileId", patientProfileId);
+      if (patientName) params.append("patientName", patientName);
+      if (patientPhone) params.append("patientPhone", patientPhone);
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
       return apiGet<PatientHistoryResponse>(
-        `${DOCTOR_ENDPOINTS.PATIENT_HISTORY}?${params.toString()}`
+        `${DOCTOR_ENDPOINTS.PATIENT_HISTORY}?${params.toString()}`,
       );
     },
     enabled: !!(patientProfileId || patientName || patientPhone),
@@ -188,16 +197,19 @@ export function usePatientHistory(options: PatientHistoryFilterOptions = {}) {
 }
 
 // Hook: Check if patient can revisit
-export function useCheckRevisit(patientProfileId?: string, patientPhone?: string) {
+export function useCheckRevisit(
+  patientProfileId?: string,
+  patientPhone?: string,
+) {
   return useQuery({
-    queryKey: ['doctor-check-revisit', { patientProfileId, patientPhone }],
+    queryKey: ["doctor-check-revisit", { patientProfileId, patientPhone }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (patientProfileId) params.append('patientProfileId', patientProfileId);
-      if (patientPhone) params.append('patientPhone', patientPhone);
+      if (patientProfileId) params.append("patientProfileId", patientProfileId);
+      if (patientPhone) params.append("patientPhone", patientPhone);
 
       return apiGet<RevisitEligibility>(
-        `${DOCTOR_ENDPOINTS.CHECK_REVISIT}?${params.toString()}`
+        `${DOCTOR_ENDPOINTS.CHECK_REVISIT}?${params.toString()}`,
       );
     },
     enabled: !!(patientProfileId || patientPhone),

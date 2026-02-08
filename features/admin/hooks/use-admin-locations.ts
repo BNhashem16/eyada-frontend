@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { State, City, Multilingual, PaginatedResponse } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { State, City, Multilingual, PaginatedResponse } from "@/types";
 
 export interface AdminStatesFilters {
   page?: number;
@@ -17,15 +17,18 @@ export function useAdminStates(filters: AdminStatesFilters = {}) {
   const { page = 1, limit = 50, search, isActive } = filters;
 
   return useQuery({
-    queryKey: ['admin-states', { page, limit, search, isActive }],
+    queryKey: ["admin-states", { page, limit, search, isActive }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
-      if (search) params.append('search', search);
-      if (isActive !== undefined) params.append('isActive', isActive.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
+      if (search) params.append("search", search);
+      if (isActive !== undefined)
+        params.append("isActive", isActive.toString());
 
-      return apiGet<PaginatedResponse<State>>(`${ADMIN_ENDPOINTS.STATES}?${params.toString()}`);
+      return apiGet<PaginatedResponse<State>>(
+        `${ADMIN_ENDPOINTS.STATES}?${params.toString()}`,
+      );
     },
     staleTime: 1000 * 60 * 5,
   });
@@ -47,7 +50,7 @@ export function useCreateState() {
       return apiPost<State>(ADMIN_ENDPOINTS.STATES, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-states'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-states"] });
     },
   });
 }
@@ -68,7 +71,7 @@ export function useUpdateState() {
       return apiPatch<State>(ADMIN_ENDPOINTS.STATE(id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-states'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-states"] });
     },
   });
 }
@@ -81,7 +84,7 @@ export function useDeleteState() {
       return apiDelete(ADMIN_ENDPOINTS.STATE(id));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-states'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-states"] });
     },
   });
 }
@@ -99,16 +102,19 @@ export function useAdminCities(filters: AdminCitiesFilters = {}) {
   const { page = 1, limit = 50, search, isActive, stateId } = filters;
 
   return useQuery({
-    queryKey: ['admin-cities', { page, limit, search, isActive, stateId }],
+    queryKey: ["admin-cities", { page, limit, search, isActive, stateId }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
-      if (search) params.append('search', search);
-      if (isActive !== undefined) params.append('isActive', isActive.toString());
-      if (stateId) params.append('stateId', stateId);
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
+      if (search) params.append("search", search);
+      if (isActive !== undefined)
+        params.append("isActive", isActive.toString());
+      if (stateId) params.append("stateId", stateId);
 
-      return apiGet<PaginatedResponse<City>>(`${ADMIN_ENDPOINTS.CITIES}?${params.toString()}`);
+      return apiGet<PaginatedResponse<City>>(
+        `${ADMIN_ENDPOINTS.CITIES}?${params.toString()}`,
+      );
     },
     staleTime: 1000 * 60 * 5,
   });
@@ -130,7 +136,7 @@ export function useCreateCity() {
       return apiPost<City>(ADMIN_ENDPOINTS.CITIES, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-cities'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-cities"] });
     },
   });
 }
@@ -152,7 +158,7 @@ export function useUpdateCity() {
       return apiPatch<City>(ADMIN_ENDPOINTS.CITY(id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-cities'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-cities"] });
     },
   });
 }
@@ -165,7 +171,7 @@ export function useDeleteCity() {
       return apiDelete(ADMIN_ENDPOINTS.CITY(id));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-cities'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-cities"] });
     },
   });
 }

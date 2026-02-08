@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPatch } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { DoctorProfile, PaginatedResponse } from '@/types';
-import { DoctorStatus } from '@/types/enums';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPatch } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { DoctorProfile, PaginatedResponse } from "@/types";
+import { DoctorStatus } from "@/types/enums";
 
 // Filter options for admin doctors list
 export interface AdminDoctorsFilters {
@@ -35,22 +35,41 @@ export function useAdminDoctors(filters: AdminDoctorsFilters = {}) {
   } = filters;
 
   return useQuery({
-    queryKey: ['admin-doctors', { page, limit, status, specialtyId, cityId, stateId, search, minRating, isActive, isApproved }],
+    queryKey: [
+      "admin-doctors",
+      {
+        page,
+        limit,
+        status,
+        specialtyId,
+        cityId,
+        stateId,
+        search,
+        minRating,
+        isActive,
+        isApproved,
+      },
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
-      if (status) params.append('status', status);
-      if (specialtyId) params.append('specialtyId', specialtyId);
-      if (cityId) params.append('cityId', cityId);
-      if (stateId) params.append('stateId', stateId);
-      if (search) params.append('search', search);
-      if (minRating !== undefined) params.append('minRating', minRating.toString());
-      if (isActive !== undefined) params.append('isActive', isActive.toString());
-      if (isApproved !== undefined) params.append('isApproved', isApproved.toString());
+      if (status) params.append("status", status);
+      if (specialtyId) params.append("specialtyId", specialtyId);
+      if (cityId) params.append("cityId", cityId);
+      if (stateId) params.append("stateId", stateId);
+      if (search) params.append("search", search);
+      if (minRating !== undefined)
+        params.append("minRating", minRating.toString());
+      if (isActive !== undefined)
+        params.append("isActive", isActive.toString());
+      if (isApproved !== undefined)
+        params.append("isApproved", isApproved.toString());
 
-      return apiGet<PaginatedResponse<DoctorProfile>>(`${ADMIN_ENDPOINTS.DOCTORS}?${params.toString()}`);
+      return apiGet<PaginatedResponse<DoctorProfile>>(
+        `${ADMIN_ENDPOINTS.DOCTORS}?${params.toString()}`,
+      );
     },
     staleTime: 1000 * 60, // 1 minute
   });
@@ -63,7 +82,7 @@ export function usePendingDoctors() {
 
 export function useAdminDoctor(doctorId: string) {
   return useQuery({
-    queryKey: ['admin-doctor', doctorId],
+    queryKey: ["admin-doctor", doctorId],
     queryFn: async () => {
       return apiGet<DoctorProfile>(ADMIN_ENDPOINTS.DOCTOR(doctorId));
     },
@@ -76,11 +95,14 @@ export function useApproveDoctor() {
 
   return useMutation({
     mutationFn: async (doctorId: string) => {
-      return apiPatch<DoctorProfile>(ADMIN_ENDPOINTS.APPROVE_DOCTOR(doctorId), {});
+      return apiPatch<DoctorProfile>(
+        ADMIN_ENDPOINTS.APPROVE_DOCTOR(doctorId),
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-doctors'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-doctor'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
   });
 }
@@ -90,11 +112,14 @@ export function useRejectDoctor() {
 
   return useMutation({
     mutationFn: async (doctorId: string) => {
-      return apiPatch<DoctorProfile>(ADMIN_ENDPOINTS.REJECT_DOCTOR(doctorId), {});
+      return apiPatch<DoctorProfile>(
+        ADMIN_ENDPOINTS.REJECT_DOCTOR(doctorId),
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-doctors'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-doctor'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
   });
 }
@@ -104,11 +129,14 @@ export function useSuspendDoctor() {
 
   return useMutation({
     mutationFn: async (doctorId: string) => {
-      return apiPatch<DoctorProfile>(ADMIN_ENDPOINTS.SUSPEND_DOCTOR(doctorId), {});
+      return apiPatch<DoctorProfile>(
+        ADMIN_ENDPOINTS.SUSPEND_DOCTOR(doctorId),
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-doctors'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-doctor'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
   });
 }

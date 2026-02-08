@@ -1,21 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import {
-  Stethoscope,
-  Menu,
-  X,
-  LogOut,
-} from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ThemeToggle } from '@/components/common/theme-toggle';
-import { LanguageToggle } from '@/components/common/language-toggle';
-import { useTranslation } from '@/lib/i18n';
-import { useAuthStore } from '@/lib/auth/store';
-import { getInitials } from '@/lib/utils';
-import type { MenuItem } from './sidebar';
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Stethoscope, Menu, X, LogOut } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeToggle } from "@/components/common/theme-toggle";
+import { LanguageToggle } from "@/components/common/language-toggle";
+import { useTranslation } from "@/lib/i18n";
+import { useAuthStore } from "@/lib/auth/store";
+import { getInitials } from "@/lib/utils";
+import type { MenuItem } from "./sidebar";
 
 export interface AdminLayoutProps {
   children: React.ReactNode;
@@ -29,7 +24,10 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
   const { user, logout } = useAuthStore();
 
   const isActive = (href: string) => {
-    return pathname === href || (href !== '/admin/dashboard' && pathname.startsWith(href));
+    return (
+      pathname === href ||
+      (href !== "/admin/dashboard" && pathname.startsWith(href))
+    );
   };
 
   return (
@@ -50,8 +48,10 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
               <div className="hidden sm:block">
-                <span className="text-xl font-bold">{t('app.name')}</span>
-                <span className="text-xs text-gray-400 block">{t('app.adminPanel')}</span>
+                <span className="text-xl font-bold">{t("app.name")}</span>
+                <span className="text-xs text-gray-400 block">
+                  {t("app.adminPanel")}
+                </span>
               </div>
             </Link>
           </div>
@@ -64,14 +64,14 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
               <Avatar className="h-9 w-9 border-2 border-primary-500">
                 <AvatarImage src={user?.profilePicture || undefined} />
                 <AvatarFallback className="text-sm bg-primary-600 text-white">
-                  {getInitials(user?.name || '')}
+                  {getInitials(user?.name || "")}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block">
                 <p className="text-sm font-medium max-w-[150px] truncate">
                   {user?.name}
                 </p>
-                <p className="text-xs text-gray-400">{t('app.systemAdmin')}</p>
+                <p className="text-xs text-gray-400">{t("app.systemAdmin")}</p>
               </div>
             </div>
           </div>
@@ -92,8 +92,8 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                     active
-                      ? 'bg-primary-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                      ? "bg-primary-600 text-white"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -109,7 +109,7 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
               className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
             >
               <LogOut className="h-5 w-5" />
-              {t('nav.logout')}
+              {t("nav.logout")}
             </button>
           </nav>
         </aside>
@@ -127,12 +127,14 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
                   <Avatar className="h-10 w-10 border-2 border-primary-500">
                     <AvatarImage src={user?.profilePicture || undefined} />
                     <AvatarFallback className="bg-primary-600 text-white">
-                      {getInitials(user?.name || '')}
+                      {getInitials(user?.name || "")}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-semibold">{user?.name}</p>
-                    <p className="text-sm text-gray-400">{t('app.systemAdmin')}</p>
+                    <p className="text-sm text-gray-400">
+                      {t("app.systemAdmin")}
+                    </p>
                   </div>
                 </div>
                 <button onClick={() => setSidebarOpen(false)}>
@@ -152,8 +154,8 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                         active
-                          ? 'bg-primary-600 text-white'
-                          : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                          ? "bg-primary-600 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
                       }`}
                     >
                       <Icon className="h-5 w-5" />
@@ -172,7 +174,7 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
                   className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   <LogOut className="h-5 w-5" />
-                  {t('nav.logout')}
+                  {t("nav.logout")}
                 </button>
               </nav>
             </aside>
@@ -180,7 +182,9 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 overflow-x-auto p-4 lg:p-6">{children}</main>
+        <main className="flex-1 min-w-0 overflow-x-auto p-4 lg:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

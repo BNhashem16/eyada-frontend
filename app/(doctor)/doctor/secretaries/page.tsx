@@ -1,21 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Plus, UserCog, Building2, Phone, Mail, MoreVertical, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
-import { useDoctorSecretaries, useUpdateSecretaryAssignment, useRemoveSecretaryFromClinic } from '@/features/doctor-portal/hooks';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Plus,
+  UserCog,
+  Building2,
+  Phone,
+  Mail,
+  MoreVertical,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+} from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
+import {
+  useDoctorSecretaries,
+  useUpdateSecretaryAssignment,
+  useRemoveSecretaryFromClinic,
+} from "@/features/doctor-portal/hooks";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,9 +45,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useToast } from '@/hooks/use-toast';
-import { getLocalizedText } from '@/lib/utils/multilingual';
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 export default function DoctorSecretariesPage() {
   const { t, locale } = useTranslation();
@@ -43,23 +63,26 @@ export default function DoctorSecretariesPage() {
     assignmentId: string;
     secretaryName: string;
     clinicName: string;
-  }>({ open: false, assignmentId: '', secretaryName: '', clinicName: '' });
+  }>({ open: false, assignmentId: "", secretaryName: "", clinicName: "" });
 
-  const handleToggleAssignment = async (assignmentId: string, currentStatus: boolean) => {
+  const handleToggleAssignment = async (
+    assignmentId: string,
+    currentStatus: boolean,
+  ) => {
     try {
       await updateAssignment.mutateAsync({
         assignmentId,
         isActive: !currentStatus,
       });
       toast({
-        title: t('toast.success'),
-        description: t('secretary.assignmentUpdated'),
+        title: t("toast.success"),
+        description: t("secretary.assignmentUpdated"),
       });
     } catch {
       toast({
-        title: t('toast.error'),
-        description: t('toast.updateFailed'),
-        variant: 'error',
+        title: t("toast.error"),
+        description: t("toast.updateFailed"),
+        variant: "error",
       });
     }
   };
@@ -68,15 +91,20 @@ export default function DoctorSecretariesPage() {
     try {
       await removeFromClinic.mutateAsync(deleteDialog.assignmentId);
       toast({
-        title: t('toast.success'),
-        description: t('secretary.removedFromClinic'),
+        title: t("toast.success"),
+        description: t("secretary.removedFromClinic"),
       });
-      setDeleteDialog({ open: false, assignmentId: '', secretaryName: '', clinicName: '' });
+      setDeleteDialog({
+        open: false,
+        assignmentId: "",
+        secretaryName: "",
+        clinicName: "",
+      });
     } catch {
       toast({
-        title: t('toast.error'),
-        description: t('toast.deleteFailed'),
-        variant: 'error',
+        title: t("toast.error"),
+        description: t("toast.deleteFailed"),
+        variant: "error",
       });
     }
   };
@@ -103,9 +131,13 @@ export default function DoctorSecretariesPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center p-8">
-        <p className="text-destructive">{t('secretary.loadError')}</p>
-        <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">
-          {t('common.tryAgain')}
+        <p className="text-destructive">{t("secretary.loadError")}</p>
+        <Button
+          variant="outline"
+          onClick={() => window.location.reload()}
+          className="mt-4"
+        >
+          {t("common.tryAgain")}
         </Button>
       </div>
     );
@@ -116,12 +148,16 @@ export default function DoctorSecretariesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t('secretary.management.title')}</h1>
-          <p className="text-muted-foreground">{t('secretary.management.subtitle')}</p>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("secretary.management.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("secretary.management.subtitle")}
+          </p>
         </div>
-        <Button onClick={() => router.push('/doctor/secretaries/new')}>
+        <Button onClick={() => router.push("/doctor/secretaries/new")}>
           <Plus className="h-4 w-4 me-2" />
-          {t('secretary.management.addSecretary')}
+          {t("secretary.management.addSecretary")}
         </Button>
       </div>
 
@@ -129,11 +165,15 @@ export default function DoctorSecretariesPage() {
       {(!secretaries || secretaries.length === 0) && (
         <Card className="p-12 text-center">
           <UserCog className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">{t('secretary.management.noSecretaries')}</h3>
-          <p className="text-muted-foreground mb-4">{t('secretary.management.noSecretariesDesc')}</p>
-          <Button onClick={() => router.push('/doctor/secretaries/new')}>
+          <h3 className="text-lg font-semibold mb-2">
+            {t("secretary.management.noSecretaries")}
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            {t("secretary.management.noSecretariesDesc")}
+          </p>
+          <Button onClick={() => router.push("/doctor/secretaries/new")}>
             <Plus className="h-4 w-4 me-2" />
-            {t('secretary.management.addFirstSecretary')}
+            {t("secretary.management.addFirstSecretary")}
           </Button>
         </Card>
       )}
@@ -150,9 +190,16 @@ export default function DoctorSecretariesPage() {
                       <UserCog className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <CardTitle className="text-base">{secretary.fullName}</CardTitle>
-                      <Badge variant={secretary.isActive ? 'default' : 'secondary'} className="mt-1">
-                        {secretary.isActive ? t('common.active') : t('common.inactive')}
+                      <CardTitle className="text-base">
+                        {secretary.fullName}
+                      </CardTitle>
+                      <Badge
+                        variant={secretary.isActive ? "default" : "secondary"}
+                        className="mt-1"
+                      >
+                        {secretary.isActive
+                          ? t("common.active")
+                          : t("common.inactive")}
                       </Badge>
                     </div>
                   </div>
@@ -163,8 +210,14 @@ export default function DoctorSecretariesPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => router.push(`/doctor/secretaries/${secretary.id}/edit`)}>
-                        {t('common.edit')}
+                      <DropdownMenuItem
+                        onClick={() =>
+                          router.push(
+                            `/doctor/secretaries/${secretary.id}/edit`,
+                          )
+                        }
+                      >
+                        {t("common.edit")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -185,7 +238,9 @@ export default function DoctorSecretariesPage() {
 
                 {/* Assigned Clinics */}
                 <div className="pt-2 border-t">
-                  <p className="text-sm font-medium mb-2">{t('secretary.management.assignedClinics')}</p>
+                  <p className="text-sm font-medium mb-2">
+                    {t("secretary.management.assignedClinics")}
+                  </p>
                   <div className="space-y-2">
                     {secretary.clinics.map((clinic) => (
                       <div
@@ -194,32 +249,43 @@ export default function DoctorSecretariesPage() {
                       >
                         <div className="flex items-center gap-2">
                           <Building2 className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{getLocalizedText(clinic.name, locale)}</span>
+                          <span className="text-sm">
+                            {getLocalizedText(clinic.name, locale)}
+                          </span>
                           {!clinic.isActive && (
                             <Badge variant="outline" className="text-xs">
-                              {t('common.inactive')}
+                              {t("common.inactive")}
                             </Badge>
                           )}
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                            >
                               <MoreVertical className="h-3 w-3" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
-                              onClick={() => handleToggleAssignment(clinic.assignmentId, clinic.isActive)}
+                              onClick={() =>
+                                handleToggleAssignment(
+                                  clinic.assignmentId,
+                                  clinic.isActive,
+                                )
+                              }
                             >
                               {clinic.isActive ? (
                                 <>
                                   <ToggleLeft className="h-4 w-4 me-2" />
-                                  {t('secretary.management.deactivate')}
+                                  {t("secretary.management.deactivate")}
                                 </>
                               ) : (
                                 <>
                                   <ToggleRight className="h-4 w-4 me-2" />
-                                  {t('secretary.management.activate')}
+                                  {t("secretary.management.activate")}
                                 </>
                               )}
                             </DropdownMenuItem>
@@ -231,12 +297,15 @@ export default function DoctorSecretariesPage() {
                                   open: true,
                                   assignmentId: clinic.assignmentId,
                                   secretaryName: secretary.fullName,
-                                  clinicName: getLocalizedText(clinic.name, locale),
+                                  clinicName: getLocalizedText(
+                                    clinic.name,
+                                    locale,
+                                  ),
                                 })
                               }
                             >
                               <Trash2 className="h-4 w-4 me-2" />
-                              {t('secretary.management.removeFromClinic')}
+                              {t("secretary.management.removeFromClinic")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -251,21 +320,31 @@ export default function DoctorSecretariesPage() {
       )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialog.open} onOpenChange={(open) => !open && setDeleteDialog({ ...deleteDialog, open: false })}>
+      <AlertDialog
+        open={deleteDialog.open}
+        onOpenChange={(open) =>
+          !open && setDeleteDialog({ ...deleteDialog, open: false })
+        }
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('secretary.management.confirmRemove')}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("secretary.management.confirmRemove")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('secretary.management.confirmRemoveDesc', {
+              {t("secretary.management.confirmRemoveDesc", {
                 secretary: deleteDialog.secretaryName,
                 clinic: deleteDialog.clinicName,
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRemoveFromClinic} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {t('common.delete')}
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRemoveFromClinic}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

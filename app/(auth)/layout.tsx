@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { GuestRoute } from '@/lib/auth';
-import { Header } from '@/components/common';
+import { GuestRoute } from "@/lib/auth";
+import { Header } from "@/components/common";
 
 export default function AuthLayout({
   children,

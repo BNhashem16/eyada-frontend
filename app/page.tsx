@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   Calendar,
   Search,
@@ -19,35 +19,38 @@ import {
   LayoutDashboard,
   CalendarCheck,
   Navigation,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { PublicLayout } from '@/components/common';
-import { useTranslation } from '@/lib/i18n';
-import { useSpecialties } from '@/features/specialties';
-import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
-import { useLanguage } from '@/components/providers';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PublicLayout } from "@/components/common";
+import { useTranslation } from "@/lib/i18n";
+import { useSpecialties } from "@/features/specialties";
+import { useAuthStore, useIsHydrated } from "@/lib/auth/store";
+import { useLanguage } from "@/components/providers";
 
 // Default icons for specialties
-const defaultSpecialtyIcons: Record<string, { icon: typeof Heart; color: string }> = {
-  'internal-medicine': { icon: Heart, color: 'text-red-500' },
-  'pediatrics': { icon: Baby, color: 'text-pink-500' },
-  'ophthalmology': { icon: Eye, color: 'text-blue-500' },
-  'orthopedics': { icon: Bone, color: 'text-amber-500' },
-  'neurology': { icon: Brain, color: 'text-purple-500' },
-  'general-medicine': { icon: Stethoscope, color: 'text-teal-500' },
+const defaultSpecialtyIcons: Record<
+  string,
+  { icon: typeof Heart; color: string }
+> = {
+  "internal-medicine": { icon: Heart, color: "text-red-500" },
+  pediatrics: { icon: Baby, color: "text-pink-500" },
+  ophthalmology: { icon: Eye, color: "text-blue-500" },
+  orthopedics: { icon: Bone, color: "text-amber-500" },
+  neurology: { icon: Brain, color: "text-purple-500" },
+  "general-medicine": { icon: Stethoscope, color: "text-teal-500" },
 };
 
 // Fallback icon
-const fallbackIcon = { icon: Stethoscope, color: 'text-primary-500' };
+const fallbackIcon = { icon: Stethoscope, color: "text-primary-500" };
 
 export default function HomePage() {
   const { t } = useTranslation();
   const router = useRouter();
   const { locale } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [trackingNumber, setTrackingNumber] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
 
   // Auth state
   const { isAuthenticated, user } = useAuthStore();
@@ -59,26 +62,26 @@ export default function HomePage() {
   const features = [
     {
       icon: Search,
-      title: t('home.step1Title'),
-      description: t('home.step1Desc'),
+      title: t("home.step1Title"),
+      description: t("home.step1Desc"),
     },
     {
       icon: Calendar,
-      title: t('home.step2Title'),
-      description: t('home.step2Desc'),
+      title: t("home.step2Title"),
+      description: t("home.step2Desc"),
     },
     {
       icon: UserCheck,
-      title: t('home.step3Title'),
-      description: t('home.step3Desc'),
+      title: t("home.step3Title"),
+      description: t("home.step3Desc"),
     },
   ];
 
   const stats = [
-    { value: '500+', label: t('home.stats.doctors') },
-    { value: '50+', label: t('home.stats.specialties') },
-    { value: '10,000+', label: t('home.stats.appointments') },
-    { value: '4.8', label: t('home.stats.rating') },
+    { value: "500+", label: t("home.stats.doctors") },
+    { value: "50+", label: t("home.stats.specialties") },
+    { value: "10,000+", label: t("home.stats.appointments") },
+    { value: "4.8", label: t("home.stats.rating") },
   ];
 
   // Handle search
@@ -86,12 +89,12 @@ export default function HomePage() {
     if (searchQuery.trim()) {
       router.push(`/doctors?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
-      router.push('/doctors');
+      router.push("/doctors");
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -104,7 +107,7 @@ export default function HomePage() {
   };
 
   const handleTrackKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleTrack();
     }
   };
@@ -112,21 +115,23 @@ export default function HomePage() {
   // Get dashboard path based on role
   const getDashboardPath = () => {
     switch (user?.role) {
-      case 'ADMIN':
-        return '/admin/dashboard';
-      case 'DOCTOR':
-        return '/doctor/dashboard';
-      case 'SECRETARY':
-        return '/secretary/dashboard';
-      case 'PATIENT':
+      case "ADMIN":
+        return "/admin/dashboard";
+      case "DOCTOR":
+        return "/doctor/dashboard";
+      case "SECRETARY":
+        return "/secretary/dashboard";
+      case "PATIENT":
       default:
-        return '/patient/dashboard';
+        return "/patient/dashboard";
     }
   };
 
   // Get specialty name based on language
-  const getSpecialtyName = (specialty: { name: { ar: string; en: string } }) => {
-    return locale === 'ar' ? specialty.name.ar : specialty.name.en;
+  const getSpecialtyName = (specialty: {
+    name: { ar: string; en: string };
+  }) => {
+    return locale === "ar" ? specialty.name.ar : specialty.name.en;
   };
 
   // Get icon for specialty
@@ -144,11 +149,14 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-              {t('home.heroTitle')}
-              <span className="text-primary-600 dark:text-primary-400"> {t('home.heroTitleHighlight')}</span>
+              {t("home.heroTitle")}
+              <span className="text-primary-600 dark:text-primary-400">
+                {" "}
+                {t("home.heroTitleHighlight")}
+              </span>
             </h1>
             <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-              {t('home.heroSubtitle')}
+              {t("home.heroSubtitle")}
             </p>
 
             {/* Search Box */}
@@ -158,7 +166,7 @@ export default function HomePage() {
                   <Search className="h-5 w-5 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder={t('home.searchPlaceholder')}
+                    placeholder={t("home.searchPlaceholder")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -166,7 +174,7 @@ export default function HomePage() {
                   />
                 </div>
                 <Button size="lg" className="md:px-8" onClick={handleSearch}>
-                  {t('home.searchButton')}
+                  {t("home.searchButton")}
                 </Button>
               </div>
             </div>
@@ -200,16 +208,20 @@ export default function HomePage() {
           <div className="max-w-2xl mx-auto text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Navigation className="h-8 w-8 text-secondary-600 dark:text-secondary-400" />
-              <h2 className="text-2xl font-bold text-foreground">{t('home.trackAppointment')}</h2>
+              <h2 className="text-2xl font-bold text-foreground">
+                {t("home.trackAppointment")}
+              </h2>
             </div>
-            <p className="text-muted-foreground mb-6">{t('home.trackAppointmentDesc')}</p>
+            <p className="text-muted-foreground mb-6">
+              {t("home.trackAppointmentDesc")}
+            </p>
 
             <div className="flex flex-col sm:flex-row gap-3 rounded-2xl bg-card p-4 shadow-lg">
               <div className="flex flex-1 items-center gap-2 rounded-xl border border-border px-4 py-3">
                 <Navigation className="h-5 w-5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder={t('home.trackAppointmentPlaceholder')}
+                  placeholder={t("home.trackAppointmentPlaceholder")}
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
                   onKeyDown={handleTrackKeyDown}
@@ -225,7 +237,7 @@ export default function HomePage() {
                 disabled={!trackingNumber.trim()}
               >
                 <Navigation className="h-4 w-4 ms-2" />
-                {t('home.trackButton')}
+                {t("home.trackButton")}
               </Button>
             </div>
           </div>
@@ -236,8 +248,10 @@ export default function HomePage() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground">{t('home.popularSpecialties')}</h2>
-            <p className="text-muted-foreground">{t('home.selectSpecialty')}</p>
+            <h2 className="mb-4 text-3xl font-bold text-foreground">
+              {t("home.popularSpecialties")}
+            </h2>
+            <p className="text-muted-foreground">{t("home.selectSpecialty")}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -257,7 +271,10 @@ export default function HomePage() {
                 const iconConfig = getSpecialtyIcon(specialty.icon);
                 const Icon = iconConfig.icon;
                 return (
-                  <Link key={specialty.id} href={`/doctors?specialty=${specialty.id}`}>
+                  <Link
+                    key={specialty.id}
+                    href={`/doctors?specialty=${specialty.id}`}
+                  >
                     <Card hover className="text-center h-full">
                       <CardContent className="p-6">
                         <div
@@ -265,7 +282,9 @@ export default function HomePage() {
                         >
                           <Icon className="h-7 w-7" />
                         </div>
-                        <h3 className="font-medium text-foreground">{getSpecialtyName(specialty)}</h3>
+                        <h3 className="font-medium text-foreground">
+                          {getSpecialtyName(specialty)}
+                        </h3>
                       </CardContent>
                     </Card>
                   </Link>
@@ -274,7 +293,7 @@ export default function HomePage() {
             ) : (
               // Fallback static content when no data
               <div className="col-span-full text-center text-muted-foreground py-8">
-                {t('common.noData')}
+                {t("common.noData")}
               </div>
             )}
           </div>
@@ -282,7 +301,7 @@ export default function HomePage() {
           <div className="mt-8 text-center">
             <Link href="/specialties">
               <Button variant="outline" size="lg">
-                {t('home.viewAllSpecialties')}
+                {t("home.viewAllSpecialties")}
               </Button>
             </Link>
           </div>
@@ -293,8 +312,12 @@ export default function HomePage() {
       <section className="bg-muted py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-foreground">{t('home.howItWorks')}</h2>
-            <p className="text-muted-foreground">{t('home.howItWorksSubtitle')}</p>
+            <h2 className="mb-4 text-3xl font-bold text-foreground">
+              {t("home.howItWorks")}
+            </h2>
+            <p className="text-muted-foreground">
+              {t("home.howItWorksSubtitle")}
+            </p>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
@@ -322,7 +345,7 @@ export default function HomePage() {
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
               <h2 className="mb-6 text-3xl font-bold text-foreground">
-                {t('home.whyChooseUs')}
+                {t("home.whyChooseUs")}
               </h2>
               <div className="space-y-6">
                 <div className="flex gap-4">
@@ -330,9 +353,11 @@ export default function HomePage() {
                     <Star className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold text-foreground">{t('home.feature1Title')}</h3>
+                    <h3 className="mb-1 font-semibold text-foreground">
+                      {t("home.feature1Title")}
+                    </h3>
                     <p className="text-muted-foreground">
-                      {t('home.feature1Desc')}
+                      {t("home.feature1Desc")}
                     </p>
                   </div>
                 </div>
@@ -341,9 +366,11 @@ export default function HomePage() {
                     <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold text-foreground">{t('home.feature2Title')}</h3>
+                    <h3 className="mb-1 font-semibold text-foreground">
+                      {t("home.feature2Title")}
+                    </h3>
                     <p className="text-muted-foreground">
-                      {t('home.feature2Desc')}
+                      {t("home.feature2Desc")}
                     </p>
                   </div>
                 </div>
@@ -352,9 +379,11 @@ export default function HomePage() {
                     <Shield className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold text-foreground">{t('home.feature3Title')}</h3>
+                    <h3 className="mb-1 font-semibold text-foreground">
+                      {t("home.feature3Title")}
+                    </h3>
                     <p className="text-muted-foreground">
-                      {t('home.feature3Desc')}
+                      {t("home.feature3Desc")}
                     </p>
                   </div>
                 </div>
@@ -386,9 +415,11 @@ export default function HomePage() {
         // Logged in user - Show quick actions
         <section className="bg-gradient-medical py-12 sm:py-20 text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="mb-3 sm:mb-4 text-xl sm:text-3xl font-bold">{t('home.welcomeBack')}, {user.name || user.fullName}!</h2>
+            <h2 className="mb-3 sm:mb-4 text-xl sm:text-3xl font-bold">
+              {t("home.welcomeBack")}, {user.name || user.fullName}!
+            </h2>
             <p className="mb-6 sm:mb-8 text-sm sm:text-lg text-white/90">
-              {t('home.welcomeBackDesc')}
+              {t("home.welcomeBackDesc")}
             </p>
             <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 sm:gap-4">
               <Link href={getDashboardPath()} className="w-full sm:w-auto">
@@ -397,10 +428,10 @@ export default function HomePage() {
                   className="w-full sm:w-auto bg-white text-primary-600 hover:bg-white/90"
                 >
                   <LayoutDashboard className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                  {t('nav.dashboard')}
+                  {t("nav.dashboard")}
                 </Button>
               </Link>
-              {user.role === 'PATIENT' && (
+              {user.role === "PATIENT" && (
                 <>
                   <Link href="/doctors" className="w-full sm:w-auto">
                     <Button
@@ -409,22 +440,25 @@ export default function HomePage() {
                       className="w-full sm:w-auto border-white text-white hover:bg-white/10"
                     >
                       <Search className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                      {t('nav.findDoctor')}
+                      {t("nav.findDoctor")}
                     </Button>
                   </Link>
-                  <Link href="/patient/appointments" className="w-full sm:w-auto">
+                  <Link
+                    href="/patient/appointments"
+                    className="w-full sm:w-auto"
+                  >
                     <Button
                       size="default"
                       variant="outline"
                       className="w-full sm:w-auto border-white text-white hover:bg-white/10"
                     >
                       <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                      {t('nav.myAppointments')}
+                      {t("nav.myAppointments")}
                     </Button>
                   </Link>
                 </>
               )}
-              {user.role === 'DOCTOR' && (
+              {user.role === "DOCTOR" && (
                 <Link href="/doctor/appointments" className="w-full sm:w-auto">
                   <Button
                     size="default"
@@ -432,7 +466,7 @@ export default function HomePage() {
                     className="w-full sm:w-auto border-white text-white hover:bg-white/10"
                   >
                     <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                    {t('nav.myAppointments')}
+                    {t("nav.myAppointments")}
                   </Button>
                 </Link>
               )}
@@ -443,22 +477,21 @@ export default function HomePage() {
         // Not logged in - Show doctor registration CTA
         <section className="bg-gradient-medical py-20 text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="mb-4 text-3xl font-bold">{t('home.doctorCta')}</h2>
+            <h2 className="mb-4 text-3xl font-bold">{t("home.doctorCta")}</h2>
             <p className="mb-8 text-lg text-white/90">
-              {t('home.doctorCtaDesc')}
+              {t("home.doctorCtaDesc")}
             </p>
             <Link href="/register?role=doctor">
               <Button
                 size="lg"
                 className="bg-white text-primary-600 hover:bg-white/90"
               >
-                {t('home.registerAsDoctor')}
+                {t("home.registerAsDoctor")}
               </Button>
             </Link>
           </div>
         </section>
       )}
-
     </PublicLayout>
   );
 }

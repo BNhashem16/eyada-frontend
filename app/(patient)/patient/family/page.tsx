@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Users } from 'lucide-react';
-import { FamilyList } from '@/features/patients';
-import { useTranslation } from '@/lib/i18n';
-import { useAuthStore } from '@/lib/auth/store';
+import { Users } from "lucide-react";
+import { FamilyList } from "@/features/patients";
+import { useTranslation } from "@/lib/i18n";
+import { useAuthStore } from "@/lib/auth/store";
 
 export default function PatientFamilyPage() {
   const { t } = useTranslation();
@@ -18,9 +18,12 @@ export default function PatientFamilyPage() {
         </div>
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-            {t('patient.familyPage.title')} {user?.fullName && `- ${user.fullName}`}
+            {t("patient.familyPage.title")}{" "}
+            {user?.fullName && `- ${user.fullName}`}
           </h1>
-          <p className="text-muted-foreground">{t('patient.familyPage.subtitle')}</p>
+          <p className="text-muted-foreground">
+            {t("patient.familyPage.subtitle")}
+          </p>
         </div>
       </div>
 

@@ -1,1 +1,1 @@
-export * from './use-specialties';
+export * from "./use-specialties";

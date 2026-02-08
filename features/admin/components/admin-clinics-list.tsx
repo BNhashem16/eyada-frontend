@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Search,
   Frown,
@@ -20,14 +20,14 @@ import {
   Calendar,
   Users,
   Clock,
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +35,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,7 +45,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -53,14 +53,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   useAdminClinics,
   useAdminClinicStatistics,
@@ -68,22 +68,22 @@ import {
   useDeleteAdminClinic,
   AdminClinic,
   useAdminSpecialties,
-} from '../hooks';
-import { useStates, useCities } from '@/features/locations/hooks/use-locations';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { useTranslation } from '@/lib/i18n';
-import { ScheduleManager } from '@/features/doctor-portal/components/schedule-manager';
+} from "../hooks";
+import { useStates, useCities } from "@/features/locations/hooks/use-locations";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
+import { ScheduleManager } from "@/features/doctor-portal/components/schedule-manager";
 import {
   useAdminClinicSchedules,
   useAdminCreateSchedule,
   useAdminUpdateSchedule,
-} from '../hooks';
+} from "../hooks";
 
 export function AdminClinicsList() {
   const { t, locale } = useTranslation();
-  const [search, setSearch] = useState('');
-  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [specialtyId, setSpecialtyId] = useState<string | undefined>(undefined);
   const [stateId, setStateId] = useState<string | undefined>(undefined);
@@ -102,7 +102,11 @@ export function AdminClinicsList() {
     cityId,
   };
 
-  const { data: clinicsResponse, isLoading, isError } = useAdminClinics(filters);
+  const {
+    data: clinicsResponse,
+    isLoading,
+    isError,
+  } = useAdminClinics(filters);
   const clinics = clinicsResponse?.data || [];
   const meta = clinicsResponse?.meta;
 
@@ -117,10 +121,14 @@ export function AdminClinicsList() {
   const updateClinic = useUpdateAdminClinic();
   const deleteClinic = useDeleteAdminClinic();
 
-  const [selectedClinic, setSelectedClinic] = useState<AdminClinic | null>(null);
+  const [selectedClinic, setSelectedClinic] = useState<AdminClinic | null>(
+    null,
+  );
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [scheduleClinic, setScheduleClinic] = useState<AdminClinic | null>(null);
+  const [scheduleClinic, setScheduleClinic] = useState<AdminClinic | null>(
+    null,
+  );
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
 
   const handleSearch = () => {
@@ -162,11 +170,14 @@ export function AdminClinicsList() {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return new Date(dateStr).toLocaleDateString(
+      locale === "ar" ? "ar-EG" : "en-US",
+      {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      },
+    );
   };
 
   if (isLoading) {
@@ -194,7 +205,9 @@ export function AdminClinicsList() {
     return (
       <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
-          <p className="text-error-600 dark:text-error-400">{t('errors.loadError')}</p>
+          <p className="text-error-600 dark:text-error-400">
+            {t("errors.loadError")}
+          </p>
         </CardContent>
       </Card>
     );
@@ -208,8 +221,12 @@ export function AdminClinicsList() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">{t('admin.clinics.total')}</p>
-                <p className="text-2xl font-bold">{statistics?.totalClinics || 0}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("admin.clinics.total")}
+                </p>
+                <p className="text-2xl font-bold">
+                  {statistics?.totalClinics || 0}
+                </p>
               </div>
               <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <Building className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -222,8 +239,12 @@ export function AdminClinicsList() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">{t('admin.clinics.active')}</p>
-                <p className="text-2xl font-bold text-green-600">{statistics?.activeClinics || 0}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("admin.clinics.active")}
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {statistics?.activeClinics || 0}
+                </p>
               </div>
               <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -236,8 +257,12 @@ export function AdminClinicsList() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">{t('admin.clinics.inactive')}</p>
-                <p className="text-2xl font-bold text-warning-600">{statistics?.inactiveClinics || 0}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("admin.clinics.inactive")}
+                </p>
+                <p className="text-2xl font-bold text-warning-600">
+                  {statistics?.inactiveClinics || 0}
+                </p>
               </div>
               <div className="h-10 w-10 rounded-full bg-warning-100 dark:bg-warning-900/30 flex items-center justify-center">
                 <XCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
@@ -253,10 +278,10 @@ export function AdminClinicsList() {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex gap-2 flex-1">
               <Input
-                placeholder={t('admin.clinics.searchPlaceholder')}
+                placeholder={t("admin.clinics.searchPlaceholder")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 inputMode="search"
                 className="flex-1"
               />
@@ -267,19 +292,23 @@ export function AdminClinicsList() {
 
             <div className="flex gap-2 flex-wrap">
               <Select
-                value={isActive === undefined ? 'all' : isActive.toString()}
+                value={isActive === undefined ? "all" : isActive.toString()}
                 onValueChange={(value) => {
-                  setIsActive(value === 'all' ? undefined : value === 'true');
+                  setIsActive(value === "all" ? undefined : value === "true");
                   setPage(1);
                 }}
               >
                 <SelectTrigger className="w-36">
-                  <SelectValue placeholder={t('admin.clinics.status')} />
+                  <SelectValue placeholder={t("admin.clinics.status")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('common.all')}</SelectItem>
-                  <SelectItem value="true">{t('admin.clinics.activeOnly')}</SelectItem>
-                  <SelectItem value="false">{t('admin.clinics.inactiveOnly')}</SelectItem>
+                  <SelectItem value="all">{t("common.all")}</SelectItem>
+                  <SelectItem value="true">
+                    {t("admin.clinics.activeOnly")}
+                  </SelectItem>
+                  <SelectItem value="false">
+                    {t("admin.clinics.inactiveOnly")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
@@ -298,12 +327,12 @@ export function AdminClinicsList() {
                   setSpecialtyId(undefined);
                   setStateId(undefined);
                   setCityId(undefined);
-                  setSearch('');
-                  setSearchInput('');
+                  setSearch("");
+                  setSearchInput("");
                   setPage(1);
                 }}
               >
-                {t('common.clearFilters')}
+                {t("common.clearFilters")}
               </Button>
             </div>
           </div>
@@ -311,17 +340,21 @@ export function AdminClinicsList() {
           {showFilters && (
             <div className="flex gap-4 mt-4 pt-4 border-t flex-wrap">
               <Select
-                value={specialtyId || 'all'}
+                value={specialtyId || "all"}
                 onValueChange={(value) => {
-                  setSpecialtyId(value === 'all' ? undefined : value);
+                  setSpecialtyId(value === "all" ? undefined : value);
                   setPage(1);
                 }}
               >
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder={t('admin.clinics.filterBySpecialty')} />
+                  <SelectValue
+                    placeholder={t("admin.clinics.filterBySpecialty")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('admin.clinics.allSpecialties')}</SelectItem>
+                  <SelectItem value="all">
+                    {t("admin.clinics.allSpecialties")}
+                  </SelectItem>
                   {specialties.map((specialty) => (
                     <SelectItem key={specialty.id} value={specialty.id}>
                       {getLocalizedText(specialty.name, locale)}
@@ -331,18 +364,20 @@ export function AdminClinicsList() {
               </Select>
 
               <Select
-                value={stateId || 'all'}
+                value={stateId || "all"}
                 onValueChange={(value) => {
-                  setStateId(value === 'all' ? undefined : value);
+                  setStateId(value === "all" ? undefined : value);
                   setCityId(undefined);
                   setPage(1);
                 }}
               >
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder={t('admin.clinics.filterByState')} />
+                  <SelectValue placeholder={t("admin.clinics.filterByState")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('admin.clinics.allStates')}</SelectItem>
+                  <SelectItem value="all">
+                    {t("admin.clinics.allStates")}
+                  </SelectItem>
                   {states.map((state) => (
                     <SelectItem key={state.id} value={state.id}>
                       {getLocalizedText(state.name, locale)}
@@ -352,17 +387,19 @@ export function AdminClinicsList() {
               </Select>
 
               <Select
-                value={cityId || 'all'}
+                value={cityId || "all"}
                 onValueChange={(value) => {
-                  setCityId(value === 'all' ? undefined : value);
+                  setCityId(value === "all" ? undefined : value);
                   setPage(1);
                 }}
               >
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder={t('admin.clinics.filterByCity')} />
+                  <SelectValue placeholder={t("admin.clinics.filterByCity")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('admin.clinics.allCities')}</SelectItem>
+                  <SelectItem value="all">
+                    {t("admin.clinics.allCities")}
+                  </SelectItem>
                   {cities.map((city) => (
                     <SelectItem key={city.id} value={city.id}>
                       {getLocalizedText(city.name, locale)}
@@ -379,26 +416,28 @@ export function AdminClinicsList() {
       <Card>
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">
-            {t('admin.clinics.list')} ({meta?.total || 0})
+            {t("admin.clinics.list")} ({meta?.total || 0})
           </h3>
 
           {clinics.length === 0 ? (
             <div className="text-center py-10">
               <Frown className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">{t('admin.clinics.noClinics')}</p>
+              <p className="text-muted-foreground">
+                {t("admin.clinics.noClinics")}
+              </p>
             </div>
           ) : (
             <>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('admin.clinics.name')}</TableHead>
-                    <TableHead>{t('admin.clinics.doctor')}</TableHead>
-                    <TableHead>{t('admin.clinics.specialty')}</TableHead>
-                    <TableHead>{t('admin.clinics.location')}</TableHead>
-                    <TableHead>{t('admin.clinics.phone')}</TableHead>
-                    <TableHead>{t('admin.clinics.status')}</TableHead>
-                    <TableHead>{t('table.actions')}</TableHead>
+                    <TableHead>{t("admin.clinics.name")}</TableHead>
+                    <TableHead>{t("admin.clinics.doctor")}</TableHead>
+                    <TableHead>{t("admin.clinics.specialty")}</TableHead>
+                    <TableHead>{t("admin.clinics.location")}</TableHead>
+                    <TableHead>{t("admin.clinics.phone")}</TableHead>
+                    <TableHead>{t("admin.clinics.status")}</TableHead>
+                    <TableHead>{t("table.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -426,7 +465,10 @@ export function AdminClinicsList() {
                       </TableCell>
                       <TableCell>
                         {clinic.doctorProfile?.specialty &&
-                          getLocalizedText(clinic.doctorProfile.specialty.name, locale)}
+                          getLocalizedText(
+                            clinic.doctorProfile.specialty.name,
+                            locale,
+                          )}
                       </TableCell>
                       <TableCell>
                         {clinic.city && (
@@ -435,7 +477,11 @@ export function AdminClinicsList() {
                             {getLocalizedText(clinic.city.name, locale)}
                             {clinic.city.state && (
                               <span className="text-muted-foreground">
-                                , {getLocalizedText(clinic.city.state.name, locale)}
+                                ,{" "}
+                                {getLocalizedText(
+                                  clinic.city.state.name,
+                                  locale,
+                                )}
                               </span>
                             )}
                           </div>
@@ -454,8 +500,12 @@ export function AdminClinicsList() {
                             onCheckedChange={() => handleToggleActive(clinic)}
                             disabled={updateClinic.isPending}
                           />
-                          <Badge variant={clinic.isActive ? 'success' : 'secondary'}>
-                            {clinic.isActive ? t('common.active') : t('common.inactive')}
+                          <Badge
+                            variant={clinic.isActive ? "success" : "secondary"}
+                          >
+                            {clinic.isActive
+                              ? t("common.active")
+                              : t("common.inactive")}
                           </Badge>
                         </div>
                       </TableCell>
@@ -465,7 +515,7 @@ export function AdminClinicsList() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleViewDetails(clinic)}
-                            title={t('admin.clinics.details')}
+                            title={t("admin.clinics.details")}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -473,7 +523,7 @@ export function AdminClinicsList() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleManageSchedule(clinic)}
-                            title={t('nav.schedules')}
+                            title={t("nav.schedules")}
                           >
                             <Clock className="h-4 w-4" />
                           </Button>
@@ -492,7 +542,16 @@ export function AdminClinicsList() {
                 </TableBody>
               </Table>
 
-              <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
+              <PaginationControls
+                meta={meta}
+                page={page}
+                onPageChange={setPage}
+                limit={limit}
+                onLimitChange={(v) => {
+                  setLimit(v);
+                  setPage(1);
+                }}
+              />
             </>
           )}
         </CardContent>
@@ -502,7 +561,7 @@ export function AdminClinicsList() {
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t('admin.clinics.details')}</DialogTitle>
+            <DialogTitle>{t("admin.clinics.details")}</DialogTitle>
             <DialogDescription>
               {selectedClinic && getLocalizedText(selectedClinic.name, locale)}
             </DialogDescription>
@@ -514,9 +573,11 @@ export function AdminClinicsList() {
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2">
                     <Building className="h-4 w-4" />
-                    {t('admin.clinics.clinicInfo')}
+                    {t("admin.clinics.clinicInfo")}
                   </h4>
-                  <p className="font-medium">{getLocalizedText(selectedClinic.name, locale)}</p>
+                  <p className="font-medium">
+                    {getLocalizedText(selectedClinic.name, locale)}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {getLocalizedText(selectedClinic.address, locale)}
                   </p>
@@ -529,9 +590,11 @@ export function AdminClinicsList() {
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    {t('admin.clinics.doctorInfo')}
+                    {t("admin.clinics.doctorInfo")}
                   </h4>
-                  <p className="font-medium">{selectedClinic.doctorProfile?.user.fullName}</p>
+                  <p className="font-medium">
+                    {selectedClinic.doctorProfile?.user.fullName}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {selectedClinic.doctorProfile?.user.phoneNumber}
                   </p>
@@ -543,33 +606,56 @@ export function AdminClinicsList() {
 
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.clinics.specialty')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("admin.clinics.specialty")}
+                  </p>
                   <p className="font-medium">
                     {selectedClinic.doctorProfile?.specialty &&
-                      getLocalizedText(selectedClinic.doctorProfile.specialty.name, locale)}
+                      getLocalizedText(
+                        selectedClinic.doctorProfile.specialty.name,
+                        locale,
+                      )}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.clinics.location')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("admin.clinics.location")}
+                  </p>
                   <p className="font-medium">
                     {selectedClinic.city && (
                       <>
                         {getLocalizedText(selectedClinic.city.name, locale)}
                         {selectedClinic.city.state && (
-                          <span>, {getLocalizedText(selectedClinic.city.state.name, locale)}</span>
+                          <span>
+                            ,{" "}
+                            {getLocalizedText(
+                              selectedClinic.city.state.name,
+                              locale,
+                            )}
+                          </span>
                         )}
                       </>
                     )}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.clinics.createdAt')}</p>
-                  <p className="font-medium">{formatDate(selectedClinic.createdAt)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("admin.clinics.createdAt")}
+                  </p>
+                  <p className="font-medium">
+                    {formatDate(selectedClinic.createdAt)}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t('admin.clinics.status')}</p>
-                  <Badge variant={selectedClinic.isActive ? 'success' : 'secondary'}>
-                    {selectedClinic.isActive ? t('common.active') : t('common.inactive')}
+                  <p className="text-sm text-muted-foreground">
+                    {t("admin.clinics.status")}
+                  </p>
+                  <Badge
+                    variant={selectedClinic.isActive ? "success" : "secondary"}
+                  >
+                    {selectedClinic.isActive
+                      ? t("common.active")
+                      : t("common.inactive")}
                   </Badge>
                 </div>
               </div>
@@ -577,20 +663,36 @@ export function AdminClinicsList() {
               {selectedClinic._count && (
                 <div className="grid grid-cols-4 gap-4 pt-4 border-t">
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{selectedClinic._count.appointments}</p>
-                    <p className="text-xs text-muted-foreground">{t('admin.clinics.appointments')}</p>
+                    <p className="text-2xl font-bold">
+                      {selectedClinic._count.appointments}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("admin.clinics.appointments")}
+                    </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{selectedClinic._count.services}</p>
-                    <p className="text-xs text-muted-foreground">{t('admin.clinics.services')}</p>
+                    <p className="text-2xl font-bold">
+                      {selectedClinic._count.services}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("admin.clinics.services")}
+                    </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{selectedClinic._count.schedules}</p>
-                    <p className="text-xs text-muted-foreground">{t('admin.clinics.schedules')}</p>
+                    <p className="text-2xl font-bold">
+                      {selectedClinic._count.schedules}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("admin.clinics.schedules")}
+                    </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{selectedClinic._count.secretaryAssignments}</p>
-                    <p className="text-xs text-muted-foreground">{t('admin.clinics.secretaries')}</p>
+                    <p className="text-2xl font-bold">
+                      {selectedClinic._count.secretaryAssignments}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("admin.clinics.secretaries")}
+                    </p>
                   </div>
                 </div>
               )}
@@ -599,32 +701,41 @@ export function AdminClinicsList() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>
-              {t('common.close')}
+              {t("common.close")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.clinics.deleteTitle')}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("admin.clinics.deleteTitle")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.clinics.deleteConfirm', {
-                name: selectedClinic ? getLocalizedText(selectedClinic.name, locale) : '',
+              {t("admin.clinics.deleteConfirm", {
+                name: selectedClinic
+                  ? getLocalizedText(selectedClinic.name, locale)
+                  : "",
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteClinic}
               className="bg-error-600 hover:bg-error-700"
               disabled={deleteClinic.isPending}
             >
-              {deleteClinic.isPending && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
-              {t('common.delete')}
+              {deleteClinic.isPending && (
+                <Loader2 className="h-4 w-4 me-2 animate-spin" />
+              )}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -636,7 +747,7 @@ export function AdminClinicsList() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              {t('nav.schedules')}
+              {t("nav.schedules")}
             </DialogTitle>
             <DialogDescription>
               {scheduleClinic && getLocalizedText(scheduleClinic.name, locale)}

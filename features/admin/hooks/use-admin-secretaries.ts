@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { PaginatedResponse } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { PaginatedResponse } from "@/types";
 
 // ==================== Types ====================
 
@@ -91,7 +91,7 @@ export interface UpdateSecretaryData {
 
 // Transform raw API response to group by secretary
 function transformSecretariesResponse(
-  rawData: RawSecretaryAssignment[]
+  rawData: RawSecretaryAssignment[],
 ): AdminSecretary[] {
   const secretariesMap = new Map<string, AdminSecretary>();
 
@@ -135,7 +135,7 @@ export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
 
   return useQuery({
     queryKey: [
-      'admin-secretaries',
+      "admin-secretaries",
       {
         page,
         limit,
@@ -147,16 +147,17 @@ export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
-      if (search) params.append('search', search);
-      if (doctorUserId) params.append('doctorUserId', doctorUserId);
-      if (clinicId) params.append('clinicId', clinicId);
-      if (isActive !== undefined) params.append('isActive', isActive.toString());
+      if (search) params.append("search", search);
+      if (doctorUserId) params.append("doctorUserId", doctorUserId);
+      if (clinicId) params.append("clinicId", clinicId);
+      if (isActive !== undefined)
+        params.append("isActive", isActive.toString());
 
       const response = await apiGet<PaginatedResponse<RawSecretaryAssignment>>(
-        `${ADMIN_ENDPOINTS.SECRETARIES}?${params.toString()}`
+        `${ADMIN_ENDPOINTS.SECRETARIES}?${params.toString()}`,
       );
 
       // Transform the data to group by secretary
@@ -182,7 +183,7 @@ export function useCreateAdminSecretary() {
       return apiPost<AdminSecretary>(ADMIN_ENDPOINTS.SECRETARIES, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
   });
 }
@@ -192,10 +193,13 @@ export function useAssignSecretary() {
 
   return useMutation({
     mutationFn: async (data: AssignSecretaryData) => {
-      return apiPost<SecretaryAssignment>(ADMIN_ENDPOINTS.ASSIGN_SECRETARY, data);
+      return apiPost<SecretaryAssignment>(
+        ADMIN_ENDPOINTS.ASSIGN_SECRETARY,
+        data,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
   });
 }
@@ -204,11 +208,14 @@ export function useUpdateAdminSecretary() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...data }: UpdateSecretaryData & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...data
+    }: UpdateSecretaryData & { id: string }) => {
       return apiPatch<AdminSecretary>(ADMIN_ENDPOINTS.SECRETARY(id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
   });
 }
@@ -221,7 +228,7 @@ export function useRemoveSecretaryAssignment() {
       return apiDelete(ADMIN_ENDPOINTS.SECRETARY_ASSIGNMENT(assignmentId));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-secretaries'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
   });
 }

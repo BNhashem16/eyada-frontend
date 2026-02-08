@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { X, LogOut } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useTranslation } from '@/lib/i18n';
-import { useAuthStore } from '@/lib/auth/store';
-import { getInitials } from '@/lib/utils';
-import { LucideIcon } from 'lucide-react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { X, LogOut } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useTranslation } from "@/lib/i18n";
+import { useAuthStore } from "@/lib/auth/store";
+import { getInitials } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
 
 export interface MenuItem {
   href: string;
@@ -26,17 +26,16 @@ export interface SidebarProps {
 }
 
 // Desktop Sidebar
-export function Sidebar({
-  menuItems,
-  basePath = '',
-}: SidebarProps) {
+export function Sidebar({ menuItems, basePath = "" }: SidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const { logout } = useAuthStore();
 
   const isActive = (href: string) => {
     const dashboardPath = `${basePath}/dashboard`;
-    return pathname === href || (href !== dashboardPath && pathname.startsWith(href));
+    return (
+      pathname === href || (href !== dashboardPath && pathname.startsWith(href))
+    );
   };
 
   return (
@@ -52,8 +51,8 @@ export function Sidebar({
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                 active
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
-                  : 'text-muted-foreground hover:bg-accent'
+                  ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                  : "text-muted-foreground hover:bg-accent"
               }`}
             >
               <Icon className="h-5 w-5" />
@@ -69,7 +68,7 @@ export function Sidebar({
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors"
         >
           <LogOut className="h-5 w-5" />
-          {t('nav.logout')}
+          {t("nav.logout")}
         </button>
       </nav>
     </aside>
@@ -84,7 +83,7 @@ export function MobileSidebar({
   isOpen,
   onClose,
   extraContent,
-  basePath = '',
+  basePath = "",
 }: SidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -94,31 +93,32 @@ export function MobileSidebar({
 
   const isActive = (href: string) => {
     const dashboardPath = `${basePath}/dashboard`;
-    return pathname === href || (href !== dashboardPath && pathname.startsWith(href));
+    return (
+      pathname === href || (href !== dashboardPath && pathname.startsWith(href))
+    );
   };
 
   const getUserDisplayName = () => {
     if (showDoctorPrefix) {
-      return `${t('doctors.doctorPrefix')} ${user?.name}`;
+      return `${t("doctors.doctorPrefix")} ${user?.name}`;
     }
     return user?.name;
   };
 
   return (
     <div className="lg:hidden fixed inset-0 z-50">
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <aside className="absolute inset-y-0 start-0 w-72 bg-card">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center gap-2">
             <Avatar className="h-10 w-10">
               <AvatarImage src={user?.profilePicture || undefined} />
-              <AvatarFallback>{getInitials(user?.name || '')}</AvatarFallback>
+              <AvatarFallback>{getInitials(user?.name || "")}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold text-foreground">{getUserDisplayName()}</p>
+              <p className="font-semibold text-foreground">
+                {getUserDisplayName()}
+              </p>
               {userRoleLabel && (
                 <p className="text-sm text-muted-foreground">{userRoleLabel}</p>
               )}
@@ -141,8 +141,8 @@ export function MobileSidebar({
                 onClick={onClose}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   active
-                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium'
-                    : 'text-muted-foreground hover:bg-accent'
+                    ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium"
+                    : "text-muted-foreground hover:bg-accent"
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -163,7 +163,7 @@ export function MobileSidebar({
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
           >
             <LogOut className="h-5 w-5" />
-            {t('nav.logout')}
+            {t("nav.logout")}
           </button>
         </nav>
       </aside>

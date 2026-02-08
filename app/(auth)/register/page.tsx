@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Suspense } from 'react';
-import { RegisterForm } from '@/features/auth/components';
-import { Spinner } from '@/components/ui/spinner';
-import { useTranslation } from '@/lib/i18n';
+import { Suspense } from "react";
+import { RegisterForm } from "@/features/auth/components";
+import { Spinner } from "@/components/ui/spinner";
+import { useTranslation } from "@/lib/i18n";
 
 export default function RegisterPage() {
   const { t } = useTranslation();
@@ -13,15 +13,19 @@ export default function RegisterPage() {
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">
-          {t('auth.registerTitle')}
+          {t("auth.registerTitle")}
         </h1>
-        <p className="text-muted-foreground">
-          {t('auth.registerSubtitle')}
-        </p>
+        <p className="text-muted-foreground">{t("auth.registerSubtitle")}</p>
       </div>
 
       {/* Form - Wrapped in Suspense for useSearchParams */}
-      <Suspense fallback={<div className="flex justify-center py-8"><Spinner /></div>}>
+      <Suspense
+        fallback={
+          <div className="flex justify-center py-8">
+            <Spinner />
+          </div>
+        }
+      >
         <RegisterForm />
       </Suspense>
     </>

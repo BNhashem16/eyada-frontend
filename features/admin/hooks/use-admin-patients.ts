@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPatch } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { PatientProfile, PaginatedResponse } from '@/types';
-import { PatientStatus } from '@/types/enums';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPatch } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { PatientProfile, PaginatedResponse } from "@/types";
+import { PatientStatus } from "@/types/enums";
 
 // Filter options for admin patients list
 export interface AdminPatientsFilters {
@@ -27,18 +27,25 @@ export function useAdminPatients(filters: AdminPatientsFilters = {}) {
   } = filters;
 
   return useQuery({
-    queryKey: ['admin-patients', { page, limit, status, search, isActive, isApproved }],
+    queryKey: [
+      "admin-patients",
+      { page, limit, status, search, isActive, isApproved },
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
-      if (status) params.append('status', status);
-      if (search) params.append('search', search);
-      if (isActive !== undefined) params.append('isActive', isActive.toString());
-      if (isApproved !== undefined) params.append('isApproved', isApproved.toString());
+      if (status) params.append("status", status);
+      if (search) params.append("search", search);
+      if (isActive !== undefined)
+        params.append("isActive", isActive.toString());
+      if (isApproved !== undefined)
+        params.append("isApproved", isApproved.toString());
 
-      return apiGet<PaginatedResponse<PatientProfile>>(`${ADMIN_ENDPOINTS.PATIENTS}?${params.toString()}`);
+      return apiGet<PaginatedResponse<PatientProfile>>(
+        `${ADMIN_ENDPOINTS.PATIENTS}?${params.toString()}`,
+      );
     },
     staleTime: 1000 * 60, // 1 minute
   });
@@ -51,7 +58,7 @@ export function usePendingPatients() {
 
 export function useAdminPatient(patientId: string) {
   return useQuery({
-    queryKey: ['admin-patient', patientId],
+    queryKey: ["admin-patient", patientId],
     queryFn: async () => {
       return apiGet<PatientProfile>(ADMIN_ENDPOINTS.PATIENT(patientId));
     },
@@ -64,11 +71,14 @@ export function useApprovePatient() {
 
   return useMutation({
     mutationFn: async (patientId: string) => {
-      return apiPatch<PatientProfile>(ADMIN_ENDPOINTS.APPROVE_PATIENT(patientId), {});
+      return apiPatch<PatientProfile>(
+        ADMIN_ENDPOINTS.APPROVE_PATIENT(patientId),
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-patients'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-patient'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-patients"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-patient"] });
     },
   });
 }
@@ -78,11 +88,14 @@ export function useRejectPatient() {
 
   return useMutation({
     mutationFn: async (patientId: string) => {
-      return apiPatch<PatientProfile>(ADMIN_ENDPOINTS.REJECT_PATIENT(patientId), {});
+      return apiPatch<PatientProfile>(
+        ADMIN_ENDPOINTS.REJECT_PATIENT(patientId),
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-patients'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-patient'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-patients"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-patient"] });
     },
   });
 }
@@ -92,11 +105,14 @@ export function useSuspendPatient() {
 
   return useMutation({
     mutationFn: async (patientId: string) => {
-      return apiPatch<PatientProfile>(ADMIN_ENDPOINTS.SUSPEND_PATIENT(patientId), {});
+      return apiPatch<PatientProfile>(
+        ADMIN_ENDPOINTS.SUSPEND_PATIENT(patientId),
+        {},
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-patients'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-patient'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-patients"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-patient"] });
     },
   });
 }

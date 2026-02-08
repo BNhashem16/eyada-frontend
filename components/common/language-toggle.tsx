@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { Languages, Globe } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Languages, Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useLanguage } from '@/components/providers/language-provider';
-import { localeNames, type Locale, useTranslation } from '@/lib/i18n';
+} from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/components/providers/language-provider";
+import { localeNames, type Locale, useTranslation } from "@/lib/i18n";
 
 export function LanguageToggle() {
   const { locale, setLocale } = useLanguage();
@@ -20,19 +20,23 @@ export function LanguageToggle() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Globe className="h-5 w-5" />
-          <span className="sr-only">{t('app.toggleLanguage')}</span>
+          <span className="sr-only">{t("app.toggleLanguage")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setLocale('ar')}>
+        <DropdownMenuItem onClick={() => setLocale("ar")}>
           <span className="me-2">🇪🇬</span>
           العربية
-          {locale === 'ar' && <span className="ms-auto text-primary-500">✓</span>}
+          {locale === "ar" && (
+            <span className="ms-auto text-primary-500">✓</span>
+          )}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLocale('en')}>
+        <DropdownMenuItem onClick={() => setLocale("en")}>
           <span className="me-2">🇺🇸</span>
           English
-          {locale === 'en' && <span className="ms-auto text-primary-500">✓</span>}
+          {locale === "en" && (
+            <span className="ms-auto text-primary-500">✓</span>
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -51,7 +55,7 @@ export function LanguageToggleSimple() {
       className="gap-2 font-medium"
     >
       <Globe className="h-4 w-4" />
-      <span>{locale === 'ar' ? 'EN' : 'ع'}</span>
+      <span>{locale === "ar" ? "EN" : "ع"}</span>
     </Button>
   );
 }
@@ -67,7 +71,7 @@ export function LanguageToggleBadge() {
       onClick={toggleLocale}
       className="gap-2 min-w-[80px]"
     >
-      {locale === 'ar' ? (
+      {locale === "ar" ? (
         <>
           <span>🇪🇬</span>
           <span>ع</span>

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { PaginatedResponse } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPatch, apiDelete } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { PaginatedResponse } from "@/types";
 
 // ==================== Types ====================
 
@@ -48,8 +48,16 @@ export interface ClinicStatistics {
   totalClinics: number;
   activeClinics: number;
   inactiveClinics: number;
-  bySpecialty: Array<{ specialtyId: string; specialtyName: { ar: string; en: string }; count: number }>;
-  byCity: Array<{ cityId: string; cityName: { ar: string; en: string }; count: number }>;
+  bySpecialty: Array<{
+    specialtyId: string;
+    specialtyName: { ar: string; en: string };
+    count: number;
+  }>;
+  byCity: Array<{
+    cityId: string;
+    cityName: { ar: string; en: string };
+    count: number;
+  }>;
 }
 
 export interface AdminClinicFilters {
@@ -79,7 +87,7 @@ export function useAdminClinics(filters: AdminClinicFilters = {}) {
 
   return useQuery({
     queryKey: [
-      'admin-clinics',
+      "admin-clinics",
       {
         page,
         limit,
@@ -93,18 +101,19 @@ export function useAdminClinics(filters: AdminClinicFilters = {}) {
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
-      if (doctorProfileId) params.append('doctorProfileId', doctorProfileId);
-      if (cityId) params.append('cityId', cityId);
-      if (stateId) params.append('stateId', stateId);
-      if (specialtyId) params.append('specialtyId', specialtyId);
-      if (isActive !== undefined) params.append('isActive', isActive.toString());
-      if (search) params.append('search', search);
+      if (doctorProfileId) params.append("doctorProfileId", doctorProfileId);
+      if (cityId) params.append("cityId", cityId);
+      if (stateId) params.append("stateId", stateId);
+      if (specialtyId) params.append("specialtyId", specialtyId);
+      if (isActive !== undefined)
+        params.append("isActive", isActive.toString());
+      if (search) params.append("search", search);
 
       return apiGet<PaginatedResponse<AdminClinic>>(
-        `${ADMIN_ENDPOINTS.CLINICS}?${params.toString()}`
+        `${ADMIN_ENDPOINTS.CLINICS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 30, // 30 seconds
@@ -113,7 +122,7 @@ export function useAdminClinics(filters: AdminClinicFilters = {}) {
 
 export function useAdminClinic(id: string) {
   return useQuery({
-    queryKey: ['admin-clinic', id],
+    queryKey: ["admin-clinic", id],
     queryFn: async () => {
       return apiGet<AdminClinic>(ADMIN_ENDPOINTS.CLINIC(id));
     },
@@ -123,7 +132,7 @@ export function useAdminClinic(id: string) {
 
 export function useAdminClinicStatistics() {
   return useQuery({
-    queryKey: ['admin-clinics-statistics'],
+    queryKey: ["admin-clinics-statistics"],
     queryFn: async () => {
       return apiGet<ClinicStatistics>(ADMIN_ENDPOINTS.CLINICS_STATISTICS);
     },
@@ -143,9 +152,9 @@ export function useUpdateAdminClinic() {
       return apiPatch<AdminClinic>(ADMIN_ENDPOINTS.CLINIC(id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-clinics'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-clinic'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-clinics-statistics'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-clinics"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-clinic"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-clinics-statistics"] });
     },
   });
 }
@@ -158,8 +167,8 @@ export function useDeleteAdminClinic() {
       return apiDelete(ADMIN_ENDPOINTS.CLINIC(id));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-clinics'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-clinics-statistics'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-clinics"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-clinics-statistics"] });
     },
   });
 }

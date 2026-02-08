@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Frown } from 'lucide-react';
-import { ClinicCard } from './clinic-card';
-import { ClinicFiltersComponent, ClinicFilters } from './clinic-filters';
-import { useClinics } from '../hooks/use-clinics';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
-import { useTranslation } from '@/lib/i18n';
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, Frown } from "lucide-react";
+import { ClinicCard } from "./clinic-card";
+import { ClinicFiltersComponent, ClinicFilters } from "./clinic-filters";
+import { useClinics } from "../hooks/use-clinics";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/lib/i18n";
 
 interface ClinicListProps {
   initialFilters?: ClinicFilters;
@@ -20,7 +20,11 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data, isLoading, isError, error } = useClinics({ filters, page, limit });
+  const { data, isLoading, isError, error } = useClinics({
+    filters,
+    page,
+    limit,
+  });
 
   const clinics = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 1;
@@ -35,7 +39,10 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Sidebar Filters */}
       <aside className="w-full lg:w-72 lg:flex-shrink-0">
-        <ClinicFiltersComponent filters={filters} onFiltersChange={handleFiltersChange} />
+        <ClinicFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
       </aside>
 
       {/* Results */}
@@ -43,7 +50,9 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
         {/* Results Count */}
         {!isLoading && !isError && (
           <div className="mb-4 text-sm text-muted-foreground">
-            {t('clinics.resultsShowing').replace('{count}', String(clinics.length)).replace('{total}', String(totalItems))}
+            {t("clinics.resultsShowing")
+              .replace("{count}", String(clinics.length))
+              .replace("{total}", String(totalItems))}
           </div>
         )}
 
@@ -77,10 +86,12 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
           <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
             <CardContent className="py-10 text-center">
               <p className="text-error-600 dark:text-error-400">
-                {t('clinics.loadError')}
+                {t("clinics.loadError")}
               </p>
               <p className="text-sm text-error-500 dark:text-error-400 mt-2">
-                {error instanceof Error ? error.message : t('common.unknownError')}
+                {error instanceof Error
+                  ? error.message
+                  : t("common.unknownError")}
               </p>
             </CardContent>
           </Card>
@@ -92,13 +103,13 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
             <CardContent className="py-16 text-center">
               <Frown className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                {t('clinics.noClinicsFound')}
+                {t("clinics.noClinicsFound")}
               </h3>
               <p className="text-muted-foreground mb-4">
-                {t('clinics.tryDifferentFilters')}
+                {t("clinics.tryDifferentFilters")}
               </p>
               <Button variant="outline" onClick={() => handleFiltersChange({})}>
-                {t('common.clearFilters')}
+                {t("common.clearFilters")}
               </Button>
             </CardContent>
           </Card>
@@ -123,7 +134,7 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
               disabled={page === 1}
             >
               <ChevronRight className="h-4 w-4" />
-              {t('common.previous')}
+              {t("common.previous")}
             </Button>
 
             <div className="flex items-center gap-1">
@@ -142,7 +153,7 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
                 return (
                   <Button
                     key={pageNum}
-                    variant={page === pageNum ? 'default' : 'ghost'}
+                    variant={page === pageNum ? "default" : "ghost"}
                     size="sm"
                     className="w-9"
                     onClick={() => setPage(pageNum)}
@@ -159,7 +170,7 @@ export function ClinicList({ initialFilters = {} }: ClinicListProps) {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
-              {t('common.next')}
+              {t("common.next")}
               <ChevronLeft className="h-4 w-4" />
             </Button>
           </div>

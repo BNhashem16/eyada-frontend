@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Calendar, Plus } from 'lucide-react';
-import { AppointmentList } from '@/features/secretary';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from '@/lib/i18n';
+import Link from "next/link";
+import { Calendar, Plus } from "lucide-react";
+import { AppointmentList } from "@/features/secretary";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n";
 
 export default function SecretaryAppointmentsPage() {
   const { t } = useTranslation();
@@ -18,14 +18,18 @@ export default function SecretaryAppointmentsPage() {
             <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('secretary.appointmentsPage.title')}</h1>
-            <p className="text-muted-foreground">{t('secretary.appointmentsPage.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("secretary.appointmentsPage.title")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("secretary.appointmentsPage.subtitle")}
+            </p>
           </div>
         </div>
         <Button asChild>
           <Link href="/secretary/appointments/new">
             <Plus className="h-4 w-4 me-2" />
-            {t('secretary.bookAppointment')}
+            {t("secretary.bookAppointment")}
           </Link>
         </Button>
       </div>

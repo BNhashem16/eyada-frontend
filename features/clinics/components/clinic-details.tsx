@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
 import {
   MapPin,
   Clock,
@@ -11,30 +11,32 @@ import {
   DollarSign,
   ChevronLeft,
   User,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useClinic } from '../hooks/use-clinics';
-import { BookingWidget } from './booking-widget';
-import { DayOfWeek } from '@/types/enums';
-import { useTranslation } from '@/lib/i18n';
-import { formatTime } from '@/lib/utils/date';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useClinic } from "../hooks/use-clinics";
+import { BookingWidget } from "./booking-widget";
+import { DayOfWeek } from "@/types/enums";
+import { useTranslation } from "@/lib/i18n";
+import { formatTime } from "@/lib/utils/date";
 
 interface ClinicDetailsProps {
   clinicId: string;
 }
 
-const getDayNames = (t: (key: string) => string): Record<DayOfWeek, string> => ({
-  [DayOfWeek.SUNDAY]: t('days.sunday'),
-  [DayOfWeek.MONDAY]: t('days.monday'),
-  [DayOfWeek.TUESDAY]: t('days.tuesday'),
-  [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
-  [DayOfWeek.THURSDAY]: t('days.thursday'),
-  [DayOfWeek.FRIDAY]: t('days.friday'),
-  [DayOfWeek.SATURDAY]: t('days.saturday'),
+const getDayNames = (
+  t: (key: string) => string,
+): Record<DayOfWeek, string> => ({
+  [DayOfWeek.SUNDAY]: t("days.sunday"),
+  [DayOfWeek.MONDAY]: t("days.monday"),
+  [DayOfWeek.TUESDAY]: t("days.tuesday"),
+  [DayOfWeek.WEDNESDAY]: t("days.wednesday"),
+  [DayOfWeek.THURSDAY]: t("days.thursday"),
+  [DayOfWeek.FRIDAY]: t("days.friday"),
+  [DayOfWeek.SATURDAY]: t("days.saturday"),
 });
 
 const dayOrder = [
@@ -54,7 +56,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
   // Use embedded data from clinic response (reduces API calls from 3 to 1)
   const schedules = clinic?.schedules;
   const services = clinic?.serviceTypes;
-  const [activeTab, setActiveTab] = useState('booking');
+  const [activeTab, setActiveTab] = useState("booking");
 
   if (isLoading) {
     return <ClinicDetailsSkeleton />;
@@ -65,10 +67,10 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
           <p className="text-error-600 dark:text-error-400">
-            {t('clinics.loadError')}
+            {t("clinics.loadError")}
           </p>
           <Button asChild variant="outline" className="mt-4">
-            <Link href="/clinics">{t('doctors.backToSearch')}</Link>
+            <Link href="/clinics">{t("doctors.backToSearch")}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -77,7 +79,9 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
 
   // Sort schedules by day
   const sortedSchedules = schedules
-    ? [...schedules].sort((a, b) => dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek))
+    ? [...schedules].sort(
+        (a, b) => dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek),
+      )
     : [];
 
   return (
@@ -95,9 +99,13 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h1 className="text-2xl font-bold text-foreground">{clinic.name?.ar || clinic.name?.en}</h1>
+                    <h1 className="text-2xl font-bold text-foreground">
+                      {clinic.name?.ar || clinic.name?.en}
+                    </h1>
                     {clinic.isActive && (
-                      <Badge variant="success" className="mt-2">{t('clinics.availableForBooking')}</Badge>
+                      <Badge variant="success" className="mt-2">
+                        {t("clinics.availableForBooking")}
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -109,7 +117,10 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                     className="flex items-center gap-2 mt-4 text-primary-600 hover:underline"
                   >
                     <User className="h-4 w-4" />
-                    <span>{t('doctors.doctorPrefix')} {clinic.doctorProfile.user?.fullName}</span>
+                    <span>
+                      {t("doctors.doctorPrefix")}{" "}
+                      {clinic.doctorProfile.user?.fullName}
+                    </span>
                     <ChevronLeft className="h-4 w-4" />
                   </Link>
                 )}
@@ -121,7 +132,8 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                     <p>{clinic.address?.ar || clinic.address?.en}</p>
                     <p>
                       {clinic.city?.name?.ar || clinic.city?.name?.en}
-                      {clinic.city?.state && `, ${clinic.city.state.name?.ar || clinic.city.state.name?.en}`}
+                      {clinic.city?.state &&
+                        `, ${clinic.city.state.name?.ar || clinic.city.state.name?.en}`}
                     </p>
                   </div>
                 </div>
@@ -130,7 +142,11 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                 {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
                   <div className="flex items-center gap-2 mt-3 text-muted-foreground">
                     <Phone className="h-5 w-5 text-muted-foreground" />
-                    <a href={`tel:${clinic.phoneNumbers[0]}`} dir="ltr" className="hover:text-primary-600">
+                    <a
+                      href={`tel:${clinic.phoneNumbers[0]}`}
+                      dir="ltr"
+                      className="hover:text-primary-600"
+                    >
                       {clinic.phoneNumbers[0]}
                     </a>
                   </div>
@@ -143,9 +159,15 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full justify-start overflow-x-auto">
-            <TabsTrigger value="booking">{t('clinics.bookAppointmentTab')}</TabsTrigger>
-            <TabsTrigger value="schedule">{t('clinics.scheduleTab')}</TabsTrigger>
-            <TabsTrigger value="services">{t('clinics.servicesTab')}</TabsTrigger>
+            <TabsTrigger value="booking">
+              {t("clinics.bookAppointmentTab")}
+            </TabsTrigger>
+            <TabsTrigger value="schedule">
+              {t("clinics.scheduleTab")}
+            </TabsTrigger>
+            <TabsTrigger value="services">
+              {t("clinics.servicesTab")}
+            </TabsTrigger>
           </TabsList>
 
           {/* Booking Tab */}
@@ -159,7 +181,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                  {t('clinics.weeklyWorkingHours')}
+                  {t("clinics.weeklyWorkingHours")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -172,8 +194,8 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                           key={schedule.id}
                           className={`flex items-center justify-between p-3 rounded-lg ${
                             schedule.isActive
-                              ? 'bg-muted'
-                              : 'bg-muted/50 text-muted-foreground'
+                              ? "bg-muted"
+                              : "bg-muted/50 text-muted-foreground"
                           }`}
                         >
                           <span className="font-medium">
@@ -181,10 +203,13 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                           </span>
                           {schedule.isActive && firstShift ? (
                             <span dir="ltr">
-                              {formatTime(firstShift.startTime)} - {formatTime(firstShift.endTime)}
+                              {formatTime(firstShift.startTime)} -{" "}
+                              {formatTime(firstShift.endTime)}
                             </span>
                           ) : (
-                            <span className="text-sm">{t('common.closed')}</span>
+                            <span className="text-sm">
+                              {t("common.closed")}
+                            </span>
                           )}
                         </div>
                       );
@@ -192,7 +217,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-center py-6">
-                    {t('clinics.noWorkingHours')}
+                    {t("clinics.noWorkingHours")}
                   </p>
                 )}
               </CardContent>
@@ -205,7 +230,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                  {t('clinics.servicesAndPrices')}
+                  {t("clinics.servicesAndPrices")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -218,15 +243,20 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                       >
                         <div>
                           <p className="font-medium text-foreground">
-                            {service.name?.ar || service.name?.en || service.serviceType}
+                            {service.name?.ar ||
+                              service.name?.en ||
+                              service.serviceType}
                           </p>
                           <p className="text-sm text-muted-foreground mt-1">
-                            {t('clinics.durationMinutes').replace('{duration}', String(service.duration))}
+                            {t("clinics.durationMinutes").replace(
+                              "{duration}",
+                              String(service.duration),
+                            )}
                           </p>
                         </div>
                         <div className="text-end">
                           <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
-                            {service.price} {t('common.egp')}
+                            {service.price} {t("common.egp")}
                           </span>
                         </div>
                       </div>
@@ -234,7 +264,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-center py-6">
-                    {t('clinics.noServicesYet')}
+                    {t("clinics.noServicesYet")}
                   </p>
                 )}
               </CardContent>
@@ -250,25 +280,25 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t('clinics.quickBooking')}
+                {t("clinics.quickBooking")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                {t('clinics.bookingInstructions')}
+                {t("clinics.bookingInstructions")}
               </p>
               <Button
                 className="w-full"
-                onClick={() => setActiveTab('booking')}
+                onClick={() => setActiveTab("booking")}
               >
                 <Calendar className="h-4 w-4 ms-2" />
-                {t('clinics.bookNow')}
+                {t("clinics.bookNow")}
               </Button>
               {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
                 <Button variant="outline" className="w-full mt-3" asChild>
                   <a href={`tel:${clinic.phoneNumbers[0]}`}>
                     <Phone className="h-4 w-4 ms-2" />
-                    {t('clinics.callClinic')}
+                    {t("clinics.callClinic")}
                   </a>
                 </Button>
               )}

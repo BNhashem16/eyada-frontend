@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
+import { useState } from "react";
+import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 import {
   ChevronLeft,
   ChevronRight,
@@ -21,49 +21,62 @@ import {
   CreditCard,
   DollarSign,
   Undo,
-} from 'lucide-react';
-import { AppointmentCard } from './appointment-card';
-import { BookAppointmentDialog } from './book-appointment-dialog';
-import { useSecretaryAppointments, useSecretaryClinics } from '../hooks';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from "lucide-react";
+import { AppointmentCard } from "./appointment-card";
+import { BookAppointmentDialog } from "./book-appointment-dialog";
+import { useSecretaryAppointments, useSecretaryClinics } from "../hooks";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { AppointmentStatus, PaymentStatus } from '@/types/enums';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { cn } from '@/lib/utils';
-import { useTranslation } from '@/lib/i18n';
+} from "@/components/ui/collapsible";
+import { AppointmentStatus, PaymentStatus } from "@/types/enums";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 
 interface AppointmentListProps {
   showBookButton?: boolean;
 }
 
-export function AppointmentList({ showBookButton = true }: AppointmentListProps) {
+export function AppointmentList({
+  showBookButton = true,
+}: AppointmentListProps) {
   const { t } = useTranslation();
-  const [selectedClinic, setSelectedClinic] = useState<string>('all');
+  const [selectedClinic, setSelectedClinic] = useState<string>("all");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [selectedPaymentStatus, setSelectedPaymentStatus] =
+    useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>("");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [bookDialogOpen, setBookDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
 
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
   const { data, isLoading, isError, error } = useSecretaryAppointments({
-    clinicId: selectedClinic === 'all' ? undefined : selectedClinic,
-    date: format(selectedDate, 'yyyy-MM-dd'),
-    status: selectedStatus === 'all' ? undefined : selectedStatus as AppointmentStatus,
-    paymentStatus: selectedPaymentStatus === 'all' ? undefined : selectedPaymentStatus as PaymentStatus,
+    clinicId: selectedClinic === "all" ? undefined : selectedClinic,
+    date: format(selectedDate, "yyyy-MM-dd"),
+    status:
+      selectedStatus === "all"
+        ? undefined
+        : (selectedStatus as AppointmentStatus),
+    paymentStatus:
+      selectedPaymentStatus === "all"
+        ? undefined
+        : (selectedPaymentStatus as PaymentStatus),
     search: searchQuery.trim() || undefined,
     page,
     limit: 20,
@@ -74,21 +87,69 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
   const totalItems = data?.meta?.total ?? 0;
 
   const statusOptions = [
-    { value: 'all', label: t('secretary.allStatuses'), icon: <Clock className="h-4 w-4" /> },
-    { value: AppointmentStatus.PENDING, label: t('secretary.waiting'), icon: <Clock className="h-4 w-4 text-warning-500" /> },
-    { value: AppointmentStatus.CONFIRMED, label: t('secretary.confirmed'), icon: <CheckCircle className="h-4 w-4 text-success-500" /> },
-    { value: AppointmentStatus.CHECKED_IN, label: t('secretary.attended'), icon: <UserCheck className="h-4 w-4 text-primary-500" /> },
-    { value: AppointmentStatus.IN_PROGRESS, label: t('secretary.inProgress'), icon: <Play className="h-4 w-4 text-info-500" /> },
-    { value: AppointmentStatus.COMPLETED, label: t('secretary.completed'), icon: <CheckCircle className="h-4 w-4 text-muted-foreground" /> },
-    { value: AppointmentStatus.CANCELLED, label: t('secretary.cancelled'), icon: <XCircle className="h-4 w-4 text-error-500" /> },
-    { value: AppointmentStatus.NO_SHOW, label: t('secretary.noShow'), icon: <Ban className="h-4 w-4 text-muted-foreground" /> },
+    {
+      value: "all",
+      label: t("secretary.allStatuses"),
+      icon: <Clock className="h-4 w-4" />,
+    },
+    {
+      value: AppointmentStatus.PENDING,
+      label: t("secretary.waiting"),
+      icon: <Clock className="h-4 w-4 text-warning-500" />,
+    },
+    {
+      value: AppointmentStatus.CONFIRMED,
+      label: t("secretary.confirmed"),
+      icon: <CheckCircle className="h-4 w-4 text-success-500" />,
+    },
+    {
+      value: AppointmentStatus.CHECKED_IN,
+      label: t("secretary.attended"),
+      icon: <UserCheck className="h-4 w-4 text-primary-500" />,
+    },
+    {
+      value: AppointmentStatus.IN_PROGRESS,
+      label: t("secretary.inProgress"),
+      icon: <Play className="h-4 w-4 text-info-500" />,
+    },
+    {
+      value: AppointmentStatus.COMPLETED,
+      label: t("secretary.completed"),
+      icon: <CheckCircle className="h-4 w-4 text-muted-foreground" />,
+    },
+    {
+      value: AppointmentStatus.CANCELLED,
+      label: t("secretary.cancelled"),
+      icon: <XCircle className="h-4 w-4 text-error-500" />,
+    },
+    {
+      value: AppointmentStatus.NO_SHOW,
+      label: t("secretary.noShow"),
+      icon: <Ban className="h-4 w-4 text-muted-foreground" />,
+    },
   ];
 
   const paymentStatusOptions = [
-    { value: 'all', label: t('secretary.allPaymentStatuses'), icon: <CreditCard className="h-4 w-4" /> },
-    { value: PaymentStatus.PENDING, label: t('secretary.unpaid'), icon: <Clock className="h-4 w-4 text-warning-500" /> },
-    { value: PaymentStatus.PAID, label: t('secretary.paid'), icon: <DollarSign className="h-4 w-4 text-success-500" /> },
-    { value: PaymentStatus.REFUNDED, label: t('secretary.refunded'), icon: <Undo className="h-4 w-4 text-info-500" /> },
+    {
+      value: "all",
+      label: t("secretary.allPaymentStatuses"),
+      icon: <CreditCard className="h-4 w-4" />,
+    },
+    {
+      value: PaymentStatus.PENDING,
+      label: t("secretary.unpaid"),
+      icon: <Clock className="h-4 w-4 text-warning-500" />,
+    },
+    {
+      value: PaymentStatus.PAID,
+      label: t("secretary.paid"),
+      icon: <DollarSign className="h-4 w-4 text-success-500" />,
+    },
+    {
+      value: PaymentStatus.REFUNDED,
+      label: t("secretary.refunded"),
+      icon: <Undo className="h-4 w-4 text-info-500" />,
+    },
   ];
 
   return (
@@ -99,7 +160,7 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
           <div className="flex-1" />
           <Button onClick={() => setBookDialogOpen(true)}>
             <Plus className="h-4 w-4 me-2" />
-            {t('secretary.bookAppointment')}
+            {t("secretary.bookAppointment")}
           </Button>
         </div>
       )}
@@ -115,11 +176,11 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
                 <div className="relative flex-1">
                   <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder={t('secretary.searchPlaceholder')}
+                    placeholder={t("secretary.searchPlaceholder")}
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         setSearchQuery(searchInput);
                         setPage(1);
                       }
@@ -131,7 +192,14 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
                     className="ps-9"
                   />
                 </div>
-                <Button variant="outline" size="icon" onClick={() => { setSearchQuery(searchInput); setPage(1); }}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    setSearchQuery(searchInput);
+                    setPage(1);
+                  }}
+                >
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -139,27 +207,34 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
               {/* Clinic Filter */}
               <SearchableSelect
                 options={[
-                  { value: 'all', label: t('secretary.allClinics'), icon: <Building2 className="h-4 w-4" /> },
+                  {
+                    value: "all",
+                    label: t("secretary.allClinics"),
+                    icon: <Building2 className="h-4 w-4" />,
+                  },
                   ...(clinics?.map((clinic) => ({
                     value: clinic.id,
-                    label: getLocalizedText(clinic.name, 'ar'),
+                    label: getLocalizedText(clinic.name, "ar"),
                     icon: <Building2 className="h-4 w-4" />,
                   })) || []),
                 ]}
                 value={selectedClinic}
                 onValueChange={setSelectedClinic}
-                placeholder={t('secretary.selectClinic')}
-                searchPlaceholder={t('common.search')}
-                emptyMessage={t('common.noResults')}
+                placeholder={t("secretary.selectClinic")}
+                searchPlaceholder={t("common.search")}
+                emptyMessage={t("common.noResults")}
                 className="w-full sm:w-[200px]"
               />
 
               {/* Date Filter */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className={cn('w-full sm:w-[200px] justify-start')}>
+                  <Button
+                    variant="outline"
+                    className={cn("w-full sm:w-[200px] justify-start")}
+                  >
                     <CalendarIcon className="me-2 h-4 w-4" />
-                    {format(selectedDate, 'dd MMMM yyyy', { locale: ar })}
+                    {format(selectedDate, "dd MMMM yyyy", { locale: ar })}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -177,7 +252,10 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
                 variant="outline"
                 size="icon"
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                className={cn(showAdvancedFilters && 'bg-primary-100 dark:bg-primary-900/30')}
+                className={cn(
+                  showAdvancedFilters &&
+                    "bg-primary-100 dark:bg-primary-900/30",
+                )}
               >
                 <SlidersHorizontal className="h-4 w-4" />
               </Button>
@@ -192,7 +270,7 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
                     options={statusOptions}
                     value={selectedStatus}
                     onValueChange={setSelectedStatus}
-                    placeholder={t('secretary.appointmentStatus')}
+                    placeholder={t("secretary.appointmentStatus")}
                     showSearch={false}
                     className="w-full sm:w-[200px]"
                   />
@@ -202,7 +280,7 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
                     options={paymentStatusOptions}
                     value={selectedPaymentStatus}
                     onValueChange={setSelectedPaymentStatus}
-                    placeholder={t('secretary.paymentStatusFilter')}
+                    placeholder={t("secretary.paymentStatusFilter")}
                     showSearch={false}
                     className="w-full sm:w-[200px]"
                   />
@@ -216,9 +294,12 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
       {/* Results Count */}
       {!isLoading && !isError && (
         <div className="text-sm text-muted-foreground">
-          {t('secretary.appointmentsCount')
-            .replace('{count}', String(totalItems))
-            .replace('{date}', format(selectedDate, 'dd MMMM yyyy', { locale: ar }))}
+          {t("secretary.appointmentsCount")
+            .replace("{count}", String(totalItems))
+            .replace(
+              "{date}",
+              format(selectedDate, "dd MMMM yyyy", { locale: ar }),
+            )}
         </div>
       )}
 
@@ -247,10 +328,10 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
         <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
           <CardContent className="py-10 text-center">
             <p className="text-error-600 dark:text-error-400">
-              {t('secretary.loadError')}
+              {t("secretary.loadError")}
             </p>
             <p className="text-sm text-error-500 dark:text-error-400 mt-2">
-              {error instanceof Error ? error.message : t('common.error')}
+              {error instanceof Error ? error.message : t("common.error")}
             </p>
           </CardContent>
         </Card>
@@ -262,10 +343,10 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
           <CardContent className="py-16 text-center">
             <Frown className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t('secretary.noAppointments')}
+              {t("secretary.noAppointments")}
             </h3>
             <p className="text-muted-foreground">
-              {t('secretary.noAppointmentsOnDay')}
+              {t("secretary.noAppointmentsOnDay")}
             </p>
           </CardContent>
         </Card>
@@ -290,11 +371,13 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
             disabled={page === 1}
           >
             <ChevronRight className="h-4 w-4" />
-            {t('common.previous')}
+            {t("common.previous")}
           </Button>
 
           <span className="text-sm text-muted-foreground">
-            {t('secretary.pageOf').replace('{page}', String(page)).replace('{total}', String(totalPages))}
+            {t("secretary.pageOf")
+              .replace("{page}", String(page))
+              .replace("{total}", String(totalPages))}
           </span>
 
           <Button
@@ -303,7 +386,7 @@ export function AppointmentList({ showBookButton = true }: AppointmentListProps)
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >
-            {t('common.next')}
+            {t("common.next")}
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>

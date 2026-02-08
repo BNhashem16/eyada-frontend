@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { User } from 'lucide-react';
-import { PatientProfileForm } from '@/features/patients';
-import { useTranslation } from '@/lib/i18n';
+import { User } from "lucide-react";
+import { PatientProfileForm } from "@/features/patients";
+import { useTranslation } from "@/lib/i18n";
 
 export default function PatientProfilePage() {
   const { t } = useTranslation();
@@ -15,8 +15,12 @@ export default function PatientProfilePage() {
           <User className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('patient.profilePage.title')}</h1>
-          <p className="text-muted-foreground">{t('patient.profilePage.subtitle')}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            {t("patient.profilePage.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("patient.profilePage.subtitle")}
+          </p>
         </div>
       </div>
 

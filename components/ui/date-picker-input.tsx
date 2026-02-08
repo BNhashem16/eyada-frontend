@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { format, parse, isValid } from 'date-fns';
-import { ar, enUS } from 'date-fns/locale';
-import { Calendar as CalendarIcon, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useTranslation } from '@/lib/i18n';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import * as React from "react";
+import { format, parse, isValid } from "date-fns";
+import { ar, enUS } from "date-fns/locale";
+import { Calendar as CalendarIcon, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "@/components/ui/popover";
 
 const locales = { ar, en: enUS };
 
@@ -28,7 +28,7 @@ interface DatePickerInputProps {
   /** Disable the picker */
   disabled?: boolean;
   /** Locale for display formatting */
-  locale?: 'ar' | 'en';
+  locale?: "ar" | "en";
   /** Disable dates before this date */
   disableBefore?: Date;
   /** Disable dates after this date */
@@ -45,7 +45,7 @@ function DatePickerInput({
   placeholder,
   className,
   disabled = false,
-  locale = 'ar',
+  locale = "ar",
   disableBefore,
   disableAfter,
   disabledDates,
@@ -56,24 +56,24 @@ function DatePickerInput({
 
   const dateValue = React.useMemo(() => {
     if (!value) return undefined;
-    const parsed = parse(value, 'yyyy-MM-dd', new Date());
+    const parsed = parse(value, "yyyy-MM-dd", new Date());
     return isValid(parsed) ? parsed : undefined;
   }, [value]);
 
   const handleSelect = (date: Date | undefined) => {
     if (date) {
-      onChange?.(format(date, 'yyyy-MM-dd'));
+      onChange?.(format(date, "yyyy-MM-dd"));
     }
     setOpen(false);
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onChange?.('');
+    onChange?.("");
   };
 
   const displayText = dateValue
-    ? format(dateValue, 'd MMMM yyyy', { locale: locales[locale] })
+    ? format(dateValue, "d MMMM yyyy", { locale: locales[locale] })
     : null;
 
   const disabledMatcher = React.useMemo(() => {
@@ -101,14 +101,14 @@ function DatePickerInput({
           variant="outline"
           disabled={disabled}
           className={cn(
-            'w-full justify-start text-start font-normal h-10',
-            !dateValue && 'text-muted-foreground',
-            className
+            "w-full justify-start text-start font-normal h-10",
+            !dateValue && "text-muted-foreground",
+            className,
           )}
         >
           <CalendarIcon className="h-4 w-4 shrink-0 opacity-60" />
           <span className="flex-1 truncate">
-            {displayText || placeholder || t('common.selectDate')}
+            {displayText || placeholder || t("common.selectDate")}
           </span>
           {clearable && dateValue && !disabled && (
             <X
@@ -132,7 +132,7 @@ function DatePickerInput({
   );
 }
 
-DatePickerInput.displayName = 'DatePickerInput';
+DatePickerInput.displayName = "DatePickerInput";
 
 export { DatePickerInput };
 export type { DatePickerInputProps };

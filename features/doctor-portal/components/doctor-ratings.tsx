@@ -1,19 +1,27 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Star, MessageSquare, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useDoctorOwnRatings } from '../hooks/use-doctor-portal';
-import { Rating } from '@/types';
-import { formatRelativeDate, getInitials } from '@/lib/utils';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { useTranslation } from '@/lib/i18n';
+import { useState } from "react";
+import { Star, MessageSquare, TrendingUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDoctorOwnRatings } from "../hooks/use-doctor-portal";
+import { Rating } from "@/types";
+import { formatRelativeDate, getInitials } from "@/lib/utils";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
 
 // Rating distribution bar component
-function RatingBar({ rating, count, total }: { rating: number; count: number; total: number }) {
+function RatingBar({
+  rating,
+  count,
+  total,
+}: {
+  rating: number;
+  count: number;
+  total: number;
+}) {
   const percentage = total > 0 ? (count / total) * 100 : 0;
 
   return (
@@ -26,7 +34,9 @@ function RatingBar({ rating, count, total }: { rating: number; count: number; to
           style={{ width: `${percentage}%` }}
         />
       </div>
-      <span className="text-sm text-muted-foreground w-8 text-end">{count}</span>
+      <span className="text-sm text-muted-foreground w-8 text-end">
+        {count}
+      </span>
     </div>
   );
 }
@@ -73,7 +83,7 @@ export function DoctorRatings() {
     return (
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-6 text-center text-error-600 dark:text-error-400">
-          {t('doctors.ratingsLoadError')}
+          {t("doctors.ratingsLoadError")}
         </CardContent>
       </Card>
     );
@@ -102,7 +112,9 @@ export function DoctorRatings() {
                 <p className="text-2xl font-bold text-foreground">
                   {statistics.averageRating.toFixed(1)}
                 </p>
-                <p className="text-sm text-muted-foreground">{t('doctor.averageRating')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("doctor.averageRating")}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -116,8 +128,12 @@ export function DoctorRatings() {
                 <MessageSquare className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">{statistics.totalRatings}</p>
-                <p className="text-sm text-muted-foreground">{t('doctor.totalRatings')}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {statistics.totalRatings}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {t("doctor.totalRatings")}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -130,14 +146,20 @@ export function DoctorRatings() {
               <div className="h-12 w-12 rounded-xl bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
                 <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400" />
               </div>
-              <p className="text-sm font-medium text-foreground">{t('doctor.ratingDistribution')}</p>
+              <p className="text-sm font-medium text-foreground">
+                {t("doctor.ratingDistribution")}
+              </p>
             </div>
             <div className="space-y-2">
               {[5, 4, 3, 2, 1].map((rating) => (
                 <RatingBar
                   key={rating}
                   rating={rating}
-                  count={statistics.ratingDistribution[rating as keyof typeof statistics.ratingDistribution]}
+                  count={
+                    statistics.ratingDistribution[
+                      rating as keyof typeof statistics.ratingDistribution
+                    ]
+                  }
                   total={statistics.totalRatings}
                 />
               ))}
@@ -149,25 +171,35 @@ export function DoctorRatings() {
       {/* Ratings List */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('doctor.patientReviews')}</CardTitle>
+          <CardTitle>{t("doctor.patientReviews")}</CardTitle>
         </CardHeader>
         <CardContent>
           {ratings.length === 0 ? (
             <div className="py-10 text-center">
               <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">{t('doctors.noRatingsYet')}</p>
+              <p className="text-muted-foreground">
+                {t("doctors.noRatingsYet")}
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
               {ratings.map((rating: Rating) => (
-                <div key={rating.id} className="flex gap-4 p-4 rounded-lg border border-border">
+                <div
+                  key={rating.id}
+                  className="flex gap-4 p-4 rounded-lg border border-border"
+                >
                   <Avatar>
                     <AvatarImage
-                      src={rating.patientProfile?.user?.profilePicture || undefined}
+                      src={
+                        rating.patientProfile?.user?.profilePicture || undefined
+                      }
                       alt={rating.patientProfile?.user?.fullName}
                     />
                     <AvatarFallback>
-                      {getInitials(rating.patientProfile?.user?.fullName || t('doctors.patientFallback'))}
+                      {getInitials(
+                        rating.patientProfile?.user?.fullName ||
+                          t("doctors.patientFallback"),
+                      )}
                     </AvatarFallback>
                   </Avatar>
 
@@ -175,7 +207,8 @@ export function DoctorRatings() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="font-semibold text-foreground">
-                          {rating.patientProfile?.user?.fullName || t('doctors.patientFallback')}
+                          {rating.patientProfile?.user?.fullName ||
+                            t("doctors.patientFallback")}
                         </p>
                         <div className="flex items-center gap-2 mt-1">
                           <div className="flex items-center">
@@ -184,8 +217,8 @@ export function DoctorRatings() {
                                 key={i}
                                 className={`h-4 w-4 ${
                                   i < rating.rating
-                                    ? 'fill-warning-400 text-warning-400'
-                                    : 'text-muted-foreground/30'
+                                    ? "fill-warning-400 text-warning-400"
+                                    : "text-muted-foreground/30"
                                 }`}
                               />
                             ))}
@@ -206,7 +239,16 @@ export function DoctorRatings() {
             </div>
           )}
 
-          <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
+          <PaginationControls
+            meta={meta}
+            page={page}
+            onPageChange={setPage}
+            limit={limit}
+            onLimitChange={(v) => {
+              setLimit(v);
+              setPage(1);
+            }}
+          />
         </CardContent>
       </Card>
     </div>

@@ -1,6 +1,6 @@
-import ar from './ar.json';
-import en from './en.json';
-import { defaultLocale, type Locale } from './config';
+import ar from "./ar.json";
+import en from "./en.json";
+import { defaultLocale, type Locale } from "./config";
 
 type TranslationKeys = typeof ar;
 type NestedKeyOf<ObjectType extends object> = {
@@ -16,19 +16,22 @@ const translations: Record<Locale, TranslationKeys> = {
   en,
 };
 
-export function getNestedValue(obj: Record<string, unknown>, path: string): string | undefined {
-  const keys = path.split('.');
+export function getNestedValue(
+  obj: Record<string, unknown>,
+  path: string,
+): string | undefined {
+  const keys = path.split(".");
   let current: unknown = obj;
 
   for (const key of keys) {
-    if (current && typeof current === 'object' && key in current) {
+    if (current && typeof current === "object" && key in current) {
       current = (current as Record<string, unknown>)[key];
     } else {
       return undefined;
     }
   }
 
-  return typeof current === 'string' ? current : undefined;
+  return typeof current === "string" ? current : undefined;
 }
 
 /**
@@ -38,9 +41,12 @@ export function getNestedValue(obj: Record<string, unknown>, path: string): stri
 export function getTranslation(
   key: TranslationKey | string,
   locale: Locale = defaultLocale,
-  params?: Record<string, string | number>
+  params?: Record<string, string | number>,
 ): string {
-  let value = getNestedValue(translations[locale] as Record<string, unknown>, key);
+  let value = getNestedValue(
+    translations[locale] as Record<string, unknown>,
+    key,
+  );
 
   if (!value) {
     value = getNestedValue(translations.ar as Record<string, unknown>, key);
@@ -52,7 +58,10 @@ export function getTranslation(
 
   if (params) {
     Object.entries(params).forEach(([paramKey, paramValue]) => {
-      value = value!.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));
+      value = value!.replace(
+        new RegExp(`\\{${paramKey}\\}`, "g"),
+        String(paramValue),
+      );
     });
   }
 

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Frown } from 'lucide-react';
-import { DoctorCard } from './doctor-card';
-import { DoctorFiltersComponent, DoctorFilters } from './doctor-filters';
-import { useDoctors } from '../hooks/use-doctors';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
-import { useTranslation } from '@/lib/i18n';
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Frown } from "lucide-react";
+import { DoctorCard } from "./doctor-card";
+import { DoctorFiltersComponent, DoctorFilters } from "./doctor-filters";
+import { useDoctors } from "../hooks/use-doctors";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/lib/i18n";
 
 interface DoctorListProps {
   initialFilters?: DoctorFilters;
@@ -27,7 +27,11 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
   }, [JSON.stringify(initialFilters)]);
   const limit = 10;
 
-  const { data, isLoading, isError, error } = useDoctors({ filters, page, limit });
+  const { data, isLoading, isError, error } = useDoctors({
+    filters,
+    page,
+    limit,
+  });
 
   const doctors = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 1;
@@ -42,7 +46,10 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Sidebar Filters */}
       <aside className="w-full lg:w-72 lg:flex-shrink-0">
-        <DoctorFiltersComponent filters={filters} onFiltersChange={handleFiltersChange} />
+        <DoctorFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
       </aside>
 
       {/* Results */}
@@ -50,7 +57,9 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
         {/* Results Count */}
         {!isLoading && !isError && (
           <div className="mb-4 text-sm text-muted-foreground">
-            {t('doctor.showingResults').replace('{count}', String(doctors.length)).replace('{total}', String(totalItems))}
+            {t("doctor.showingResults")
+              .replace("{count}", String(doctors.length))
+              .replace("{total}", String(totalItems))}
           </div>
         )}
 
@@ -87,10 +96,10 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
           <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
             <CardContent className="py-10 text-center">
               <p className="text-error-600 dark:text-error-400">
-                {t('doctor.loadError')}
+                {t("doctor.loadError")}
               </p>
               <p className="text-sm text-error-500 dark:text-error-400 mt-2">
-                {error instanceof Error ? error.message : t('common.error')}
+                {error instanceof Error ? error.message : t("common.error")}
               </p>
             </CardContent>
           </Card>
@@ -102,13 +111,13 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
             <CardContent className="py-16 text-center">
               <Frown className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                {t('doctor.noDoctorsFound')}
+                {t("doctor.noDoctorsFound")}
               </h3>
               <p className="text-muted-foreground mb-4">
-                {t('doctor.tryDifferentFilters')}
+                {t("doctor.tryDifferentFilters")}
               </p>
               <Button variant="outline" onClick={() => handleFiltersChange({})}>
-                {t('common.clearFilters')}
+                {t("common.clearFilters")}
               </Button>
             </CardContent>
           </Card>
@@ -133,7 +142,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
               disabled={page === 1}
             >
               <ChevronRight className="h-4 w-4" />
-              {t('common.previous')}
+              {t("common.previous")}
             </Button>
 
             <div className="flex items-center gap-1">
@@ -152,7 +161,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
                 return (
                   <Button
                     key={pageNum}
-                    variant={page === pageNum ? 'default' : 'ghost'}
+                    variant={page === pageNum ? "default" : "ghost"}
                     className="w-9 text-xs"
                     onClick={() => setPage(pageNum)}
                   >
@@ -168,7 +177,7 @@ export function DoctorList({ initialFilters = {} }: DoctorListProps) {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
-              {t('common.next')}
+              {t("common.next")}
               <ChevronLeft className="h-4 w-4" />
             </Button>
           </div>

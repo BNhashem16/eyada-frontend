@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Users } from 'lucide-react';
-import { AdminDoctorsList } from '@/features/admin';
-import { useTranslation } from '@/lib/i18n';
+import { Users } from "lucide-react";
+import { AdminDoctorsList } from "@/features/admin";
+import { useTranslation } from "@/lib/i18n";
 
 export default function AdminDoctorsPage() {
   const { t } = useTranslation();
@@ -16,8 +16,12 @@ export default function AdminDoctorsPage() {
             <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('admin.doctors.title')}</h1>
-            <p className="text-muted-foreground">{t('admin.doctors.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {t("admin.doctors.title")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("admin.doctors.subtitle")}
+            </p>
           </div>
         </div>
       </div>

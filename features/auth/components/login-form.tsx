@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { createLoginSchema, type LoginFormData } from '../schemas';
-import { useLogin } from '../hooks';
-import { useTranslation } from '@/lib/i18n';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { createLoginSchema, type LoginFormData } from "../schemas";
+import { useLogin } from "../hooks";
+import { useTranslation } from "@/lib/i18n";
 
 export function LoginForm() {
   const { t, locale } = useTranslation();
@@ -25,8 +25,8 @@ export function LoginForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(createLoginSchema(locale)),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -39,16 +39,16 @@ export function LoginForm() {
       {/* Email Field */}
       <div className="space-y-2">
         <Label htmlFor="email" required>
-          {t('auth.email')}
+          {t("auth.email")}
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder={t('placeholder.email')}
+          placeholder={t("placeholder.email")}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
           error={!!errors.email}
-          {...register('email')}
+          {...register("email")}
         />
         {errors.email && (
           <p className="text-sm text-error-500">{errors.email.message}</p>
@@ -59,25 +59,25 @@ export function LoginForm() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="password" required>
-            {t('auth.password')}
+            {t("auth.password")}
           </Label>
           <Link
             href="/forgot-password"
             className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
           >
-            {t('auth.forgotPassword')}
+            {t("auth.forgotPassword")}
           </Link>
         </div>
         <div className="relative">
           <Input
             id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder={t('placeholder.password')}
+            type={showPassword ? "text" : "password"}
+            placeholder={t("placeholder.password")}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"
             error={!!errors.password}
             className="pe-10"
-            {...register('password')}
+            {...register("password")}
           />
           <button
             type="button"
@@ -98,14 +98,17 @@ export function LoginForm() {
 
       {/* Submit Button */}
       <Button type="submit" className="w-full" size="lg" loading={isPending}>
-        {t('auth.loginButton')}
+        {t("auth.loginButton")}
       </Button>
 
       {/* Register Link */}
       <p className="text-center text-muted-foreground">
-        {t('auth.noAccount')}{' '}
-        <Link href="/register" className="text-primary-600 dark:text-primary-400 hover:underline">
-          {t('auth.createNewAccount')}
+        {t("auth.noAccount")}{" "}
+        <Link
+          href="/register"
+          className="text-primary-600 dark:text-primary-400 hover:underline"
+        >
+          {t("auth.createNewAccount")}
         </Link>
       </p>
     </form>

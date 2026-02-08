@@ -1,15 +1,25 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
-import { PATIENT_ENDPOINTS } from '@/lib/api/endpoints';
-import { PatientProfile, Appointment, FamilyMember, PaginatedResponse } from '@/types';
-import { AppointmentStatus, PaymentStatus, Gender, RelationshipType } from '@/types/enums';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
+import { PATIENT_ENDPOINTS } from "@/lib/api/endpoints";
+import {
+  PatientProfile,
+  Appointment,
+  FamilyMember,
+  PaginatedResponse,
+} from "@/types";
+import {
+  AppointmentStatus,
+  PaymentStatus,
+  Gender,
+  RelationshipType,
+} from "@/types/enums";
 
 // Profile hooks
 export function usePatientProfile(options?: { enabled?: boolean }) {
   return useQuery({
-    queryKey: ['patient-profile'],
+    queryKey: ["patient-profile"],
     queryFn: async () => {
       return apiGet<PatientProfile>(PATIENT_ENDPOINTS.PROFILE);
     },
@@ -36,7 +46,7 @@ export function useCreatePatientProfile() {
       return apiPost<PatientProfile>(PATIENT_ENDPOINTS.CREATE_PROFILE, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-profile'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
     },
   });
 }
@@ -49,14 +59,14 @@ export function useUpdatePatientProfile() {
       return apiPatch<PatientProfile>(PATIENT_ENDPOINTS.UPDATE_PROFILE, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-profile'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
     },
   });
 }
 
 export function usePatientMedicalData() {
   return useQuery({
-    queryKey: ['patient-medical-data'],
+    queryKey: ["patient-medical-data"],
     queryFn: async () => {
       return apiGet(PATIENT_ENDPOINTS.MEDICAL);
     },
@@ -72,8 +82,8 @@ export function useUpdatePatientMedicalData() {
       return apiPatch(PATIENT_ENDPOINTS.MEDICAL, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-medical-data'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-profile'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-medical-data"] });
+      queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
     },
   });
 }
@@ -105,22 +115,38 @@ export function usePatientAppointments({
   limit = 10,
 }: UsePatientAppointmentsOptions = {}) {
   return useQuery({
-    queryKey: ['patient-appointments', { status, paymentStatus, dateFrom, dateTo, clinicId, doctorId, upcoming, forFamilyMember, page, limit }],
+    queryKey: [
+      "patient-appointments",
+      {
+        status,
+        paymentStatus,
+        dateFrom,
+        dateTo,
+        clinicId,
+        doctorId,
+        upcoming,
+        forFamilyMember,
+        page,
+        limit,
+      },
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (status) params.append('status', status);
-      if (paymentStatus) params.append('paymentStatus', paymentStatus);
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
-      if (clinicId) params.append('clinicId', clinicId);
-      if (doctorId) params.append('doctorId', doctorId);
-      if (upcoming !== undefined) params.append('upcoming', upcoming.toString());
-      if (forFamilyMember !== undefined) params.append('forFamilyMember', forFamilyMember.toString());
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      if (status) params.append("status", status);
+      if (paymentStatus) params.append("paymentStatus", paymentStatus);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
+      if (clinicId) params.append("clinicId", clinicId);
+      if (doctorId) params.append("doctorId", doctorId);
+      if (upcoming !== undefined)
+        params.append("upcoming", upcoming.toString());
+      if (forFamilyMember !== undefined)
+        params.append("forFamilyMember", forFamilyMember.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
       return apiGet<PaginatedResponse<Appointment>>(
-        `${PATIENT_ENDPOINTS.APPOINTMENTS}?${params.toString()}`
+        `${PATIENT_ENDPOINTS.APPOINTMENTS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 60,
@@ -129,7 +155,7 @@ export function usePatientAppointments({
 
 export function usePatientAppointment(appointmentId: string) {
   return useQuery({
-    queryKey: ['patient-appointment', appointmentId],
+    queryKey: ["patient-appointment", appointmentId],
     queryFn: async () => {
       return apiGet<Appointment>(PATIENT_ENDPOINTS.APPOINTMENT(appointmentId));
     },
@@ -155,7 +181,7 @@ export function useBookAppointment() {
       return apiPost<Appointment>(PATIENT_ENDPOINTS.APPOINTMENTS, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
   });
 }
@@ -164,11 +190,19 @@ export function useCancelAppointment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ appointmentId, reason }: { appointmentId: string; reason?: string }) => {
-      return apiPatch(PATIENT_ENDPOINTS.CANCEL_APPOINTMENT(appointmentId), { reason });
+    mutationFn: async ({
+      appointmentId,
+      reason,
+    }: {
+      appointmentId: string;
+      reason?: string;
+    }) => {
+      return apiPatch(PATIENT_ENDPOINTS.CANCEL_APPOINTMENT(appointmentId), {
+        reason,
+      });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
   });
 }
@@ -182,9 +216,11 @@ export interface MedicalNotes {
 
 export function useAppointmentMedicalNotes(appointmentId: string) {
   return useQuery({
-    queryKey: ['patient-appointment-medical-notes', appointmentId],
+    queryKey: ["patient-appointment-medical-notes", appointmentId],
     queryFn: async () => {
-      return apiGet<MedicalNotes>(PATIENT_ENDPOINTS.APPOINTMENT_MEDICAL_NOTES(appointmentId));
+      return apiGet<MedicalNotes>(
+        PATIENT_ENDPOINTS.APPOINTMENT_MEDICAL_NOTES(appointmentId),
+      );
     },
     enabled: !!appointmentId,
     staleTime: 1000 * 60 * 5,
@@ -194,7 +230,7 @@ export function useAppointmentMedicalNotes(appointmentId: string) {
 // Family hooks
 export function usePatientFamily() {
   return useQuery({
-    queryKey: ['patient-family'],
+    queryKey: ["patient-family"],
     queryFn: async () => {
       return apiGet<FamilyMember[]>(PATIENT_ENDPOINTS.FAMILY);
     },
@@ -206,11 +242,13 @@ export function useAddFamilyMember() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Omit<FamilyMember, 'id' | 'patientId' | 'createdAt' | 'updatedAt'>) => {
+    mutationFn: async (
+      data: Omit<FamilyMember, "id" | "patientId" | "createdAt" | "updatedAt">,
+    ) => {
       return apiPost<FamilyMember>(PATIENT_ENDPOINTS.FAMILY, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-family'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
   });
 }
@@ -219,11 +257,22 @@ export function useUpdateFamilyMember() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ memberId, data }: { memberId: string; data: Partial<Omit<FamilyMember, 'id' | 'patientId' | 'createdAt' | 'updatedAt'>> }) => {
-      return apiPatch<FamilyMember>(`${PATIENT_ENDPOINTS.FAMILY}/${memberId}`, data);
+    mutationFn: async ({
+      memberId,
+      data,
+    }: {
+      memberId: string;
+      data: Partial<
+        Omit<FamilyMember, "id" | "patientId" | "createdAt" | "updatedAt">
+      >;
+    }) => {
+      return apiPatch<FamilyMember>(
+        `${PATIENT_ENDPOINTS.FAMILY}/${memberId}`,
+        data,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-family'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
   });
 }
@@ -236,7 +285,7 @@ export function useDeleteFamilyMember() {
       return apiDelete(`${PATIENT_ENDPOINTS.FAMILY}/${memberId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-family'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
   });
 }
@@ -282,16 +331,18 @@ export interface PatientRating {
   };
 }
 
-export function usePatientRatings(filters: { page?: number; limit?: number } = {}) {
+export function usePatientRatings(
+  filters: { page?: number; limit?: number } = {},
+) {
   const { page = 1, limit = 10 } = filters;
   return useQuery({
-    queryKey: ['patient-ratings', { page, limit }],
+    queryKey: ["patient-ratings", { page, limit }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
       return apiGet<PaginatedResponse<PatientRating>>(
-        `${PATIENT_ENDPOINTS.RATINGS}?${params.toString()}`
+        `${PATIENT_ENDPOINTS.RATINGS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 60,
@@ -306,8 +357,8 @@ export function useSubmitRating() {
       return apiPost(PATIENT_ENDPOINTS.RATINGS, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-ratings'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
     },
   });
 }
@@ -316,11 +367,17 @@ export function useUpdateRating() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ ratingId, data }: { ratingId: string; data: UpdateRatingData }) => {
+    mutationFn: async ({
+      ratingId,
+      data,
+    }: {
+      ratingId: string;
+      data: UpdateRatingData;
+    }) => {
       return apiPatch(PATIENT_ENDPOINTS.RATING(ratingId), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-ratings'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
     },
   });
 }
@@ -333,8 +390,8 @@ export function useDeleteRating() {
       return apiDelete(PATIENT_ENDPOINTS.RATING(ratingId));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patient-ratings'] });
-      queryClient.invalidateQueries({ queryKey: ['patient-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
+      queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
   });
 }

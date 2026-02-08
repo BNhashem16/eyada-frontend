@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +8,9 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from '@/lib/i18n';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n";
 
 interface CancelDialogProps {
   open: boolean;
@@ -19,7 +19,12 @@ interface CancelDialogProps {
   isLoading?: boolean;
 }
 
-export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: CancelDialogProps) {
+export function CancelDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+  isLoading,
+}: CancelDialogProps) {
   const { t } = useTranslation();
 
   return (
@@ -29,11 +34,13 @@ export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: Cance
           <div className="mx-auto h-14 w-14 rounded-full bg-error-100 flex items-center justify-center mb-4">
             <AlertTriangle className="h-7 w-7 text-error-600" />
           </div>
-          <DialogTitle className="text-center">{t('appointments.cancel')}</DialogTitle>
+          <DialogTitle className="text-center">
+            {t("appointments.cancel")}
+          </DialogTitle>
           <DialogDescription className="text-center">
-            {t('appointments.confirmCancel')}
+            {t("appointments.confirmCancel")}
             <br />
-            {t('appointments.confirmCancelDesc')}
+            {t("appointments.confirmCancelDesc")}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:gap-0">
@@ -42,7 +49,7 @@ export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: Cance
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
-            {t('common.back')}
+            {t("common.back")}
           </Button>
           <Button
             variant="destructive"
@@ -52,10 +59,10 @@ export function CancelDialog({ open, onOpenChange, onConfirm, isLoading }: Cance
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
-                {t('appointments.cancelling')}
+                {t("appointments.cancelling")}
               </>
             ) : (
-              t('appointments.yesCancel')
+              t("appointments.yesCancel")
             )}
           </Button>
         </DialogFooter>

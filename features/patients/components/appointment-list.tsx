@@ -1,39 +1,43 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, Frown } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AppointmentCard } from './appointment-card';
-import { RatingDialog } from './rating-dialog';
-import { CancelDialog } from './cancel-dialog';
-import { usePatientAppointments, useCancelAppointment } from '../hooks/use-patient';
-import { Appointment } from '@/types';
-import { AppointmentStatus } from '@/types/enums';
-import { useToast } from '@/hooks/use-toast';
-import Link from 'next/link';
-import { useTranslation } from '@/lib/i18n';
+import { useState, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Calendar, Frown } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppointmentCard } from "./appointment-card";
+import { RatingDialog } from "./rating-dialog";
+import { CancelDialog } from "./cancel-dialog";
+import {
+  usePatientAppointments,
+  useCancelAppointment,
+} from "../hooks/use-patient";
+import { Appointment } from "@/types";
+import { AppointmentStatus } from "@/types/enums";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
+import { useTranslation } from "@/lib/i18n";
 
-type FilterTab = 'all' | 'upcoming' | 'completed' | 'cancelled';
+type FilterTab = "all" | "upcoming" | "completed" | "cancelled";
 
 export function AppointmentList() {
   const { t } = useTranslation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<FilterTab>('all');
+  const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [page, setPage] = useState(1);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
-  const [ratingAppointment, setRatingAppointment] = useState<Appointment | null>(null);
+  const [ratingAppointment, setRatingAppointment] =
+    useState<Appointment | null>(null);
 
   // Get status filter based on tab
   const getStatusFilter = (): AppointmentStatus | undefined => {
     switch (activeTab) {
-      case 'upcoming':
+      case "upcoming":
         return AppointmentStatus.CONFIRMED;
-      case 'completed':
+      case "completed":
         return AppointmentStatus.COMPLETED;
-      case 'cancelled':
+      case "cancelled":
         return AppointmentStatus.CANCELLED;
       default:
         return undefined;
@@ -70,15 +74,15 @@ export function AppointmentList() {
     try {
       await cancelMutation.mutateAsync({ appointmentId: cancelingId });
       toast({
-        title: t('appointments.cancelSuccess'),
-        description: t('common.success'),
-        variant: 'success',
+        title: t("appointments.cancelSuccess"),
+        description: t("common.success"),
+        variant: "success",
       });
     } catch (error) {
       toast({
-        title: t('toast.error'),
-        description: t('errors.somethingWentWrong'),
-        variant: 'error',
+        title: t("toast.error"),
+        description: t("errors.somethingWentWrong"),
+        variant: "error",
       });
     } finally {
       setCancelingId(null);
@@ -90,10 +94,16 @@ export function AppointmentList() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList>
-          <TabsTrigger value="all">{t('common.all')}</TabsTrigger>
-          <TabsTrigger value="upcoming">{t('appointments.upcoming')}</TabsTrigger>
-          <TabsTrigger value="completed">{t('appointments.completed')}</TabsTrigger>
-          <TabsTrigger value="cancelled">{t('appointments.cancelled')}</TabsTrigger>
+          <TabsTrigger value="all">{t("common.all")}</TabsTrigger>
+          <TabsTrigger value="upcoming">
+            {t("appointments.upcoming")}
+          </TabsTrigger>
+          <TabsTrigger value="completed">
+            {t("appointments.completed")}
+          </TabsTrigger>
+          <TabsTrigger value="cancelled">
+            {t("appointments.cancelled")}
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -128,7 +138,7 @@ export function AppointmentList() {
         <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
           <CardContent className="py-10 text-center">
             <p className="text-error-600 dark:text-error-400">
-              {t('errors.loadError')}
+              {t("errors.loadError")}
             </p>
           </CardContent>
         </Card>
@@ -140,13 +150,13 @@ export function AppointmentList() {
           <CardContent className="py-16 text-center">
             <Calendar className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t('common.noResults')}
+              {t("common.noResults")}
             </h3>
             <p className="text-muted-foreground mb-4">
-              {t('appointments.noUpcomingAppointments')}
+              {t("appointments.noUpcomingAppointments")}
             </p>
             <Button asChild>
-              <Link href="/doctors">{t('appointments.bookNow')}</Link>
+              <Link href="/doctors">{t("appointments.bookNow")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -176,7 +186,7 @@ export function AppointmentList() {
             disabled={page === 1}
           >
             <ChevronRight className="h-4 w-4" />
-            {t('common.previous')}
+            {t("common.previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
             {page} / {totalPages}
@@ -187,7 +197,7 @@ export function AppointmentList() {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >
-            {t('common.next')}
+            {t("common.next")}
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>

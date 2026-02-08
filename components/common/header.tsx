@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Stethoscope,
   Menu,
@@ -10,17 +10,17 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronDown,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ThemeToggle } from '@/components/common/theme-toggle';
-import { LanguageToggle } from '@/components/common/language-toggle';
-import { useTranslation } from '@/lib/i18n';
-import { useAuthStore, useIsHydrated } from '@/lib/auth/store';
-import { getInitials } from '@/lib/utils';
-import { useState } from 'react';
-import { LucideIcon } from 'lucide-react';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/common/theme-toggle";
+import { LanguageToggle } from "@/components/common/language-toggle";
+import { useTranslation } from "@/lib/i18n";
+import { useAuthStore, useIsHydrated } from "@/lib/auth/store";
+import { getInitials } from "@/lib/utils";
+import { useState } from "react";
+import { LucideIcon } from "lucide-react";
 
 export interface NavLinkItem {
   href: string;
@@ -29,7 +29,7 @@ export interface NavLinkItem {
 }
 
 export interface HeaderProps {
-  variant?: 'public' | 'auth' | 'dashboard';
+  variant?: "public" | "auth" | "dashboard";
   navLinks?: NavLinkItem[];
   userRole?: string;
   userRoleLabel?: string;
@@ -39,7 +39,7 @@ export interface HeaderProps {
 }
 
 export function Header({
-  variant = 'public',
+  variant = "public",
   navLinks = [],
   userRole,
   userRoleLabel,
@@ -55,28 +55,28 @@ export function Header({
 
   const getDashboardLink = () => {
     switch (user?.role) {
-      case 'DOCTOR':
-        return '/doctor/dashboard';
-      case 'PATIENT':
-        return '/patient/dashboard';
-      case 'SECRETARY':
-        return '/secretary/dashboard';
-      case 'ADMIN':
-        return '/admin/dashboard';
+      case "DOCTOR":
+        return "/doctor/dashboard";
+      case "PATIENT":
+        return "/patient/dashboard";
+      case "SECRETARY":
+        return "/secretary/dashboard";
+      case "ADMIN":
+        return "/admin/dashboard";
       default:
-        return '/';
+        return "/";
     }
   };
 
   const getUserDisplayName = () => {
     if (showDoctorPrefix) {
-      return `${t('doctors.doctorPrefix')} ${user?.name}`;
+      return `${t("doctors.doctorPrefix")} ${user?.name}`;
     }
     return user?.name;
   };
 
   // Auth variant - simple header
-  if (variant === 'auth') {
+  if (variant === "auth") {
     return (
       <header className="absolute top-0 w-full p-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
@@ -84,7 +84,7 @@ export function Header({
             <Stethoscope className="h-6 w-6 text-white" />
           </div>
           <span className="text-xl font-bold text-primary-700 dark:text-primary-400">
-            {t('app.name')}
+            {t("app.name")}
           </span>
         </Link>
         <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ export function Header({
   }
 
   // Dashboard variant - with sidebar toggle
-  if (variant === 'dashboard') {
+  if (variant === "dashboard") {
     return (
       <header className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="flex h-16 items-center justify-between px-4">
@@ -115,7 +115,7 @@ export function Header({
                 <Stethoscope className="h-6 w-6 text-white" />
               </div>
               <span className="text-xl font-bold text-foreground hidden sm:block">
-                {t('app.name')}
+                {t("app.name")}
               </span>
             </Link>
           </div>
@@ -129,7 +129,7 @@ export function Header({
               <Avatar className="h-9 w-9">
                 <AvatarImage src={user?.profilePicture || undefined} />
                 <AvatarFallback className="text-sm">
-                  {getInitials(user?.name || '')}
+                  {getInitials(user?.name || "")}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block">
@@ -137,7 +137,9 @@ export function Header({
                   {getUserDisplayName()}
                 </p>
                 {userRoleLabel && (
-                  <p className="text-xs text-muted-foreground">{userRoleLabel}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {userRoleLabel}
+                  </p>
                 )}
               </div>
             </div>
@@ -158,7 +160,7 @@ export function Header({
               <Stethoscope className="h-5 w-5 text-white" />
             </div>
             <span className="text-lg font-bold bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-400 dark:to-primary-300 bg-clip-text text-transparent">
-              {t('app.name')}
+              {t("app.name")}
             </span>
           </Link>
 
@@ -175,8 +177,8 @@ export function Header({
                     href={link.href}
                     className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                       isActive
-                        ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400'
-                        : 'text-foreground hover:text-primary-600 dark:hover:text-primary-400 hover:bg-accent'
+                        ? "bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400"
+                        : "text-foreground hover:text-primary-600 dark:hover:text-primary-400 hover:bg-accent"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -203,7 +205,7 @@ export function Header({
                   <Avatar className="h-8 w-8 ring-2 ring-primary-100 dark:ring-primary-900/50">
                     <AvatarImage src={user.profilePicture || undefined} />
                     <AvatarFallback className="text-xs bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
-                      {getInitials(user.name || '')}
+                      {getInitials(user.name || "")}
                     </AvatarFallback>
                   </Avatar>
                   <span className="hidden lg:block text-sm font-medium text-foreground max-w-[120px] truncate">
@@ -224,7 +226,9 @@ export function Header({
                         <p className="text-sm font-medium text-foreground">
                           {user.name}
                         </p>
-                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {user.email}
+                        </p>
                       </div>
                       <Link
                         href={getDashboardLink()}
@@ -232,7 +236,7 @@ export function Header({
                         className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                       >
                         <LayoutDashboard className="h-4 w-4" />
-                        {t('nav.dashboard')}
+                        {t("nav.dashboard")}
                       </Link>
                       <button
                         onClick={() => {
@@ -242,7 +246,7 @@ export function Header({
                         className="flex items-center gap-2 px-4 py-2.5 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 w-full transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
-                        {t('nav.logout')}
+                        {t("nav.logout")}
                       </button>
                     </div>
                   </>
@@ -250,17 +254,28 @@ export function Header({
               </div>
             ) : (
               <div className="flex items-center gap-2 ms-1">
-                <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="hidden sm:flex"
+                >
                   <Link href="/login">
                     <LogIn className="h-4 w-4 ms-1.5" />
-                    {t('nav.login')}
+                    {t("nav.login")}
                   </Link>
                 </Button>
-                <Button size="sm" asChild className="shadow-sm shadow-primary-500/20">
+                <Button
+                  size="sm"
+                  asChild
+                  className="shadow-sm shadow-primary-500/20"
+                >
                   <Link href="/register">
                     <UserPlus className="h-4 w-4 ms-1.5" />
-                    <span className="hidden sm:inline">{t('nav.register')}</span>
-                    <span className="sm:hidden">{t('nav.login')}</span>
+                    <span className="hidden sm:inline">
+                      {t("nav.register")}
+                    </span>
+                    <span className="sm:hidden">{t("nav.login")}</span>
                   </Link>
                 </Button>
               </div>

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { apiGet } from '@/lib/api';
-import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
-import { Specialty } from '@/types';
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api";
+import { PUBLIC_ENDPOINTS } from "@/lib/api/endpoints";
+import { Specialty } from "@/types";
 
 export function useSpecialties() {
   return useQuery({
-    queryKey: ['specialties'],
+    queryKey: ["specialties"],
     queryFn: async () => {
       return apiGet<Specialty[]>(PUBLIC_ENDPOINTS.SPECIALTIES);
     },
@@ -17,7 +17,7 @@ export function useSpecialties() {
 
 export function useSpecialty(specialtyId: string) {
   return useQuery({
-    queryKey: ['specialty', specialtyId],
+    queryKey: ["specialty", specialtyId],
     queryFn: async () => {
       return apiGet<Specialty>(PUBLIC_ENDPOINTS.SPECIALTY(specialtyId));
     },

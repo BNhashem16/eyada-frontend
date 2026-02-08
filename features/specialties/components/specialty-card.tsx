@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 import {
   Heart,
   Brain,
@@ -15,10 +15,10 @@ import {
   Ear,
   SmilePlus,
   Syringe,
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Specialty } from '@/types';
-import { getLocalizedText } from '@/lib/utils/multilingual';
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Specialty } from "@/types";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 interface SpecialtyCardProps {
   specialty: Specialty;
@@ -41,12 +41,14 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   default: Stethoscope,
 };
 
-export const SpecialtyCard = React.memo(function SpecialtyCard({ specialty }: SpecialtyCardProps) {
-  const Icon = iconMap[specialty.icon || 'default'] || iconMap.default;
-  const name = getLocalizedText(specialty.name, 'ar');
+export const SpecialtyCard = React.memo(function SpecialtyCard({
+  specialty,
+}: SpecialtyCardProps) {
+  const Icon = iconMap[specialty.icon || "default"] || iconMap.default;
+  const name = getLocalizedText(specialty.name, "ar");
   const description = specialty.description
-    ? getLocalizedText(specialty.description, 'ar')
-    : '';
+    ? getLocalizedText(specialty.description, "ar")
+    : "";
 
   return (
     <Link href={`/doctors?specialty=${specialty.id}`}>
@@ -57,7 +59,9 @@ export const SpecialtyCard = React.memo(function SpecialtyCard({ specialty }: Sp
           </div>
           <h3 className="text-lg font-bold text-foreground mb-2">{name}</h3>
           {description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {description}
+            </p>
           )}
         </CardContent>
       </Card>

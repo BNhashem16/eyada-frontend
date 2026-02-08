@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { apiClient, tokenStorage, AUTH_ENDPOINTS, apiPost } from '@/lib/api';
-import type { User, AuthResponse } from '@/types';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { apiClient, tokenStorage, AUTH_ENDPOINTS, apiPost } from "@/lib/api";
+import type { User, AuthResponse } from "@/types";
 
 // Login credentials
 interface LoginCredentials {
@@ -17,7 +17,7 @@ interface RegisterData {
   password: string;
   fullName: string;
   phoneNumber: string;
-  role?: 'PATIENT' | 'DOCTOR';
+  role?: "PATIENT" | "DOCTOR";
 }
 
 // Auth state
@@ -58,32 +58,42 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await apiPost<AuthResponse>(
             AUTH_ENDPOINTS.LOGIN,
-            credentials
+            credentials,
           );
 
-          console.log('Login response (unwrapped):', response);
+          console.log("Login response (unwrapped):", response);
 
           // Extract tokens - handle both nested and flat structures
           // Nested: { tokens: { accessToken, refreshToken }, user }
           // Flat: { accessToken, refreshToken, user }
-          const accessToken = response.tokens?.accessToken || (response as any).accessToken;
-          const refreshToken = response.tokens?.refreshToken || (response as any).refreshToken;
+          const accessToken =
+            response.tokens?.accessToken || (response as any).accessToken;
+          const refreshToken =
+            response.tokens?.refreshToken || (response as any).refreshToken;
 
           if (!accessToken) {
-            throw new Error('Invalid login response - no access token');
+            throw new Error("Invalid login response - no access token");
           }
 
           tokenStorage.setTokens({
             accessToken,
-            refreshToken: refreshToken || '',
+            refreshToken: refreshToken || "",
           });
 
           // Add name alias for fullName and normalize role to uppercase
-          const user = response.user ? {
-            ...response.user,
-            name: response.user.fullName || (response.user as any).full_name || (response.user as any).name || '',
-            role: ((response.user.role || '') as string).toUpperCase() as any,
-          } : null;
+          const user = response.user
+            ? {
+                ...response.user,
+                name:
+                  response.user.fullName ||
+                  (response.user as any).full_name ||
+                  (response.user as any).name ||
+                  "",
+                role: (
+                  (response.user.role || "") as string
+                ).toUpperCase() as any,
+              }
+            : null;
 
           set({
             user,
@@ -91,7 +101,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error) {
-          console.error('Login error:', error);
+          console.error("Login error:", error);
           set({ isLoading: false });
           throw error;
         }
@@ -106,32 +116,42 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await apiPost<AuthResponse>(
             AUTH_ENDPOINTS.REGISTER,
-            data
+            data,
           );
 
-          console.log('Register response (unwrapped):', response);
+          console.log("Register response (unwrapped):", response);
 
           // Extract tokens - handle both nested and flat structures
           // Nested: { tokens: { accessToken, refreshToken }, user }
           // Flat: { accessToken, refreshToken, user }
-          const accessToken = response.tokens?.accessToken || (response as any).accessToken;
-          const refreshToken = response.tokens?.refreshToken || (response as any).refreshToken;
+          const accessToken =
+            response.tokens?.accessToken || (response as any).accessToken;
+          const refreshToken =
+            response.tokens?.refreshToken || (response as any).refreshToken;
 
           if (!accessToken) {
-            throw new Error('Invalid register response - no access token');
+            throw new Error("Invalid register response - no access token");
           }
 
           tokenStorage.setTokens({
             accessToken,
-            refreshToken: refreshToken || '',
+            refreshToken: refreshToken || "",
           });
 
           // Add name alias for fullName and normalize role to uppercase
-          const user = response.user ? {
-            ...response.user,
-            name: response.user.fullName || (response.user as any).full_name || (response.user as any).name || '',
-            role: ((response.user.role || '') as string).toUpperCase() as any,
-          } : null;
+          const user = response.user
+            ? {
+                ...response.user,
+                name:
+                  response.user.fullName ||
+                  (response.user as any).full_name ||
+                  (response.user as any).name ||
+                  "",
+                role: (
+                  (response.user.role || "") as string
+                ).toUpperCase() as any,
+              }
+            : null;
 
           set({
             user,
@@ -139,7 +159,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error) {
-          console.error('Register error:', error);
+          console.error("Register error:", error);
           set({ isLoading: false });
           throw error;
         }
@@ -195,7 +215,7 @@ export const useAuthStore = create<AuthState>()(
           const user = {
             ...response.data,
             name: response.data.fullName,
-            role: ((response.data.role || '') as string).toUpperCase() as any,
+            role: ((response.data.role || "") as string).toUpperCase() as any,
           };
           set({
             user,
@@ -220,7 +240,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'eyada-auth',
+      name: "eyada-auth",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,
@@ -239,13 +259,13 @@ export const useAuthStore = create<AuthState>()(
         }
         state?.setHydrated();
       },
-    }
-  )
+    },
+  ),
 );
 
 // Register session invalidation callback
 // This is called when the refresh token fails, to clear the store
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   tokenStorage.onSessionInvalidated(() => {
     // Clear query cache to prevent data leakage
     tokenStorage.clearQueryCache();
@@ -260,14 +280,15 @@ if (typeof window !== 'undefined') {
   tokenStorage.onDoctorProfileIncomplete(() => {
     const currentPath = window.location.pathname;
     // Only redirect if not already on the profile page
-    if (!currentPath.includes('/doctor/profile')) {
-      window.location.href = '/doctor/profile';
+    if (!currentPath.includes("/doctor/profile")) {
+      window.location.href = "/doctor/profile";
     }
   });
 }
 
 // Selector hooks for better performance
 export const useUser = () => useAuthStore((state) => state.user);
-export const useIsAuthenticated = () => useAuthStore((state) => state.isAuthenticated);
+export const useIsAuthenticated = () =>
+  useAuthStore((state) => state.isAuthenticated);
 export const useIsAuthLoading = () => useAuthStore((state) => state.isLoading);
 export const useIsHydrated = () => useAuthStore((state) => state.isHydrated);

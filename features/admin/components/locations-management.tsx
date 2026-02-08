@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Plus,
   Edit2,
@@ -11,13 +11,13 @@ import {
   ChevronDown,
   ChevronRight,
   Search,
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,12 +35,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+} from "@/components/ui/collapsible";
 import {
   useAdminStates,
   useAdminCities,
@@ -50,10 +50,10 @@ import {
   useCreateCity,
   useUpdateCity,
   useDeleteCity,
-} from '../hooks';
-import { State, City, Multilingual } from '@/types';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { useTranslation } from '@/lib/i18n';
+} from "../hooks";
+import { State, City, Multilingual } from "@/types";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
 
 interface StateFormData {
   nameAr: string;
@@ -67,14 +67,14 @@ interface CityFormData {
   nameEn: string;
 }
 
-const initialStateForm: StateFormData = { nameAr: '', nameEn: '', code: '' };
-const initialCityForm: CityFormData = { stateId: '', nameAr: '', nameEn: '' };
+const initialStateForm: StateFormData = { nameAr: "", nameEn: "", code: "" };
+const initialCityForm: CityFormData = { stateId: "", nameAr: "", nameEn: "" };
 
 export function LocationsManagement() {
   const { t } = useTranslation();
 
-  const [searchStates, setSearchStates] = useState('');
-  const [searchCities, setSearchCities] = useState('');
+  const [searchStates, setSearchStates] = useState("");
+  const [searchCities, setSearchCities] = useState("");
   const [statesPage, setStatesPage] = useState(1);
   const [statesLimit, setStatesLimit] = useState(50);
   const [citiesPage, setCitiesPage] = useState(1);
@@ -139,7 +139,7 @@ export function LocationsManagement() {
     setStateForm({
       nameAr: state.name.ar,
       nameEn: state.name.en,
-      code: state.code || '',
+      code: state.code || "",
     });
     setStateDialogOpen(true);
   };
@@ -150,19 +150,31 @@ export function LocationsManagement() {
     if (editingState) {
       updateState.mutate(
         { id: editingState.id, name, code: stateForm.code || undefined },
-        { onSuccess: () => { setStateDialogOpen(false); setEditingState(null); } }
+        {
+          onSuccess: () => {
+            setStateDialogOpen(false);
+            setEditingState(null);
+          },
+        },
       );
     } else {
       createState.mutate(
         { name, code: stateForm.code },
-        { onSuccess: () => { setStateDialogOpen(false); setStateForm(initialStateForm); } }
+        {
+          onSuccess: () => {
+            setStateDialogOpen(false);
+            setStateForm(initialStateForm);
+          },
+        },
       );
     }
   };
 
   const handleDeleteState = () => {
     if (!deleteStateId) return;
-    deleteState.mutate(deleteStateId, { onSuccess: () => setDeleteStateId(null) });
+    deleteState.mutate(deleteStateId, {
+      onSuccess: () => setDeleteStateId(null),
+    });
   };
 
   const handleToggleStateActive = (state: State) => {
@@ -192,12 +204,22 @@ export function LocationsManagement() {
     if (editingCity) {
       updateCity.mutate(
         { id: editingCity.id, name },
-        { onSuccess: () => { setCityDialogOpen(false); setEditingCity(null); } }
+        {
+          onSuccess: () => {
+            setCityDialogOpen(false);
+            setEditingCity(null);
+          },
+        },
       );
     } else {
       createCity.mutate(
         { stateId: cityForm.stateId, name },
-        { onSuccess: () => { setCityDialogOpen(false); setCityForm(initialCityForm); } }
+        {
+          onSuccess: () => {
+            setCityDialogOpen(false);
+            setCityForm(initialCityForm);
+          },
+        },
       );
     }
   };
@@ -228,18 +250,23 @@ export function LocationsManagement() {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold">{t('admin.locations.statesAndCities')}</h3>
+            <h3 className="text-lg font-semibold">
+              {t("admin.locations.statesAndCities")}
+            </h3>
             <Button onClick={handleOpenCreateState}>
               <Plus className="h-4 w-4 me-2" />
-              {t('admin.addState')}
+              {t("admin.addState")}
             </Button>
           </div>
 
           <div className="flex gap-2 mb-4">
             <Input
-              placeholder={t('admin.locations.searchStates')}
+              placeholder={t("admin.locations.searchStates")}
               value={searchStates}
-              onChange={(e) => { setSearchStates(e.target.value); setStatesPage(1); }}
+              onChange={(e) => {
+                setSearchStates(e.target.value);
+                setStatesPage(1);
+              }}
               className="max-w-sm"
             />
           </div>
@@ -247,7 +274,9 @@ export function LocationsManagement() {
           {states.length === 0 ? (
             <div className="text-center py-10">
               <MapPin className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">{t('admin.locations.noStates')}</p>
+              <p className="text-muted-foreground">
+                {t("admin.locations.noStates")}
+              </p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -272,18 +301,23 @@ export function LocationsManagement() {
                               ) : (
                                 <ChevronRight className="h-4 w-4" />
                               )}
-                              <span className="font-medium">{state.name.ar}</span>
+                              <span className="font-medium">
+                                {state.name.ar}
+                              </span>
                               <span className="text-muted-foreground text-sm">
                                 ({state.name.en})
                               </span>
                               <span className="text-xs text-muted-foreground/70">
-                                {stateCities.length} {t('admin.locations.cityCount')}
+                                {stateCities.length}{" "}
+                                {t("admin.locations.cityCount")}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Switch
                                 checked={state.isActive}
-                                onCheckedChange={() => handleToggleStateActive(state)}
+                                onCheckedChange={() =>
+                                  handleToggleStateActive(state)
+                                }
                                 onClick={(e) => e.stopPropagation()}
                               />
                               <Button
@@ -315,7 +349,7 @@ export function LocationsManagement() {
                           <div className="border-t bg-muted p-4">
                             <div className="flex justify-between items-center mb-3">
                               <span className="text-sm font-medium text-muted-foreground">
-                                {t('admin.cities')}
+                                {t("admin.cities")}
                               </span>
                               <Button
                                 variant="outline"
@@ -323,22 +357,25 @@ export function LocationsManagement() {
                                 onClick={() => handleOpenCreateCity(state.id)}
                               >
                                 <Plus className="h-3 w-3 me-1" />
-                                {t('admin.addCity')}
+                                {t("admin.addCity")}
                               </Button>
                             </div>
 
                             <div className="flex gap-2 mb-3">
                               <Input
-                                placeholder={t('admin.locations.searchCities')}
+                                placeholder={t("admin.locations.searchCities")}
                                 value={searchCities}
-                                onChange={(e) => { setSearchCities(e.target.value); setCitiesPage(1); }}
+                                onChange={(e) => {
+                                  setSearchCities(e.target.value);
+                                  setCitiesPage(1);
+                                }}
                                 className="max-w-sm"
                               />
                             </div>
 
                             {stateCities.length === 0 ? (
                               <p className="text-sm text-muted-foreground text-center py-4">
-                                {t('admin.locations.noCities')}
+                                {t("admin.locations.noCities")}
                               </p>
                             ) : (
                               <div className="space-y-2">
@@ -367,7 +404,9 @@ export function LocationsManagement() {
                                         <Button
                                           variant="ghost"
                                           size="icon"
-                                          onClick={() => handleOpenEditCity(city)}
+                                          onClick={() =>
+                                            handleOpenEditCity(city)
+                                          }
                                         >
                                           <Edit2 className="h-4 w-4" />
                                         </Button>
@@ -375,7 +414,9 @@ export function LocationsManagement() {
                                           variant="ghost"
                                           size="icon"
                                           className="text-error-600"
-                                          onClick={() => setDeleteCityId(city.id)}
+                                          onClick={() =>
+                                            setDeleteCityId(city.id)
+                                          }
                                         >
                                           <Trash2 className="h-4 w-4" />
                                         </Button>
@@ -393,7 +434,16 @@ export function LocationsManagement() {
             </div>
           )}
 
-          <PaginationControls meta={statesMeta} page={statesPage} onPageChange={setStatesPage} limit={statesLimit} onLimitChange={(v) => { setStatesLimit(v); setStatesPage(1); }} />
+          <PaginationControls
+            meta={statesMeta}
+            page={statesPage}
+            onPageChange={setStatesPage}
+            limit={statesLimit}
+            onLimitChange={(v) => {
+              setStatesLimit(v);
+              setStatesPage(1);
+            }}
+          />
         </CardContent>
       </Card>
 
@@ -402,48 +452,50 @@ export function LocationsManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingState ? t('admin.editState') : t('admin.locations.addNewState')}
+              {editingState
+                ? t("admin.editState")
+                : t("admin.locations.addNewState")}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label>{t('admin.locations.nameArRequired')}</Label>
+                <Label>{t("admin.locations.nameArRequired")}</Label>
                 <Input
                   value={stateForm.nameAr}
                   onChange={(e) =>
                     setStateForm((f) => ({ ...f, nameAr: e.target.value }))
                   }
-                  placeholder={t('placeholder.stateNameAr')}
+                  placeholder={t("placeholder.stateNameAr")}
                 />
               </div>
               <div>
-                <Label>{t('admin.locations.nameEnRequired')}</Label>
+                <Label>{t("admin.locations.nameEnRequired")}</Label>
                 <Input
                   value={stateForm.nameEn}
                   onChange={(e) =>
                     setStateForm((f) => ({ ...f, nameEn: e.target.value }))
                   }
-                  placeholder={t('placeholder.stateNameEn')}
+                  placeholder={t("placeholder.stateNameEn")}
                   dir="ltr"
                 />
               </div>
             </div>
             <div>
-              <Label>{t('admin.locations.code')}</Label>
+              <Label>{t("admin.locations.code")}</Label>
               <Input
                 value={stateForm.code}
                 onChange={(e) =>
                   setStateForm((f) => ({ ...f, code: e.target.value }))
                 }
-                placeholder={t('placeholder.stateCode')}
+                placeholder={t("placeholder.stateCode")}
                 dir="ltr"
               />
             </div>
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setStateDialogOpen(false)}>
-              {t('common.cancel')}
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleSubmitState}
@@ -457,7 +509,7 @@ export function LocationsManagement() {
               {(createState.isPending || updateState.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {editingState ? t('common.update') : t('common.add')}
+              {editingState ? t("common.update") : t("common.add")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -468,29 +520,31 @@ export function LocationsManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingCity ? t('admin.editCity') : t('admin.locations.addNewCity')}
+              {editingCity
+                ? t("admin.editCity")
+                : t("admin.locations.addNewCity")}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label>{t('admin.locations.nameArRequired')}</Label>
+                <Label>{t("admin.locations.nameArRequired")}</Label>
                 <Input
                   value={cityForm.nameAr}
                   onChange={(e) =>
                     setCityForm((f) => ({ ...f, nameAr: e.target.value }))
                   }
-                  placeholder={t('placeholder.cityNameAr')}
+                  placeholder={t("placeholder.cityNameAr")}
                 />
               </div>
               <div>
-                <Label>{t('admin.locations.nameEnRequired')}</Label>
+                <Label>{t("admin.locations.nameEnRequired")}</Label>
                 <Input
                   value={cityForm.nameEn}
                   onChange={(e) =>
                     setCityForm((f) => ({ ...f, nameEn: e.target.value }))
                   }
-                  placeholder={t('placeholder.cityNameEn')}
+                  placeholder={t("placeholder.cityNameEn")}
                   dir="ltr"
                 />
               </div>
@@ -498,7 +552,7 @@ export function LocationsManagement() {
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setCityDialogOpen(false)}>
-              {t('common.cancel')}
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleSubmitCity}
@@ -512,49 +566,59 @@ export function LocationsManagement() {
               {(createCity.isPending || updateCity.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {editingCity ? t('common.update') : t('common.add')}
+              {editingCity ? t("common.update") : t("common.add")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete State Confirmation */}
-      <AlertDialog open={!!deleteStateId} onOpenChange={() => setDeleteStateId(null)}>
+      <AlertDialog
+        open={!!deleteStateId}
+        onOpenChange={() => setDeleteStateId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.locations.deleteState')}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("admin.locations.deleteState")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.locations.deleteStateConfirm')}
+              {t("admin.locations.deleteStateConfirm")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteState}
               className="bg-error-600 hover:bg-error-700"
             >
-              {t('common.delete')}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* Delete City Confirmation */}
-      <AlertDialog open={!!deleteCityId} onOpenChange={() => setDeleteCityId(null)}>
+      <AlertDialog
+        open={!!deleteCityId}
+        onOpenChange={() => setDeleteCityId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.locations.deleteCity')}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("admin.locations.deleteCity")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.locations.deleteCityConfirm')}
+              {t("admin.locations.deleteCityConfirm")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteCity}
               className="bg-error-600 hover:bg-error-700"
             >
-              {t('common.delete')}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

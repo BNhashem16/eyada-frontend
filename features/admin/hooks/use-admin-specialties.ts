@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { Specialty, Multilingual, PaginatedResponse } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { Specialty, Multilingual, PaginatedResponse } from "@/types";
 
 // Per Swagger: GET /admin/specialties with optional filters and pagination
 export interface UseAdminSpecialtiesOptions {
@@ -17,15 +17,18 @@ export function useAdminSpecialties(options: UseAdminSpecialtiesOptions = {}) {
   const { page = 1, limit = 10, search, isActive } = options;
 
   return useQuery({
-    queryKey: ['admin-specialties', { page, limit, search, isActive }],
+    queryKey: ["admin-specialties", { page, limit, search, isActive }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
-      if (search) params.append('search', search);
-      if (isActive !== undefined) params.append('isActive', isActive.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
+      if (search) params.append("search", search);
+      if (isActive !== undefined)
+        params.append("isActive", isActive.toString());
 
-      return apiGet<PaginatedResponse<Specialty>>(`${ADMIN_ENDPOINTS.SPECIALTIES}?${params.toString()}`);
+      return apiGet<PaginatedResponse<Specialty>>(
+        `${ADMIN_ENDPOINTS.SPECIALTIES}?${params.toString()}`,
+      );
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -48,8 +51,8 @@ export function useCreateSpecialty() {
       return apiPost<Specialty>(ADMIN_ENDPOINTS.SPECIALTIES, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-specialties'] });
-      queryClient.invalidateQueries({ queryKey: ['specialties'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-specialties"] });
+      queryClient.invalidateQueries({ queryKey: ["specialties"] });
     },
   });
 }
@@ -71,8 +74,8 @@ export function useUpdateSpecialty() {
       return apiPatch<Specialty>(ADMIN_ENDPOINTS.SPECIALTY(id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-specialties'] });
-      queryClient.invalidateQueries({ queryKey: ['specialties'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-specialties"] });
+      queryClient.invalidateQueries({ queryKey: ["specialties"] });
     },
   });
 }
@@ -85,8 +88,8 @@ export function useDeleteSpecialty() {
       return apiDelete(ADMIN_ENDPOINTS.SPECIALTY(id));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-specialties'] });
-      queryClient.invalidateQueries({ queryKey: ['specialties'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-specialties"] });
+      queryClient.invalidateQueries({ queryKey: ["specialties"] });
     },
   });
 }

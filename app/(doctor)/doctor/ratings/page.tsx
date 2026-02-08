@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { PageHeader } from '@/components/common';
-import { DoctorRatings } from '@/features/doctor-portal/components';
-import { useTranslation } from '@/lib/i18n';
+import { PageHeader } from "@/components/common";
+import { DoctorRatings } from "@/features/doctor-portal/components";
+import { useTranslation } from "@/lib/i18n";
 
 export default function DoctorRatingsPage() {
   const { t } = useTranslation();
@@ -10,8 +10,8 @@ export default function DoctorRatingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={t('nav.ratings')}
-        description={t('doctor.ratingsPageDescription')}
+        title={t("nav.ratings")}
+        description={t("doctor.ratingsPageDescription")}
       />
       <DoctorRatings />
     </div>

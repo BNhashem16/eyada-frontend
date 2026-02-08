@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   CalendarIcon,
   User,
@@ -15,36 +15,45 @@ import {
   CheckCircle2,
   Copy,
   ExternalLink,
-  X,
   Clock,
   Users,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
+  Phone,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { useSecretaryClinics, useCreateAppointment } from '@/features/secretary';
-import { useSecretaryPatients } from '@/features/secretary/hooks/use-secretary-patients';
-import { useSecretaryClinicSchedules } from '@/features/secretary/hooks/use-secretary-schedules';
-import { useClinicServices } from '@/features/clinics/hooks/use-clinics';
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import {
+  useSecretaryClinics,
+  useCreateAppointment,
+} from "@/features/secretary";
+import { useSecretaryPatients } from "@/features/secretary/hooks/use-secretary-patients";
+import { useSecretaryClinicSchedules } from "@/features/secretary/hooks/use-secretary-schedules";
+import { useClinicServices } from "@/features/clinics/hooks/use-clinics";
 import {
   utcTimeToLocal,
   formatDate,
@@ -53,18 +62,19 @@ import {
   isSameDay,
   isToday,
   isBefore,
-} from '@/lib/utils/date';
-import { DayOfWeek } from '@/types/enums';
-import type { PatientProfile } from '@/types';
+} from "@/lib/utils/date";
+import { DayOfWeek } from "@/types/enums";
 
-const getDayNames = (t: (key: string) => string): Record<DayOfWeek, string> => ({
-  [DayOfWeek.SUNDAY]: t('days.sunday'),
-  [DayOfWeek.MONDAY]: t('days.monday'),
-  [DayOfWeek.TUESDAY]: t('days.tuesday'),
-  [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
-  [DayOfWeek.THURSDAY]: t('days.thursday'),
-  [DayOfWeek.FRIDAY]: t('days.friday'),
-  [DayOfWeek.SATURDAY]: t('days.saturday'),
+const getDayNames = (
+  t: (key: string) => string,
+): Record<DayOfWeek, string> => ({
+  [DayOfWeek.SUNDAY]: t("days.sunday"),
+  [DayOfWeek.MONDAY]: t("days.monday"),
+  [DayOfWeek.TUESDAY]: t("days.tuesday"),
+  [DayOfWeek.WEDNESDAY]: t("days.wednesday"),
+  [DayOfWeek.THURSDAY]: t("days.thursday"),
+  [DayOfWeek.FRIDAY]: t("days.friday"),
+  [DayOfWeek.SATURDAY]: t("days.saturday"),
 });
 
 const dayOrder = [
@@ -87,7 +97,6 @@ export default function NewAppointmentPage() {
   const [weekStart, setWeekStart] = useState(() => {
     const today = new Date();
     const day = today.getDay();
-    // Start from Saturday
     const diff = day === 6 ? 0 : day + 1;
     const saturday = new Date(today);
     saturday.setDate(today.getDate() - diff);
@@ -95,18 +104,23 @@ export default function NewAppointmentPage() {
   });
 
   // Form state
-  const [selectedClinic, setSelectedClinic] = useState<string>('');
-  const [selectedService, setSelectedService] = useState<string>('');
+  const [selectedClinic, setSelectedClinic] = useState<string>("");
+  const [selectedService, setSelectedService] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedPatient, setSelectedPatient] = useState<PatientProfile | null>(null);
-  const [patientSearch, setPatientSearch] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
-  const [symptoms, setSymptoms] = useState<string>('');
+  const [patientName, setPatientName] = useState<string>("");
+  const [patientDateOfBirth, setPatientDateOfBirth] = useState<string>("");
+  const [patientPhone, setPatientPhone] = useState<string>("");
+  const [patientSearch, setPatientSearch] = useState<string>("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [notes, setNotes] = useState<string>("");
+  const [symptoms, setSymptoms] = useState<string>("");
 
   // Week days
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
-
-  const canGoPrevious = !isBefore(addDays(weekStart, -7), addDays(new Date(), -1));
+  const canGoPrevious = !isBefore(
+    addDays(weekStart, -7),
+    addDays(new Date(), -1),
+  );
 
   const goToPreviousWeek = () => {
     if (canGoPrevious) {
@@ -130,18 +144,21 @@ export default function NewAppointmentPage() {
 
   // Data fetching
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
-  const { data: services, isLoading: servicesLoading } = useClinicServices(selectedClinic);
-  const { data: patientsData, isLoading: patientsLoading } = useSecretaryPatients({
-    search: patientSearch,
-    limit: 10,
-  });
-  const { data: schedules, isLoading: schedulesLoading } = useSecretaryClinicSchedules(selectedClinic);
+  const { data: services, isLoading: servicesLoading } =
+    useClinicServices(selectedClinic);
+  const { data: patientsData, isLoading: patientsLoading } =
+    useSecretaryPatients({
+      search: patientSearch,
+      limit: 10,
+    });
+  const { data: schedules, isLoading: schedulesLoading } =
+    useSecretaryClinicSchedules(selectedClinic);
 
   const createAppointment = useCreateAppointment();
 
-  // Reset dependent fields when parent selection changes
+  // Reset dependent fields when clinic changes
   useEffect(() => {
-    setSelectedService('');
+    setSelectedService("");
     setSelectedDate(null);
   }, [selectedClinic]);
 
@@ -151,69 +168,86 @@ export default function NewAppointmentPage() {
   const sortedSchedules = schedules
     ? [...schedules]
         .filter((s) => s.isActive)
-        .sort((a, b) => dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek))
+        .sort(
+          (a, b) =>
+            dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek),
+        )
     : [];
 
   const canSubmit =
     selectedClinic &&
     selectedService &&
     selectedDate &&
-    selectedPatient;
+    patientName.trim().length >= 2 &&
+    patientDateOfBirth;
 
   const handleSubmit = async () => {
-    if (!canSubmit || !selectedPatient) return;
+    if (!canSubmit) return;
 
     try {
       const result = await createAppointment.mutateAsync({
         clinicId: selectedClinic,
         serviceTypeId: selectedService,
-        appointmentDate: formatDate(selectedDate!, 'yyyy-MM-dd'),
-        patientProfileId: selectedPatient.id,
+        appointmentDate: formatDate(selectedDate!, "yyyy-MM-dd"),
+        patientName: patientName.trim(),
+        patientDateOfBirth,
+        patientPhone: patientPhone.trim() || undefined,
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
       });
 
-      // Show success dialog with booking info
       setSuccessData({
         bookingNumber: result.bookingNumber,
         queueNumber: result.queueNumber ?? 0,
       });
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.somethingWentWrong');
+      const errorMessage =
+        error instanceof Error ? error.message : t("errors.somethingWentWrong");
       toast({
-        title: t('toast.error'),
+        title: t("toast.error"),
         description: errorMessage,
-        variant: 'error',
+        variant: "error",
       });
     }
   };
 
   const trackingUrl = successData
-    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/track/${successData.bookingNumber}`
-    : '';
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/track/${successData.bookingNumber}`
+    : "";
 
   const copyTrackingLink = () => {
     navigator.clipboard.writeText(trackingUrl);
     toast({
-      title: t('toast.success'),
-      description: t('secretary.linkCopied'),
-      variant: 'success',
+      title: t("toast.success"),
+      description: t("secretary.linkCopied"),
+      variant: "success",
     });
   };
 
-  // Calculate age from date of birth
   const calculateAge = (dob: string) => {
     const birthDate = new Date(dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
       age--;
     }
     return age;
   };
 
   const patients = patientsData?.data ?? [];
+
+  // Fill patient fields from search result
+  const fillFromPatient = (name: string, dob?: string, phone?: string) => {
+    setPatientName(name);
+    if (dob) setPatientDateOfBirth(dob.split("T")[0]);
+    if (phone) setPatientPhone(phone);
+    setPatientSearch("");
+    setShowSearch(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -224,13 +258,21 @@ export default function NewAppointmentPage() {
             <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-lg sm:text-2xl font-bold text-foreground">{t('secretary.bookAppointment')}</h1>
-            <p className="text-sm text-muted-foreground hidden sm:block">{t('secretary.bookAppointmentDesc')}</p>
+            <h1 className="text-lg sm:text-2xl font-bold text-foreground">
+              {t("secretary.bookAppointment")}
+            </h1>
+            <p className="text-sm text-muted-foreground hidden sm:block">
+              {t("secretary.bookAppointmentDesc")}
+            </p>
           </div>
         </div>
-        <Button variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+        <Button
+          variant="outline"
+          onClick={() => router.back()}
+          className="w-full sm:w-auto"
+        >
           <ArrowRight className="h-4 w-4 ms-2" />
-          {t('common.back')}
+          {t("common.back")}
         </Button>
       </div>
 
@@ -239,8 +281,10 @@ export default function NewAppointmentPage() {
         <Alert className="bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            <p className="font-medium">{t('secretary.noClinicsAssigned')}</p>
-            <p className="text-sm text-muted-foreground">{t('secretary.contactAdmin')}</p>
+            <p className="font-medium">{t("secretary.noClinicsAssigned")}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("secretary.contactAdmin")}
+            </p>
           </AlertDescription>
         </Alert>
       )}
@@ -248,89 +292,83 @@ export default function NewAppointmentPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Form */}
         <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
-          {/* Patient Selection */}
+          {/* Patient Information */}
           <Card>
             <CardHeader className="pb-3 sm:pb-6">
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t('secretary.selectPatient')}
+                {t("secretary.patientInfo")}
               </CardTitle>
               <CardDescription>
-                {t('secretary.searchPatientHint')}
+                {t("secretary.walkInPatientHint")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Selected Patient Display */}
-              {selectedPatient ? (
-                <div className="p-3 sm:p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center shrink-0">
-                        <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-medium truncate">{selectedPatient.user?.fullName || t('common.unknown')}</p>
-                        <p className="text-sm text-muted-foreground truncate">
-                          {selectedPatient.user?.phoneNumber || '-'}
-                          {selectedPatient.dateOfBirth && (
-                            <> • {calculateAge(selectedPatient.dateOfBirth)} {t('family.yearsOld')}</>
-                          )}
-                        </p>
-                        {selectedPatient.familyHeadId && selectedPatient.relationshipToHead && (
-                          <Badge variant="secondary" className="mt-1 text-xs">
-                            {t('secretary.familyMember')}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="shrink-0"
-                      onClick={() => setSelectedPatient(null)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
+              {/* Patient Name */}
+              <div className="space-y-2">
+                <Label>{t("patient.fullName")} *</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder={t("patient.fullName")}
+                    className="flex-1"
+                    maxLength={100}
+                  />
+                  <Button
+                    type="button"
+                    variant={showSearch ? "default" : "outline"}
+                    size="icon"
+                    className="shrink-0"
+                    onClick={() => setShowSearch(!showSearch)}
+                    title={t("secretary.searchPatient")}
+                  >
+                    <Search className="h-4 w-4" />
+                  </Button>
                 </div>
-              ) : (
-                <>
-                  {/* Patient Search */}
-                  <div className="space-y-2">
-                    <Label>{t('secretary.searchPatient')}</Label>
-                    <div className="relative">
-                      <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        value={patientSearch}
-                        onChange={(e) => setPatientSearch(e.target.value)}
-                        placeholder={t('placeholder.searchPatient')}
-                        className="ps-9"
-                      />
-                    </div>
+              </div>
+
+              {/* Search Existing Patients */}
+              {showSearch && (
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={patientSearch}
+                      onChange={(e) => setPatientSearch(e.target.value)}
+                      placeholder={t("placeholder.searchPatient")}
+                      className="ps-9"
+                      autoFocus
+                    />
                   </div>
 
-                  {/* Patient Search Results with Family Members */}
                   {patientSearch && (
-                    <div className="border rounded-lg max-h-80 overflow-y-auto">
+                    <div className="border rounded-lg max-h-60 overflow-y-auto">
                       {patientsLoading ? (
                         <div className="p-4 text-center">
                           <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
                         </div>
                       ) : patients.length === 0 ? (
                         <div className="p-4 text-center text-muted-foreground">
-                          {t('common.noResults')}
+                          {t("common.noResults")}
                         </div>
                       ) : (
                         patients.map((patient) => (
-                          <div key={patient.id} className="border-b last:border-b-0">
-                            {/* Family Head / Main Patient */}
+                          <div
+                            key={patient.id}
+                            className="border-b last:border-b-0"
+                          >
+                            {/* Main Patient */}
                             <button
                               type="button"
                               className="w-full p-3 text-start hover:bg-muted/50 transition-colors flex items-center gap-3"
-                              onClick={() => {
-                                setSelectedPatient(patient);
-                                setPatientSearch('');
-                              }}
+                              onClick={() =>
+                                fillFromPatient(
+                                  patient.user?.fullName || "",
+                                  patient.dateOfBirth,
+                                  patient.user?.phoneNumber,
+                                )
+                              }
                             >
                               <div className="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center shrink-0">
                                 <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
@@ -338,79 +376,141 @@ export default function NewAppointmentPage() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <p className="font-medium truncate">
-                                    {patient.user?.fullName || t('common.unknown')}
+                                    {patient.user?.fullName ||
+                                      t("common.unknown")}
                                   </p>
-                                  {patient.familyMembers && patient.familyMembers.length > 0 && (
-                                    <Badge variant="secondary" className="text-xs shrink-0">
-                                      <Users className="h-3 w-3 me-1" />
-                                      {patient.familyMembers.length}
-                                    </Badge>
-                                  )}
+                                  {patient.familyMembers &&
+                                    patient.familyMembers.length > 0 && (
+                                      <Badge
+                                        variant="secondary"
+                                        className="text-xs shrink-0"
+                                      >
+                                        <Users className="h-3 w-3 me-1" />
+                                        {patient.familyMembers.length}
+                                      </Badge>
+                                    )}
                                 </div>
                                 <p className="text-sm text-muted-foreground truncate">
-                                  {patient.user?.phoneNumber || '-'}
+                                  {patient.user?.phoneNumber || "-"}
                                   {patient.dateOfBirth && (
-                                    <> • {calculateAge(patient.dateOfBirth)} {t('family.yearsOld')}</>
+                                    <>
+                                      {" "}
+                                      • {calculateAge(patient.dateOfBirth)}{" "}
+                                      {t("family.yearsOld")}
+                                    </>
                                   )}
                                 </p>
                               </div>
                             </button>
 
                             {/* Family Members */}
-                            {patient.familyMembers && patient.familyMembers.length > 0 && (
-                              <div className="bg-muted/30 border-t">
-                                {patient.familyMembers.map((member) => (
-                                  <button
-                                    key={member.id}
-                                    type="button"
-                                    className="w-full p-3 ps-12 text-start hover:bg-muted/50 transition-colors flex items-center gap-3 border-t border-dashed first:border-t-0"
-                                    onClick={() => {
-                                      setSelectedPatient({
-                                        ...member,
-                                        userId: member.user?.id || member.patientId || '',
-                                        usePhoneAsWhatsapp: false,
-                                        relationshipToHead: member.relationshipToHead || member.relationship || 'OTHER',
-                                        familyHeadId: patient.id,
-                                        user: member.user || { id: '', email: '', phoneNumber: patient.user?.phoneNumber || '', fullName: member.fullName, role: 'PATIENT' as const, isActive: true, isApproved: true },
-                                      } as PatientProfile);
-                                      setPatientSearch('');
-                                    }}
-                                  >
-                                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                                      <User className="h-3.5 w-3.5 text-muted-foreground" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2 flex-wrap">
-                                        <p className="text-sm font-medium truncate">
-                                          {member.fullName || member.user?.fullName || t('common.unknown')}
-                                        </p>
-                                        <Badge variant="outline" className="text-xs shrink-0">
-                                          {member.relationshipToHead
-                                            ? t(`family.${member.relationshipToHead.toLowerCase()}`)
-                                            : member.relationship
-                                              ? t(`family.${member.relationship.toLowerCase()}`)
-                                              : t('secretary.familyMember')}
-                                        </Badge>
+                            {patient.familyMembers &&
+                              patient.familyMembers.length > 0 && (
+                                <div className="bg-muted/30 border-t">
+                                  {patient.familyMembers.map((member) => (
+                                    <button
+                                      key={member.id}
+                                      type="button"
+                                      className="w-full p-3 ps-12 text-start hover:bg-muted/50 transition-colors flex items-center gap-3 border-t border-dashed first:border-t-0"
+                                      onClick={() =>
+                                        fillFromPatient(
+                                          member.fullName ||
+                                            member.user?.fullName ||
+                                            "",
+                                          member.dateOfBirth,
+                                          patient.user?.phoneNumber,
+                                        )
+                                      }
+                                    >
+                                      <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                        <User className="h-3.5 w-3.5 text-muted-foreground" />
                                       </div>
-                                      <p className="text-xs text-muted-foreground truncate">
-                                        {member.dateOfBirth && (
-                                          <>{calculateAge(member.dateOfBirth)} {t('family.yearsOld')}</>
-                                        )}
-                                        {member.gender && (
-                                          <> • {member.gender === 'MALE' ? t('patient.male') : t('patient.female')}</>
-                                        )}
-                                      </p>
-                                    </div>
-                                  </button>
-                                ))}
-                              </div>
-                            )}
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                          <p className="text-sm font-medium truncate">
+                                            {member.fullName ||
+                                              member.user?.fullName ||
+                                              t("common.unknown")}
+                                          </p>
+                                          <Badge
+                                            variant="outline"
+                                            className="text-xs shrink-0"
+                                          >
+                                            {member.relationshipToHead
+                                              ? t(
+                                                  `family.${member.relationshipToHead.toLowerCase()}`,
+                                                )
+                                              : member.relationship
+                                                ? t(
+                                                    `family.${member.relationship.toLowerCase()}`,
+                                                  )
+                                                : t("secretary.familyMember")}
+                                          </Badge>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground truncate">
+                                          {member.dateOfBirth && (
+                                            <>
+                                              {calculateAge(member.dateOfBirth)}{" "}
+                                              {t("family.yearsOld")}
+                                            </>
+                                          )}
+                                          {member.gender && (
+                                            <>
+                                              {" "}
+                                              •{" "}
+                                              {member.gender === "MALE"
+                                                ? t("patient.male")
+                                                : t("patient.female")}
+                                            </>
+                                          )}
+                                        </p>
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
                           </div>
                         ))
                       )}
                     </div>
                   )}
-                </>
+                </div>
+              )}
+
+              {/* Date of Birth & Phone */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>{t("patient.dateOfBirth")} *</Label>
+                  <Input
+                    type="date"
+                    value={patientDateOfBirth}
+                    onChange={(e) => setPatientDateOfBirth(e.target.value)}
+                    max={new Date().toISOString().split("T")[0]}
+                    dir="ltr"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1">
+                    <Phone className="h-3.5 w-3.5" />
+                    {t("patient.phoneNumber")}
+                  </Label>
+                  <Input
+                    value={patientPhone}
+                    onChange={(e) => setPatientPhone(e.target.value)}
+                    placeholder={t("placeholder.phone")}
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              {/* Age display */}
+              {patientDateOfBirth && (
+                <p className="text-sm text-muted-foreground">
+                  {t("family.age")}:{" "}
+                  <span className="font-medium text-foreground">
+                    {calculateAge(patientDateOfBirth)} {t("family.yearsOld")}
+                  </span>
+                </p>
               )}
             </CardContent>
           </Card>
@@ -420,42 +520,54 @@ export default function NewAppointmentPage() {
             <CardHeader className="pb-3 sm:pb-6">
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t('secretary.clinicAndService')}
+                {t("secretary.clinicAndService")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>{t('secretary.selectClinic')} *</Label>
+                  <Label>{t("secretary.selectClinic")} *</Label>
                   <SearchableSelect
-                    options={clinics?.map((clinic) => ({
-                      value: clinic.id,
-                      label: getLocalizedText(clinic.name, locale),
-                      icon: <Building2 className="h-4 w-4" />,
-                    })) || []}
+                    options={
+                      clinics?.map((clinic) => ({
+                        value: clinic.id,
+                        label: getLocalizedText(clinic.name, locale),
+                        icon: <Building2 className="h-4 w-4" />,
+                      })) || []
+                    }
                     value={selectedClinic}
                     onValueChange={setSelectedClinic}
-                    placeholder={t('secretary.selectClinic')}
-                    searchPlaceholder={t('common.search')}
-                    emptyMessage={t('common.noResults')}
+                    placeholder={t("secretary.selectClinic")}
+                    searchPlaceholder={t("common.search")}
+                    emptyMessage={t("common.noResults")}
                     loading={clinicsLoading}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t('secretary.selectService')} *</Label>
+                  <Label>{t("secretary.selectService")} *</Label>
                   <SearchableSelect
-                    options={services?.filter((s) => s.isActive).map((service) => ({
-                      value: service.id,
-                      label: `${getLocalizedText(service.name, locale)} - ${service.price} ${t('common.egp')}`,
-                      description: service.duration ? `${service.duration} ${t('services.minute')}` : undefined,
-                      icon: <Stethoscope className="h-4 w-4" />,
-                    })) || []}
+                    options={
+                      services
+                        ?.filter((s) => s.isActive)
+                        .map((service) => ({
+                          value: service.id,
+                          label: `${getLocalizedText(service.name, locale)} - ${service.price} ${t("common.egp")}`,
+                          description: service.duration
+                            ? `${service.duration} ${t("services.minute")}`
+                            : undefined,
+                          icon: <Stethoscope className="h-4 w-4" />,
+                        })) || []
+                    }
                     value={selectedService}
                     onValueChange={setSelectedService}
-                    placeholder={t('secretary.selectService')}
-                    searchPlaceholder={t('common.search')}
-                    emptyMessage={servicesLoading ? t('common.loading') : t('clinics.noServicesAvailable')}
+                    placeholder={t("secretary.selectService")}
+                    searchPlaceholder={t("common.search")}
+                    emptyMessage={
+                      servicesLoading
+                        ? t("common.loading")
+                        : t("clinics.noServicesAvailable")
+                    }
                     disabled={!selectedClinic}
                     loading={servicesLoading}
                   />
@@ -467,14 +579,16 @@ export default function NewAppointmentPage() {
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2">
                       <Stethoscope className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                      <span className="font-medium">{getLocalizedText(selectedServiceData.name, locale)}</span>
+                      <span className="font-medium">
+                        {getLocalizedText(selectedServiceData.name, locale)}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge className="bg-primary-600">
-                        {selectedServiceData.price} {t('common.egp')}
+                        {selectedServiceData.price} {t("common.egp")}
                       </Badge>
                       <Badge variant="outline">
-                        {selectedServiceData.duration} {t('services.minute')}
+                        {selectedServiceData.duration} {t("services.minute")}
                       </Badge>
                     </div>
                   </div>
@@ -486,14 +600,16 @@ export default function NewAppointmentPage() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <Clock className="h-4 w-4" />
-                    {t('secretary.clinicSchedule')}
+                    {t("secretary.clinicSchedule")}
                   </div>
                   {schedulesLoading ? (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                     </div>
                   ) : sortedSchedules.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">{t('secretary.noSchedules')}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("secretary.noSchedules")}
+                    </p>
                   ) : (
                     <div className="grid gap-2 sm:grid-cols-2">
                       {sortedSchedules.map((schedule) => (
@@ -501,11 +617,18 @@ export default function NewAppointmentPage() {
                           key={schedule.id}
                           className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 border text-sm"
                         >
-                          <span className="font-medium">{dayNames[schedule.dayOfWeek]}</span>
+                          <span className="font-medium">
+                            {dayNames[schedule.dayOfWeek]}
+                          </span>
                           <div className="flex flex-col items-end gap-0.5">
                             {schedule.shifts.map((shift, idx) => (
-                              <span key={idx} className="text-muted-foreground text-xs" dir="ltr">
-                                {utcTimeToLocal(shift.startTime)} - {utcTimeToLocal(shift.endTime)}
+                              <span
+                                key={idx}
+                                className="text-muted-foreground text-xs"
+                                dir="ltr"
+                              >
+                                {utcTimeToLocal(shift.startTime)} -{" "}
+                                {utcTimeToLocal(shift.endTime)}
                               </span>
                             ))}
                           </div>
@@ -523,14 +646,14 @@ export default function NewAppointmentPage() {
             <CardHeader className="pb-3 sm:pb-6">
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t('secretary.selectDate')}
+                {t("secretary.selectDate")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between">
-                  <Label>{t('appointments.date')} *</Label>
+                  <Label>{t("appointments.date")} *</Label>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
@@ -542,7 +665,7 @@ export default function NewAppointmentPage() {
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                     <span className="text-sm text-muted-foreground min-w-[80px] text-center">
-                      {formatDate(weekStart, 'MMM yyyy')}
+                      {formatDate(weekStart, "MMM yyyy")}
                     </span>
                     <Button
                       variant="ghost"
@@ -560,7 +683,8 @@ export default function NewAppointmentPage() {
                 <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
                   {weekDays.map((date) => {
                     const isPast = isBefore(date, new Date()) && !isToday(date);
-                    const isSelected = selectedDate && isSameDay(date, selectedDate);
+                    const isSelected =
+                      selectedDate && isSameDay(date, selectedDate);
                     const today = isToday(date);
                     const isDisabled = isPast || !selectedClinic;
 
@@ -571,18 +695,20 @@ export default function NewAppointmentPage() {
                         onClick={() => !isDisabled && setSelectedDate(date)}
                         disabled={isDisabled}
                         className={cn(
-                          'flex flex-col items-center justify-center p-1.5 sm:p-2.5 rounded-lg text-center transition-all',
-                          isDisabled && 'opacity-40 cursor-not-allowed',
-                          !isDisabled && 'hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer',
-                          isSelected && 'bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-600',
-                          today && !isSelected && 'border-2 border-primary-500',
+                          "flex flex-col items-center justify-center p-1.5 sm:p-2.5 rounded-lg text-center transition-all",
+                          isDisabled && "opacity-40 cursor-not-allowed",
+                          !isDisabled &&
+                            "hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer",
+                          isSelected &&
+                            "bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-600",
+                          today && !isSelected && "border-2 border-primary-500",
                         )}
                       >
                         <span className="text-[10px] sm:text-xs font-medium">
-                          {formatDate(date, 'EEE')}
+                          {formatDate(date, "EEE")}
                         </span>
                         <span className="text-base sm:text-lg font-bold">
-                          {formatDate(date, 'd')}
+                          {formatDate(date, "d")}
                         </span>
                       </button>
                     );
@@ -592,7 +718,7 @@ export default function NewAppointmentPage() {
                 {/* Selected date display */}
                 {selectedDate && (
                   <p className="text-sm text-center text-primary-600 dark:text-primary-400 font-medium">
-                    {formatDate(selectedDate, 'EEEE, d MMMM yyyy')}
+                    {formatDate(selectedDate, "EEEE, d MMMM yyyy")}
                   </p>
                 )}
               </div>
@@ -602,27 +728,33 @@ export default function NewAppointmentPage() {
           {/* Additional Notes */}
           <Card>
             <CardHeader className="pb-3 sm:pb-6">
-              <CardTitle className="text-base sm:text-lg">{t('secretary.additionalInfo')}</CardTitle>
+              <CardTitle className="text-base sm:text-lg">
+                {t("secretary.additionalInfo")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="symptoms">{t('appointments.symptoms')}</Label>
+                <Label htmlFor="symptoms">{t("appointments.symptoms")}</Label>
                 <Textarea
                   id="symptoms"
                   value={symptoms}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setSymptoms(e.target.value)}
-                  placeholder={t('secretary.symptomsPlaceholder')}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setSymptoms(e.target.value)
+                  }
+                  placeholder={t("secretary.symptomsPlaceholder")}
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes">{t('appointments.notes')}</Label>
+                <Label htmlFor="notes">{t("appointments.notes")}</Label>
                 <Textarea
                   id="notes"
                   value={notes}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
-                  placeholder={t('secretary.notesPlaceholder')}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setNotes(e.target.value)
+                  }
+                  placeholder={t("secretary.notesPlaceholder")}
                   rows={3}
                 />
               </div>
@@ -634,56 +766,76 @@ export default function NewAppointmentPage() {
         <div className="space-y-6 order-1 lg:order-2">
           <Card className="lg:sticky lg:top-4">
             <CardHeader className="pb-3 sm:pb-6">
-              <CardTitle className="text-base sm:text-lg">{t('secretary.bookingSummary')}</CardTitle>
+              <CardTitle className="text-base sm:text-lg">
+                {t("secretary.bookingSummary")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 sm:space-y-4">
               {/* Patient Name */}
               <div className="flex items-center justify-between py-2 border-b gap-2">
-                <span className="text-sm text-muted-foreground shrink-0">{t('auth.fullName')}</span>
+                <span className="text-sm text-muted-foreground shrink-0">
+                  {t("patient.fullName")}
+                </span>
                 <span className="font-medium text-sm truncate text-end">
-                  {selectedPatient?.user?.fullName || '-'}
+                  {patientName || "-"}
                 </span>
               </div>
 
               {/* Patient Age */}
               <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-sm text-muted-foreground">{t('family.age')}</span>
+                <span className="text-sm text-muted-foreground">
+                  {t("family.age")}
+                </span>
                 <span className="font-medium text-sm">
-                  {selectedPatient?.dateOfBirth
-                    ? `${calculateAge(selectedPatient.dateOfBirth)} ${t('family.yearsOld')}`
-                    : '-'}
+                  {patientDateOfBirth
+                    ? `${calculateAge(patientDateOfBirth)} ${t("family.yearsOld")}`
+                    : "-"}
                 </span>
               </div>
 
               {/* Clinic */}
               <div className="flex items-center justify-between py-2 border-b gap-2">
-                <span className="text-sm text-muted-foreground shrink-0">{t('appointments.clinic')}</span>
+                <span className="text-sm text-muted-foreground shrink-0">
+                  {t("appointments.clinic")}
+                </span>
                 <span className="font-medium text-sm truncate text-end">
-                  {selectedClinicData ? getLocalizedText(selectedClinicData.name, locale) : '-'}
+                  {selectedClinicData
+                    ? getLocalizedText(selectedClinicData.name, locale)
+                    : "-"}
                 </span>
               </div>
 
               {/* Service */}
               <div className="flex items-center justify-between py-2 border-b gap-2">
-                <span className="text-sm text-muted-foreground shrink-0">{t('appointments.service')}</span>
+                <span className="text-sm text-muted-foreground shrink-0">
+                  {t("appointments.service")}
+                </span>
                 <span className="font-medium text-sm truncate text-end">
-                  {selectedServiceData ? getLocalizedText(selectedServiceData.name, locale) : '-'}
+                  {selectedServiceData
+                    ? getLocalizedText(selectedServiceData.name, locale)
+                    : "-"}
                 </span>
               </div>
 
               {/* Date */}
               <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-sm text-muted-foreground">{t('appointments.date')}</span>
+                <span className="text-sm text-muted-foreground">
+                  {t("appointments.date")}
+                </span>
                 <span className="font-medium text-sm">
-                  {selectedDate ? formatDate(selectedDate, 'dd/MM/yyyy') : '-'}
+                  {selectedDate ? formatDate(selectedDate, "dd/MM/yyyy") : "-"}
                 </span>
               </div>
 
               {/* Price */}
               <div className="flex items-center justify-between py-2">
-                <span className="text-sm text-muted-foreground">{t('appointments.price')}</span>
+                <span className="text-sm text-muted-foreground">
+                  {t("appointments.price")}
+                </span>
                 <span className="font-bold text-lg text-primary-600 dark:text-primary-400">
-                  {selectedServiceData ? `${selectedServiceData.price} ${t('common.egp')}` : '-'}
+                  {selectedServiceData
+                    ? `${selectedServiceData.price} ${t("common.egp")}`
+                    : "-"}
                 </span>
               </div>
 
@@ -699,19 +851,19 @@ export default function NewAppointmentPage() {
                 {createAppointment.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin me-2" />
-                    {t('common.loading')}
+                    {t("common.loading")}
                   </>
                 ) : (
                   <>
                     <Plus className="h-4 w-4 me-2" />
-                    {t('secretary.confirmBooking')}
+                    {t("secretary.confirmBooking")}
                   </>
                 )}
               </Button>
 
               {!canSubmit && (
                 <p className="text-xs text-center text-muted-foreground">
-                  {t('booking.selectAllRequired')}
+                  {t("booking.selectAllRequired")}
                 </p>
               )}
             </CardContent>
@@ -727,38 +879,35 @@ export default function NewAppointmentPage() {
               <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
             </div>
             <DialogTitle className="text-center text-xl">
-              {t('secretary.bookingSuccess')}
+              {t("secretary.bookingSuccess")}
             </DialogTitle>
             <DialogDescription className="text-center">
-              {t('booking.bookingSuccessDesc')}
+              {t("booking.bookingSuccessDesc")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {/* Booking Number */}
             <div className="p-4 bg-muted rounded-lg text-center">
               <p className="text-sm text-muted-foreground mb-1">
-                {t('appointments.bookingNumber')}
+                {t("appointments.bookingNumber")}
               </p>
               <p className="font-mono text-lg sm:text-xl font-bold text-primary break-all">
                 {successData?.bookingNumber}
               </p>
             </div>
 
-            {/* Queue Number */}
             <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-center">
               <p className="text-sm text-muted-foreground mb-1">
-                {t('appointments.queueNumber')}
+                {t("appointments.queueNumber")}
               </p>
               <p className="text-3xl font-bold text-primary">
                 {successData?.queueNumber}
               </p>
             </div>
 
-            {/* Tracking Link */}
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground text-center">
-                {t('secretary.trackingLinkHint')}
+                {t("secretary.trackingLinkHint")}
               </p>
               <div className="flex items-center gap-2">
                 <Input
@@ -767,7 +916,12 @@ export default function NewAppointmentPage() {
                   className="font-mono text-xs sm:text-sm"
                   dir="ltr"
                 />
-                <Button variant="outline" size="icon" className="shrink-0" onClick={copyTrackingLink}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="shrink-0"
+                  onClick={copyTrackingLink}
+                >
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
@@ -778,7 +932,7 @@ export default function NewAppointmentPage() {
             <Button asChild className="w-full">
               <a href={trackingUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-4 w-4 me-2" />
-                {t('secretary.openTrackingPage')}
+                {t("secretary.openTrackingPage")}
               </a>
             </Button>
             <Button
@@ -786,10 +940,10 @@ export default function NewAppointmentPage() {
               className="w-full"
               onClick={() => {
                 setSuccessData(null);
-                router.push('/secretary/appointments');
+                router.push("/secretary/appointments");
               }}
             >
-              {t('secretary.goToAppointments')}
+              {t("secretary.goToAppointments")}
             </Button>
           </div>
         </DialogContent>

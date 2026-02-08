@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPatch } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { PaginatedResponse } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPatch } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { PaginatedResponse } from "@/types";
 
 // ==================== Types ====================
 
 export type AppointmentStatus =
-  | 'PENDING'
-  | 'CONFIRMED'
-  | 'CHECKED_IN'
-  | 'IN_PROGRESS'
-  | 'COMPLETED'
-  | 'CANCELLED'
-  | 'NO_SHOW';
+  | "PENDING"
+  | "CONFIRMED"
+  | "CHECKED_IN"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "NO_SHOW";
 
-export type PaymentStatus = 'PENDING' | 'PAID' | 'REFUNDED';
+export type PaymentStatus = "PENDING" | "PAID" | "REFUNDED";
 
 export interface AdminAppointment {
   id: string;
@@ -132,7 +132,7 @@ export function useAdminAppointments(filters: AdminAppointmentFilters = {}) {
 
   return useQuery({
     queryKey: [
-      'admin-appointments',
+      "admin-appointments",
       {
         page,
         limit,
@@ -151,23 +151,23 @@ export function useAdminAppointments(filters: AdminAppointmentFilters = {}) {
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
-      if (clinicId) params.append('clinicId', clinicId);
-      if (doctorProfileId) params.append('doctorProfileId', doctorProfileId);
-      if (patientProfileId) params.append('patientProfileId', patientProfileId);
-      if (status) params.append('status', status);
-      if (paymentStatus) params.append('paymentStatus', paymentStatus);
-      if (date) params.append('date', date);
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
-      if (search) params.append('search', search);
-      if (serviceTypeId) params.append('serviceTypeId', serviceTypeId);
-      if (specialtyId) params.append('specialtyId', specialtyId);
+      if (clinicId) params.append("clinicId", clinicId);
+      if (doctorProfileId) params.append("doctorProfileId", doctorProfileId);
+      if (patientProfileId) params.append("patientProfileId", patientProfileId);
+      if (status) params.append("status", status);
+      if (paymentStatus) params.append("paymentStatus", paymentStatus);
+      if (date) params.append("date", date);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
+      if (search) params.append("search", search);
+      if (serviceTypeId) params.append("serviceTypeId", serviceTypeId);
+      if (specialtyId) params.append("specialtyId", specialtyId);
 
       return apiGet<PaginatedResponse<AdminAppointment>>(
-        `${ADMIN_ENDPOINTS.APPOINTMENTS}?${params.toString()}`
+        `${ADMIN_ENDPOINTS.APPOINTMENTS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 30, // 30 seconds
@@ -176,7 +176,7 @@ export function useAdminAppointments(filters: AdminAppointmentFilters = {}) {
 
 export function useAdminAppointment(id: string) {
   return useQuery({
-    queryKey: ['admin-appointment', id],
+    queryKey: ["admin-appointment", id],
     queryFn: async () => {
       return apiGet<AdminAppointment>(ADMIN_ENDPOINTS.APPOINTMENT(id));
     },
@@ -184,18 +184,20 @@ export function useAdminAppointment(id: string) {
   });
 }
 
-export function useAdminAppointmentStatistics(filters: AdminAppointmentFilters = {}) {
+export function useAdminAppointmentStatistics(
+  filters: AdminAppointmentFilters = {},
+) {
   const { dateFrom, dateTo } = filters;
 
   return useQuery({
-    queryKey: ['admin-appointments-statistics', { dateFrom, dateTo }],
+    queryKey: ["admin-appointments-statistics", { dateFrom, dateTo }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
 
       return apiGet<AppointmentStatistics>(
-        `${ADMIN_ENDPOINTS.APPOINTMENTS_STATISTICS}?${params.toString()}`
+        `${ADMIN_ENDPOINTS.APPOINTMENTS_STATISTICS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 60, // 1 minute
@@ -212,13 +214,18 @@ export function useUpdateAdminAppointment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...data }: UpdateAppointmentData & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...data
+    }: UpdateAppointmentData & { id: string }) => {
       return apiPatch<AdminAppointment>(ADMIN_ENDPOINTS.APPOINTMENT(id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-appointments'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-appointment'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-appointments-statistics'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-appointment"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-appointments-statistics"],
+      });
     },
   });
 }

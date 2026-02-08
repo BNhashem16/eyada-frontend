@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { User } from 'lucide-react';
-import { DoctorProfileForm } from '@/features/doctor-portal/components';
-import { useTranslation } from '@/lib/i18n';
+import { User } from "lucide-react";
+import { DoctorProfileForm } from "@/features/doctor-portal/components";
+import { useTranslation } from "@/lib/i18n";
 
 export default function DoctorProfilePage() {
   const { t } = useTranslation();
@@ -15,8 +15,12 @@ export default function DoctorProfilePage() {
           <User className="h-6 w-6 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('doctor.profilePage.title')}</h1>
-          <p className="text-muted-foreground">{t('doctor.profilePage.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            {t("doctor.profilePage.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("doctor.profilePage.subtitle")}
+          </p>
         </div>
       </div>
 

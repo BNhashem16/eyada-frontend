@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/auth';
-import { toastSuccess, toastError } from '@/hooks/use-toast';
-import { AxiosError } from 'axios';
-import type { ApiError, Role } from '@/types';
-import { useTranslation } from '@/lib/i18n';
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/lib/auth";
+import { toastSuccess, toastError } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
+import type { ApiError, Role } from "@/types";
+import { useTranslation } from "@/lib/i18n";
 
 interface RegisterData {
   email: string;
   password: string;
   fullName: string;
   phoneNumber: string;
-  role?: 'PATIENT' | 'DOCTOR';
+  role?: "PATIENT" | "DOCTOR";
 }
 
 export function useRegister() {
@@ -32,27 +32,27 @@ export function useRegister() {
       // Redirect based on role
       if (currentUser) {
         switch (currentUser.role) {
-          case 'DOCTOR':
+          case "DOCTOR":
             // Show message that doctor needs to complete profile
             toastSuccess(
-              t('auth.registerSuccessTitle'),
-              t('auth.registerSuccessDoctorDesc')
+              t("auth.registerSuccessTitle"),
+              t("auth.registerSuccessDoctorDesc"),
             );
             // Redirect to profile page to complete registration
-            router.push('/doctor/profile');
+            router.push("/doctor/profile");
             break;
-          case 'PATIENT':
+          case "PATIENT":
           default:
             // Show message that patient needs to complete profile
             toastSuccess(
-              t('auth.registerSuccessTitle'),
-              t('auth.registerSuccessPatientDesc')
+              t("auth.registerSuccessTitle"),
+              t("auth.registerSuccessPatientDesc"),
             );
             // Redirect to profile page to complete registration
-            router.push('/patient/profile');
+            router.push("/patient/profile");
         }
       } else {
-        router.push('/');
+        router.push("/");
       }
     },
     onError: (error: AxiosError<ApiError>) => {
@@ -60,22 +60,22 @@ export function useRegister() {
 
       if (!error.response) {
         // Network error or server is down
-        message = t('auth.registerNetworkError');
+        message = t("auth.registerNetworkError");
       } else if (error.response.status === 409) {
-        message = t('auth.registerConflictError');
+        message = t("auth.registerConflictError");
       } else if (error.response.status === 429) {
-        message = t('auth.registerRateLimitError');
+        message = t("auth.registerRateLimitError");
       } else {
         // Handle message that could be string or array
         const errorMessage = error.response.data?.message;
         if (Array.isArray(errorMessage)) {
-          message = errorMessage[0] || t('auth.registerFailedDefault');
+          message = errorMessage[0] || t("auth.registerFailedDefault");
         } else {
-          message = errorMessage || t('auth.registerFailedDefault');
+          message = errorMessage || t("auth.registerFailedDefault");
         }
       }
 
-      toastError(t('auth.registerErrorTitle'), message);
+      toastError(t("auth.registerErrorTitle"), message);
     },
   });
 }

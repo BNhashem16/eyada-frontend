@@ -1,22 +1,24 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { Star, MapPin, Clock, Calendar, ChevronLeft } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { DoctorProfile } from '@/types';
-import { DoctorStatus } from '@/types/enums';
-import { getInitials } from '@/lib/utils';
-import { useTranslation } from '@/lib/i18n';
+import React from "react";
+import Link from "next/link";
+import { Star, MapPin, Clock, Calendar, ChevronLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { DoctorProfile } from "@/types";
+import { DoctorStatus } from "@/types/enums";
+import { getInitials } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 
 interface DoctorCardProps {
   doctor: DoctorProfile;
 }
 
-export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardProps) {
+export const DoctorCard = React.memo(function DoctorCard({
+  doctor,
+}: DoctorCardProps) {
   const { t } = useTranslation();
   const averageRating = doctor.averageRating ?? 0;
   const totalRatings = doctor.totalRatings ?? 0;
@@ -34,7 +36,7 @@ export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardP
                 className="object-cover"
               />
               <AvatarFallback className="rounded-none text-4xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/50 dark:to-primary-800/50 text-primary-700 dark:text-primary-300">
-                {getInitials(doctor.user?.fullName || '')}
+                {getInitials(doctor.user?.fullName || "")}
               </AvatarFallback>
             </Avatar>
             {doctor.status === DoctorStatus.APPROVED && (
@@ -42,7 +44,7 @@ export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardP
                 variant="success"
                 className="absolute top-3 start-3 shadow-md"
               >
-                {t('doctor.verified')}
+                {t("doctor.verified")}
               </Badge>
             )}
           </div>
@@ -54,7 +56,7 @@ export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardP
                 href={`/doctors/${doctor.id}`}
                 className="inline-block text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
-                {t('doctors.doctorPrefix')} {doctor.user?.fullName}
+                {t("doctors.doctorPrefix")} {doctor.user?.fullName}
               </Link>
               <p className="text-sm text-muted-foreground mt-0.5">
                 {doctor.specialty?.name?.ar || doctor.specialty?.name?.en}
@@ -70,7 +72,7 @@ export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardP
                 </span>
               </div>
               <span className="text-sm text-muted-foreground">
-                ({totalRatings} {t('doctor.rating')})
+                ({totalRatings} {t("doctor.rating")})
               </span>
             </div>
 
@@ -80,14 +82,17 @@ export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardP
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
                   <span>
-                    {doctor.clinics[0].city?.name?.ar}, {doctor.clinics[0].city?.state?.name?.ar}
+                    {doctor.clinics[0].city?.name?.ar},{" "}
+                    {doctor.clinics[0].city?.state?.name?.ar}
                   </span>
                 </div>
               )}
               {doctor.yearsOfExperience && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" />
-                  <span>{doctor.yearsOfExperience} {t('doctors.yearsExp')}</span>
+                  <span>
+                    {doctor.yearsOfExperience} {t("doctors.yearsExp")}
+                  </span>
                 </div>
               )}
             </div>
@@ -95,19 +100,27 @@ export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardP
             {/* Price & Book Button */}
             <div className="flex items-center justify-between gap-4 pt-3 border-t border-border">
               <div>
-                {doctor.clinics && doctor.clinics[0]?.serviceTypes?.[0]?.price && (
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">{t('doctor.consultationPrice')} </span>
-                    <span className="font-bold text-primary-600 dark:text-primary-400">
-                      {doctor.clinics[0].serviceTypes[0].price} {t('common.currency')}
-                    </span>
-                  </div>
-                )}
+                {doctor.clinics &&
+                  doctor.clinics[0]?.serviceTypes?.[0]?.price && (
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">
+                        {t("doctor.consultationPrice")}{" "}
+                      </span>
+                      <span className="font-bold text-primary-600 dark:text-primary-400">
+                        {doctor.clinics[0].serviceTypes[0].price}{" "}
+                        {t("common.currency")}
+                      </span>
+                    </div>
+                  )}
               </div>
-              <Button asChild size="sm" className="gap-1 group-hover:gap-2 transition-all">
+              <Button
+                asChild
+                size="sm"
+                className="gap-1 group-hover:gap-2 transition-all"
+              >
                 <Link href={`/doctors/${doctor.id}`}>
                   <Calendar className="h-4 w-4" />
-                  {t('doctor.bookNow')}
+                  {t("doctor.bookNow")}
                   <ChevronLeft className="h-4 w-4" />
                 </Link>
               </Button>

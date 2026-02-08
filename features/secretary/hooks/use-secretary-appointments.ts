@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiPatch } from '@/lib/api';
-import { SECRETARY_ENDPOINTS } from '@/lib/api/endpoints';
-import { Appointment, Clinic, PaginatedResponse } from '@/types';
-import { AppointmentStatus, PaymentStatus } from '@/types/enums';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost, apiPatch } from "@/lib/api";
+import { SECRETARY_ENDPOINTS } from "@/lib/api/endpoints";
+import { Appointment, Clinic, PaginatedResponse } from "@/types";
+import { AppointmentStatus, PaymentStatus } from "@/types/enums";
 
 // Extended filters matching Swagger spec
 export interface UseSecretaryAppointmentsOptions {
@@ -35,20 +35,36 @@ export function useSecretaryAppointments({
   limit = 20,
 }: UseSecretaryAppointmentsOptions = {}) {
   return useQuery({
-    queryKey: ['secretary-appointments', { clinicId, status, paymentStatus, date, dateFrom, dateTo, search, serviceTypeId, upcoming, page, limit }],
+    queryKey: [
+      "secretary-appointments",
+      {
+        clinicId,
+        status,
+        paymentStatus,
+        date,
+        dateFrom,
+        dateTo,
+        search,
+        serviceTypeId,
+        upcoming,
+        page,
+        limit,
+      },
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (clinicId) params.append('clinicId', clinicId);
-      if (status) params.append('status', status);
-      if (paymentStatus) params.append('paymentStatus', paymentStatus);
-      if (date) params.append('date', date);
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
-      if (search) params.append('search', search);
-      if (serviceTypeId) params.append('serviceTypeId', serviceTypeId);
-      if (upcoming !== undefined) params.append('upcoming', upcoming.toString());
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      if (clinicId) params.append("clinicId", clinicId);
+      if (status) params.append("status", status);
+      if (paymentStatus) params.append("paymentStatus", paymentStatus);
+      if (date) params.append("date", date);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
+      if (search) params.append("search", search);
+      if (serviceTypeId) params.append("serviceTypeId", serviceTypeId);
+      if (upcoming !== undefined)
+        params.append("upcoming", upcoming.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
       const url = `${SECRETARY_ENDPOINTS.APPOINTMENTS}?${params.toString()}`;
       return apiGet<PaginatedResponse<Appointment>>(url);
@@ -59,9 +75,11 @@ export function useSecretaryAppointments({
 
 export function useSecretaryAppointment(appointmentId: string) {
   return useQuery({
-    queryKey: ['secretary-appointment', appointmentId],
+    queryKey: ["secretary-appointment", appointmentId],
     queryFn: async () => {
-      return apiGet<Appointment>(SECRETARY_ENDPOINTS.APPOINTMENT(appointmentId));
+      return apiGet<Appointment>(
+        SECRETARY_ENDPOINTS.APPOINTMENT(appointmentId),
+      );
     },
     enabled: !!appointmentId,
     staleTime: 1000 * 30,
@@ -70,7 +88,7 @@ export function useSecretaryAppointment(appointmentId: string) {
 
 export function useSecretaryClinics() {
   return useQuery({
-    queryKey: ['secretary-clinics'],
+    queryKey: ["secretary-clinics"],
     queryFn: async () => {
       return apiGet<Clinic[]>(SECRETARY_ENDPOINTS.CLINICS);
     },
@@ -98,7 +116,7 @@ export function useCreateAppointment() {
       return apiPost<Appointment>(SECRETARY_ENDPOINTS.APPOINTMENTS, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['secretary-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ["secretary-appointments"] });
     },
   });
 }
@@ -116,15 +134,18 @@ export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ appointmentId, ...data }: UpdateAppointmentStatusData) => {
+    mutationFn: async ({
+      appointmentId,
+      ...data
+    }: UpdateAppointmentStatusData) => {
       return apiPatch<Appointment>(
         SECRETARY_ENDPOINTS.APPOINTMENT_STATUS(appointmentId),
-        data
+        data,
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['secretary-appointments'] });
-      queryClient.invalidateQueries({ queryKey: ['secretary-appointment'] });
+      queryClient.invalidateQueries({ queryKey: ["secretary-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["secretary-appointment"] });
     },
   });
 }
@@ -132,7 +153,7 @@ export function useUpdateAppointmentStatus() {
 interface UpdatePaymentData {
   appointmentId: string;
   paymentStatus: PaymentStatus;
-  paymentMethod?: 'CASH' | 'CARD' | 'INSURANCE';
+  paymentMethod?: "CASH" | "CARD" | "INSURANCE";
 }
 
 export function useUpdatePayment() {
@@ -142,12 +163,12 @@ export function useUpdatePayment() {
     mutationFn: async ({ appointmentId, ...data }: UpdatePaymentData) => {
       return apiPatch<Appointment>(
         SECRETARY_ENDPOINTS.APPOINTMENT_PAYMENT(appointmentId),
-        data
+        data,
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['secretary-appointments'] });
-      queryClient.invalidateQueries({ queryKey: ['secretary-appointment'] });
+      queryClient.invalidateQueries({ queryKey: ["secretary-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["secretary-appointment"] });
     },
   });
 }

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   User,
   Mail,
@@ -10,12 +10,12 @@ import {
   XCircle,
   Frown,
   Loader2,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,29 +25,34 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useAdminDoctors, useApproveDoctor, useRejectDoctor } from '../hooks';
-import { DoctorStatus } from '@/types/enums';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { getInitials } from '@/lib/utils';
-import { PaginationControls } from '@/components/ui/pagination-controls';
-import { useTranslation } from '@/lib/i18n';
+} from "@/components/ui/alert-dialog";
+import { useAdminDoctors, useApproveDoctor, useRejectDoctor } from "../hooks";
+import { DoctorStatus } from "@/types/enums";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { getInitials } from "@/lib/utils";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
 
 export function PendingDoctorsList() {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const { data: doctors, isLoading, isError, error } = useAdminDoctors({ status: DoctorStatus.PENDING, page, limit });
+  const {
+    data: doctors,
+    isLoading,
+    isError,
+    error,
+  } = useAdminDoctors({ status: DoctorStatus.PENDING, page, limit });
   const approveDoctor = useApproveDoctor();
   const rejectDoctor = useRejectDoctor();
 
   const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
-  const [action, setAction] = useState<'approve' | 'reject' | null>(null);
+  const [action, setAction] = useState<"approve" | "reject" | null>(null);
 
   const handleAction = () => {
     if (!selectedDoctor || !action) return;
 
-    if (action === 'approve') {
+    if (action === "approve") {
       approveDoctor.mutate(selectedDoctor, {
         onSuccess: () => {
           setSelectedDoctor(null);
@@ -94,10 +99,10 @@ export function PendingDoctorsList() {
       <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
           <p className="text-error-600 dark:text-error-400">
-            {t('admin.loadError')}
+            {t("admin.loadError")}
           </p>
           <p className="text-sm text-error-500 dark:text-error-400 mt-2">
-            {error instanceof Error ? error.message : t('common.unknownError')}
+            {error instanceof Error ? error.message : t("common.unknownError")}
           </p>
         </CardContent>
       </Card>
@@ -113,10 +118,10 @@ export function PendingDoctorsList() {
         <CardContent className="py-16 text-center">
           <CheckCircle className="h-16 w-16 mx-auto text-green-300 dark:text-green-700 mb-4" />
           <h3 className="text-lg font-semibold text-foreground mb-2">
-            {t('admin.noPendingRequests')}
+            {t("admin.noPendingRequests")}
           </h3>
           <p className="text-muted-foreground">
-            {t('admin.allRequestsReviewed')}
+            {t("admin.allRequestsReviewed")}
           </p>
         </CardContent>
       </Card>
@@ -142,10 +147,10 @@ export function PendingDoctorsList() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-lg font-semibold text-foreground">
-                      {t('auth.doctor')}. {doctor.user.fullName}
+                      {t("auth.doctor")}. {doctor.user.fullName}
                     </h3>
                     <Badge variant="outline">
-                      {getLocalizedText(doctor.specialty.name, 'ar')}
+                      {getLocalizedText(doctor.specialty.name, "ar")}
                     </Badge>
                   </div>
 
@@ -161,20 +166,20 @@ export function PendingDoctorsList() {
                     {doctor.licenseNumber && (
                       <span className="flex items-center gap-2">
                         <Award className="h-4 w-4" />
-                        {t('doctors.licenseNumber')}: {doctor.licenseNumber}
+                        {t("doctors.licenseNumber")}: {doctor.licenseNumber}
                       </span>
                     )}
                     {doctor.yearsOfExperience && (
                       <span className="flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        {doctor.yearsOfExperience} {t('doctors.yearsExp')}
+                        {doctor.yearsOfExperience} {t("doctors.yearsExp")}
                       </span>
                     )}
                   </div>
 
                   {doctor.bio && (
                     <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                      {getLocalizedText(doctor.bio, 'ar')}
+                      {getLocalizedText(doctor.bio, "ar")}
                     </p>
                   )}
                 </div>
@@ -184,23 +189,23 @@ export function PendingDoctorsList() {
                   <Button
                     onClick={() => {
                       setSelectedDoctor(doctor.id);
-                      setAction('approve');
+                      setAction("approve");
                     }}
                     className="bg-green-600 hover:bg-green-700"
                   >
                     <CheckCircle className="h-4 w-4 me-2" />
-                    {t('admin.approve')}
+                    {t("admin.approve")}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => {
                       setSelectedDoctor(doctor.id);
-                      setAction('reject');
+                      setAction("reject");
                     }}
                     className="text-error-600 border-error-300 hover:bg-error-50 dark:hover:bg-error-900/20"
                   >
                     <XCircle className="h-4 w-4 me-2" />
-                    {t('admin.reject')}
+                    {t("admin.reject")}
                   </Button>
                 </div>
               </div>
@@ -209,7 +214,16 @@ export function PendingDoctorsList() {
         ))}
       </div>
 
-      <PaginationControls meta={meta} page={page} onPageChange={setPage} limit={limit} onLimitChange={(v) => { setLimit(v); setPage(1); }} />
+      <PaginationControls
+        meta={meta}
+        page={page}
+        onPageChange={setPage}
+        limit={limit}
+        onLimitChange={(v) => {
+          setLimit(v);
+          setPage(1);
+        }}
+      />
 
       {/* Confirmation Dialog */}
       <AlertDialog
@@ -222,25 +236,31 @@ export function PendingDoctorsList() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {action === 'approve' ? t('admin.confirmApprove') : t('admin.confirmReject')}
+              {action === "approve"
+                ? t("admin.confirmApprove")
+                : t("admin.confirmReject")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {action === 'approve'
-                ? t('admin.approveMessage')
-                : t('admin.rejectMessage')}
+              {action === "approve"
+                ? t("admin.approveMessage")
+                : t("admin.rejectMessage")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleAction}
-              className={action === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-error-600 hover:bg-error-700'}
+              className={
+                action === "approve"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-error-600 hover:bg-error-700"
+              }
               disabled={approveDoctor.isPending || rejectDoctor.isPending}
             >
               {(approveDoctor.isPending || rejectDoctor.isPending) && (
                 <Loader2 className="h-4 w-4 me-2 animate-spin" />
               )}
-              {action === 'approve' ? t('admin.approve') : t('admin.reject')}
+              {action === "approve" ? t("admin.approve") : t("admin.reject")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

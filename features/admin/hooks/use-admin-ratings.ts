@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPatch, apiDelete } from '@/lib/api';
-import { ADMIN_ENDPOINTS } from '@/lib/api/endpoints';
-import { PaginatedResponse } from '@/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPatch, apiDelete } from "@/lib/api";
+import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import { PaginatedResponse } from "@/types";
 
 // ==================== Types ====================
 
@@ -81,7 +81,7 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
 
   return useQuery({
     queryKey: [
-      'admin-ratings',
+      "admin-ratings",
       {
         page,
         limit,
@@ -96,19 +96,20 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', limit.toString());
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
 
-      if (search) params.append('search', search);
-      if (doctorProfileId) params.append('doctorProfileId', doctorProfileId);
-      if (patientProfileId) params.append('patientProfileId', patientProfileId);
-      if (rating) params.append('rating', rating.toString());
-      if (isVisible !== undefined) params.append('isVisible', isVisible.toString());
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
+      if (search) params.append("search", search);
+      if (doctorProfileId) params.append("doctorProfileId", doctorProfileId);
+      if (patientProfileId) params.append("patientProfileId", patientProfileId);
+      if (rating) params.append("rating", rating.toString());
+      if (isVisible !== undefined)
+        params.append("isVisible", isVisible.toString());
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
 
       return apiGet<PaginatedResponse<AdminRating>>(
-        `${ADMIN_ENDPOINTS.RATINGS}?${params.toString()}`
+        `${ADMIN_ENDPOINTS.RATINGS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 30, // 30 seconds
@@ -117,7 +118,7 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
 
 export function useAdminRating(id: string) {
   return useQuery({
-    queryKey: ['admin-rating', id],
+    queryKey: ["admin-rating", id],
     queryFn: async () => {
       return apiGet<AdminRating>(ADMIN_ENDPOINTS.RATING(id));
     },
@@ -129,14 +130,14 @@ export function useAdminRatingStatistics(filters: AdminRatingFilters = {}) {
   const { dateFrom, dateTo } = filters;
 
   return useQuery({
-    queryKey: ['admin-ratings-statistics', { dateFrom, dateTo }],
+    queryKey: ["admin-ratings-statistics", { dateFrom, dateTo }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
 
       return apiGet<RatingStatistics>(
-        `${ADMIN_ENDPOINTS.RATINGS_STATISTICS}?${params.toString()}`
+        `${ADMIN_ENDPOINTS.RATINGS_STATISTICS}?${params.toString()}`,
       );
     },
     staleTime: 1000 * 60, // 1 minute
@@ -155,9 +156,9 @@ export function useUpdateAdminRating() {
       return apiPatch<AdminRating>(ADMIN_ENDPOINTS.RATING(id), data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-ratings'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-rating'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-ratings-statistics'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-ratings"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-rating"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-ratings-statistics"] });
     },
   });
 }
@@ -170,8 +171,8 @@ export function useDeleteAdminRating() {
       return apiDelete(ADMIN_ENDPOINTS.RATING(id));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-ratings'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-ratings-statistics'] });
+      queryClient.invalidateQueries({ queryKey: ["admin-ratings"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-ratings-statistics"] });
     },
   });
 }

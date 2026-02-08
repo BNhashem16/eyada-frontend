@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { usePatientProfile } from '@/features/patients/hooks/use-patient';
-import { useDoctorProfile } from '@/features/doctor-portal/hooks/use-doctor-portal';
-import { Role, DoctorStatus, PatientStatus } from '@/types';
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { usePatientProfile } from "@/features/patients/hooks/use-patient";
+import { useDoctorProfile } from "@/features/doctor-portal/hooks/use-doctor-portal";
+import { Role, DoctorStatus, PatientStatus } from "@/types";
 
 interface ProfileCompletionGuardProps {
   children: React.ReactNode;
   role: Role;
 }
 
-export function ProfileCompletionGuard({ children, role }: ProfileCompletionGuardProps) {
+export function ProfileCompletionGuard({
+  children,
+  role,
+}: ProfileCompletionGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -24,7 +27,7 @@ export function ProfileCompletionGuard({ children, role }: ProfileCompletionGuar
 
   useEffect(() => {
     // Skip if already on profile page
-    if (pathname.includes('/profile')) {
+    if (pathname.includes("/profile")) {
       return;
     }
 
@@ -34,13 +37,13 @@ export function ProfileCompletionGuard({ children, role }: ProfileCompletionGuar
 
       // Check if patient profile doesn't exist or is incomplete
       if (!patientProfile.data) {
-        router.push('/patient/profile');
+        router.push("/patient/profile");
       } else {
         const profile = patientProfile.data;
         const isIncomplete = !profile.dateOfBirth || !profile.gender;
         // Redirect to profile if incomplete OR if pending approval
         if (isIncomplete || profile.status === PatientStatus.PENDING) {
-          router.push('/patient/profile');
+          router.push("/patient/profile");
         }
       }
     }
@@ -51,11 +54,11 @@ export function ProfileCompletionGuard({ children, role }: ProfileCompletionGuar
 
       // Check if doctor profile doesn't exist
       if (!doctorProfile.data) {
-        router.push('/doctor/profile');
+        router.push("/doctor/profile");
       } else {
         // Redirect to profile if pending approval
         if (doctorProfile.data.status === DoctorStatus.PENDING) {
-          router.push('/doctor/profile');
+          router.push("/doctor/profile");
         }
       }
     }

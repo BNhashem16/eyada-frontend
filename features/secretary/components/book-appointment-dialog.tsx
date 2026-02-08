@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
+import React, { useState, useEffect } from "react";
+import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 import {
   CalendarIcon,
   Clock,
@@ -13,83 +13,94 @@ import {
   AlertCircle,
   Building2,
   Stethoscope,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils/multilingual';
-import { useSecretaryClinics, useCreateAppointment } from '../hooks';
-import { useClinicServices, useClinicAvailableSlots } from '@/features/clinics/hooks/use-clinics';
-import { formatTime, utcTimeToLocal } from '@/lib/utils/date';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { useSecretaryClinics, useCreateAppointment } from "../hooks";
+import {
+  useClinicServices,
+  useClinicAvailableSlots,
+} from "@/features/clinics/hooks/use-clinics";
+import { formatTime, utcTimeToLocal } from "@/lib/utils/date";
 
 interface BookAppointmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDialogProps) {
+export function BookAppointmentDialog({
+  open,
+  onOpenChange,
+}: BookAppointmentDialogProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
 
   // Form state
-  const [selectedClinic, setSelectedClinic] = useState<string>('');
-  const [selectedService, setSelectedService] = useState<string>('');
+  const [selectedClinic, setSelectedClinic] = useState<string>("");
+  const [selectedService, setSelectedService] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [selectedTime, setSelectedTime] = useState<string>('');
-  const [patientProfileId, setPatientProfileId] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
-  const [symptoms, setSymptoms] = useState<string>('');
+  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [patientProfileId, setPatientProfileId] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
+  const [symptoms, setSymptoms] = useState<string>("");
 
   // Data fetching
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
-  const { data: services, isLoading: servicesLoading } = useClinicServices(selectedClinic);
+  const { data: services, isLoading: servicesLoading } =
+    useClinicServices(selectedClinic);
   const { data: slots, isLoading: slotsLoading } = useClinicAvailableSlots(
     selectedClinic,
-    selectedDate ? format(selectedDate, 'yyyy-MM-dd') : ''
+    selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
   );
 
   const createAppointment = useCreateAppointment();
 
   // Reset dependent fields when parent selection changes
   useEffect(() => {
-    setSelectedService('');
+    setSelectedService("");
     setSelectedDate(undefined);
-    setSelectedTime('');
+    setSelectedTime("");
   }, [selectedClinic]);
 
   useEffect(() => {
-    setSelectedTime('');
+    setSelectedTime("");
   }, [selectedDate]);
 
   // Reset form when dialog closes
   useEffect(() => {
     if (!open) {
-      setSelectedClinic('');
-      setSelectedService('');
+      setSelectedClinic("");
+      setSelectedService("");
       setSelectedDate(undefined);
-      setSelectedTime('');
-      setPatientProfileId('');
-      setNotes('');
-      setSymptoms('');
+      setSelectedTime("");
+      setPatientProfileId("");
+      setNotes("");
+      setSymptoms("");
     }
   }, [open]);
 
@@ -110,25 +121,26 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
       await createAppointment.mutateAsync({
         clinicId: selectedClinic,
         serviceTypeId: selectedService,
-        appointmentDate: `${format(selectedDate!, 'yyyy-MM-dd')}T${selectedTime}`,
+        appointmentDate: `${format(selectedDate!, "yyyy-MM-dd")}T${selectedTime}`,
         patientProfileId: patientProfileId.trim(),
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
       });
 
       toast({
-        title: t('toast.success'),
-        description: t('secretary.bookingSuccess'),
-        variant: 'success',
+        title: t("toast.success"),
+        description: t("secretary.bookingSuccess"),
+        variant: "success",
       });
 
       onOpenChange(false);
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.somethingWentWrong');
+      const errorMessage =
+        error instanceof Error ? error.message : t("errors.somethingWentWrong");
       toast({
-        title: t('toast.error'),
+        title: t("toast.error"),
         description: errorMessage,
-        variant: 'error',
+        variant: "error",
       });
     }
   };
@@ -139,10 +151,10 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5 text-primary-600" />
-            {t('secretary.bookAppointment')}
+            {t("secretary.bookAppointment")}
           </DialogTitle>
           <DialogDescription>
-            {t('secretary.bookAppointmentDesc')}
+            {t("secretary.bookAppointmentDesc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -151,22 +163,24 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <User className="h-4 w-4" />
-              {t('secretary.patientInfo')}
+              {t("secretary.patientInfo")}
             </h3>
             <div className="space-y-2">
-              <Label htmlFor="patientProfileId">{t('secretary.patientProfileId')}</Label>
+              <Label htmlFor="patientProfileId">
+                {t("secretary.patientProfileId")}
+              </Label>
               <div className="relative">
                 <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="patientProfileId"
                   value={patientProfileId}
                   onChange={(e) => setPatientProfileId(e.target.value)}
-                  placeholder={t('secretary.patientProfileIdPlaceholder')}
+                  placeholder={t("secretary.patientProfileIdPlaceholder")}
                   className="ps-9"
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                {t('secretary.patientProfileIdHint')}
+                {t("secretary.patientProfileIdHint")}
               </p>
             </div>
           </div>
@@ -176,41 +190,53 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
           {/* Clinic Selection */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground">
-              {t('secretary.clinicAndService')}
+              {t("secretary.clinicAndService")}
             </h3>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>{t('secretary.selectClinic')}</Label>
+                <Label>{t("secretary.selectClinic")}</Label>
                 <SearchableSelect
-                  options={clinics?.map((clinic) => ({
-                    value: clinic.id,
-                    label: getLocalizedText(clinic.name, 'ar'),
-                    icon: <Building2 className="h-4 w-4" />,
-                  })) || []}
+                  options={
+                    clinics?.map((clinic) => ({
+                      value: clinic.id,
+                      label: getLocalizedText(clinic.name, "ar"),
+                      icon: <Building2 className="h-4 w-4" />,
+                    })) || []
+                  }
                   value={selectedClinic}
                   onValueChange={setSelectedClinic}
-                  placeholder={t('secretary.selectClinic')}
-                  searchPlaceholder={t('common.search')}
-                  emptyMessage={t('common.noResults')}
+                  placeholder={t("secretary.selectClinic")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={t("common.noResults")}
                   loading={clinicsLoading}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>{t('secretary.selectService')}</Label>
+                <Label>{t("secretary.selectService")}</Label>
                 <SearchableSelect
-                  options={services?.filter((s) => s.isActive).map((service) => ({
-                    value: service.id,
-                    label: `${getLocalizedText(service.name, 'ar')} - ${service.price} ${t('common.egp')}`,
-                    description: service.duration ? `${service.duration} ${t('services.minute')}` : undefined,
-                    icon: <Stethoscope className="h-4 w-4" />,
-                  })) || []}
+                  options={
+                    services
+                      ?.filter((s) => s.isActive)
+                      .map((service) => ({
+                        value: service.id,
+                        label: `${getLocalizedText(service.name, "ar")} - ${service.price} ${t("common.egp")}`,
+                        description: service.duration
+                          ? `${service.duration} ${t("services.minute")}`
+                          : undefined,
+                        icon: <Stethoscope className="h-4 w-4" />,
+                      })) || []
+                  }
                   value={selectedService}
                   onValueChange={setSelectedService}
-                  placeholder={t('secretary.selectService')}
-                  searchPlaceholder={t('common.search')}
-                  emptyMessage={servicesLoading ? t('common.loading') : t('clinics.noServicesAvailable')}
+                  placeholder={t("secretary.selectService")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={
+                    servicesLoading
+                      ? t("common.loading")
+                      : t("clinics.noServicesAvailable")
+                  }
                   disabled={!selectedClinic}
                   loading={servicesLoading}
                 />
@@ -221,16 +247,18 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
               <Card className="bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800">
                 <CardContent className="p-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{t('secretary.selectedService')}:</span>
+                    <span className="text-muted-foreground">
+                      {t("secretary.selectedService")}:
+                    </span>
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">
-                        {getLocalizedText(selectedServiceData.name, 'ar')}
+                        {getLocalizedText(selectedServiceData.name, "ar")}
                       </Badge>
                       <Badge className="bg-primary-600">
-                        {selectedServiceData.price} {t('common.egp')}
+                        {selectedServiceData.price} {t("common.egp")}
                       </Badge>
                       <Badge variant="outline">
-                        {selectedServiceData.duration} {t('services.minute')}
+                        {selectedServiceData.duration} {t("services.minute")}
                       </Badge>
                     </div>
                   </div>
@@ -245,26 +273,26 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <CalendarIcon className="h-4 w-4" />
-              {t('secretary.dateAndTime')}
+              {t("secretary.dateAndTime")}
             </h3>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>{t('secretary.selectDate')}</Label>
+                <Label>{t("secretary.selectDate")}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className={cn(
-                        'w-full justify-start',
-                        !selectedDate && 'text-muted-foreground'
+                        "w-full justify-start",
+                        !selectedDate && "text-muted-foreground",
                       )}
                       disabled={!selectedClinic}
                     >
                       <CalendarIcon className="me-2 h-4 w-4" />
                       {selectedDate
-                        ? format(selectedDate, 'dd MMMM yyyy', { locale: ar })
-                        : t('secretary.selectDate')}
+                        ? format(selectedDate, "dd MMMM yyyy", { locale: ar })
+                        : t("secretary.selectDate")}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -272,7 +300,9 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
                       mode="single"
                       selected={selectedDate}
                       onSelect={setSelectedDate}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      disabled={(date) =>
+                        date < new Date(new Date().setHours(0, 0, 0, 0))
+                      }
                       initialFocus
                     />
                   </PopoverContent>
@@ -280,7 +310,7 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
               </div>
 
               <div className="space-y-2">
-                <Label>{t('secretary.selectTime')}</Label>
+                <Label>{t("secretary.selectTime")}</Label>
                 <SearchableSelect
                   options={availableSlots.map((slot) => ({
                     value: slot.time,
@@ -289,8 +319,8 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
                   }))}
                   value={selectedTime}
                   onValueChange={setSelectedTime}
-                  placeholder={t('secretary.selectTime')}
-                  emptyMessage={t('clinics.noSlotsAvailable')}
+                  placeholder={t("secretary.selectTime")}
+                  emptyMessage={t("clinics.noSlotsAvailable")}
                   disabled={!selectedDate || !selectedClinic}
                   loading={slotsLoading}
                   showSearch={availableSlots.length > 6}
@@ -304,33 +334,41 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
           {/* Additional Notes */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground">
-              {t('secretary.additionalInfo')}
+              {t("secretary.additionalInfo")}
             </h3>
 
             <div className="space-y-2">
-              <Label htmlFor="symptoms">{t('appointments.symptoms')}</Label>
+              <Label htmlFor="symptoms">{t("appointments.symptoms")}</Label>
               <Textarea
                 id="symptoms"
                 value={symptoms}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setSymptoms(e.target.value)}
-                placeholder={t('secretary.symptomsPlaceholder')}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setSymptoms(e.target.value)
+                }
+                placeholder={t("secretary.symptomsPlaceholder")}
                 rows={2}
                 maxLength={500}
               />
-              <p className="text-xs text-muted-foreground text-end mt-1">{symptoms.length}/500</p>
+              <p className="text-xs text-muted-foreground text-end mt-1">
+                {symptoms.length}/500
+              </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">{t('appointments.notes')}</Label>
+              <Label htmlFor="notes">{t("appointments.notes")}</Label>
               <Textarea
                 id="notes"
                 value={notes}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
-                placeholder={t('secretary.notesPlaceholder')}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setNotes(e.target.value)
+                }
+                placeholder={t("secretary.notesPlaceholder")}
                 rows={2}
                 maxLength={500}
               />
-              <p className="text-xs text-muted-foreground text-end mt-1">{notes.length}/500</p>
+              <p className="text-xs text-muted-foreground text-end mt-1">
+                {notes.length}/500
+              </p>
             </div>
           </div>
 
@@ -340,15 +378,22 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
               <AlertDescription>
                 <div className="text-sm space-y-1">
                   <p className="font-medium text-success-800 dark:text-success-400">
-                    {t('secretary.bookingSummary')}
+                    {t("secretary.bookingSummary")}
                   </p>
                   <div className="text-success-700 dark:text-success-500">
-                    <span>{getLocalizedText(clinics?.find(c => c.id === selectedClinic)?.name, 'ar')}</span>
-                    {' - '}
-                    <span>{getLocalizedText(selectedServiceData?.name, 'ar')}</span>
-                    {' - '}
-                    <span>{format(selectedDate!, 'dd/MM/yyyy')}</span>
-                    {' - '}
+                    <span>
+                      {getLocalizedText(
+                        clinics?.find((c) => c.id === selectedClinic)?.name,
+                        "ar",
+                      )}
+                    </span>
+                    {" - "}
+                    <span>
+                      {getLocalizedText(selectedServiceData?.name, "ar")}
+                    </span>
+                    {" - "}
+                    <span>{format(selectedDate!, "dd/MM/yyyy")}</span>
+                    {" - "}
                     <span dir="ltr">{formatTime(selectedTime)}</span>
                   </div>
                 </div>
@@ -360,7 +405,7 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {t('common.cancel')}
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -369,12 +414,12 @@ export function BookAppointmentDialog({ open, onOpenChange }: BookAppointmentDia
             {createAppointment.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin me-2" />
-                {t('common.loading')}
+                {t("common.loading")}
               </>
             ) : (
               <>
                 <Plus className="h-4 w-4 me-2" />
-                {t('secretary.confirmBooking')}
+                {t("secretary.confirmBooking")}
               </>
             )}
           </Button>

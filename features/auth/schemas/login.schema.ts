@@ -1,18 +1,18 @@
-import { z } from 'zod';
-import { getTranslation, type Locale } from '@/lib/i18n';
+import { z } from "zod";
+import { getTranslation, type Locale } from "@/lib/i18n";
 
-export const createLoginSchema = (locale: Locale = 'ar') => {
+export const createLoginSchema = (locale: Locale = "ar") => {
   const t = (key: string) => getTranslation(key, locale);
 
   return z.object({
     email: z
       .string()
-      .min(1, t('validation.emailRequired'))
-      .email(t('validation.emailInvalid')),
+      .min(1, t("validation.emailRequired"))
+      .email(t("validation.emailInvalid")),
     password: z
       .string()
-      .min(1, t('validation.passwordRequired'))
-      .min(8, t('validation.passwordMinLength')),
+      .min(1, t("validation.passwordRequired"))
+      .min(8, t("validation.passwordMinLength")),
   });
 };
 

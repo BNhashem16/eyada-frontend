@@ -102,9 +102,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"phoneNumber\": \"01012345678\",\n  \"password\": \"password123\",\n  \"fullName\": \"Ahmed Mohamed\",\n  \"role\": \"PATIENT\"\n}"
@@ -143,9 +141,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
@@ -178,9 +174,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
@@ -197,9 +191,7 @@
           "name": "Logout",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
@@ -229,9 +221,7 @@
           "name": "Change Password",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"currentPassword\": \"oldPassword123\",\n  \"newPassword\": \"newPassword123\"\n}"
@@ -277,15 +267,58 @@
                   "host": ["{{base_url}}"],
                   "path": ["doctors"],
                   "query": [
-                    { "key": "page", "value": "1", "description": "Page number (min: 1)" },
-                    { "key": "limit", "value": "20", "description": "Items per page (1-100)" },
-                    { "key": "specialtyId", "value": "", "description": "Filter by specialty UUID", "disabled": true },
-                    { "key": "cityId", "value": "", "description": "Filter by city UUID", "disabled": true },
-                    { "key": "stateId", "value": "", "description": "Filter by state UUID", "disabled": true },
-                    { "key": "search", "value": "", "description": "Search by doctor name", "disabled": true },
-                    { "key": "minRating", "value": "", "description": "Minimum rating (0-5)", "disabled": true },
-                    { "key": "priceMin", "value": "", "description": "Minimum price", "disabled": true },
-                    { "key": "priceMax", "value": "", "description": "Maximum price", "disabled": true }
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Page number (min: 1)"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20",
+                      "description": "Items per page (1-100)"
+                    },
+                    {
+                      "key": "specialtyId",
+                      "value": "",
+                      "description": "Filter by specialty UUID",
+                      "disabled": true
+                    },
+                    {
+                      "key": "cityId",
+                      "value": "",
+                      "description": "Filter by city UUID",
+                      "disabled": true
+                    },
+                    {
+                      "key": "stateId",
+                      "value": "",
+                      "description": "Filter by state UUID",
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": "",
+                      "description": "Search by doctor name",
+                      "disabled": true
+                    },
+                    {
+                      "key": "minRating",
+                      "value": "",
+                      "description": "Minimum rating (0-5)",
+                      "disabled": true
+                    },
+                    {
+                      "key": "priceMin",
+                      "value": "",
+                      "description": "Minimum price",
+                      "disabled": true
+                    },
+                    {
+                      "key": "priceMax",
+                      "value": "",
+                      "description": "Maximum price",
+                      "disabled": true
+                    }
                   ]
                 },
                 "description": "Search doctors with filters and pagination.\n\n**Public endpoint** - No authentication required"
@@ -302,7 +335,11 @@
                   "host": ["{{base_url}}"],
                   "path": ["doctors", ":id"],
                   "variable": [
-                    { "key": "id", "value": "{{doctor_id}}", "description": "Doctor profile UUID" }
+                    {
+                      "key": "id",
+                      "value": "{{doctor_id}}",
+                      "description": "Doctor profile UUID"
+                    }
                   ]
                 },
                 "description": "Get doctor public profile by ID.\n\n**Public endpoint** - No authentication required"
@@ -570,9 +607,7 @@
                   "raw": "{{base_url}}/patients/family/:id",
                   "host": ["{{base_url}}"],
                   "path": ["patients", "family", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{family_member_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{family_member_id}}" }]
                 },
                 "description": "Get a specific family member by ID.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
               }
@@ -592,9 +627,7 @@
                   "raw": "{{base_url}}/patients/family/:id",
                   "host": ["{{base_url}}"],
                   "path": ["patients", "family", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{family_member_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{family_member_id}}" }]
                 },
                 "description": "Update a family member.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
               }
@@ -608,9 +641,7 @@
                   "raw": "{{base_url}}/patients/family/:id",
                   "host": ["{{base_url}}"],
                   "path": ["patients", "family", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{family_member_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{family_member_id}}" }]
                 },
                 "description": "Remove a family member.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
               }
@@ -688,9 +719,7 @@
                   "raw": "{{base_url}}/clinics/:id",
                   "host": ["{{base_url}}"],
                   "path": ["clinics", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{clinic_id}}" }]
                 },
                 "description": "Get clinic details by ID.\n\n**Public endpoint** - No authentication required"
               }
@@ -757,9 +786,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:id",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{clinic_id}}" }]
                 },
                 "description": "Get clinic details by ID.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -779,9 +806,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:id",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{clinic_id}}" }]
                 },
                 "description": "Update clinic information.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -795,9 +820,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:id/toggle-active",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":id", "toggle-active"],
-                  "variable": [
-                    { "key": "id", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{clinic_id}}" }]
                 },
                 "description": "Toggle clinic active status.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -811,9 +834,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:id",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{clinic_id}}" }]
                 },
                 "description": "Delete a clinic.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -839,9 +860,7 @@
                   "raw": "{{base_url}}/clinics/:clinicId/schedules",
                   "host": ["{{base_url}}"],
                   "path": ["clinics", ":clinicId", "schedules"],
-                  "variable": [
-                    { "key": "clinicId", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "clinicId", "value": "{{clinic_id}}" }]
                 },
                 "description": "Get clinic weekly schedule.\n\n**Public endpoint** - No authentication required"
               }
@@ -857,11 +876,13 @@
                   "host": ["{{base_url}}"],
                   "path": ["clinics", ":clinicId", "available-slots"],
                   "query": [
-                    { "key": "date", "value": "2026-02-15", "description": "Date in YYYY-MM-DD format" }
+                    {
+                      "key": "date",
+                      "value": "2026-02-15",
+                      "description": "Date in YYYY-MM-DD format"
+                    }
                   ],
-                  "variable": [
-                    { "key": "clinicId", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "clinicId", "value": "{{clinic_id}}" }]
                 },
                 "description": "Get available time slots for a specific date.\n\n**Public endpoint** - No authentication required\n\n**Required query:**\n- date: YYYY-MM-DD format"
               }
@@ -880,9 +901,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":clinicId", "schedules"],
-                  "variable": [
-                    { "key": "clinicId", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "clinicId", "value": "{{clinic_id}}" }]
                 },
                 "description": "Get all schedules for a clinic.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -918,9 +937,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":clinicId", "schedules"],
-                  "variable": [
-                    { "key": "clinicId", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "clinicId", "value": "{{clinic_id}}" }]
                 },
                 "description": "Create a new schedule entry.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- dayOfWeek: SUNDAY-SATURDAY\n\n**Optional:**\n- startTime/endTime (HH:mm) OR shifts array\n- shifts: [{startTime, endTime, breakTime?}]\n- slotDuration: 5-120 minutes\n- maxPatients: min 1\n- isActive: boolean"
               }
@@ -939,7 +956,13 @@
                 "url": {
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules/:scheduleId",
                   "host": ["{{base_url}}"],
-                  "path": ["doctors", "clinics", ":clinicId", "schedules", ":scheduleId"],
+                  "path": [
+                    "doctors",
+                    "clinics",
+                    ":clinicId",
+                    "schedules",
+                    ":scheduleId"
+                  ],
                   "variable": [
                     { "key": "clinicId", "value": "{{clinic_id}}" },
                     { "key": "scheduleId", "value": "{{schedule_id}}" }
@@ -956,7 +979,13 @@
                 "url": {
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/schedules/:scheduleId",
                   "host": ["{{base_url}}"],
-                  "path": ["doctors", "clinics", ":clinicId", "schedules", ":scheduleId"],
+                  "path": [
+                    "doctors",
+                    "clinics",
+                    ":clinicId",
+                    "schedules",
+                    ":scheduleId"
+                  ],
                   "variable": [
                     { "key": "clinicId", "value": "{{clinic_id}}" },
                     { "key": "scheduleId", "value": "{{schedule_id}}" }
@@ -986,9 +1015,7 @@
                   "raw": "{{base_url}}/clinics/:clinicId/services",
                   "host": ["{{base_url}}"],
                   "path": ["clinics", ":clinicId", "services"],
-                  "variable": [
-                    { "key": "clinicId", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "clinicId", "value": "{{clinic_id}}" }]
                 },
                 "description": "Get all active services for a clinic.\n\n**Public endpoint** - No authentication required"
               }
@@ -1007,9 +1034,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/services",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":clinicId", "services"],
-                  "variable": [
-                    { "key": "clinicId", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "clinicId", "value": "{{clinic_id}}" }]
                 },
                 "description": "Get all services for a clinic.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -1045,9 +1070,7 @@
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/services",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "clinics", ":clinicId", "services"],
-                  "variable": [
-                    { "key": "clinicId", "value": "{{clinic_id}}" }
-                  ]
+                  "variable": [{ "key": "clinicId", "value": "{{clinic_id}}" }]
                 },
                 "description": "Create a new service type.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- serviceType: FIRST_VISIT, RE_VISIT, CONSULTATION_PHONE, CONSULTATION_VIDEO\n- price: 0-100000\n\n**Optional:**\n- name: {ar, en}\n- duration: 1-240 minutes\n- reVisitValidityDays\n- isActive"
               }
@@ -1060,7 +1083,13 @@
                 "url": {
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId",
                   "host": ["{{base_url}}"],
-                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId"],
+                  "path": [
+                    "doctors",
+                    "clinics",
+                    ":clinicId",
+                    "services",
+                    ":serviceId"
+                  ],
                   "variable": [
                     { "key": "clinicId", "value": "{{clinic_id}}" },
                     { "key": "serviceId", "value": "{{service_id}}" }
@@ -1083,7 +1112,13 @@
                 "url": {
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId",
                   "host": ["{{base_url}}"],
-                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId"],
+                  "path": [
+                    "doctors",
+                    "clinics",
+                    ":clinicId",
+                    "services",
+                    ":serviceId"
+                  ],
                   "variable": [
                     { "key": "clinicId", "value": "{{clinic_id}}" },
                     { "key": "serviceId", "value": "{{service_id}}" }
@@ -1100,7 +1135,14 @@
                 "url": {
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId/toggle-active",
                   "host": ["{{base_url}}"],
-                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId", "toggle-active"],
+                  "path": [
+                    "doctors",
+                    "clinics",
+                    ":clinicId",
+                    "services",
+                    ":serviceId",
+                    "toggle-active"
+                  ],
                   "variable": [
                     { "key": "clinicId", "value": "{{clinic_id}}" },
                     { "key": "serviceId", "value": "{{service_id}}" }
@@ -1117,7 +1159,13 @@
                 "url": {
                   "raw": "{{base_url}}/doctors/clinics/:clinicId/services/:serviceId",
                   "host": ["{{base_url}}"],
-                  "path": ["doctors", "clinics", ":clinicId", "services", ":serviceId"],
+                  "path": [
+                    "doctors",
+                    "clinics",
+                    ":clinicId",
+                    "services",
+                    ":serviceId"
+                  ],
                   "variable": [
                     { "key": "clinicId", "value": "{{clinic_id}}" },
                     { "key": "serviceId", "value": "{{service_id}}" }
@@ -1149,8 +1197,18 @@
                   "query": [
                     { "key": "page", "value": "1" },
                     { "key": "limit", "value": "20" },
-                    { "key": "status", "value": "", "disabled": true, "description": "PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW" },
-                    { "key": "paymentStatus", "value": "", "disabled": true, "description": "PENDING, PAID, REFUNDED" },
+                    {
+                      "key": "status",
+                      "value": "",
+                      "disabled": true,
+                      "description": "PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW"
+                    },
+                    {
+                      "key": "paymentStatus",
+                      "value": "",
+                      "disabled": true,
+                      "description": "PENDING, PAID, REFUNDED"
+                    },
                     { "key": "dateFrom", "value": "", "disabled": true },
                     { "key": "dateTo", "value": "", "disabled": true },
                     { "key": "clinicId", "value": "", "disabled": true },
@@ -1206,9 +1264,7 @@
                   "raw": "{{base_url}}/patients/appointments/:id",
                   "host": ["{{base_url}}"],
                   "path": ["patients", "appointments", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Get appointment details by ID.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
               }
@@ -1228,9 +1284,7 @@
                   "raw": "{{base_url}}/patients/appointments/:id/cancel",
                   "host": ["{{base_url}}"],
                   "path": ["patients", "appointments", ":id", "cancel"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Cancel an appointment.\n\n**Requires:** JWT Bearer Token (PATIENT role)\n\n**Optional body:**\n- reason: Cancellation reason"
               }
@@ -1244,9 +1298,7 @@
                   "raw": "{{base_url}}/patients/appointments/:id/medical-notes",
                   "host": ["{{base_url}}"],
                   "path": ["patients", "appointments", ":id", "medical-notes"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Get medical notes for an appointment.\n\n**Requires:** JWT Bearer Token (PATIENT role)"
               }
@@ -1291,9 +1343,7 @@
                   "raw": "{{base_url}}/doctors/appointments/:id",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "appointments", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Get appointment details by ID.\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -1313,9 +1363,7 @@
                   "raw": "{{base_url}}/doctors/appointments/:id/status",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "appointments", ":id", "status"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Update appointment status.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- status: PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW\n\n**Optional:**\n- cancellationReason: max 500 chars (for CANCELLED)"
               }
@@ -1335,9 +1383,7 @@
                   "raw": "{{base_url}}/doctors/appointments/:id/medical-notes",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "appointments", ":id", "medical-notes"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Update medical notes (encrypted storage).\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Optional fields (max 2000 chars each):**\n- diagnosis, prescription, notes"
               }
@@ -1351,9 +1397,7 @@
                   "raw": "{{base_url}}/doctors/appointments/:id/medical-notes",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "appointments", ":id", "medical-notes"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Get medical notes (decrypted).\n\n**Requires:** JWT Bearer Token (DOCTOR role)"
               }
@@ -1373,9 +1417,7 @@
                   "raw": "{{base_url}}/doctors/appointments/:id/payment",
                   "host": ["{{base_url}}"],
                   "path": ["doctors", "appointments", ":id", "payment"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Update payment status.\n\n**Requires:** JWT Bearer Token (DOCTOR role)\n\n**Required:**\n- paymentStatus: PENDING, PAID, REFUNDED\n\n**Optional:**\n- paymentMethod: CASH, CARD, INSURANCE"
               }
@@ -1450,9 +1492,7 @@
                   "raw": "{{base_url}}/secretary/appointments/:id",
                   "host": ["{{base_url}}"],
                   "path": ["secretary", "appointments", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Get appointment details by ID.\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
               }
@@ -1472,9 +1512,7 @@
                   "raw": "{{base_url}}/secretary/appointments/:id/status",
                   "host": ["{{base_url}}"],
                   "path": ["secretary", "appointments", ":id", "status"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Update appointment status (limited).\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
               }
@@ -1494,9 +1532,7 @@
                   "raw": "{{base_url}}/secretary/appointments/:id/payment",
                   "host": ["{{base_url}}"],
                   "path": ["secretary", "appointments", ":id", "payment"],
-                  "variable": [
-                    { "key": "id", "value": "{{appointment_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{appointment_id}}" }]
                 },
                 "description": "Update payment status.\n\n**Requires:** JWT Bearer Token (SECRETARY role)"
               }
@@ -1563,9 +1599,7 @@
                   "raw": "{{base_url}}/specialties/:id",
                   "host": ["{{base_url}}"],
                   "path": ["specialties", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{specialty_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{specialty_id}}" }]
                 },
                 "description": "Get specialty by ID.\n\n**Public endpoint** - No authentication required"
               }
@@ -1605,9 +1639,7 @@
                   "raw": "{{base_url}}/states/:id",
                   "host": ["{{base_url}}"],
                   "path": ["states", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{state_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{state_id}}" }]
                 },
                 "description": "Get state by ID.\n\n**Public endpoint** - No authentication required"
               }
@@ -1634,7 +1666,12 @@
                   "host": ["{{base_url}}"],
                   "path": ["cities"],
                   "query": [
-                    { "key": "stateId", "value": "", "disabled": true, "description": "Filter by state UUID" }
+                    {
+                      "key": "stateId",
+                      "value": "",
+                      "disabled": true,
+                      "description": "Filter by state UUID"
+                    }
                   ]
                 },
                 "description": "Get all active cities, optionally filter by state.\n\n**Public endpoint** - No authentication required"
@@ -1650,9 +1687,7 @@
                   "raw": "{{base_url}}/cities/:id",
                   "host": ["{{base_url}}"],
                   "path": ["cities", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{city_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{city_id}}" }]
                 },
                 "description": "Get city by ID.\n\n**Public endpoint** - No authentication required"
               }
@@ -1680,7 +1715,12 @@
                   "query": [
                     { "key": "page", "value": "1" },
                     { "key": "limit", "value": "20" },
-                    { "key": "status", "value": "", "disabled": true, "description": "PENDING, APPROVED, REJECTED, SUSPENDED" },
+                    {
+                      "key": "status",
+                      "value": "",
+                      "disabled": true,
+                      "description": "PENDING, APPROVED, REJECTED, SUSPENDED"
+                    },
                     { "key": "specialtyId", "value": "", "disabled": true },
                     { "key": "cityId", "value": "", "disabled": true },
                     { "key": "stateId", "value": "", "disabled": true },
@@ -1788,9 +1828,7 @@
                   "raw": "{{base_url}}/admin/specialties/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "specialties", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{specialty_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{specialty_id}}" }]
                 },
                 "description": "Get specialty by ID.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -1845,9 +1883,7 @@
                   "raw": "{{base_url}}/admin/specialties/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "specialties", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{specialty_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{specialty_id}}" }]
                 },
                 "description": "Update specialty.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -1861,9 +1897,7 @@
                   "raw": "{{base_url}}/admin/specialties/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "specialties", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{specialty_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{specialty_id}}" }]
                 },
                 "description": "Delete specialty.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -1895,9 +1929,7 @@
                   "raw": "{{base_url}}/admin/states/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "states", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{state_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{state_id}}" }]
                 },
                 "description": "Get state by ID.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -1952,9 +1984,7 @@
                   "raw": "{{base_url}}/admin/states/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "states", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{state_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{state_id}}" }]
                 },
                 "description": "Update state.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -1968,9 +1998,7 @@
                   "raw": "{{base_url}}/admin/states/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "states", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{state_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{state_id}}" }]
                 },
                 "description": "Delete state (soft delete if has cities).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -1989,9 +2017,7 @@
                   "raw": "{{base_url}}/admin/cities",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "cities"],
-                  "query": [
-                    { "key": "stateId", "value": "", "disabled": true }
-                  ]
+                  "query": [{ "key": "stateId", "value": "", "disabled": true }]
                 },
                 "description": "Get all cities (active and inactive).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -2005,9 +2031,7 @@
                   "raw": "{{base_url}}/admin/cities/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "cities", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{city_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{city_id}}" }]
                 },
                 "description": "Get city by ID.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -2062,9 +2086,7 @@
                   "raw": "{{base_url}}/admin/cities/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "cities", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{city_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{city_id}}" }]
                 },
                 "description": "Update city.\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }
@@ -2078,9 +2100,7 @@
                   "raw": "{{base_url}}/admin/cities/:id",
                   "host": ["{{base_url}}"],
                   "path": ["admin", "cities", ":id"],
-                  "variable": [
-                    { "key": "id", "value": "{{city_id}}" }
-                  ]
+                  "variable": [{ "key": "id", "value": "{{city_id}}" }]
                 },
                 "description": "Delete city (soft delete if has clinics).\n\n**Requires:** JWT Bearer Token (ADMIN role)"
               }

@@ -1,1 +1,1 @@
-export * from './use-locations';
+export * from "./use-locations";

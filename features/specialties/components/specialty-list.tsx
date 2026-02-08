@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Frown } from 'lucide-react';
-import { SpecialtyCard } from './specialty-card';
-import { useSpecialties } from '../hooks/use-specialties';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
-import { useTranslation } from '@/lib/i18n';
+import { Frown } from "lucide-react";
+import { SpecialtyCard } from "./specialty-card";
+import { useSpecialties } from "../hooks/use-specialties";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/lib/i18n";
 
 export function SpecialtyList() {
   const { t } = useTranslation();
@@ -34,10 +34,10 @@ export function SpecialtyList() {
       <Card className="border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20">
         <CardContent className="py-10 text-center">
           <p className="text-error-600 dark:text-error-400">
-            {t('specialtiesList.loadError')}
+            {t("specialtiesList.loadError")}
           </p>
           <p className="text-sm text-error-500 dark:text-error-400 mt-2">
-            {error instanceof Error ? error.message : t('common.unknownError')}
+            {error instanceof Error ? error.message : t("common.unknownError")}
           </p>
         </CardContent>
       </Card>
@@ -51,10 +51,10 @@ export function SpecialtyList() {
         <CardContent className="py-16 text-center">
           <Frown className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
           <h3 className="text-lg font-semibold text-foreground mb-2">
-            {t('specialtiesList.noSpecialties')}
+            {t("specialtiesList.noSpecialties")}
           </h3>
           <p className="text-muted-foreground">
-            {t('specialtiesList.comingSoon')}
+            {t("specialtiesList.comingSoon")}
           </p>
         </CardContent>
       </Card>

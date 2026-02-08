@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useCallback, useMemo } from 'react';
-import ar from './ar.json';
-import en from './en.json';
-import { defaultLocale, type Locale } from './config';
-import { getNestedValue, type TranslationKey } from './get-translation';
+import { useCallback, useMemo } from "react";
+import ar from "./ar.json";
+import en from "./en.json";
+import { defaultLocale, type Locale } from "./config";
+import { getNestedValue, type TranslationKey } from "./get-translation";
 
 // Try to import useLanguage, but provide fallback for SSR
 let useLanguageHook: (() => { locale: Locale }) | null = null;
 try {
   // Dynamic import to avoid SSR issues
-  const { useLanguage } = require('@/components/providers/language-provider');
+  const { useLanguage } = require("@/components/providers/language-provider");
   useLanguageHook = useLanguage;
 } catch {
   // Fallback if provider not available
@@ -49,8 +49,14 @@ export function useTranslation(overrideLocale?: Locale) {
    * @returns The translated string or the key if not found
    */
   const t = useCallback(
-    (key: TranslationKey | string, params?: Record<string, string | number>): string => {
-      let value = getNestedValue(currentTranslations as Record<string, unknown>, key);
+    (
+      key: TranslationKey | string,
+      params?: Record<string, string | number>,
+    ): string => {
+      let value = getNestedValue(
+        currentTranslations as Record<string, unknown>,
+        key,
+      );
 
       if (!value) {
         // Fallback to Arabic if not found
@@ -65,20 +71,22 @@ export function useTranslation(overrideLocale?: Locale) {
       // Interpolate parameters
       if (params) {
         Object.entries(params).forEach(([paramKey, paramValue]) => {
-          value = value!.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));
+          value = value!.replace(
+            new RegExp(`\\{${paramKey}\\}`, "g"),
+            String(paramValue),
+          );
         });
       }
 
       return value;
     },
-    [currentTranslations]
+    [currentTranslations],
   );
 
   return {
     t,
     locale,
-    isRtl: locale === 'ar',
-    dir: locale === 'ar' ? 'rtl' : 'ltr',
+    isRtl: locale === "ar",
+    dir: locale === "ar" ? "rtl" : "ltr",
   };
 }
-

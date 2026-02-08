@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { LayoutDashboard } from 'lucide-react';
-import { AdminDashboardStats, PendingDoctorsList } from '@/features/admin';
-import { useTranslation } from '@/lib/i18n';
+import { LayoutDashboard } from "lucide-react";
+import { AdminDashboardStats, PendingDoctorsList } from "@/features/admin";
+import { useTranslation } from "@/lib/i18n";
 
 export default function AdminDashboardPage() {
   const { t } = useTranslation();
@@ -16,8 +16,12 @@ export default function AdminDashboardPage() {
             <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('admin.dashboard')}</h1>
-            <p className="text-muted-foreground">{t('admin.dashboardSubtitle')}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              {t("admin.dashboard")}
+            </h1>
+            <p className="text-muted-foreground">
+              {t("admin.dashboardSubtitle")}
+            </p>
           </div>
         </div>
       </div>
@@ -28,7 +32,7 @@ export default function AdminDashboardPage() {
       {/* Pending Doctors */}
       <div>
         <h2 className="text-lg font-semibold text-foreground mb-4">
-          {t('admin.pendingDoctors')}
+          {t("admin.pendingDoctors")}
         </h2>
         <PendingDoctorsList />
       </div>
