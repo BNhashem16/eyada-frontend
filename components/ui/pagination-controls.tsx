@@ -44,7 +44,7 @@ export function PaginationControls({
   if (!meta || meta.total === 0) return null;
 
   return (
-    <div className="flex items-center justify-between gap-4 mt-4 flex-wrap">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
       {/* Rows per page */}
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground whitespace-nowrap">
@@ -54,10 +54,10 @@ export function PaginationControls({
           value={limit.toString()}
           onValueChange={(value) => onLimitChange(Number(value))}
         >
-          <SelectTrigger className="h-8 w-[70px]">
+          <SelectTrigger className="h-9 w-[70px]">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent side="top">
             {limitOptions.map((opt) => (
               <SelectItem key={opt} value={opt.toString()}>
                 {opt}
@@ -75,7 +75,7 @@ export function PaginationControls({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="h-9 w-9"
           disabled={!meta.hasPreviousPage}
           onClick={() => onPageChange(page - 1)}
         >
@@ -84,7 +84,7 @@ export function PaginationControls({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="h-9 w-9"
           disabled={!meta.hasNextPage}
           onClick={() => onPageChange(page + 1)}
         >

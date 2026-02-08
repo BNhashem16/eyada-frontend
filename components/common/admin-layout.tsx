@@ -180,7 +180,7 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-6">{children}</main>
+        <main className="flex-1 min-w-0 overflow-x-auto p-4 lg:p-6">{children}</main>
       </div>
     </div>
   );

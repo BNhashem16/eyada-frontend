@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   Calendar,
-  Clock,
+
   User,
   Phone,
   Mail,
@@ -37,7 +37,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
 import { AppointmentStatus, PaymentStatus } from '@/types/enums';
-import { formatDate, formatTime } from '@/lib/utils/date';
+import { formatDate } from '@/lib/utils/date';
 import { getInitials } from '@/lib/utils';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 
@@ -250,20 +250,13 @@ export function DoctorAppointmentDetails({ appointmentId }: AppointmentDetailsPr
             </div>
           </div>
 
-          {/* Date & Time */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+          {/* Date */}
+          <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
             <div className="flex items-center gap-3">
               <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               <div>
                 <p className="text-sm text-muted-foreground">{t('appointments.date')}</p>
-                <p className="font-semibold">{formatDate(appointmentDateStr, 'EEEE, d MMMM yyyy')}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-              <div>
-                <p className="text-sm text-muted-foreground">{t('appointments.time')}</p>
-                <p className="font-semibold" dir="ltr">{formatTime(appointment.appointmentTime)}</p>
+                <p className="font-semibold text-foreground">{formatDate(appointmentDateStr, 'EEEE, d MMMM yyyy')}</p>
               </div>
             </div>
           </div>
