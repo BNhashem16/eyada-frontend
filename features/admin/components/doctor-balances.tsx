@@ -262,6 +262,7 @@ export function DoctorBalances() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                inputMode="search"
                 className="flex-1"
               />
               <Button variant="outline" size="icon" onClick={handleSearch}>
@@ -446,6 +447,7 @@ export function DoctorBalances() {
               <Label>{t('admin.collections.amount')} *</Label>
               <Input
                 type="number"
+                inputMode="decimal"
                 min="0"
                 max={paymentData.balance}
                 value={paymentData.amount}

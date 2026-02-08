@@ -391,6 +391,7 @@ export function DoctorProfileForm() {
               <Input
                 id="yearsOfExperience"
                 type="number"
+                inputMode="numeric"
                 min={0}
                 max={70}
                 placeholder="0"

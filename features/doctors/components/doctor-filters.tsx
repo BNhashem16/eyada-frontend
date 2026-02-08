@@ -122,6 +122,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleSearchKeyDown}
           onBlur={handleSearch}
+          inputMode="search"
           icon={<Search className="h-5 w-5" />}
           iconPosition="start"
           className="bg-background flex-1"
@@ -207,6 +208,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
         <div className="flex gap-2">
           <Input
             type="number"
+            inputMode="decimal"
             placeholder={t('common.from')}
             value={priceMinInput}
             onChange={(e) => setPriceMinInput(e.target.value)}
@@ -215,6 +217,7 @@ export function DoctorFiltersComponent({ filters, onFiltersChange }: DoctorFilte
           />
           <Input
             type="number"
+            inputMode="decimal"
             placeholder={t('common.to')}
             value={priceMaxInput}
             onChange={(e) => setPriceMaxInput(e.target.value)}

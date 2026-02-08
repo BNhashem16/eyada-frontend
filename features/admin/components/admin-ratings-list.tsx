@@ -266,6 +266,7 @@ export function AdminRatingsList() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                inputMode="search"
                 className="max-w-sm"
               />
               <Button variant="outline" size="icon" onClick={handleSearch}>

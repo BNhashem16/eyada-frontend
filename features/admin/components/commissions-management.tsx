@@ -230,6 +230,7 @@ export function CommissionsManagement() {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  inputMode="search"
                   className="w-48"
                 />
                 <Button variant="outline" size="icon" onClick={handleSearch}>
@@ -409,6 +410,7 @@ export function CommissionsManagement() {
               </Label>
               <Input
                 type="number"
+                inputMode="decimal"
                 min="0"
                 step={formData.commissionType === 'FIXED' ? '1' : '0.1'}
                 value={formData.commissionValue}

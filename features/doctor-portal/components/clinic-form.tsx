@@ -374,6 +374,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               <Input
                 id="latitude"
                 type="number"
+                inputMode="decimal"
                 step="any"
                 {...register('latitude')}
                 placeholder="30.0444"
@@ -395,6 +396,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               <Input
                 id="longitude"
                 type="number"
+                inputMode="decimal"
                 step="any"
                 {...register('longitude')}
                 placeholder="31.2357"

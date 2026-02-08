@@ -216,6 +216,7 @@ export function AdminSecretariesList() {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  inputMode="search"
                   className="max-w-sm"
                 />
                 <Button variant="outline" size="icon" onClick={handleSearch}>
@@ -490,6 +491,8 @@ export function AdminSecretariesList() {
             <div>
               <Label>{t('admin.secretaries.phone')}</Label>
               <Input
+                type="tel"
+                dir="ltr"
                 value={formData.phoneNumber}
                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                 placeholder={t('admin.secretaries.phonePlaceholder')}

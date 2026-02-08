@@ -503,6 +503,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
               <Label>{t('admin.collections.amount')} *</Label>
               <Input
                 type="number"
+                inputMode="decimal"
                 min="0"
                 max={report.balance}
                 value={paymentData.amount}

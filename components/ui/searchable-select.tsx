@@ -326,6 +326,7 @@ export function SearchableSelect({
                 setSearchQuery(e.target.value);
                 setActiveIndex(-1);
               }}
+              inputMode="search"
               className="h-8 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-sm placeholder:text-muted-foreground"
             />
             {searchQuery && (

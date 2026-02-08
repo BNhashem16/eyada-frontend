@@ -257,6 +257,7 @@ export function AdminClinicsList() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                inputMode="search"
                 className="flex-1"
               />
               <Button variant="outline" size="icon" onClick={handleSearch}>

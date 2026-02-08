@@ -339,6 +339,7 @@ export function ScheduleManager({
                     </Label>
                     <Input
                       type="number"
+                      inputMode="numeric"
                       min={1}
                       value={schedule.maxPatients ?? ''}
                       onChange={(e) => handleMaxPatientsChange(index, e.target.value)}

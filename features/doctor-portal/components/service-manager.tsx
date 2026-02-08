@@ -355,6 +355,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 <Input
                   id="price"
                   type="number"
+                  inputMode="decimal"
                   {...register('price', { valueAsNumber: true })}
                   placeholder="0"
                   error={!!errors.price}
@@ -367,6 +368,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 <Input
                   id="durationMinutes"
                   type="number"
+                  inputMode="numeric"
                   {...register('durationMinutes', { valueAsNumber: true })}
                   placeholder="30"
                   error={!!errors.durationMinutes}
@@ -386,6 +388,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                 <Input
                   id="reVisitValidityDays"
                   type="number"
+                  inputMode="numeric"
                   {...register('reVisitValidityDays', { valueAsNumber: true })}
                   placeholder="14"
                 />
