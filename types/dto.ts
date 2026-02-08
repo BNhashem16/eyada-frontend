@@ -176,9 +176,10 @@ export interface CreateAppointmentDto {
 export interface CreateSecretaryAppointmentDto {
   clinicId: string; // UUID, required
   serviceTypeId: string; // UUID, required
-  appointmentDate: string; // YYYY-MM-DD format, required (per Swagger)
-  appointmentTime?: string; // HH:mm format, optional
-  patientProfileId: string; // UUID, required for secretary
+  appointmentDate: string; // YYYY-MM-DD format, required
+  patientName: string; // 2-100 chars, required
+  patientDateOfBirth: string; // YYYY-MM-DD format, required
+  patientPhone?: string; // optional
   notes?: string; // maxLength: 500
   symptoms?: string; // maxLength: 500
 }

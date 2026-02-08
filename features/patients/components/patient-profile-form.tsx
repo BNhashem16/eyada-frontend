@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { DatePickerInput } from "@/components/ui/date-picker-input";
+import { DateOfBirthInput } from "@/components/ui/date-of-birth-input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   usePatientProfile,
@@ -283,11 +283,9 @@ function PatientProfileFormContent({
               name="dateOfBirth"
               control={control}
               render={({ field }) => (
-                <DatePickerInput
+                <DateOfBirthInput
                   value={field.value || ""}
                   onChange={field.onChange}
-                  placeholder={t("patient.dateOfBirth")}
-                  disableAfter={new Date()}
                 />
               )}
             />

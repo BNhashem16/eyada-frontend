@@ -16,7 +16,6 @@ import {
   Copy,
   ExternalLink,
   Clock,
-  Users,
   ChevronLeft,
   ChevronRight,
   Phone,
@@ -26,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { DateOfBirthInput } from "@/components/ui/date-of-birth-input";
 import {
   Card,
   CardContent,
@@ -110,8 +110,6 @@ export default function NewAppointmentPage() {
   const [patientName, setPatientName] = useState<string>("");
   const [patientDateOfBirth, setPatientDateOfBirth] = useState<string>("");
   const [patientPhone, setPatientPhone] = useState<string>("");
-  const [patientSearch, setPatientSearch] = useState<string>("");
-  const [showSearch, setShowSearch] = useState(false);
   const [notes, setNotes] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string>("");
 
@@ -148,8 +146,8 @@ export default function NewAppointmentPage() {
     useClinicServices(selectedClinic);
   const { data: patientsData, isLoading: patientsLoading } =
     useSecretaryPatients({
-      search: patientSearch,
-      limit: 10,
+      search: patientName.trim().length >= 2 ? patientName.trim() : "",
+      limit: 5,
     });
   const { data: schedules, isLoading: schedulesLoading } =
     useSecretaryClinicSchedules(selectedClinic);
@@ -245,8 +243,6 @@ export default function NewAppointmentPage() {
     setPatientName(name);
     if (dob) setPatientDateOfBirth(dob.split("T")[0]);
     if (phone) setPatientPhone(phone);
-    setPatientSearch("");
-    setShowSearch(false);
   };
 
   return (
@@ -304,175 +300,115 @@ export default function NewAppointmentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Patient Name */}
+              {/* Patient Name with inline search */}
               <div className="space-y-2">
                 <Label>{t("patient.fullName")} *</Label>
-                <div className="flex gap-2">
+                <div className="relative">
+                  <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value)}
-                    placeholder={t("patient.fullName")}
-                    className="flex-1"
+                    placeholder={t("secretary.searchOrEnterName")}
+                    className="ps-9"
                     maxLength={100}
                   />
-                  <Button
-                    type="button"
-                    variant={showSearch ? "default" : "outline"}
-                    size="icon"
-                    className="shrink-0"
-                    onClick={() => setShowSearch(!showSearch)}
-                    title={t("secretary.searchPatient")}
-                  >
-                    <Search className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
 
-              {/* Search Existing Patients */}
-              {showSearch && (
-                <div className="space-y-2">
-                  <div className="relative">
-                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      value={patientSearch}
-                      onChange={(e) => setPatientSearch(e.target.value)}
-                      placeholder={t("placeholder.searchPatient")}
-                      className="ps-9"
-                      autoFocus
-                    />
-                  </div>
-
-                  {patientSearch && (
-                    <div className="border rounded-lg max-h-60 overflow-y-auto">
-                      {patientsLoading ? (
-                        <div className="p-4 text-center">
-                          <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
-                        </div>
-                      ) : patients.length === 0 ? (
-                        <div className="p-4 text-center text-muted-foreground">
-                          {t("common.noResults")}
-                        </div>
-                      ) : (
-                        patients.map((patient) => (
-                          <div
-                            key={patient.id}
-                            className="border-b last:border-b-0"
-                          >
-                            {/* Main Patient */}
-                            <button
-                              type="button"
-                              className="w-full p-3 text-start hover:bg-muted/50 transition-colors flex items-center gap-3"
-                              onClick={() =>
-                                fillFromPatient(
-                                  patient.user?.fullName || "",
-                                  patient.dateOfBirth,
-                                  patient.user?.phoneNumber,
-                                )
-                              }
-                            >
-                              <div className="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center shrink-0">
-                                <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <p className="font-medium truncate">
-                                    {patient.user?.fullName ||
-                                      t("common.unknown")}
-                                  </p>
-                                  {patient.familyMembers &&
-                                    patient.familyMembers.length > 0 && (
-                                      <Badge
-                                        variant="secondary"
-                                        className="text-xs shrink-0"
-                                      >
-                                        <Users className="h-3 w-3 me-1" />
-                                        {patient.familyMembers.length}
-                                      </Badge>
-                                    )}
-                                </div>
-                                <p className="text-sm text-muted-foreground truncate">
-                                  {patient.user?.phoneNumber || "-"}
-                                  {patient.dateOfBirth && (
-                                    <>
-                                      {" "}
-                                      • {calculateAge(patient.dateOfBirth)}{" "}
-                                      {t("family.yearsOld")}
-                                    </>
-                                  )}
-                                </p>
-                              </div>
-                            </button>
-
-                            {/* Family Members */}
-                            {patient.familyMembers &&
-                              patient.familyMembers.length > 0 && (
-                                <div className="bg-muted/30 border-t">
-                                  {patient.familyMembers.map((member) => (
-                                    <button
-                                      key={member.id}
-                                      type="button"
-                                      className="w-full p-3 ps-12 text-start hover:bg-muted/50 transition-colors flex items-center gap-3 border-t border-dashed first:border-t-0"
-                                      onClick={() =>
-                                        fillFromPatient(
-                                          member.fullName ||
-                                            member.user?.fullName ||
-                                            "",
-                                          member.dateOfBirth,
-                                          patient.user?.phoneNumber,
-                                        )
-                                      }
-                                    >
-                                      <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                                        <User className="h-3.5 w-3.5 text-muted-foreground" />
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                          <p className="text-sm font-medium truncate">
-                                            {member.fullName ||
-                                              member.user?.fullName ||
-                                              t("common.unknown")}
-                                          </p>
-                                          <Badge
-                                            variant="outline"
-                                            className="text-xs shrink-0"
-                                          >
-                                            {member.relationshipToHead
-                                              ? t(
-                                                  `family.${member.relationshipToHead.toLowerCase()}`,
-                                                )
-                                              : member.relationship
-                                                ? t(
-                                                    `family.${member.relationship.toLowerCase()}`,
-                                                  )
-                                                : t("secretary.familyMember")}
-                                          </Badge>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground truncate">
-                                          {member.dateOfBirth && (
-                                            <>
-                                              {calculateAge(member.dateOfBirth)}{" "}
-                                              {t("family.yearsOld")}
-                                            </>
-                                          )}
-                                          {member.gender && (
-                                            <>
-                                              {" "}
-                                              •{" "}
-                                              {member.gender === "MALE"
-                                                ? t("patient.male")
-                                                : t("patient.female")}
-                                            </>
-                                          )}
-                                        </p>
-                                      </div>
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
-                          </div>
-                        ))
-                      )}
+              {/* Search Results - show when typing 2+ chars and results exist */}
+              {patientName.trim().length >= 2 && (patientsLoading || patients.length > 0) && (
+                <div className="border rounded-lg max-h-48 overflow-y-auto">
+                  {patientsLoading ? (
+                    <div className="p-3 text-center">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto text-muted-foreground" />
                     </div>
+                  ) : (
+                    patients.map((patient) => (
+                      <div
+                        key={patient.id}
+                        className="border-b last:border-b-0"
+                      >
+                        <button
+                          type="button"
+                          className="w-full p-2.5 text-start hover:bg-muted/50 transition-colors flex items-center gap-3"
+                          onClick={() =>
+                            fillFromPatient(
+                              patient.user?.fullName || "",
+                              patient.dateOfBirth,
+                              patient.user?.phoneNumber,
+                            )
+                          }
+                        >
+                          <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center shrink-0">
+                            <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm truncate">
+                              {patient.user?.fullName || t("common.unknown")}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {patient.user?.phoneNumber || "-"}
+                              {patient.dateOfBirth && (
+                                <>
+                                  {" "}• {calculateAge(patient.dateOfBirth)}{" "}
+                                  {t("family.yearsOld")}
+                                </>
+                              )}
+                            </p>
+                          </div>
+                        </button>
+
+                        {/* Family Members */}
+                        {patient.familyMembers &&
+                          patient.familyMembers.length > 0 && (
+                            <div className="bg-muted/30 border-t">
+                              {patient.familyMembers.map((member) => (
+                                <button
+                                  key={member.id}
+                                  type="button"
+                                  className="w-full p-2.5 ps-12 text-start hover:bg-muted/50 transition-colors flex items-center gap-2 border-t border-dashed first:border-t-0"
+                                  onClick={() =>
+                                    fillFromPatient(
+                                      member.fullName ||
+                                        member.user?.fullName ||
+                                        "",
+                                      member.dateOfBirth,
+                                      patient.user?.phoneNumber,
+                                    )
+                                  }
+                                >
+                                  <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                    <User className="h-3 w-3 text-muted-foreground" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <p className="text-xs font-medium truncate">
+                                        {member.fullName ||
+                                          member.user?.fullName ||
+                                          t("common.unknown")}
+                                      </p>
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[10px] shrink-0 px-1.5 py-0"
+                                      >
+                                        {member.relationshipToHead
+                                          ? t(
+                                              `family.${member.relationshipToHead.toLowerCase()}`,
+                                            )
+                                          : member.relationship
+                                            ? t(
+                                                `family.${member.relationship.toLowerCase()}`,
+                                              )
+                                            : t("secretary.familyMember")}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                      </div>
+                    ))
                   )}
                 </div>
               )}
@@ -481,12 +417,9 @@ export default function NewAppointmentPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>{t("patient.dateOfBirth")} *</Label>
-                  <Input
-                    type="date"
+                  <DateOfBirthInput
                     value={patientDateOfBirth}
-                    onChange={(e) => setPatientDateOfBirth(e.target.value)}
-                    max={new Date().toISOString().split("T")[0]}
-                    dir="ltr"
+                    onChange={(val) => setPatientDateOfBirth(val)}
                   />
                 </div>
                 <div className="space-y-2">

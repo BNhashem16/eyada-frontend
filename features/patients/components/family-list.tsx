@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { DatePickerInput } from "@/components/ui/date-picker-input";
+import { DateOfBirthInput } from "@/components/ui/date-of-birth-input";
 import {
   Dialog,
   DialogContent,
@@ -502,13 +502,11 @@ export function FamilyList() {
             {/* Date of Birth */}
             <div className="space-y-2">
               <Label>{t("family.dateOfBirth")}</Label>
-              <DatePickerInput
+              <DateOfBirthInput
                 value={watch("dateOfBirth") || ""}
                 onChange={(val) =>
                   setValue("dateOfBirth", val, { shouldDirty: true })
                 }
-                placeholder={t("family.dateOfBirth")}
-                disableAfter={new Date()}
               />
             </div>
 

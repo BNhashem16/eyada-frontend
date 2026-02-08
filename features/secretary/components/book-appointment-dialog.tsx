@@ -8,9 +8,7 @@ import {
   Clock,
   User,
   Loader2,
-  Search,
   Plus,
-  AlertCircle,
   Building2,
   Stethoscope,
 } from "lucide-react";
@@ -26,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { DateOfBirthInput } from "@/components/ui/date-of-birth-input";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -65,7 +64,9 @@ export function BookAppointmentDialog({
   const [selectedService, setSelectedService] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const [patientProfileId, setPatientProfileId] = useState<string>("");
+  const [patientName, setPatientName] = useState<string>("");
+  const [patientDateOfBirth, setPatientDateOfBirth] = useState<string>("");
+  const [patientPhone, setPatientPhone] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string>("");
 
@@ -98,7 +99,9 @@ export function BookAppointmentDialog({
       setSelectedService("");
       setSelectedDate(undefined);
       setSelectedTime("");
-      setPatientProfileId("");
+      setPatientName("");
+      setPatientDateOfBirth("");
+      setPatientPhone("");
       setNotes("");
       setSymptoms("");
     }
@@ -112,7 +115,8 @@ export function BookAppointmentDialog({
     selectedService &&
     selectedDate &&
     selectedTime &&
-    patientProfileId.trim();
+    patientName.trim() &&
+    patientDateOfBirth;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -121,8 +125,10 @@ export function BookAppointmentDialog({
       await createAppointment.mutateAsync({
         clinicId: selectedClinic,
         serviceTypeId: selectedService,
-        appointmentDate: `${format(selectedDate!, "yyyy-MM-dd")}T${selectedTime}`,
-        patientProfileId: patientProfileId.trim(),
+        appointmentDate: format(selectedDate!, "yyyy-MM-dd"),
+        patientName: patientName.trim(),
+        patientDateOfBirth,
+        patientPhone: patientPhone.trim() || undefined,
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
       });
@@ -165,23 +171,39 @@ export function BookAppointmentDialog({
               <User className="h-4 w-4" />
               {t("secretary.patientInfo")}
             </h3>
-            <div className="space-y-2">
-              <Label htmlFor="patientProfileId">
-                {t("secretary.patientProfileId")}
-              </Label>
-              <div className="relative">
-                <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="patientName">
+                  {t("appointments.patientName")} *
+                </Label>
                 <Input
-                  id="patientProfileId"
-                  value={patientProfileId}
-                  onChange={(e) => setPatientProfileId(e.target.value)}
-                  placeholder={t("secretary.patientProfileIdPlaceholder")}
-                  className="ps-9"
+                  id="patientName"
+                  value={patientName}
+                  onChange={(e) => setPatientName(e.target.value)}
+                  placeholder={t("appointments.patientName")}
+                  maxLength={100}
                 />
               </div>
-              <p className="text-xs text-muted-foreground">
-                {t("secretary.patientProfileIdHint")}
-              </p>
+              <div className="space-y-2">
+                <Label htmlFor="patientDateOfBirth">
+                  {t("secretary.patientDateOfBirth")} *
+                </Label>
+                <DateOfBirthInput
+                  value={patientDateOfBirth}
+                  onChange={(val) => setPatientDateOfBirth(val)}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="patientPhone">
+                {t("secretary.patientPhone")}
+              </Label>
+              <Input
+                id="patientPhone"
+                value={patientPhone}
+                onChange={(e) => setPatientPhone(e.target.value)}
+                placeholder="01xxxxxxxxx"
+              />
             </div>
           </div>
 
