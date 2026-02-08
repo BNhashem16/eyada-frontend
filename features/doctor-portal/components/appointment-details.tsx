@@ -276,7 +276,7 @@ export function DoctorAppointmentDetails({ appointmentId }: AppointmentDetailsPr
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">{t('clinics.clinic')}</span>
+                <span className="text-muted-foreground">{t('appointments.clinic')}</span>
                 <span className="font-medium">{getLocalizedText(appointment.clinic.name, 'ar')}</span>
               </div>
               {appointment.clinic.secretaries && appointment.clinic.secretaries.length > 0 && (
@@ -285,7 +285,7 @@ export function DoctorAppointmentDetails({ appointmentId }: AppointmentDetailsPr
                   <div className="flex justify-between items-start">
                     <span className="text-muted-foreground flex items-center gap-1">
                       <ShieldCheck className="h-4 w-4" />
-                      {t('doctor.secretary')}
+                      {t('appointments.clinicSecretary')}
                     </span>
                     <div className="text-end space-y-1">
                       {appointment.clinic.secretaries.map((sec) => (

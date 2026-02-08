@@ -352,6 +352,8 @@
     "doctor": "Doctor",
     "doctorInfo": "Doctor Information",
     "patientInfo": "Patient Information",
+    "clinicInfo": "Clinic & Secretary",
+    "clinicSecretary": "Secretary",
     "clinic": "Clinic",
     "service": "Service",
     "serviceAndPayment": "Service & Payment",

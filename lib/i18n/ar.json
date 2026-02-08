@@ -352,6 +352,8 @@
     "doctor": "الطبيب",
     "doctorInfo": "معلومات الطبيب",
     "patientInfo": "معلومات المريض",
+    "clinicInfo": "العيادة والسكرتارية",
+    "clinicSecretary": "السكرتارية",
     "clinic": "العيادة",
     "service": "الخدمة",
     "serviceAndPayment": "الخدمة والدفع",
