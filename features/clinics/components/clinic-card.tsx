@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { MapPin, Clock, Phone, Calendar, ChevronLeft, Stethoscope } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,28 +15,26 @@ interface ClinicCardProps {
   showBookButton?: boolean;
 }
 
-export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) {
+export const ClinicCard = React.memo(function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) {
   const { t, locale } = useTranslation();
 
-  const dayNames: Record<DayOfWeek, string> = {
-    [DayOfWeek.SUNDAY]: t('days.sunday'),
-    [DayOfWeek.MONDAY]: t('days.monday'),
-    [DayOfWeek.TUESDAY]: t('days.tuesday'),
-    [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
-    [DayOfWeek.THURSDAY]: t('days.thursday'),
-    [DayOfWeek.FRIDAY]: t('days.friday'),
-    [DayOfWeek.SATURDAY]: t('days.saturday'),
-  };
-  // Get working days from schedules
-  const workingDays = clinic.schedules
-    ?.filter((s) => s.isActive)
-    .map((s) => dayNames[s.dayOfWeek])
-    .slice(0, 3);
-
-  // Get price from first active service or FIRST_VISIT
-  const consultationPrice = clinic.serviceTypes?.find(
-    (s) => s.isActive
-  )?.price;
+  const { workingDays, consultationPrice } = useMemo(() => {
+    const dayNames: Record<DayOfWeek, string> = {
+      [DayOfWeek.SUNDAY]: t('days.sunday'),
+      [DayOfWeek.MONDAY]: t('days.monday'),
+      [DayOfWeek.TUESDAY]: t('days.tuesday'),
+      [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
+      [DayOfWeek.THURSDAY]: t('days.thursday'),
+      [DayOfWeek.FRIDAY]: t('days.friday'),
+      [DayOfWeek.SATURDAY]: t('days.saturday'),
+    };
+    const days = clinic.schedules
+      ?.filter((s) => s.isActive)
+      .map((s) => dayNames[s.dayOfWeek])
+      .slice(0, 3);
+    const price = clinic.serviceTypes?.find((s) => s.isActive)?.price;
+    return { workingDays: days, consultationPrice: price };
+  }, [clinic.schedules, clinic.serviceTypes, t]);
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800">
@@ -132,4 +131,4 @@ export function ClinicCard({ clinic, showBookButton = false }: ClinicCardProps) 
       </CardContent>
     </Card>
   );
-}
+});

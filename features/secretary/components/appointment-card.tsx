@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -84,14 +84,14 @@ const getPaymentStatusConfig = (t: (key: string) => string): Record<PaymentStatu
   [PaymentStatus.REFUNDED]: { label: t('secretary.refunded'), color: 'bg-muted text-muted-foreground' },
 });
 
-export function AppointmentCard({ appointment }: AppointmentCardProps) {
+export const AppointmentCard = React.memo(function AppointmentCard({ appointment }: AppointmentCardProps) {
   const { t } = useTranslation();
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const updateStatus = useUpdateAppointmentStatus();
   const updatePayment = useUpdatePayment();
 
-  const statusConfig = getStatusConfig(t);
-  const paymentStatusConfig = getPaymentStatusConfig(t);
+  const statusConfig = useMemo(() => getStatusConfig(t), [t]);
+  const paymentStatusConfig = useMemo(() => getPaymentStatusConfig(t), [t]);
 
   const status = statusConfig[appointment.status];
   const paymentStatus = paymentStatusConfig[appointment.paymentStatus];
@@ -228,4 +228,4 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
       </CardContent>
     </Card>
   );
-}
+});

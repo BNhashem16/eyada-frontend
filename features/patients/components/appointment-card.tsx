@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Calendar,
@@ -22,7 +23,6 @@ import { AppointmentStatus } from '@/types/enums';
 import { formatDate, formatTime, isPast } from '@/lib/utils/date';
 import { getInitials } from '@/lib/utils';
 import { getLocalizedText } from '@/lib/utils/multilingual';
-import { useState } from 'react';
 import { useTranslation } from '@/lib/i18n';
 
 interface AppointmentCardProps {
@@ -41,22 +41,19 @@ const statusVariants: Record<AppointmentStatus, 'warning' | 'success' | 'default
   [AppointmentStatus.NO_SHOW]: 'secondary',
 };
 
-export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCardProps) {
+export const AppointmentCard = React.memo(function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCardProps) {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
-  const getStatusLabel = (status: AppointmentStatus) => {
-    const statusMap: Record<AppointmentStatus, string> = {
-      [AppointmentStatus.PENDING]: t('status.pending'),
-      [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
-      [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
-      [AppointmentStatus.IN_PROGRESS]: t('status.inProgress'),
-      [AppointmentStatus.COMPLETED]: t('status.completed'),
-      [AppointmentStatus.CANCELLED]: t('status.cancelled'),
-      [AppointmentStatus.NO_SHOW]: t('status.noShow'),
-    };
-    return statusMap[status];
-  };
+  const statusLabels = useMemo(() => ({
+    [AppointmentStatus.PENDING]: t('status.pending'),
+    [AppointmentStatus.CONFIRMED]: t('status.confirmed'),
+    [AppointmentStatus.CHECKED_IN]: t('status.checkedIn'),
+    [AppointmentStatus.IN_PROGRESS]: t('status.inProgress'),
+    [AppointmentStatus.COMPLETED]: t('status.completed'),
+    [AppointmentStatus.CANCELLED]: t('status.cancelled'),
+    [AppointmentStatus.NO_SHOW]: t('status.noShow'),
+  }), [t]);
 
   const canCancel =
     appointment.status === AppointmentStatus.PENDING ||
@@ -153,7 +150,7 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
               {/* Status & Actions */}
               <div className="flex flex-col items-end gap-2">
                 <Badge variant={statusVariants[appointment.status]}>
-                  {getStatusLabel(appointment.status)}
+                  {statusLabels[appointment.status]}
                 </Badge>
 
                 {/* Actions Menu */}
@@ -249,4 +246,4 @@ export function AppointmentCard({ appointment, onCancel, onRate }: AppointmentCa
       </CardContent>
     </Card>
   );
-}
+});

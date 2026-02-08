@@ -1,15 +1,40 @@
 'use client';
 
 import { use } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Building2, ChevronRight, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScheduleManager, ServiceManager } from '@/features/doctor-portal';
+import { ScheduleManager } from '@/features/doctor-portal';
 import { useDoctorClinic } from '@/features/doctor-portal/hooks/use-doctor-portal';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useTranslation } from '@/lib/i18n';
+
+const ServiceManager = dynamic(
+  () => import('@/features/doctor-portal/components/service-manager').then(mod => ({ default: mod.ServiceManager })),
+  {
+    loading: () => (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <Skeleton className="h-6 w-20" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    ),
+  }
+);
 
 interface ClinicManagePageProps {
   params: Promise<{ id: string }>;

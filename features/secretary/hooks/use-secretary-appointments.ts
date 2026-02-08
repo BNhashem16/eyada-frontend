@@ -83,8 +83,9 @@ export interface CreateSecretaryAppointmentData {
   clinicId: string; // UUID, required
   serviceTypeId: string; // UUID, required
   appointmentDate: string; // YYYY-MM-DD format, required
-  appointmentTime?: string; // HH:mm format, optional
-  patientProfileId: string; // UUID of existing patient, required for secretary
+  patientName: string; // 2-100 chars, required
+  patientDateOfBirth: string; // YYYY-MM-DD format, required
+  patientPhone?: string; // optional
   notes?: string; // max 500 chars
   symptoms?: string; // max 500 chars
 }

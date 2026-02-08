@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { Star, MapPin, Clock, Calendar, ChevronLeft } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +16,7 @@ interface DoctorCardProps {
   doctor: DoctorProfile;
 }
 
-export function DoctorCard({ doctor }: DoctorCardProps) {
+export const DoctorCard = React.memo(function DoctorCard({ doctor }: DoctorCardProps) {
   const { t } = useTranslation();
   const averageRating = doctor.averageRating ?? 0;
   const totalRatings = doctor.totalRatings ?? 0;
@@ -116,4 +117,4 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
       </CardContent>
     </Card>
   );
-}
+});

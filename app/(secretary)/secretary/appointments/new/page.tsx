@@ -1,9 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
 import {
   CalendarIcon,
   User,
@@ -20,14 +18,14 @@ import {
   X,
   Clock,
   Users,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { SearchableSelect } from '@/components/ui/searchable-select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -47,7 +45,15 @@ import { useSecretaryClinics, useCreateAppointment } from '@/features/secretary'
 import { useSecretaryPatients } from '@/features/secretary/hooks/use-secretary-patients';
 import { useSecretaryClinicSchedules } from '@/features/secretary/hooks/use-secretary-schedules';
 import { useClinicServices } from '@/features/clinics/hooks/use-clinics';
-import { utcTimeToLocal } from '@/lib/utils/date';
+import {
+  utcTimeToLocal,
+  formatDate,
+  getWeekDays,
+  addDays,
+  isSameDay,
+  isToday,
+  isBefore,
+} from '@/lib/utils/date';
 import { DayOfWeek } from '@/types/enums';
 import type { PatientProfile } from '@/types';
 
@@ -77,14 +83,44 @@ export default function NewAppointmentPage() {
   const router = useRouter();
   const dayNames = getDayNames(t);
 
+  // Week calendar state
+  const [weekStart, setWeekStart] = useState(() => {
+    const today = new Date();
+    const day = today.getDay();
+    // Start from Saturday
+    const diff = day === 6 ? 0 : day + 1;
+    const saturday = new Date(today);
+    saturday.setDate(today.getDate() - diff);
+    return saturday;
+  });
+
   // Form state
   const [selectedClinic, setSelectedClinic] = useState<string>('');
   const [selectedService, setSelectedService] = useState<string>('');
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<PatientProfile | null>(null);
   const [patientSearch, setPatientSearch] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [symptoms, setSymptoms] = useState<string>('');
+
+  // Week days
+  const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
+
+  const canGoPrevious = !isBefore(addDays(weekStart, -7), addDays(new Date(), -1));
+
+  const goToPreviousWeek = () => {
+    if (canGoPrevious) {
+      setWeekStart(addDays(weekStart, -7));
+    }
+  };
+
+  const goToNextWeek = () => {
+    const maxDate = addDays(new Date(), 60);
+    const newStart = addDays(weekStart, 7);
+    if (isBefore(newStart, maxDate)) {
+      setWeekStart(newStart);
+    }
+  };
 
   // Success dialog state
   const [successData, setSuccessData] = useState<{
@@ -106,7 +142,7 @@ export default function NewAppointmentPage() {
   // Reset dependent fields when parent selection changes
   useEffect(() => {
     setSelectedService('');
-    setSelectedDate(undefined);
+    setSelectedDate(null);
   }, [selectedClinic]);
 
   const selectedClinicData = clinics?.find((c) => c.id === selectedClinic);
@@ -131,7 +167,7 @@ export default function NewAppointmentPage() {
       const result = await createAppointment.mutateAsync({
         clinicId: selectedClinic,
         serviceTypeId: selectedService,
-        appointmentDate: format(selectedDate!, 'yyyy-MM-dd'),
+        appointmentDate: formatDate(selectedDate!, 'yyyy-MM-dd'),
         patientProfileId: selectedPatient.id,
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
@@ -482,7 +518,7 @@ export default function NewAppointmentPage() {
             </CardContent>
           </Card>
 
-          {/* Date Selection */}
+          {/* Date Selection - Week Calendar */}
           <Card>
             <CardHeader className="pb-3 sm:pb-6">
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
@@ -491,34 +527,74 @@ export default function NewAppointmentPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <Label>{t('appointments.date')} *</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
+              <div className="space-y-4">
+                {/* Week Navigation */}
+                <div className="flex items-center justify-between">
+                  <Label>{t('appointments.date')} *</Label>
+                  <div className="flex items-center gap-2">
                     <Button
-                      variant="outline"
-                      className={cn(
-                        'w-full justify-start',
-                        !selectedDate && 'text-muted-foreground'
-                      )}
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={goToPreviousWeek}
+                      disabled={!canGoPrevious || !selectedClinic}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm text-muted-foreground min-w-[80px] text-center">
+                      {formatDate(weekStart, 'MMM yyyy')}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={goToNextWeek}
                       disabled={!selectedClinic}
                     >
-                      <CalendarIcon className="me-2 h-4 w-4" />
-                      {selectedDate
-                        ? format(selectedDate, 'dd MMMM yyyy', { locale: ar })
-                        : t('secretary.selectDate')}
+                      <ChevronLeft className="h-4 w-4" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={setSelectedDate}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                  </div>
+                </div>
+
+                {/* Week Days Grid */}
+                <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                  {weekDays.map((date) => {
+                    const isPast = isBefore(date, new Date()) && !isToday(date);
+                    const isSelected = selectedDate && isSameDay(date, selectedDate);
+                    const today = isToday(date);
+                    const isDisabled = isPast || !selectedClinic;
+
+                    return (
+                      <button
+                        key={date.toISOString()}
+                        type="button"
+                        onClick={() => !isDisabled && setSelectedDate(date)}
+                        disabled={isDisabled}
+                        className={cn(
+                          'flex flex-col items-center justify-center p-1.5 sm:p-2.5 rounded-lg text-center transition-all',
+                          isDisabled && 'opacity-40 cursor-not-allowed',
+                          !isDisabled && 'hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer',
+                          isSelected && 'bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-600',
+                          today && !isSelected && 'border-2 border-primary-500',
+                        )}
+                      >
+                        <span className="text-[10px] sm:text-xs font-medium">
+                          {formatDate(date, 'EEE')}
+                        </span>
+                        <span className="text-base sm:text-lg font-bold">
+                          {formatDate(date, 'd')}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Selected date display */}
+                {selectedDate && (
+                  <p className="text-sm text-center text-primary-600 dark:text-primary-400 font-medium">
+                    {formatDate(selectedDate, 'EEEE, d MMMM yyyy')}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -599,7 +675,7 @@ export default function NewAppointmentPage() {
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm text-muted-foreground">{t('appointments.date')}</span>
                 <span className="font-medium text-sm">
-                  {selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '-'}
+                  {selectedDate ? formatDate(selectedDate, 'dd/MM/yyyy') : '-'}
                 </span>
               </div>
 

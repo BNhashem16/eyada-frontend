@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import {
   Heart,
@@ -40,7 +41,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   default: Stethoscope,
 };
 
-export function SpecialtyCard({ specialty }: SpecialtyCardProps) {
+export const SpecialtyCard = React.memo(function SpecialtyCard({ specialty }: SpecialtyCardProps) {
   const Icon = iconMap[specialty.icon || 'default'] || iconMap.default;
   const name = getLocalizedText(specialty.name, 'ar');
   const description = specialty.description
@@ -62,4 +63,4 @@ export function SpecialtyCard({ specialty }: SpecialtyCardProps) {
       </Card>
     </Link>
   );
-}
+});

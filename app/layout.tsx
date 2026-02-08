@@ -8,7 +8,7 @@ import { getTranslation } from '@/lib/i18n';
 const cairo = Cairo({
   variable: '--font-cairo',
   subsets: ['arabic', 'latin'],
-  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
@@ -16,7 +16,7 @@ const cairo = Cairo({
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 

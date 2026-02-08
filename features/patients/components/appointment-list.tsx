@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Calendar, Frown } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,9 +56,13 @@ export function AppointmentList() {
     setPage(1);
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancel = useCallback((id: string) => {
     setCancelingId(id);
-  };
+  }, []);
+
+  const handleRate = useCallback((appointment: Appointment) => {
+    setRatingAppointment(appointment);
+  }, []);
 
   const confirmCancel = async () => {
     if (!cancelingId) return;
@@ -156,7 +160,7 @@ export function AppointmentList() {
               key={appointment.id}
               appointment={appointment}
               onCancel={handleCancel}
-              onRate={setRatingAppointment}
+              onRate={handleRate}
             />
           ))}
         </div>
