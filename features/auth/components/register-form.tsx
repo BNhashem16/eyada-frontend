@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { createRegisterSchemaWithConfirm, type RegisterFormData } from '../schemas';
 import { useRegister } from '../hooks';
 import { useTranslation } from '@/lib/i18n';
@@ -28,6 +29,7 @@ export function RegisterForm() {
     register: registerField,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(createRegisterSchemaWithConfirm(locale)),
@@ -58,8 +60,8 @@ export function RegisterForm() {
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
               selectedRole === 'PATIENT'
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
-                : 'border-border hover:border-primary-300 dark:hover:border-primary-700'
+                ? 'border-primary-500 bg-primary-100 dark:bg-primary-800/40 text-primary-700 dark:text-primary-300 shadow-sm'
+                : 'border-border bg-muted/30 dark:bg-muted/10 text-muted-foreground hover:border-primary-300 dark:hover:border-primary-700'
             }`}
           >
             <input
@@ -74,8 +76,8 @@ export function RegisterForm() {
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
               selectedRole === 'DOCTOR'
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
-                : 'border-border hover:border-primary-300 dark:hover:border-primary-700'
+                ? 'border-primary-500 bg-primary-100 dark:bg-primary-800/40 text-primary-700 dark:text-primary-300 shadow-sm'
+                : 'border-border bg-muted/30 dark:bg-muted/10 text-muted-foreground hover:border-primary-300 dark:hover:border-primary-700'
             }`}
           >
             <input
@@ -216,12 +218,12 @@ export function RegisterForm() {
       </div>
 
       {/* Terms Agreement */}
-      <div className="flex items-start gap-2">
-        <input
-          type="checkbox"
+      <div className="flex items-start gap-3">
+        <Checkbox
           id="agreeTerms"
-          {...registerField('agreeTerms')}
-          className="mt-1 h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
+          checked={watch('agreeTerms')}
+          onCheckedChange={(checked) => setValue('agreeTerms', !!checked, { shouldValidate: true })}
+          className="mt-0.5"
         />
         <label htmlFor="agreeTerms" className="text-sm text-muted-foreground">
           {t('auth.agreeToTerms')}{' '}

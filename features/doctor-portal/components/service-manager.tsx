@@ -18,6 +18,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -400,11 +401,10 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
 
             {/* Active Status */}
             <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="isActive"
-                {...register('isActive')}
-                className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
+                checked={watch('isActive')}
+                onCheckedChange={(checked) => setValue('isActive', !!checked)}
               />
               <Label htmlFor="isActive" className="cursor-pointer">
                 {t('services.serviceActive')}

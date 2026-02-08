@@ -1,24 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Building2, MapPin, Loader2, Navigation, Phone, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreateClinic, useUpdateClinic, useDoctorClinic } from '../hooks/use-doctor-portal';
+import { usePublicStates, usePublicCities } from '../hooks/use-public-locations';
 import { useToast } from '@/hooks/use-toast';
 import { State, City } from '@/types';
-import { apiGet } from '@/lib/api';
-import { PUBLIC_ENDPOINTS } from '@/lib/api/endpoints';
 import { useTranslation } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils/multilingual';
 
 // Schema matching backend CreateClinicDto
 const getClinicSchema = (t: (key: string) => string) => z.object({
@@ -47,13 +46,20 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
   const { toast } = useToast();
   const isEditing = !!clinicId;
 
-  const [states, setStates] = useState<State[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
-  const [loadingLocations, setLoadingLocations] = useState(true);
-
   const { data: clinic, isLoading: clinicLoading } = useDoctorClinic(clinicId || '');
   const createMutation = useCreateClinic();
   const updateMutation = useUpdateClinic();
+
+  // Paginated states
+  const [statesSearch, setStatesSearch] = useState('');
+  const [statesPage, setStatesPage] = useState(1);
+  const [allStates, setAllStates] = useState<State[]>([]);
+  const statesQuery = usePublicStates({ search: statesSearch, page: statesPage });
+
+  // Paginated cities
+  const [citiesSearch, setCitiesSearch] = useState('');
+  const [citiesPage, setCitiesPage] = useState(1);
+  const [allCities, setAllCities] = useState<City[]>([]);
 
   const clinicSchema = getClinicSchema(t);
 
@@ -80,78 +86,119 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
   });
 
   const selectedStateId = watch('stateId');
+  const citiesQuery = usePublicCities({ stateId: selectedStateId, search: citiesSearch, page: citiesPage });
 
-  // Fetch states on mount
+  const selectedCityId = watch('cityId');
+
+  // Accumulate states data across pages (preserve selected item)
   useEffect(() => {
-    const fetchStates = async () => {
-      try {
-        const statesData = await apiGet<State[]>(PUBLIC_ENDPOINTS.STATES);
-        setStates(statesData);
-      } catch (error) {
-        console.error('Failed to fetch states:', error);
-      } finally {
-        setLoadingLocations(false);
-      }
-    };
-    fetchStates();
-  }, []);
-
-  // Fetch cities when state changes
-  useEffect(() => {
-    if (selectedStateId) {
-      const fetchCities = async () => {
-        try {
-          const citiesData = await apiGet<City[]>(
-            `${PUBLIC_ENDPOINTS.CITIES}?stateId=${selectedStateId}`
-          );
-          setCities(citiesData);
-        } catch (error) {
-          console.error('Failed to fetch cities:', error);
-        }
-      };
-      fetchCities();
-    } else {
-      setCities([]);
-    }
-  }, [selectedStateId]);
-
-  // Populate form when clinic data loads
-  useEffect(() => {
-    const populateForm = async () => {
-      if (clinic && isEditing) {
-        // Get state ID from city
-        const stateId = clinic.city?.state?.id || clinic.city?.stateId || '';
-
-        // Fetch cities for this state first if we have a stateId
-        if (stateId) {
-          try {
-            const citiesData = await apiGet<City[]>(
-              `${PUBLIC_ENDPOINTS.CITIES}?stateId=${stateId}`
-            );
-            setCities(citiesData);
-          } catch (error) {
-            console.error('Failed to fetch cities:', error);
+    if (statesQuery.data) {
+      const newData = statesQuery.data.data;
+      if (statesPage === 1) {
+        setAllStates(prev => {
+          const selected = prev.find(s => s.id === selectedStateId);
+          if (selected && !newData.some(s => s.id === selectedStateId)) {
+            return [selected, ...newData];
           }
-        }
-
-        // Now reset the form with all values including cityId
-        reset({
-          nameAr: clinic.name?.ar || '',
-          nameEn: clinic.name?.en || '',
-          addressAr: clinic.address?.ar || '',
-          addressEn: clinic.address?.en || '',
-          stateId: stateId,
-          cityId: clinic.cityId || '',
-          phoneNumber: (clinic as any).phoneNumber || '',
-          latitude: clinic.latitude || '',
-          longitude: clinic.longitude || '',
-          slotDurationMinutes: (clinic as any).slotDurationMinutes || 15,
-          isActive: clinic.isActive ?? true,
+          return newData;
+        });
+      } else {
+        setAllStates(prev => {
+          const existingIds = new Set(prev.map(s => s.id));
+          const unique = newData.filter(s => !existingIds.has(s.id));
+          return [...prev, ...unique];
         });
       }
-    };
+    }
+  }, [statesQuery.data, statesPage, selectedStateId]);
 
-    populateForm();
+  // Accumulate cities data across pages (preserve selected item)
+  useEffect(() => {
+    if (citiesQuery.data) {
+      const newData = citiesQuery.data.data;
+      if (citiesPage === 1) {
+        setAllCities(prev => {
+          const selected = prev.find(c => c.id === selectedCityId);
+          if (selected && !newData.some(c => c.id === selectedCityId)) {
+            return [selected, ...newData];
+          }
+          return newData;
+        });
+      } else {
+        setAllCities(prev => {
+          const existingIds = new Set(prev.map(c => c.id));
+          const unique = newData.filter(c => !existingIds.has(c.id));
+          return [...prev, ...unique];
+        });
+      }
+    }
+  }, [citiesQuery.data, citiesPage, selectedCityId]);
+
+  // Reset cities when state changes
+  useEffect(() => {
+    setCitiesSearch('');
+    setCitiesPage(1);
+    setAllCities([]);
+  }, [selectedStateId]);
+
+  // Handlers for server-side search
+  const handleStatesSearch = useCallback((search: string) => {
+    setStatesSearch(search);
+    setStatesPage(1);
+  }, []);
+
+  const handleStatesLoadMore = useCallback(() => {
+    if (statesQuery.data?.meta.hasNextPage) {
+      setStatesPage(prev => prev + 1);
+    }
+  }, [statesQuery.data?.meta.hasNextPage]);
+
+  const handleCitiesSearch = useCallback((search: string) => {
+    setCitiesSearch(search);
+    setCitiesPage(1);
+  }, []);
+
+  const handleCitiesLoadMore = useCallback(() => {
+    if (citiesQuery.data?.meta.hasNextPage) {
+      setCitiesPage(prev => prev + 1);
+    }
+  }, [citiesQuery.data?.meta.hasNextPage]);
+
+  // Populate form when clinic data loads (edit mode)
+  useEffect(() => {
+    if (clinic && isEditing) {
+      const stateId = clinic.city?.state?.id || clinic.city?.stateId || '';
+
+      // Ensure the selected state is in the options
+      if (clinic.city?.state) {
+        setAllStates(prev => {
+          if (prev.some(s => s.id === clinic.city!.state!.id)) return prev;
+          return [clinic.city!.state! as State, ...prev];
+        });
+      }
+
+      // Ensure the selected city is in the options
+      if (clinic.city) {
+        setAllCities(prev => {
+          if (prev.some(c => c.id === clinic.city!.id)) return prev;
+          return [clinic.city! as City, ...prev];
+        });
+      }
+
+      reset({
+        nameAr: clinic.name?.ar || '',
+        nameEn: clinic.name?.en || '',
+        addressAr: clinic.address?.ar || '',
+        addressEn: clinic.address?.en || '',
+        stateId: stateId,
+        cityId: clinic.cityId || '',
+        phoneNumber: (clinic as any).phoneNumber || '',
+        latitude: clinic.latitude || '',
+        longitude: clinic.longitude || '',
+        slotDurationMinutes: (clinic as any).slotDurationMinutes || 15,
+        isActive: clinic.isActive ?? true,
+      });
+    }
   }, [clinic, isEditing, reset]);
 
   const onSubmit = async (data: ClinicFormData) => {
@@ -283,7 +330,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             <div className="space-y-2">
               <Label required>{t('clinics.state')}</Label>
               <SearchableSelect
-                options={states.map((state) => ({
+                options={allStates.map((state) => ({
                   value: state.id,
                   label: state.name?.ar || state.name?.en || '',
                   icon: <MapPin className="h-4 w-4" />,
@@ -296,10 +343,13 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 placeholder={t('clinics.selectState')}
                 searchPlaceholder={t('common.search')}
                 emptyMessage={t('common.noResults')}
-                disabled={loadingLocations}
-                loading={loadingLocations}
+                loading={statesQuery.isLoading && statesPage === 1}
                 clearable={false}
                 className="bg-background text-foreground"
+                onSearchChange={handleStatesSearch}
+                hasMore={statesQuery.data?.meta.hasNextPage}
+                onLoadMore={handleStatesLoadMore}
+                serverLoading={statesQuery.isFetching}
               />
               {errors.stateId && (
                 <p className="text-sm text-error-600 dark:text-error-400">{errors.stateId.message}</p>
@@ -309,7 +359,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             <div className="space-y-2">
               <Label required>{t('clinics.city')}</Label>
               <SearchableSelect
-                options={cities.map((city) => ({
+                options={allCities.map((city) => ({
                   value: city.id,
                   label: city.name?.ar || city.name?.en || '',
                   icon: <Building2 className="h-4 w-4" />,
@@ -319,9 +369,14 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 placeholder={!selectedStateId ? t('clinics.selectStateFirst') : t('clinics.selectCity')}
                 searchPlaceholder={t('common.search')}
                 emptyMessage={t('common.noResults')}
-                disabled={!selectedStateId || cities.length === 0}
+                disabled={!selectedStateId}
+                loading={citiesQuery.isLoading && citiesPage === 1}
                 clearable={false}
                 className="bg-background text-foreground"
+                onSearchChange={handleCitiesSearch}
+                hasMore={citiesQuery.data?.meta.hasNextPage}
+                onLoadMore={handleCitiesLoadMore}
+                serverLoading={citiesQuery.isFetching}
               />
               {errors.cityId && (
                 <p className="text-sm text-error-600 dark:text-error-400">{errors.cityId.message}</p>
@@ -459,11 +514,10 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
         <CardContent className="pt-6">
           {/* Active Status */}
           <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
+            <Checkbox
               id="isActive"
-              {...register('isActive')}
-              className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500 bg-background"
+              checked={watch('isActive')}
+              onCheckedChange={(checked) => setValue('isActive', !!checked)}
             />
             <Label htmlFor="isActive" className="cursor-pointer">
               {t('clinics.clinicActiveSearch')}

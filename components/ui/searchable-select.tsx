@@ -36,6 +36,14 @@ interface SearchableSelectProps {
   showSearch?: boolean;
   maxHeight?: number;
   renderOption?: (option: SearchableSelectOption, isSelected: boolean) => React.ReactNode;
+  /** When provided, search is delegated to the server (client-side filtering is disabled) */
+  onSearchChange?: (search: string) => void;
+  /** Whether there are more pages to load (shows load-more at bottom) */
+  hasMore?: boolean;
+  /** Called when user scrolls to the bottom of the list */
+  onLoadMore?: () => void;
+  /** Loading state for server-side search results */
+  serverLoading?: boolean;
 }
 
 // Highlight matching text in search results
@@ -74,6 +82,10 @@ export function SearchableSelect({
   showSearch = true,
   maxHeight = 280,
   renderOption,
+  onSearchChange,
+  hasMore,
+  onLoadMore,
+  serverLoading,
 }: SearchableSelectProps) {
   const { t } = useTranslation();
   const resolvedPlaceholder = placeholder ?? t('common.select');
@@ -84,11 +96,32 @@ export function SearchableSelect({
   const inputRef = React.useRef<HTMLInputElement>(null);
   const listRef = React.useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = React.useState(-1);
+  const debounceRef = React.useRef<ReturnType<typeof setTimeout>>(null);
 
   const selectedOption = options.find((option) => option.value === value);
 
-  // Filter and group options
+  // Debounced server-side search
+  const handleSearchInput = React.useCallback((value: string) => {
+    setSearchQuery(value);
+    setActiveIndex(-1);
+    if (onSearchChange) {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        onSearchChange(value);
+      }, 300);
+    }
+  }, [onSearchChange]);
+
+  // Cleanup debounce on unmount
+  React.useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
+  // Filter and group options (skip client-side filtering when server search is active)
   const filteredOptions = React.useMemo(() => {
+    if (onSearchChange) return options; // server handles filtering
     if (!searchQuery) return options;
     const query = searchQuery.toLowerCase();
     return options.filter(
@@ -96,7 +129,17 @@ export function SearchableSelect({
         option.label?.toLowerCase().includes(query) ||
         option.description?.toLowerCase().includes(query)
     );
-  }, [options, searchQuery]);
+  }, [options, searchQuery, onSearchChange]);
+
+  // Infinite scroll: detect scroll to bottom
+  const handleScroll = React.useCallback(() => {
+    if (!hasMore || !onLoadMore || serverLoading) return;
+    const el = listRef.current;
+    if (!el) return;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) {
+      onLoadMore();
+    }
+  }, [hasMore, onLoadMore, serverLoading]);
 
   // Group options by group field
   const groupedOptions = React.useMemo(() => {
@@ -125,8 +168,10 @@ export function SearchableSelect({
     if (!open) {
       setSearchQuery("");
       setActiveIndex(-1);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (onSearchChange) onSearchChange("");
     }
-  }, [open, showSearch]);
+  }, [open, showSearch, onSearchChange]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -322,16 +367,16 @@ export function SearchableSelect({
               ref={inputRef}
               placeholder={resolvedSearchPlaceholder}
               value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setActiveIndex(-1);
-              }}
+              onChange={(e) => handleSearchInput(e.target.value)}
               inputMode="search"
               className="h-8 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-sm placeholder:text-muted-foreground"
             />
+            {serverLoading && (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground flex-shrink-0" />
+            )}
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery("")}
+                onClick={() => handleSearchInput("")}
                 className="p-1 rounded-full hover:bg-muted transition-colors"
               >
                 <X className="h-3.5 w-3.5 text-muted-foreground" />
@@ -355,6 +400,7 @@ export function SearchableSelect({
           ref={listRef}
           className="overflow-y-auto p-1.5"
           style={{ maxHeight }}
+          onScroll={handleScroll}
         >
           {filteredOptions.length === 0 ? (
             <div className="py-8 text-center">
@@ -391,6 +437,22 @@ export function SearchableSelect({
             </>
           ) : (
             filteredOptions.map((option, index) => renderOptionItem(option, index))
+          )}
+
+          {/* Load more indicator */}
+          {hasMore && (
+            <div className="flex items-center justify-center py-2">
+              {serverLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+              ) : (
+                <button
+                  onClick={onLoadMore}
+                  className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
+                >
+                  {t('common.loadMore')}
+                </button>
+              )}
+            </div>
           )}
         </div>
 

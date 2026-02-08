@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Clock, Save, Loader2, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -257,12 +258,10 @@ export function ScheduleManager({
             >
               {/* Day Toggle */}
               <div className="flex items-center gap-3 sm:w-32">
-                <input
-                  type="checkbox"
+                <Checkbox
                   id={`day-${schedule.dayOfWeek}`}
                   checked={schedule.isActive}
-                  onChange={() => handleToggleDay(index)}
-                  className="h-5 w-5 rounded border-border text-primary-600 focus:ring-primary-500"
+                  onCheckedChange={() => handleToggleDay(index)}
                 />
                 <Label
                   htmlFor={`day-${schedule.dayOfWeek}`}
