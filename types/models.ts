@@ -170,6 +170,16 @@ export interface Clinic extends Timestamps {
   city?: City;
   schedules?: ClinicSchedule[];
   serviceTypes?: ClinicServiceType[];
+  secretaries?: ClinicSecretary[];
+}
+
+// Clinic Secretary model
+export interface ClinicSecretary extends Timestamps {
+  id: string;
+  clinicId: string;
+  userId: string;
+  isActive: boolean;
+  user?: User;
 }
 
 // Clinic Schedule model

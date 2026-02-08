@@ -774,7 +774,13 @@
     "linkCopied": "تم نسخ الرابط",
     "trackingLinkHint": "شارك هذا الرابط مع المريض لتتبع موعده",
     "openTrackingPage": "فتح صفحة التتبع",
-    "goToAppointments": "الذهاب للمواعيد"
+    "goToAppointments": "الذهاب للمواعيد",
+    "clinicSchedule": "مواعيد عمل العيادة",
+    "noSchedules": "لا توجد مواعيد عمل محددة لهذه العيادة",
+    "familyHead": "رب العائلة",
+    "familyMember": "فرد من العائلة",
+    "selectFamilyMember": "اختر الشخص المراد الحجز له",
+    "bookingFor": "الحجز لـ"
   },
   "admin": {
     "dashboard": "لوحة التحكم",

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   Calendar,
-
+  Building2,
   User,
   Phone,
   Mail,
@@ -20,6 +20,7 @@ import {
   ClipboardList,
   Save,
   UserCheck,
+  ShieldCheck,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -262,6 +263,53 @@ export function DoctorAppointmentDetails({ appointmentId }: AppointmentDetailsPr
           </div>
         </CardContent>
       </Card>
+
+      {/* Clinic & Secretary Info */}
+      {appointment.clinic && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              {t('appointments.clinicInfo')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">{t('clinics.clinic')}</span>
+                <span className="font-medium">{getLocalizedText(appointment.clinic.name, 'ar')}</span>
+              </div>
+              {appointment.clinic.secretaries && appointment.clinic.secretaries.length > 0 && (
+                <>
+                  <Separator />
+                  <div className="flex justify-between items-start">
+                    <span className="text-muted-foreground flex items-center gap-1">
+                      <ShieldCheck className="h-4 w-4" />
+                      {t('doctor.secretary')}
+                    </span>
+                    <div className="text-end space-y-1">
+                      {appointment.clinic.secretaries.map((sec) => (
+                        <div key={sec.id}>
+                          <span className="font-medium">{sec.user?.fullName}</span>
+                          {sec.user?.phoneNumber && (
+                            <a
+                              href={`tel:${sec.user.phoneNumber}`}
+                              className="text-sm text-muted-foreground hover:text-primary-600 ms-2"
+                              dir="ltr"
+                            >
+                              {sec.user.phoneNumber}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Patient Info */}
       <Card>

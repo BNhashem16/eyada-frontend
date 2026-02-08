@@ -226,13 +226,13 @@ export function ScheduleManager({
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
           {t('clinics.scheduleTitle')}
         </CardTitle>
         {hasChanges && (
-          <Button onClick={handleSave} disabled={isPending}>
+          <Button onClick={handleSave} disabled={isPending} className="w-full sm:w-auto">
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />
@@ -275,7 +275,7 @@ export function ScheduleManager({
 
               {/* Time Inputs */}
               {schedule.isActive && (
-                <div className="flex flex-wrap items-center gap-4 flex-1">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap lg:items-center gap-3 lg:gap-4 flex-1">
                   <div className="flex items-center gap-2">
                     <Label className="text-sm text-muted-foreground whitespace-nowrap">{t('common.from')}</Label>
                     <Input
@@ -284,7 +284,7 @@ export function ScheduleManager({
                       onChange={(e) =>
                         handleTimeChange(index, 'startTime', e.target.value)
                       }
-                      className="w-32"
+                      className="w-full lg:w-32"
                       dir="ltr"
                     />
                   </div>
@@ -296,7 +296,7 @@ export function ScheduleManager({
                       onChange={(e) =>
                         handleTimeChange(index, 'endTime', e.target.value)
                       }
-                      className="w-32"
+                      className="w-full lg:w-32"
                       dir="ltr"
                     />
                   </div>
@@ -308,7 +308,7 @@ export function ScheduleManager({
                       onChange={(e) =>
                         handleTimeChange(index, 'breakTime', e.target.value)
                       }
-                      className="w-32"
+                      className="w-full lg:w-32"
                       dir="ltr"
                       placeholder="--:--"
                     />
@@ -322,7 +322,7 @@ export function ScheduleManager({
                       onChange={(e) =>
                         handleSlotDurationChange(index, Number(e.target.value))
                       }
-                      className="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+                      className="w-full lg:w-auto rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                     >
                       <option value={15}>{t('common.duration15')}</option>
                       <option value={20}>{t('common.duration20')}</option>
@@ -342,7 +342,7 @@ export function ScheduleManager({
                       min={1}
                       value={schedule.maxPatients ?? ''}
                       onChange={(e) => handleMaxPatientsChange(index, e.target.value)}
-                      className="w-24"
+                      className="w-full lg:w-24"
                       placeholder={t('clinics.maxPatientsPlaceholder')}
                       dir="ltr"
                     />

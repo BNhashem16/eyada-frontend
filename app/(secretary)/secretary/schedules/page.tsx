@@ -75,13 +75,13 @@ export default function SecretarySchedulesPage() {
       {/* Clinic Selector */}
       <Card>
         <CardContent className="p-4">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <Label className="flex items-center gap-2 whitespace-nowrap">
               <Building2 className="h-4 w-4" />
               {t('secretary.selectClinic')}
             </Label>
             <Select value={selectedClinicId} onValueChange={setSelectedClinicId}>
-              <SelectTrigger className="w-72">
+              <SelectTrigger className="w-full sm:w-72">
                 <SelectValue placeholder={t('secretary.selectClinic')} />
               </SelectTrigger>
               <SelectContent>

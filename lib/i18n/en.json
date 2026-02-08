@@ -774,7 +774,13 @@
     "linkCopied": "Link copied",
     "trackingLinkHint": "Share this link with the patient to track their appointment",
     "openTrackingPage": "Open Tracking Page",
-    "goToAppointments": "Go to Appointments"
+    "goToAppointments": "Go to Appointments",
+    "clinicSchedule": "Clinic Working Hours",
+    "noSchedules": "No working hours set for this clinic",
+    "familyHead": "Family Head",
+    "familyMember": "Family Member",
+    "selectFamilyMember": "Select who to book for",
+    "bookingFor": "Booking for"
   },
   "admin": {
     "dashboard": "Dashboard",

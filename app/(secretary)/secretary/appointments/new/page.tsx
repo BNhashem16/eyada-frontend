@@ -18,6 +18,8 @@ import {
   Copy,
   ExternalLink,
   X,
+  Clock,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,13 +45,37 @@ import { useTranslation } from '@/lib/i18n';
 import { getLocalizedText } from '@/lib/utils/multilingual';
 import { useSecretaryClinics, useCreateAppointment } from '@/features/secretary';
 import { useSecretaryPatients } from '@/features/secretary/hooks/use-secretary-patients';
+import { useSecretaryClinicSchedules } from '@/features/secretary/hooks/use-secretary-schedules';
 import { useClinicServices } from '@/features/clinics/hooks/use-clinics';
+import { utcTimeToLocal } from '@/lib/utils/date';
+import { DayOfWeek } from '@/types/enums';
 import type { PatientProfile } from '@/types';
+
+const getDayNames = (t: (key: string) => string): Record<DayOfWeek, string> => ({
+  [DayOfWeek.SUNDAY]: t('days.sunday'),
+  [DayOfWeek.MONDAY]: t('days.monday'),
+  [DayOfWeek.TUESDAY]: t('days.tuesday'),
+  [DayOfWeek.WEDNESDAY]: t('days.wednesday'),
+  [DayOfWeek.THURSDAY]: t('days.thursday'),
+  [DayOfWeek.FRIDAY]: t('days.friday'),
+  [DayOfWeek.SATURDAY]: t('days.saturday'),
+});
+
+const dayOrder = [
+  DayOfWeek.SATURDAY,
+  DayOfWeek.SUNDAY,
+  DayOfWeek.MONDAY,
+  DayOfWeek.TUESDAY,
+  DayOfWeek.WEDNESDAY,
+  DayOfWeek.THURSDAY,
+  DayOfWeek.FRIDAY,
+];
 
 export default function NewAppointmentPage() {
   const { t, locale } = useTranslation();
   const { toast } = useToast();
   const router = useRouter();
+  const dayNames = getDayNames(t);
 
   // Form state
   const [selectedClinic, setSelectedClinic] = useState<string>('');
@@ -73,6 +99,7 @@ export default function NewAppointmentPage() {
     search: patientSearch,
     limit: 10,
   });
+  const { data: schedules, isLoading: schedulesLoading } = useSecretaryClinicSchedules(selectedClinic);
 
   const createAppointment = useCreateAppointment();
 
@@ -84,6 +111,12 @@ export default function NewAppointmentPage() {
 
   const selectedClinicData = clinics?.find((c) => c.id === selectedClinic);
   const selectedServiceData = services?.find((s) => s.id === selectedService);
+
+  const sortedSchedules = schedules
+    ? [...schedules]
+        .filter((s) => s.isActive)
+        .sort((a, b) => dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek))
+    : [];
 
   const canSubmit =
     selectedClinic &&
@@ -151,12 +184,12 @@ export default function NewAppointmentPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-            <Plus className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center shrink-0">
+            <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('secretary.bookAppointment')}</h1>
-            <p className="text-muted-foreground">{t('secretary.bookAppointmentDesc')}</p>
+            <h1 className="text-lg sm:text-2xl font-bold text-foreground">{t('secretary.bookAppointment')}</h1>
+            <p className="text-sm text-muted-foreground hidden sm:block">{t('secretary.bookAppointmentDesc')}</p>
           </div>
         </div>
         <Button variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
@@ -176,13 +209,13 @@ export default function NewAppointmentPage() {
         </Alert>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Form */}
-        <div className="md:col-span-1 lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
           {/* Patient Selection */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 {t('secretary.selectPatient')}
               </CardTitle>
@@ -193,25 +226,31 @@ export default function NewAppointmentPage() {
             <CardContent className="space-y-4">
               {/* Selected Patient Display */}
               {selectedPatient ? (
-                <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center">
+                <div className="p-3 sm:p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center shrink-0">
                         <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                       </div>
-                      <div>
-                        <p className="font-medium">{selectedPatient.user?.fullName || t('common.unknown')}</p>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{selectedPatient.user?.fullName || t('common.unknown')}</p>
+                        <p className="text-sm text-muted-foreground truncate">
                           {selectedPatient.user?.phoneNumber || '-'}
                           {selectedPatient.dateOfBirth && (
                             <> • {calculateAge(selectedPatient.dateOfBirth)} {t('family.yearsOld')}</>
                           )}
                         </p>
+                        {selectedPatient.familyHeadId && selectedPatient.relationshipToHead && (
+                          <Badge variant="secondary" className="mt-1 text-xs">
+                            {t('secretary.familyMember')}
+                          </Badge>
+                        )}
                       </div>
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="shrink-0"
                       onClick={() => setSelectedPatient(null)}
                     >
                       <X className="h-4 w-4" />
@@ -234,9 +273,9 @@ export default function NewAppointmentPage() {
                     </div>
                   </div>
 
-                  {/* Patient Search Results */}
+                  {/* Patient Search Results with Family Members */}
                   {patientSearch && (
-                    <div className="border rounded-lg divide-y max-h-60 overflow-y-auto">
+                    <div className="border rounded-lg max-h-80 overflow-y-auto">
                       {patientsLoading ? (
                         <div className="p-4 text-center">
                           <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
@@ -247,30 +286,90 @@ export default function NewAppointmentPage() {
                         </div>
                       ) : (
                         patients.map((patient) => (
-                          <button
-                            key={patient.id}
-                            type="button"
-                            className="w-full p-3 text-start hover:bg-muted/50 transition-colors flex items-center gap-3"
-                            onClick={() => {
-                              setSelectedPatient(patient);
-                              setPatientSearch('');
-                            }}
-                          >
-                            <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center">
-                              <User className="h-4 w-4 text-muted-foreground" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium truncate">
-                                {patient.user?.fullName || t('common.unknown')}
-                              </p>
-                              <p className="text-sm text-muted-foreground truncate">
-                                {patient.user?.phoneNumber || '-'}
-                                {patient.dateOfBirth && (
-                                  <> • {calculateAge(patient.dateOfBirth)} {t('family.yearsOld')}</>
-                                )}
-                              </p>
-                            </div>
-                          </button>
+                          <div key={patient.id} className="border-b last:border-b-0">
+                            {/* Family Head / Main Patient */}
+                            <button
+                              type="button"
+                              className="w-full p-3 text-start hover:bg-muted/50 transition-colors flex items-center gap-3"
+                              onClick={() => {
+                                setSelectedPatient(patient);
+                                setPatientSearch('');
+                              }}
+                            >
+                              <div className="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center shrink-0">
+                                <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <p className="font-medium truncate">
+                                    {patient.user?.fullName || t('common.unknown')}
+                                  </p>
+                                  {patient.familyMembers && patient.familyMembers.length > 0 && (
+                                    <Badge variant="secondary" className="text-xs shrink-0">
+                                      <Users className="h-3 w-3 me-1" />
+                                      {patient.familyMembers.length}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-muted-foreground truncate">
+                                  {patient.user?.phoneNumber || '-'}
+                                  {patient.dateOfBirth && (
+                                    <> • {calculateAge(patient.dateOfBirth)} {t('family.yearsOld')}</>
+                                  )}
+                                </p>
+                              </div>
+                            </button>
+
+                            {/* Family Members */}
+                            {patient.familyMembers && patient.familyMembers.length > 0 && (
+                              <div className="bg-muted/30 border-t">
+                                {patient.familyMembers.map((member) => (
+                                  <button
+                                    key={member.id}
+                                    type="button"
+                                    className="w-full p-3 ps-12 text-start hover:bg-muted/50 transition-colors flex items-center gap-3 border-t border-dashed first:border-t-0"
+                                    onClick={() => {
+                                      setSelectedPatient({
+                                        ...member,
+                                        userId: member.user?.id || member.patientId || '',
+                                        usePhoneAsWhatsapp: false,
+                                        relationshipToHead: member.relationshipToHead || member.relationship || 'OTHER',
+                                        familyHeadId: patient.id,
+                                        user: member.user || { id: '', email: '', phoneNumber: patient.user?.phoneNumber || '', fullName: member.fullName, role: 'PATIENT' as const, isActive: true, isApproved: true },
+                                      } as PatientProfile);
+                                      setPatientSearch('');
+                                    }}
+                                  >
+                                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                      <User className="h-3.5 w-3.5 text-muted-foreground" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <p className="text-sm font-medium truncate">
+                                          {member.fullName || member.user?.fullName || t('common.unknown')}
+                                        </p>
+                                        <Badge variant="outline" className="text-xs shrink-0">
+                                          {member.relationshipToHead
+                                            ? t(`family.${member.relationshipToHead.toLowerCase()}`)
+                                            : member.relationship
+                                              ? t(`family.${member.relationship.toLowerCase()}`)
+                                              : t('secretary.familyMember')}
+                                        </Badge>
+                                      </div>
+                                      <p className="text-xs text-muted-foreground truncate">
+                                        {member.dateOfBirth && (
+                                          <>{calculateAge(member.dateOfBirth)} {t('family.yearsOld')}</>
+                                        )}
+                                        {member.gender && (
+                                          <> • {member.gender === 'MALE' ? t('patient.male') : t('patient.female')}</>
+                                        )}
+                                      </p>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         ))
                       )}
                     </div>
@@ -282,8 +381,8 @@ export default function NewAppointmentPage() {
 
           {/* Clinic & Service Selection */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 {t('secretary.clinicAndService')}
               </CardTitle>
@@ -328,8 +427,8 @@ export default function NewAppointmentPage() {
               </div>
 
               {selectedServiceData && (
-                <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
-                  <div className="flex items-center justify-between">
+                <div className="p-3 sm:p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2">
                       <Stethoscope className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                       <span className="font-medium">{getLocalizedText(selectedServiceData.name, locale)}</span>
@@ -345,13 +444,48 @@ export default function NewAppointmentPage() {
                   </div>
                 </div>
               )}
+
+              {/* Clinic Schedule Display */}
+              {selectedClinic && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    {t('secretary.clinicSchedule')}
+                  </div>
+                  {schedulesLoading ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : sortedSchedules.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">{t('secretary.noSchedules')}</p>
+                  ) : (
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {sortedSchedules.map((schedule) => (
+                        <div
+                          key={schedule.id}
+                          className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 border text-sm"
+                        >
+                          <span className="font-medium">{dayNames[schedule.dayOfWeek]}</span>
+                          <div className="flex flex-col items-end gap-0.5">
+                            {schedule.shifts.map((shift, idx) => (
+                              <span key={idx} className="text-muted-foreground text-xs" dir="ltr">
+                                {utcTimeToLocal(shift.startTime)} - {utcTimeToLocal(shift.endTime)}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Date Selection */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 {t('secretary.selectDate')}
               </CardTitle>
@@ -391,8 +525,8 @@ export default function NewAppointmentPage() {
 
           {/* Additional Notes */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">{t('secretary.additionalInfo')}</CardTitle>
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="text-base sm:text-lg">{t('secretary.additionalInfo')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -421,16 +555,16 @@ export default function NewAppointmentPage() {
         </div>
 
         {/* Summary Sidebar */}
-        <div className="space-y-6">
-          <Card className="md:sticky md:top-4">
-            <CardHeader>
-              <CardTitle className="text-lg">{t('secretary.bookingSummary')}</CardTitle>
+        <div className="space-y-6 order-1 lg:order-2">
+          <Card className="lg:sticky lg:top-4">
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="text-base sm:text-lg">{t('secretary.bookingSummary')}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 sm:space-y-4">
               {/* Patient Name */}
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-sm text-muted-foreground">{t('auth.fullName')}</span>
-                <span className="font-medium text-sm">
+              <div className="flex items-center justify-between py-2 border-b gap-2">
+                <span className="text-sm text-muted-foreground shrink-0">{t('auth.fullName')}</span>
+                <span className="font-medium text-sm truncate text-end">
                   {selectedPatient?.user?.fullName || '-'}
                 </span>
               </div>
@@ -446,17 +580,17 @@ export default function NewAppointmentPage() {
               </div>
 
               {/* Clinic */}
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-sm text-muted-foreground">{t('appointments.clinic')}</span>
-                <span className="font-medium text-sm">
+              <div className="flex items-center justify-between py-2 border-b gap-2">
+                <span className="text-sm text-muted-foreground shrink-0">{t('appointments.clinic')}</span>
+                <span className="font-medium text-sm truncate text-end">
                   {selectedClinicData ? getLocalizedText(selectedClinicData.name, locale) : '-'}
                 </span>
               </div>
 
               {/* Service */}
-              <div className="flex items-center justify-between py-2 border-b">
-                <span className="text-sm text-muted-foreground">{t('appointments.service')}</span>
-                <span className="font-medium text-sm">
+              <div className="flex items-center justify-between py-2 border-b gap-2">
+                <span className="text-sm text-muted-foreground shrink-0">{t('appointments.service')}</span>
+                <span className="font-medium text-sm truncate text-end">
                   {selectedServiceData ? getLocalizedText(selectedServiceData.name, locale) : '-'}
                 </span>
               </div>
@@ -511,7 +645,7 @@ export default function NewAppointmentPage() {
 
       {/* Success Dialog */}
       <Dialog open={!!successData} onOpenChange={() => setSuccessData(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
           <DialogHeader>
             <div className="mx-auto w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
               <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
@@ -530,7 +664,7 @@ export default function NewAppointmentPage() {
               <p className="text-sm text-muted-foreground mb-1">
                 {t('appointments.bookingNumber')}
               </p>
-              <p className="font-mono text-xl font-bold text-primary">
+              <p className="font-mono text-lg sm:text-xl font-bold text-primary break-all">
                 {successData?.bookingNumber}
               </p>
             </div>
@@ -554,10 +688,10 @@ export default function NewAppointmentPage() {
                 <Input
                   value={trackingUrl}
                   readOnly
-                  className="font-mono text-sm"
+                  className="font-mono text-xs sm:text-sm"
                   dir="ltr"
                 />
-                <Button variant="outline" size="icon" onClick={copyTrackingLink}>
+                <Button variant="outline" size="icon" className="shrink-0" onClick={copyTrackingLink}>
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
