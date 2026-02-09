@@ -11,13 +11,15 @@ import { useTranslation } from "@/lib/i18n";
 import { useAuthStore } from "@/lib/auth/store";
 import { getInitials } from "@/lib/utils";
 import type { MenuItem } from "./sidebar";
+import { TourProvider } from "@/lib/tour";
 
 export interface AdminLayoutProps {
   children: React.ReactNode;
   menuItems: MenuItem[];
+  headerRightContent?: React.ReactNode;
 }
 
-export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
+export function AdminLayout({ children, menuItems, headerRightContent }: AdminLayoutProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -31,6 +33,7 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
   };
 
   return (
+    <TourProvider>
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-gray-900 dark:bg-gray-950 text-white">
@@ -60,6 +63,7 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
           <div className="flex items-center gap-3">
             <LanguageToggle />
             <ThemeToggle />
+            {headerRightContent}
             <div className="flex items-center gap-2">
               <Avatar className="h-9 w-9 border-2 border-primary-500">
                 <AvatarImage src={user?.profilePicture || undefined} />
@@ -81,7 +85,7 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
       <div className="flex">
         {/* Sidebar - Desktop */}
         <aside className="hidden lg:block w-64 bg-gray-800 dark:bg-gray-900 text-white min-h-[calc(100vh-4rem)]">
-          <nav className="p-4 space-y-1">
+          <nav data-tour="sidebar-nav" className="p-4 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
@@ -187,5 +191,6 @@ export function AdminLayout({ children, menuItems }: AdminLayoutProps) {
         </main>
       </div>
     </div>
+    </TourProvider>
   );
 }

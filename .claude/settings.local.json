@@ -36,7 +36,11 @@
       "Bash(npx next dev:*)",
       "Bash(npm run format:*)",
       "Bash(npm run:*)",
-      "Bash(npx next lint:*)"
+      "Bash(npx next lint:*)",
+      "WebSearch",
+      "WebFetch(domain:onboardjs.com)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:userguiding.com)"
     ]
   }
 }

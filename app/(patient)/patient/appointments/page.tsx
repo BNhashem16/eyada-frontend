@@ -1,11 +1,21 @@
 "use client";
 
+import { useEffect } from "react";
 import { Calendar } from "lucide-react";
 import { AppointmentList } from "@/features/patients";
 import { useTranslation } from "@/lib/i18n";
+import { useTour, PATIENT_APPOINTMENTS_TOUR_ID, patientAppointmentsSteps } from "@/lib/tour";
 
 export default function PatientAppointmentsPage() {
   const { t } = useTranslation();
+  const { startTour } = useTour();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startTour(PATIENT_APPOINTMENTS_TOUR_ID, patientAppointmentsSteps);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [startTour]);
 
   return (
     <div className="space-y-6">

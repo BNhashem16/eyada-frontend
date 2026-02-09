@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Header } from "./header";
 import { Sidebar, MobileSidebar, MenuItem } from "./sidebar";
 import { useTranslation } from "@/lib/i18n";
+import { TourProvider } from "@/lib/tour";
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -27,32 +28,34 @@ export function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header
-        variant="dashboard"
-        userRoleLabel={userRoleLabel}
-        showDoctorPrefix={showDoctorPrefix}
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-        rightContent={headerRightContent}
-      />
-
-      <div className="flex">
-        <Sidebar menuItems={menuItems} basePath={basePath} />
-
-        <MobileSidebar
-          menuItems={menuItems}
+    <TourProvider>
+      <div className="min-h-screen bg-background">
+        <Header
+          variant="dashboard"
           userRoleLabel={userRoleLabel}
           showDoctorPrefix={showDoctorPrefix}
-          isOpen={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-          extraContent={mobileExtraContent}
-          basePath={basePath}
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+          rightContent={headerRightContent}
         />
 
-        <main className="flex-1 min-w-0 overflow-x-hidden p-4 lg:p-6">
-          {children}
-        </main>
+        <div className="flex">
+          <Sidebar menuItems={menuItems} basePath={basePath} />
+
+          <MobileSidebar
+            menuItems={menuItems}
+            userRoleLabel={userRoleLabel}
+            showDoctorPrefix={showDoctorPrefix}
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            extraContent={mobileExtraContent}
+            basePath={basePath}
+          />
+
+          <main className="flex-1 min-w-0 overflow-x-hidden p-4 lg:p-6">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </TourProvider>
   );
 }

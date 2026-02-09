@@ -591,3 +591,209 @@ input[type="number"] {
 .ring-ring {
   --tw-ring-color: rgb(var(--ring));
 }
+
+/* ============================================
+   GUIDED TOUR (driver.js overrides)
+   ============================================ */
+
+.driver-overlay {
+  background-color: rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+.dark .driver-overlay {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.driver-active-element {
+  border-radius: 0.75rem !important;
+}
+
+/* Popover container */
+.driver-popover.eyada-tour-popover {
+  background: rgb(var(--card)) !important;
+  color: rgb(var(--foreground)) !important;
+  border: none !important;
+  border-radius: 1rem !important;
+  padding: 0 !important;
+  box-shadow:
+    0 20px 60px -15px rgba(59, 130, 246, 0.25),
+    0 8px 24px -4px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(59, 130, 246, 0.08) !important;
+  max-width: 400px !important;
+  min-width: 300px !important;
+  font-family: var(--font-family-sans) !important;
+  animation: tourPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  overflow: hidden !important;
+}
+
+.dark .driver-popover.eyada-tour-popover {
+  box-shadow:
+    0 20px 60px -15px rgba(59, 130, 246, 0.3),
+    0 8px 24px -4px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(96, 165, 250, 0.15) !important;
+}
+
+/* Gradient accent bar at top */
+.driver-popover.eyada-tour-popover::before {
+  content: "";
+  display: block;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-400),
+    var(--color-primary-600),
+    var(--color-secondary-500)
+  );
+  border-radius: 1rem 1rem 0 0;
+}
+
+/* RTL / LTR */
+.driver-popover.eyada-rtl {
+  direction: rtl !important;
+  text-align: right !important;
+}
+.driver-popover.eyada-ltr {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Arrow */
+.driver-popover.eyada-tour-popover .driver-popover-arrow {
+  border-color: rgb(var(--card)) !important;
+}
+.driver-popover.eyada-tour-popover .driver-popover-arrow-side-top {
+  border-top-color: rgb(var(--card)) !important;
+}
+.driver-popover.eyada-tour-popover .driver-popover-arrow-side-bottom {
+  border-bottom-color: rgb(var(--card)) !important;
+}
+.driver-popover.eyada-tour-popover .driver-popover-arrow-side-left {
+  border-left-color: rgb(var(--card)) !important;
+}
+.driver-popover.eyada-tour-popover .driver-popover-arrow-side-right {
+  border-right-color: rgb(var(--card)) !important;
+}
+
+/* Title */
+.driver-popover.eyada-tour-popover .driver-popover-title {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: var(--color-primary-700) !important;
+  padding: 1.1rem 1.25rem 0 !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.dark .driver-popover.eyada-tour-popover .driver-popover-title {
+  color: var(--color-primary-300) !important;
+}
+
+/* Description */
+.driver-popover.eyada-tour-popover .driver-popover-description {
+  font-size: 0.875rem !important;
+  color: rgb(var(--foreground) / 0.65) !important;
+  padding: 0.5rem 1.25rem 0 !important;
+  margin: 0 !important;
+  line-height: 1.7 !important;
+}
+
+/* Progress text - styled as pill badge */
+.driver-popover.eyada-tour-popover .driver-popover-progress-text {
+  font-size: 0.7rem !important;
+  font-weight: 600 !important;
+  color: var(--color-primary-600) !important;
+  background: var(--color-primary-50) !important;
+  padding: 0.2rem 0.6rem !important;
+  border-radius: 9999px !important;
+  display: inline-block !important;
+  margin: 0.75rem 0 0 1.25rem !important;
+  letter-spacing: 0.03em !important;
+}
+
+.dark .driver-popover.eyada-tour-popover .driver-popover-progress-text {
+  color: var(--color-primary-300) !important;
+  background: rgba(59, 130, 246, 0.15) !important;
+}
+
+.driver-popover.eyada-rtl .driver-popover-progress-text {
+  margin: 0.75rem 1.25rem 0 0 !important;
+}
+
+/* Footer (buttons area) */
+.driver-popover.eyada-tour-popover .driver-popover-footer {
+  padding: 0.85rem 1.25rem 1rem !important;
+  display: flex !important;
+  gap: 0.5rem !important;
+  justify-content: flex-end !important;
+  border-top: 1px solid rgb(var(--border) / 0.5) !important;
+  margin-top: 0.85rem !important;
+  background: rgb(var(--muted) / 0.3) !important;
+}
+
+.driver-popover.eyada-rtl .driver-popover-footer {
+  flex-direction: row-reverse !important;
+}
+
+/* Navigation buttons base */
+.driver-popover.eyada-tour-popover .driver-popover-footer button {
+  border-radius: 0.5rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1.15rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: none !important;
+  text-shadow: none !important;
+}
+
+/* Previous button */
+.driver-popover.eyada-tour-popover .driver-popover-prev-btn {
+  background: rgb(var(--muted)) !important;
+  color: rgb(var(--foreground) / 0.7) !important;
+}
+.driver-popover.eyada-tour-popover .driver-popover-prev-btn:hover {
+  background: rgb(var(--border)) !important;
+  color: rgb(var(--foreground)) !important;
+}
+
+/* Next / Done button */
+.driver-popover.eyada-tour-popover .driver-popover-next-btn {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500),
+    var(--color-primary-700)
+  ) !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35) !important;
+}
+.driver-popover.eyada-tour-popover .driver-popover-next-btn:hover {
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Close button */
+.driver-popover.eyada-tour-popover .driver-popover-close-btn {
+  color: rgb(var(--foreground) / 0.35) !important;
+  top: 0.85rem !important;
+}
+.driver-popover.eyada-tour-popover .driver-popover-close-btn:hover {
+  color: rgb(var(--foreground) / 0.7) !important;
+}
+
+/* Entrance animation - bouncy pop */
+@keyframes tourPopIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Smooth stage transition */
+.driver-popover.eyada-tour-popover {
+  transition: none !important;
+}

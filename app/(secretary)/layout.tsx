@@ -4,7 +4,9 @@ import { LayoutDashboard, Calendar, Plus, Star, Clock } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
 import { DashboardLayout, MenuItem } from "@/components/common";
+import { TourReplayButton } from "@/components/common/tour-replay-button";
 import { useTranslation } from "@/lib/i18n";
+import { SECRETARY_DASHBOARD_TOUR_ID, secretaryDashboardSteps } from "@/lib/tour";
 
 function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -29,11 +31,19 @@ function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
     { href: "/secretary/ratings", label: t("nav.ratings"), icon: Star },
   ];
 
+  const headerRightContent = (
+    <TourReplayButton
+      tourId={SECRETARY_DASHBOARD_TOUR_ID}
+      steps={secretaryDashboardSteps}
+    />
+  );
+
   return (
     <DashboardLayout
       menuItems={menuItems}
       userRoleLabel={t("app.secretaryRole")}
       basePath="/secretary"
+      headerRightContent={headerRightContent}
     >
       {children}
     </DashboardLayout>

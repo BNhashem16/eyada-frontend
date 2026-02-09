@@ -138,14 +138,16 @@ export function AppointmentList() {
   return (
     <div className="space-y-6">
       {/* Status Filter */}
-      <SearchableSelect
-        options={statusFilterOptions}
-        value={selectedStatus}
-        onValueChange={handleStatusChange}
-        placeholder={t("appointments.status")}
-        showSearch={false}
-        className="w-full sm:w-56"
-      />
+      <div data-tour="patient-status-filter">
+        <SearchableSelect
+          options={statusFilterOptions}
+          value={selectedStatus}
+          onValueChange={handleStatusChange}
+          placeholder={t("appointments.status")}
+          showSearch={false}
+          className="w-full sm:w-56"
+        />
+      </div>
 
       {/* Loading */}
       {isLoading && (
@@ -204,7 +206,7 @@ export function AppointmentList() {
 
       {/* Appointments List */}
       {!isLoading && !isError && appointments.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-4" data-tour="patient-appointments-list">
           {appointments.map((appointment) => (
             <AppointmentCard
               key={appointment.id}

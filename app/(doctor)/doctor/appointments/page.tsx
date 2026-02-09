@@ -1,13 +1,23 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { Calendar, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppointmentQueue } from "@/features/doctor-portal";
 import { useTranslation } from "@/lib/i18n";
+import { useTour, DOCTOR_APPOINTMENTS_TOUR_ID, doctorAppointmentsSteps } from "@/lib/tour";
 
 export default function DoctorAppointmentsPage() {
   const { t } = useTranslation();
+  const { startTour } = useTour();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startTour(DOCTOR_APPOINTMENTS_TOUR_ID, doctorAppointmentsSteps);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [startTour]);
 
   return (
     <div className="space-y-6">
