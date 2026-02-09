@@ -165,7 +165,7 @@ export function AdminRatingsList() {
             className={`h-4 w-4 ${
               star <= rating
                 ? "text-yellow-500 fill-yellow-500"
-                : "text-gray-300"
+                : "text-gray-300 dark:text-gray-600"
             }`}
           />
         ))}
@@ -235,7 +235,7 @@ export function AdminRatingsList() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.ratings.average")}
                 </p>
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                   {(statistics?.averageRating || 0).toFixed(1)}
                 </p>
               </div>
@@ -253,7 +253,7 @@ export function AdminRatingsList() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.ratings.visible")}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {statistics?.visibleRatings || 0}
                 </p>
               </div>

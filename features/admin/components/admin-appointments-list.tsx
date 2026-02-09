@@ -296,7 +296,7 @@ export function AdminAppointmentsList() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.appointments.completed")}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {statistics?.completed || 0}
                 </p>
               </div>

@@ -269,7 +269,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.collections.totalCommission")}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(report.totalCommission)}
                 </p>
               </div>
@@ -287,7 +287,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.collections.totalPaid")}
                 </p>
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                   {formatCurrency(report.totalPaid)}
                 </p>
               </div>
@@ -306,7 +306,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                   {t("admin.collections.balance")}
                 </p>
                 <p
-                  className={`text-2xl font-bold ${report.balance > 0 ? "text-warning-600" : "text-green-600"}`}
+                  className={`text-2xl font-bold ${report.balance > 0 ? "text-warning-600 dark:text-warning-400" : "text-green-600 dark:text-green-400"}`}
                 >
                   {formatCurrency(report.balance)}
                 </p>

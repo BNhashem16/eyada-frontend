@@ -226,7 +226,7 @@ export function AdminFeedbacksList() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.feedbacks.complaints")}
                 </p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {feedbacks.filter((f) => f.type === "COMPLAINT").length}
                 </p>
               </div>
@@ -244,7 +244,7 @@ export function AdminFeedbacksList() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.feedbacks.suggestions")}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {feedbacks.filter((f) => f.type === "SUGGESTION").length}
                 </p>
               </div>
@@ -262,7 +262,7 @@ export function AdminFeedbacksList() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.feedbacks.newCount")}
                 </p>
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                   {feedbacks.filter((f) => f.status === "NEW").length}
                 </p>
               </div>

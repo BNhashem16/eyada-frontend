@@ -107,7 +107,7 @@ function Footer() {
               </div>
               <span className="text-xl font-bold">{t("app.name")}</span>
             </div>
-            <p className="text-gray-400 dark:text-gray-500 max-w-md">
+            <p className="text-gray-400 max-w-md">
               {t("app.footerText")}. {t("app.description")}
             </p>
           </div>
@@ -115,7 +115,7 @@ function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="font-bold mb-4">{t("nav.quickLinks")}</h4>
-            <ul className="space-y-2 text-gray-400 dark:text-gray-500">
+            <ul className="space-y-2 text-gray-400">
               <li>
                 <Link
                   href="/doctors"
@@ -155,7 +155,7 @@ function Footer() {
           {/* Contact */}
           <div>
             <h4 className="font-bold mb-4">{t("nav.contactUs")}</h4>
-            <ul className="space-y-2 text-gray-400 dark:text-gray-500">
+            <ul className="space-y-2 text-gray-400">
               <li dir="ltr">+20 123 456 7890</li>
               <li>support@eyada.com</li>
               <li>{t("app.location")}</li>
@@ -166,7 +166,7 @@ function Footer() {
         {/* Feedback CTA */}
         <div className="mt-8 pt-8 border-t border-gray-800 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-            <p className="text-gray-400 dark:text-gray-500 text-sm">
+            <p className="text-gray-400 text-sm">
               {t("feedback.subtitle")}
             </p>
             <Link

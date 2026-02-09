@@ -208,7 +208,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                     handleStatusChange(AppointmentStatus.CONFIRMED)
                   }
                 >
-                  <CheckCircle className="h-4 w-4 me-2 text-blue-600" />
+                  <CheckCircle className="h-4 w-4 me-2 text-blue-600 dark:text-blue-400" />
                   {t("secretary.confirmAppointment")}
                 </DropdownMenuItem>
               )}
@@ -218,7 +218,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                     handleStatusChange(AppointmentStatus.CHECKED_IN)
                   }
                 >
-                  <CheckCircle className="h-4 w-4 me-2 text-green-600" />
+                  <CheckCircle className="h-4 w-4 me-2 text-green-600 dark:text-green-400" />
                   {t("secretary.checkIn")}
                 </DropdownMenuItem>
               )}

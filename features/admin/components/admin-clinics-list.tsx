@@ -242,7 +242,7 @@ export function AdminClinicsList() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.clinics.active")}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {statistics?.activeClinics || 0}
                 </p>
               </div>

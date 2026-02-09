@@ -263,7 +263,7 @@ export function DoctorBalances() {
                 <p className="text-sm text-muted-foreground">
                   {t("admin.collections.totalBalance")}
                 </p>
-                <p className="text-2xl font-bold text-warning-600">
+                <p className="text-2xl font-bold text-warning-600 dark:text-warning-400">
                   {formatCurrency(summary?.totalBalance || 0)}
                 </p>
               </div>
@@ -438,10 +438,10 @@ export function DoctorBalances() {
                         {doctor.appointmentsCount}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-medium text-green-600">
+                    <TableCell className="font-medium text-green-600 dark:text-green-400">
                       {formatCurrency(doctor.totalCommission)}
                     </TableCell>
-                    <TableCell className="text-purple-600">
+                    <TableCell className="text-purple-600 dark:text-purple-400">
                       {formatCurrency(doctor.totalPaid)}
                     </TableCell>
                     <TableCell>
@@ -465,7 +465,7 @@ export function DoctorBalances() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="text-green-600"
+                            className="text-green-600 dark:text-green-400"
                             onClick={() => handleOpenPayment(doctor)}
                           >
                             <CreditCard className="h-4 w-4" />
