@@ -45,7 +45,7 @@ export function DashboardStats() {
       .length,
     totalRevenue: appointments
       .filter((a) => a.paymentStatus === PaymentStatus.PAID)
-      .reduce((sum, a) => sum + a.price, 0),
+      .reduce((sum, a) => sum + Number(a.price), 0),
   };
 
   const statCards = [
