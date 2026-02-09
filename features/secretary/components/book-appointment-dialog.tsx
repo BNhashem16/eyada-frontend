@@ -200,6 +200,9 @@ export function BookAppointmentDialog({
               </Label>
               <Input
                 id="patientPhone"
+                type="tel"
+                inputMode="tel"
+                dir="ltr"
                 value={patientPhone}
                 onChange={(e) => setPatientPhone(e.target.value)}
                 placeholder="01xxxxxxxxx"

@@ -130,6 +130,7 @@ export function RegisterForm() {
         <Input
           id="email"
           type="email"
+          inputMode="email"
           placeholder={t("placeholder.email")}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
@@ -149,6 +150,8 @@ export function RegisterForm() {
         <Input
           id="phoneNumber"
           type="tel"
+          inputMode="tel"
+          dir="ltr"
           placeholder={t("placeholder.phone")}
           icon={<Phone className="h-5 w-5" />}
           iconPosition="start"

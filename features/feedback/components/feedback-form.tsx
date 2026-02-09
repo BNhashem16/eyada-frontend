@@ -155,6 +155,7 @@ export function FeedbackForm() {
           <Input
             id="email"
             type="email"
+            inputMode="email"
             placeholder={t("feedback.emailPlaceholder")}
             icon={<Mail className="h-5 w-5" />}
             iconPosition="start"
@@ -172,6 +173,7 @@ export function FeedbackForm() {
           <Input
             id="phone"
             type="tel"
+            inputMode="tel"
             placeholder={t("feedback.phonePlaceholder")}
             icon={<Phone className="h-5 w-5" />}
             iconPosition="start"

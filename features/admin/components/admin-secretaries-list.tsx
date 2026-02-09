@@ -557,6 +557,7 @@ export function AdminSecretariesList() {
               <Label>{t("admin.secretaries.email")}</Label>
               <Input
                 type="email"
+                inputMode="email"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -568,6 +569,7 @@ export function AdminSecretariesList() {
               <Label>{t("admin.secretaries.phone")}</Label>
               <Input
                 type="tel"
+                inputMode="tel"
                 dir="ltr"
                 value={formData.phoneNumber}
                 onChange={(e) =>

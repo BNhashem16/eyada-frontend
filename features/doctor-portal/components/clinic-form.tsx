@@ -537,6 +537,8 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             </Label>
             <Input
               id="phoneNumber"
+              type="tel"
+              inputMode="tel"
               {...register("phoneNumber")}
               placeholder={t("clinics.phonePlaceholder")}
               maxLength={11}

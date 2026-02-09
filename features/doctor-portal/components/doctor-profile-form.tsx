@@ -637,6 +637,8 @@ export function DoctorProfileForm() {
               <div className="flex gap-2">
                 <Input
                   type="tel"
+                  inputMode="tel"
+                  dir="ltr"
                   placeholder={t("placeholder.phone")}
                   value={newWhatsappNumber}
                   onChange={(e) => setNewWhatsappNumber(e.target.value)}

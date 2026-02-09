@@ -248,6 +248,7 @@ function PatientProfileFormContent({
             <Input
               id="phone"
               type="tel"
+              inputMode="tel"
               dir="ltr"
               {...register("phone")}
               icon={<Phone className="h-5 w-5" />}
@@ -328,6 +329,7 @@ function PatientProfileFormContent({
             <Input
               id="whatsappNumber"
               type="tel"
+              inputMode="tel"
               dir="ltr"
               {...register("whatsappNumber")}
               icon={<Phone className="h-5 w-5" />}

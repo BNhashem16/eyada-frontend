@@ -44,6 +44,7 @@ export function LoginForm() {
         <Input
           id="email"
           type="email"
+          inputMode="email"
           placeholder={t("placeholder.email")}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
