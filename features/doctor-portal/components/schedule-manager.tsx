@@ -72,7 +72,7 @@ export function ScheduleManager({
   const useCreate = createHook || useCreateSchedule;
   const useUpdate = updateHook || useUpdateSchedule;
 
-  const { data: schedules, isLoading } = useSchedules(clinicId);
+  const { data: schedules, isLoading, isError } = useSchedules(clinicId);
   const createMutation = useCreate();
   const updateMutation = useUpdate();
 
@@ -223,6 +223,18 @@ export function ScheduleManager({
           {[...Array(7)].map((_, i) => (
             <Skeleton key={i} className="h-14 w-full" />
           ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
+        <CardContent className="py-10 text-center">
+          <p className="text-error-600 dark:text-error-400">
+            {t("errors.loadError")}
+          </p>
         </CardContent>
       </Card>
     );

@@ -77,7 +77,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
     useState<ClinicServiceType | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const { data: services, isLoading } = useClinicServices(clinicId);
+  const { data: services, isLoading, isError } = useClinicServices(clinicId);
   const createMutation = useCreateService();
   const updateMutation = useUpdateService();
   const deleteMutation = useDeleteService();
@@ -209,6 +209,18 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
           {[...Array(3)].map((_, i) => (
             <Skeleton key={i} className="h-20 w-full" />
           ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
+        <CardContent className="py-10 text-center">
+          <p className="text-error-600 dark:text-error-400">
+            {t("errors.loadError")}
+          </p>
         </CardContent>
       </Card>
     );

@@ -99,6 +99,7 @@ export function AdminSecretariesList() {
   const updateSecretary = useUpdateAdminSecretary();
   const removeAssignment = useRemoveSecretaryAssignment();
 
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [selectedSecretary, setSelectedSecretary] =
     useState<AdminSecretary | null>(null);
   const [selectedAssignment, setSelectedAssignment] =
@@ -158,10 +159,14 @@ export function AdminSecretariesList() {
   };
 
   const handleToggleActive = (secretary: AdminSecretary) => {
-    updateSecretary.mutate({
-      id: secretary.id,
-      isActive: !secretary.isActive,
-    });
+    setTogglingId(secretary.id);
+    updateSecretary.mutate(
+      {
+        id: secretary.id,
+        isActive: !secretary.isActive,
+      },
+      { onSettled: () => setTogglingId(null) },
+    );
   };
 
   const handleRemoveAssignment = () => {
@@ -383,13 +388,17 @@ export function AdminSecretariesList() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Switch
-                            checked={secretary.isActive}
-                            onCheckedChange={() =>
-                              handleToggleActive(secretary)
-                            }
-                            disabled={updateSecretary.isPending}
-                          />
+                          {togglingId === secretary.id && updateSecretary.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          ) : (
+                            <Switch
+                              checked={secretary.isActive}
+                              onCheckedChange={() =>
+                                handleToggleActive(secretary)
+                              }
+                              disabled={updateSecretary.isPending}
+                            />
+                          )}
                           <Badge
                             variant={
                               secretary.isActive ? "success" : "secondary"

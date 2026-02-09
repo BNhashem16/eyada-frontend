@@ -103,6 +103,7 @@ export function CommissionsManagement() {
   const updateCommission = useUpdateCommission();
   const deleteCommission = useDeleteCommission();
 
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCommission, setEditingCommission] = useState<Commission | null>(
     null,
@@ -183,10 +184,14 @@ export function CommissionsManagement() {
   };
 
   const handleToggleActive = (commission: Commission) => {
-    updateCommission.mutate({
-      id: commission.id,
-      isActive: !commission.isActive,
-    });
+    setTogglingId(commission.id);
+    updateCommission.mutate(
+      {
+        id: commission.id,
+        isActive: !commission.isActive,
+      },
+      { onSettled: () => setTogglingId(null) },
+    );
   };
 
   const formatCommissionValue = (commission: Commission) => {
@@ -310,11 +315,15 @@ export function CommissionsManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Switch
-                          checked={commission.isActive}
-                          onCheckedChange={() => handleToggleActive(commission)}
-                          disabled={updateCommission.isPending}
-                        />
+                        {togglingId === commission.id && updateCommission.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        ) : (
+                          <Switch
+                            checked={commission.isActive}
+                            onCheckedChange={() => handleToggleActive(commission)}
+                            disabled={updateCommission.isPending}
+                          />
+                        )}
                         <Badge
                           variant={
                             commission.isActive ? "success" : "secondary"

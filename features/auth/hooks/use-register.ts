@@ -7,6 +7,7 @@ import { toastSuccess, toastError } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
 import type { ApiError, Role } from "@/types";
 import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 interface RegisterData {
   email: string;
@@ -59,20 +60,13 @@ export function useRegister() {
       let message: string;
 
       if (!error.response) {
-        // Network error or server is down
         message = t("auth.registerNetworkError");
       } else if (error.response.status === 409) {
         message = t("auth.registerConflictError");
       } else if (error.response.status === 429) {
         message = t("auth.registerRateLimitError");
       } else {
-        // Handle message that could be string or array
-        const errorMessage = error.response.data?.message;
-        if (Array.isArray(errorMessage)) {
-          message = errorMessage[0] || t("auth.registerFailedDefault");
-        } else {
-          message = errorMessage || t("auth.registerFailedDefault");
-        }
+        message = extractApiError(error, t("auth.registerFailedDefault"));
       }
 
       toastError(t("auth.registerErrorTitle"), message);

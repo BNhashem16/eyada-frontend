@@ -104,6 +104,7 @@ export function SpecialtiesManagement() {
   const updateSpecialty = useUpdateSpecialty();
   const deleteSpecialty = useDeleteSpecialty();
 
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSpecialty, setEditingSpecialty] = useState<Specialty | null>(
     null,
@@ -177,10 +178,14 @@ export function SpecialtiesManagement() {
   };
 
   const handleToggleActive = (specialty: Specialty) => {
-    updateSpecialty.mutate({
-      id: specialty.id,
-      isActive: !specialty.isActive,
-    });
+    setTogglingId(specialty.id);
+    updateSpecialty.mutate(
+      {
+        id: specialty.id,
+        isActive: !specialty.isActive,
+      },
+      { onSettled: () => setTogglingId(null) },
+    );
   };
 
   if (isLoading) {
@@ -298,13 +303,17 @@ export function SpecialtiesManagement() {
                       <TableCell>{specialty.icon || "-"}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Switch
-                            checked={specialty.isActive}
-                            onCheckedChange={() =>
-                              handleToggleActive(specialty)
-                            }
-                            disabled={updateSpecialty.isPending}
-                          />
+                          {togglingId === specialty.id && updateSpecialty.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          ) : (
+                            <Switch
+                              checked={specialty.isActive}
+                              onCheckedChange={() =>
+                                handleToggleActive(specialty)
+                              }
+                              disabled={updateSpecialty.isPending}
+                            />
+                          )}
                           <Badge
                             variant={
                               specialty.isActive ? "success" : "secondary"

@@ -315,8 +315,9 @@ export interface PaginatedResponse<T> {
 // API Error response
 export interface ApiError {
   statusCode: number;
-  message: string;
+  message: string | string[];
   error?: string;
+  errorCode?: string;
 }
 
 // Secretary assignment model

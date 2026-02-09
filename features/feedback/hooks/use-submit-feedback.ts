@@ -7,6 +7,7 @@ import { toastSuccess, toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { AxiosError } from "axios";
 import type { ApiError } from "@/types";
+import { extractApiError } from "@/lib/utils";
 
 interface SubmitFeedbackData {
   type: "COMPLAINT" | "SUGGESTION";
@@ -35,10 +36,9 @@ export function useSubmitFeedback() {
       toastSuccess(t("common.success"), t("feedback.success"));
     },
     onError: (error: AxiosError<ApiError>) => {
-      const message = error.response?.data?.message || t("common.error");
       toastError(
         t("common.error"),
-        Array.isArray(message) ? message[0] : message,
+        extractApiError(error, t("errors.somethingWentWrong")),
       );
     },
   });

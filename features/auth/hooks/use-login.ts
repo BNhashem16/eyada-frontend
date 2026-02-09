@@ -7,6 +7,7 @@ import { toastSuccess, toastError } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
 import type { ApiError } from "@/types";
 import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 interface LoginCredentials {
   email: string;
@@ -53,18 +54,11 @@ export function useLogin() {
       let message: string;
 
       if (!error.response) {
-        // Network error or server is down
         message = t("auth.loginNetworkError");
       } else if (error.response.status === 429) {
         message = t("auth.loginRateLimitError");
       } else {
-        // Handle message that could be string or array
-        const errorMessage = error.response.data?.message;
-        if (Array.isArray(errorMessage)) {
-          message = errorMessage[0] || t("auth.loginFailedDefault");
-        } else {
-          message = errorMessage || t("auth.loginFailedDefault");
-        }
+        message = extractApiError(error, t("auth.loginFailedDefault"));
       }
 
       toastError(t("auth.loginErrorTitle"), message);

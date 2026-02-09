@@ -18,7 +18,7 @@ import { useTranslation } from "@/lib/i18n";
 export function DashboardStats() {
   const { t } = useTranslation();
   const today = format(new Date(), "yyyy-MM-dd");
-  const { data, isLoading } = useSecretaryAppointments({
+  const { data, isLoading, isError } = useSecretaryAppointments({
     date: today,
     limit: 100,
   });
@@ -104,6 +104,18 @@ export function DashboardStats() {
           </Card>
         ))}
       </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
+        <CardContent className="py-6 text-center">
+          <p className="text-error-600 dark:text-error-400 text-sm">
+            {t("errors.loadError")}
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 

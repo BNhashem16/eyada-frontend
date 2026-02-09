@@ -393,6 +393,11 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 onLoadMore={handleStatesLoadMore}
                 serverLoading={statesQuery.isFetching}
               />
+              {statesQuery.isError && (
+                <p className="text-sm text-error-600 dark:text-error-400">
+                  {t("errors.loadError")}
+                </p>
+              )}
               {errors.stateId && (
                 <p className="text-sm text-error-600 dark:text-error-400">
                   {errors.stateId.message}
@@ -431,6 +436,11 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
                 onLoadMore={handleCitiesLoadMore}
                 serverLoading={citiesQuery.isFetching}
               />
+              {citiesQuery.isError && (
+                <p className="text-sm text-error-600 dark:text-error-400">
+                  {t("errors.loadError")}
+                </p>
+              )}
               {errors.cityId && (
                 <p className="text-sm text-error-600 dark:text-error-400">
                   {errors.cityId.message}

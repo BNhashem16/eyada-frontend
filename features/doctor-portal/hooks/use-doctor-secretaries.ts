@@ -4,6 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { DOCTOR_SECRETARIES_ENDPOINTS } from "@/lib/api/endpoints";
 import { SecretaryWithClinics, SecretaryAssignment } from "@/types";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // Get all secretaries for doctor's clinics
 export function useDoctorSecretaries() {
@@ -43,6 +48,7 @@ export interface CreateSecretaryData {
 
 export function useCreateSecretary() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateSecretaryData) => {
@@ -55,6 +61,9 @@ export function useCreateSecretary() {
       queryClient.invalidateQueries({ queryKey: ["doctor-secretaries"] });
       queryClient.invalidateQueries({ queryKey: ["clinic-secretaries"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
@@ -66,6 +75,7 @@ export interface AssignSecretaryData {
 
 export function useAssignSecretary() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: AssignSecretaryData) => {
@@ -77,6 +87,9 @@ export function useAssignSecretary() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-secretaries"] });
       queryClient.invalidateQueries({ queryKey: ["clinic-secretaries"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -90,6 +103,7 @@ export interface UpdateSecretaryData {
 
 export function useUpdateSecretary() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -104,6 +118,9 @@ export function useUpdateSecretary() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-secretaries"] });
       queryClient.invalidateQueries({ queryKey: ["clinic-secretaries"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

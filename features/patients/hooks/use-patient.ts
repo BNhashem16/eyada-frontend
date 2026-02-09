@@ -15,6 +15,11 @@ import {
   Gender,
   RelationshipType,
 } from "@/types/enums";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // Profile hooks
 export function usePatientProfile(options?: { enabled?: boolean }) {
@@ -40,6 +45,7 @@ export interface CreatePatientProfileData {
 
 export function useCreatePatientProfile() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreatePatientProfileData) => {
@@ -48,11 +54,15 @@ export function useCreatePatientProfile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useUpdatePatientProfile() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: Partial<PatientProfile>) => {
@@ -60,6 +70,9 @@ export function useUpdatePatientProfile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

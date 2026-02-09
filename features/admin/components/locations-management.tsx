@@ -79,7 +79,7 @@ export function LocationsManagement() {
   const [statesLimit, setStatesLimit] = useState(50);
   const [citiesPage, setCitiesPage] = useState(1);
 
-  const { data: statesResponse, isLoading: statesLoading } = useAdminStates({
+  const { data: statesResponse, isLoading: statesLoading, isError: statesError } = useAdminStates({
     search: searchStates || undefined,
     page: statesPage,
     limit: statesLimit,
@@ -101,6 +101,8 @@ export function LocationsManagement() {
   const updateCity = useUpdateCity();
   const deleteCity = useDeleteCity();
 
+  const [togglingStateId, setTogglingStateId] = useState<string | null>(null);
+  const [togglingCityId, setTogglingCityId] = useState<string | null>(null);
   const [expandedStates, setExpandedStates] = useState<Set<string>>(new Set());
   const [stateDialogOpen, setStateDialogOpen] = useState(false);
   const [cityDialogOpen, setCityDialogOpen] = useState(false);
@@ -178,7 +180,11 @@ export function LocationsManagement() {
   };
 
   const handleToggleStateActive = (state: State) => {
-    updateState.mutate({ id: state.id, isActive: !state.isActive });
+    setTogglingStateId(state.id);
+    updateState.mutate(
+      { id: state.id, isActive: !state.isActive },
+      { onSettled: () => setTogglingStateId(null) },
+    );
   };
 
   // City handlers
@@ -230,7 +236,11 @@ export function LocationsManagement() {
   };
 
   const handleToggleCityActive = (city: City) => {
-    updateCity.mutate({ id: city.id, isActive: !city.isActive });
+    setTogglingCityId(city.id);
+    updateCity.mutate(
+      { id: city.id, isActive: !city.isActive },
+      { onSettled: () => setTogglingCityId(null) },
+    );
   };
 
   if (statesLoading) {
@@ -240,6 +250,18 @@ export function LocationsManagement() {
           {[...Array(5)].map((_, i) => (
             <Skeleton key={i} className="h-12 w-full" />
           ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (statesError) {
+    return (
+      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
+        <CardContent className="py-10 text-center">
+          <p className="text-error-600 dark:text-error-400">
+            {t("errors.loadError")}
+          </p>
         </CardContent>
       </Card>
     );
@@ -313,13 +335,18 @@ export function LocationsManagement() {
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Switch
-                                checked={state.isActive}
-                                onCheckedChange={() =>
-                                  handleToggleStateActive(state)
-                                }
-                                onClick={(e) => e.stopPropagation()}
-                              />
+                              {togglingStateId === state.id && updateState.isPending ? (
+                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                              ) : (
+                                <Switch
+                                  checked={state.isActive}
+                                  onCheckedChange={() =>
+                                    handleToggleStateActive(state)
+                                  }
+                                  onClick={(e) => e.stopPropagation()}
+                                  disabled={updateState.isPending}
+                                />
+                              )}
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -395,12 +422,17 @@ export function LocationsManagement() {
                                         </span>
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <Switch
-                                          checked={city.isActive}
-                                          onCheckedChange={() =>
-                                            handleToggleCityActive(city)
-                                          }
-                                        />
+                                        {togglingCityId === city.id && updateCity.isPending ? (
+                                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                        ) : (
+                                          <Switch
+                                            checked={city.isActive}
+                                            onCheckedChange={() =>
+                                              handleToggleCityActive(city)
+                                            }
+                                            disabled={updateCity.isPending}
+                                          />
+                                        )}
                                         <Button
                                           variant="ghost"
                                           size="icon"

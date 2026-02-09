@@ -7,6 +7,7 @@ import { toastSuccess, toastError } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
 import type { ApiError } from "@/types";
 import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 interface ChangePasswordData {
   currentPassword: string;
@@ -27,9 +28,10 @@ export function useChangePassword() {
       );
     },
     onError: (error: AxiosError<ApiError>) => {
-      const message =
-        error.response?.data?.message || t("auth.changePasswordFailedDefault");
-      toastError(t("auth.changePasswordErrorTitle"), message);
+      toastError(
+        t("auth.changePasswordErrorTitle"),
+        extractApiError(error, t("auth.changePasswordFailedDefault")),
+      );
     },
   });
 }

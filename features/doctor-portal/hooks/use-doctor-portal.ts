@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { DOCTOR_ENDPOINTS, SECRETARY_ENDPOINTS } from "@/lib/api/endpoints";
 import {
@@ -12,7 +13,11 @@ import {
   PaginatedResponse,
   Rating,
 } from "@/types";
+import type { ApiError } from "@/types";
 import { AppointmentStatus, PaymentStatus } from "@/types/enums";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // Profile hooks
 export function useDoctorProfile(options?: { enabled?: boolean }) {
@@ -27,6 +32,7 @@ export function useDoctorProfile(options?: { enabled?: boolean }) {
 }
 
 export function useUpdateDoctorProfile() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -36,11 +42,15 @@ export function useUpdateDoctorProfile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-profile"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 // Create profile for new doctors
 export function useCreateDoctorProfile() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -51,6 +61,9 @@ export function useCreateDoctorProfile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-profile"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -77,6 +90,7 @@ export function useDoctorClinic(clinicId: string) {
 }
 
 export function useCreateClinic() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -86,10 +100,14 @@ export function useCreateClinic() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinics"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useUpdateClinic() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -106,10 +124,14 @@ export function useUpdateClinic() {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinics"] });
       queryClient.invalidateQueries({ queryKey: ["doctor-clinic", clinicId] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useToggleClinicActive() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -123,10 +145,14 @@ export function useToggleClinicActive() {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinics"] });
       queryClient.invalidateQueries({ queryKey: ["doctor-clinic", clinicId] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteClinic() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -135,6 +161,9 @@ export function useDeleteClinic() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinics"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -154,6 +183,7 @@ export function useClinicSchedules(clinicId: string) {
 }
 
 export function useCreateSchedule() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -174,10 +204,14 @@ export function useCreateSchedule() {
         queryKey: ["doctor-clinic-schedules", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useUpdateSchedule() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -200,10 +234,14 @@ export function useUpdateSchedule() {
         queryKey: ["doctor-clinic-schedules", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteSchedule() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -223,6 +261,9 @@ export function useDeleteSchedule() {
         queryKey: ["doctor-clinic-schedules", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
@@ -241,6 +282,7 @@ export function useClinicServices(clinicId: string) {
 }
 
 export function useCreateService() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -261,10 +303,14 @@ export function useCreateService() {
         queryKey: ["doctor-clinic-services", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useUpdateService() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -287,10 +333,14 @@ export function useUpdateService() {
         queryKey: ["doctor-clinic-services", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteService() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -310,10 +360,14 @@ export function useDeleteService() {
         queryKey: ["doctor-clinic-services", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useToggleServiceActive() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -333,6 +387,9 @@ export function useToggleServiceActive() {
       queryClient.invalidateQueries({
         queryKey: ["doctor-clinic-services", clinicId],
       });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -418,6 +475,7 @@ export function useDoctorAppointment(appointmentId: string) {
 }
 
 export function useUpdateAppointmentStatus() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -439,11 +497,15 @@ export function useUpdateAppointmentStatus() {
         queryKey: ["doctor-appointment", appointmentId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 // Per Swagger UpdatePaymentStatusDto: paymentStatus (required), paymentMethod (optional)
 export function useUpdateAppointmentPayment() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -470,6 +532,9 @@ export function useUpdateAppointmentPayment() {
         queryKey: ["doctor-appointment", appointmentId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
@@ -495,6 +560,7 @@ export function useGetMedicalNotes(appointmentId: string) {
 }
 
 export function useAddMedicalNotes() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -517,6 +583,9 @@ export function useAddMedicalNotes() {
       queryClient.invalidateQueries({
         queryKey: ["doctor-appointment-medical-notes", appointmentId],
       });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -561,6 +630,7 @@ export interface CreateWalkInAppointmentData {
 }
 
 export function useCreateDoctorAppointment() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -569,6 +639,9 @@ export function useCreateDoctorAppointment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-appointments"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

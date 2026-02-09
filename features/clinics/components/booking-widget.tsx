@@ -15,6 +15,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { ApiError } from "@/types/models";
+import { extractApiError } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,9 +64,9 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     useState<string>("");
 
   // Queries
-  const { data: services, isLoading: servicesLoading } =
+  const { data: services, isLoading: servicesLoading, isError: servicesError } =
     useClinicServices(clinicId);
-  const { data: familyMembers, isLoading: familyLoading } = usePatientFamily();
+  const { data: familyMembers, isLoading: familyLoading, isError: familyError } = usePatientFamily();
 
   // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({
@@ -109,11 +110,9 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
       router.push("/patient/appointments");
     },
     onError: (error: AxiosError<ApiError>) => {
-      const message =
-        error.response?.data?.message || t("booking.bookingFailedDesc");
       toast({
         title: t("booking.bookingFailedTitle"),
-        description: message,
+        description: extractApiError(error, t("booking.bookingFailedDesc")),
         variant: "error",
       });
     },
@@ -190,6 +189,10 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
           </label>
           {servicesLoading ? (
             <Skeleton className="h-10 w-full" />
+          ) : servicesError ? (
+            <p className="text-sm text-error-600 dark:text-error-400">
+              {t("errors.loadError")}
+            </p>
           ) : services && services.length > 0 ? (
             <SearchableSelect
               options={services.map((service) => ({
@@ -251,6 +254,10 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
               <>
                 {familyLoading ? (
                   <Skeleton className="h-10 w-full" />
+                ) : familyError ? (
+                  <p className="text-sm text-error-600 dark:text-error-400">
+                    {t("errors.loadError")}
+                  </p>
                 ) : familyMembers && familyMembers.length > 0 ? (
                   <SearchableSelect
                     options={familyMembers.map((member) => ({

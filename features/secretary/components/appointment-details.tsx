@@ -471,6 +471,9 @@ export function SecretaryAppointmentDetails({
                       onClick={() => handlePayment("CARD")}
                       disabled={updatePaymentMutation.isPending}
                     >
+                      {updatePaymentMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin ms-2" />
+                      ) : null}
                       {t("appointments.payCard")}
                     </Button>
                     <Button
@@ -479,6 +482,9 @@ export function SecretaryAppointmentDetails({
                       onClick={() => handlePayment("INSURANCE")}
                       disabled={updatePaymentMutation.isPending}
                     >
+                      {updatePaymentMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin ms-2" />
+                      ) : null}
                       {t("appointments.payInsurance")}
                     </Button>
                   </div>
