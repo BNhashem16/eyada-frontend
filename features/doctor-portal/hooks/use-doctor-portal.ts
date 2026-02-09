@@ -433,8 +433,11 @@ export function useUpdateAppointmentStatus() {
         { status },
       );
     },
-    onSuccess: () => {
+    onSuccess: (_, { appointmentId }) => {
       queryClient.invalidateQueries({ queryKey: ["doctor-appointments"] });
+      queryClient.invalidateQueries({
+        queryKey: ["doctor-appointment", appointmentId],
+      });
     },
   });
 }
@@ -461,8 +464,11 @@ export function useUpdateAppointmentPayment() {
         },
       );
     },
-    onSuccess: () => {
+    onSuccess: (_, { appointmentId }) => {
       queryClient.invalidateQueries({ queryKey: ["doctor-appointments"] });
+      queryClient.invalidateQueries({
+        queryKey: ["doctor-appointment", appointmentId],
+      });
     },
   });
 }

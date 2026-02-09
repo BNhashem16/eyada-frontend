@@ -208,6 +208,7 @@ export function DoctorAppointmentDetails({
   const appointmentDateStr = appointment.appointmentDate;
   const canEditMedicalNotes = [
     AppointmentStatus.CHECKED_IN,
+    AppointmentStatus.IN_PROGRESS,
     AppointmentStatus.COMPLETED,
   ].includes(appointment.status);
 
