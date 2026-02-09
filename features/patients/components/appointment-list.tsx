@@ -1,11 +1,22 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Calendar, Frown } from "lucide-react";
+import { useState, useCallback, useMemo } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Frown,
+  Clock,
+  CheckCircle,
+  UserCheck,
+  Stethoscope,
+  XCircle,
+  Ban,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { AppointmentCard } from "./appointment-card";
 import { RatingDialog } from "./rating-dialog";
 import { CancelDialog } from "./cancel-dialog";
@@ -19,33 +30,73 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 
-type FilterTab = "all" | "upcoming" | "completed" | "cancelled";
-
 export function AppointmentList() {
   const { t } = useTranslation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<FilterTab>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [ratingAppointment, setRatingAppointment] =
     useState<Appointment | null>(null);
 
-  // Get status filter based on tab
-  const getStatusFilter = (): AppointmentStatus | undefined => {
-    switch (activeTab) {
-      case "upcoming":
-        return AppointmentStatus.CONFIRMED;
-      case "completed":
-        return AppointmentStatus.COMPLETED;
-      case "cancelled":
-        return AppointmentStatus.CANCELLED;
-      default:
-        return undefined;
-    }
-  };
+  const statusFilterOptions = useMemo(
+    () => [
+      {
+        value: "all",
+        label: t("common.all"),
+        icon: <Calendar className="h-4 w-4" />,
+      },
+      {
+        value: AppointmentStatus.PENDING,
+        label: t("status.pending"),
+        icon: <Clock className="h-4 w-4 text-warning-500" />,
+      },
+      {
+        value: AppointmentStatus.CONFIRMED,
+        label: t("status.confirmed"),
+        icon: <CheckCircle className="h-4 w-4 text-primary-500" />,
+      },
+      {
+        value: AppointmentStatus.CHECKED_IN,
+        label: t("status.checkedIn"),
+        icon: <UserCheck className="h-4 w-4 text-success-500" />,
+      },
+      {
+        value: AppointmentStatus.IN_PROGRESS,
+        label: t("status.inProgress"),
+        icon: <Stethoscope className="h-4 w-4 text-info-500" />,
+      },
+      {
+        value: AppointmentStatus.COMPLETED,
+        label: t("status.completed"),
+        icon: <CheckCircle className="h-4 w-4 text-muted-foreground" />,
+      },
+      {
+        value: AppointmentStatus.CANCELLED,
+        label: t("status.cancelled"),
+        icon: <XCircle className="h-4 w-4 text-error-500" />,
+      },
+      {
+        value: AppointmentStatus.NO_SHOW,
+        label: t("status.noShow"),
+        icon: <Ban className="h-4 w-4 text-muted-foreground" />,
+      },
+    ],
+    [t],
+  );
+
+  const handleStatusChange = useCallback((value: string) => {
+    setSelectedStatus(value);
+    setPage(1);
+  }, []);
+
+  const statusFilter =
+    selectedStatus === "all"
+      ? undefined
+      : (selectedStatus as AppointmentStatus);
 
   const { data, isLoading, isError } = usePatientAppointments({
-    status: getStatusFilter(),
+    status: statusFilter,
     page,
     limit: 10,
   });
@@ -54,11 +105,6 @@ export function AppointmentList() {
 
   const appointments = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 1;
-
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab as FilterTab);
-    setPage(1);
-  };
 
   const handleCancel = useCallback((id: string) => {
     setCancelingId(id);
@@ -91,21 +137,15 @@ export function AppointmentList() {
 
   return (
     <div className="space-y-6">
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList>
-          <TabsTrigger value="all">{t("common.all")}</TabsTrigger>
-          <TabsTrigger value="upcoming">
-            {t("appointments.upcoming")}
-          </TabsTrigger>
-          <TabsTrigger value="completed">
-            {t("appointments.completed")}
-          </TabsTrigger>
-          <TabsTrigger value="cancelled">
-            {t("appointments.cancelled")}
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+      {/* Status Filter */}
+      <SearchableSelect
+        options={statusFilterOptions}
+        value={selectedStatus}
+        onValueChange={handleStatusChange}
+        placeholder={t("appointments.status")}
+        showSearch={false}
+        className="w-full sm:w-56"
+      />
 
       {/* Loading */}
       {isLoading && (

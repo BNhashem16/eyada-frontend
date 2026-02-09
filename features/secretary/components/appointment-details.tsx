@@ -239,10 +239,10 @@ export function SecretaryAppointmentDetails({
 
       {/* Header Card */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                   #{appointment.queueNumber || "--"}
                 </span>
@@ -254,7 +254,7 @@ export function SecretaryAppointmentDetails({
                   {paymentStatus.label}
                 </Badge>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground break-all">
                 {t("appointments.bookingNumber")}: {appointment.bookingNumber}
               </p>
             </div>
@@ -265,8 +265,10 @@ export function SecretaryAppointmentDetails({
                   <Button
                     key={action.status}
                     variant={action.variant}
+                    size="sm"
                     onClick={() => handleStatusUpdate(action.status)}
                     disabled={updateStatusMutation.isPending}
+                    className="flex-1 sm:flex-none"
                   >
                     {updateStatusMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin ms-2" />
@@ -281,20 +283,20 @@ export function SecretaryAppointmentDetails({
           </div>
 
           {/* Date & Time */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3 sm:p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
             <div className="flex items-center gap-3">
-              <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-              <div>
+              <Calendar className="h-5 w-5 flex-shrink-0 text-primary-600 dark:text-primary-400" />
+              <div className="min-w-0">
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.date")}
                 </p>
-                <p className="font-semibold">
+                <p className="font-semibold truncate">
                   {formatDate(appointmentDateStr, "EEEE, d MMMM yyyy")}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              <Clock className="h-5 w-5 flex-shrink-0 text-primary-600 dark:text-primary-400" />
               <div>
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.time")}
@@ -310,29 +312,29 @@ export function SecretaryAppointmentDetails({
 
       {/* Patient Info */}
       <Card>
-        <CardHeader>
+        <CardHeader className="px-4 sm:px-6">
           <CardTitle className="text-lg flex items-center gap-2">
             <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             {t("appointments.patientInfo")}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4 p-4 bg-muted rounded-lg mb-4">
-            <Avatar className="h-16 w-16">
+        <CardContent className="px-4 sm:px-6">
+          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-muted rounded-lg mb-4">
+            <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
               <AvatarImage
                 src={
                   appointment.bookedForPatient?.user?.profilePicture ||
                   undefined
                 }
               />
-              <AvatarFallback className="text-xl">
+              <AvatarFallback className="text-lg sm:text-xl">
                 {getInitials(appointment.patientName || "")}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <p className="font-semibold text-lg">{appointment.patientName}</p>
+            <div className="min-w-0">
+              <p className="font-semibold text-base sm:text-lg truncate">{appointment.patientName}</p>
               {appointment.patientAge && (
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {appointment.patientAge} {t("common.years")}
                 </p>
               )}
@@ -342,10 +344,10 @@ export function SecretaryAppointmentDetails({
           <div className="space-y-3">
             {appointment.bookedForPatient?.user?.phoneNumber && (
               <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-muted-foreground" />
+                <Phone className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
                 <a
                   href={`tel:${appointment.bookedForPatient.user.phoneNumber}`}
-                  className="hover:text-primary-600"
+                  className="hover:text-primary-600 truncate"
                   dir="ltr"
                 >
                   {appointment.bookedForPatient.user.phoneNumber}
@@ -354,8 +356,8 @@ export function SecretaryAppointmentDetails({
             )}
             {appointment.bookedForPatient?.user?.email && (
               <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-muted-foreground" />
-                <span>{appointment.bookedForPatient.user.email}</span>
+                <Mail className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
+                <span className="truncate">{appointment.bookedForPatient.user.email}</span>
               </div>
             )}
           </div>
@@ -364,24 +366,24 @@ export function SecretaryAppointmentDetails({
 
       {/* Doctor & Clinic Info */}
       <Card>
-        <CardHeader>
+        <CardHeader className="px-4 sm:px-6">
           <CardTitle className="text-lg flex items-center gap-2">
             <Stethoscope className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             {t("appointments.doctorInfo")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="px-4 sm:px-6 space-y-4">
           {appointment.clinic?.doctorProfile && (
-            <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
-              <Avatar className="h-12 w-12">
+            <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-muted rounded-lg">
+              <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
                 <AvatarFallback>
                   {getInitials(
                     appointment.clinic.doctorProfile.user?.fullName || "",
                   )}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <p className="font-semibold">
+              <div className="min-w-0">
+                <p className="font-semibold truncate">
                   {t("doctors.doctorPrefix")}{" "}
                   {appointment.clinic.doctorProfile.user?.fullName}
                 </p>
@@ -391,9 +393,9 @@ export function SecretaryAppointmentDetails({
 
           {appointment.clinic && (
             <div className="flex items-start gap-3">
-              <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="font-medium">
+              <MapPin className="h-5 w-5 flex-shrink-0 text-muted-foreground mt-0.5" />
+              <div className="min-w-0">
+                <p className="font-medium truncate">
                   {getLocalizedText(appointment.clinic.name, "ar")}
                 </p>
               </div>
@@ -404,19 +406,19 @@ export function SecretaryAppointmentDetails({
 
       {/* Service & Payment */}
       <Card>
-        <CardHeader>
+        <CardHeader className="px-4 sm:px-6">
           <CardTitle className="text-lg flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             {t("appointments.serviceAndPayment")}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">
+            <div className="flex justify-between items-center gap-2">
+              <span className="text-muted-foreground flex-shrink-0">
                 {t("appointments.service")}
               </span>
-              <span className="font-medium">
+              <span className="font-medium truncate text-end">
                 {getLocalizedText(appointment.serviceName, "ar")}
               </span>
             </div>
@@ -451,9 +453,10 @@ export function SecretaryAppointmentDetails({
                   <p className="text-sm text-muted-foreground mb-3">
                     {t("appointments.markPayment")}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={() => handlePayment("CASH")}
                       disabled={updatePaymentMutation.isPending}
                     >
@@ -464,6 +467,7 @@ export function SecretaryAppointmentDetails({
                     </Button>
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={() => handlePayment("CARD")}
                       disabled={updatePaymentMutation.isPending}
                     >
@@ -471,6 +475,7 @@ export function SecretaryAppointmentDetails({
                     </Button>
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={() => handlePayment("INSURANCE")}
                       disabled={updatePaymentMutation.isPending}
                     >
@@ -487,19 +492,19 @@ export function SecretaryAppointmentDetails({
       {/* Patient Notes */}
       {(appointment.patientNotes || appointment.symptoms) && (
         <Card>
-          <CardHeader>
+          <CardHeader className="px-4 sm:px-6">
             <CardTitle className="text-lg flex items-center gap-2">
               <FileText className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               {t("appointments.patientNotes")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="px-4 sm:px-6 space-y-4">
             {appointment.symptoms && (
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">
                   {t("appointments.symptoms")}
                 </p>
-                <p className="text-foreground bg-muted p-3 rounded-lg whitespace-pre-line">
+                <p className="text-foreground bg-muted p-3 rounded-lg whitespace-pre-line break-words">
                   {appointment.symptoms}
                 </p>
               </div>
@@ -509,7 +514,7 @@ export function SecretaryAppointmentDetails({
                 <p className="text-sm font-medium text-muted-foreground mb-1">
                   {t("appointments.notes")}
                 </p>
-                <p className="text-foreground bg-muted p-3 rounded-lg whitespace-pre-line">
+                <p className="text-foreground bg-muted p-3 rounded-lg whitespace-pre-line break-words">
                   {appointment.patientNotes}
                 </p>
               </div>
@@ -526,22 +531,22 @@ function AppointmentDetailsSkeleton() {
     <div className="space-y-6">
       <Skeleton className="h-10 w-24" />
       <Card>
-        <CardContent className="p-6">
-          <div className="flex justify-between items-center mb-6">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
             <div className="space-y-2">
               <Skeleton className="h-8 w-32" />
               <Skeleton className="h-4 w-48" />
             </div>
             <Skeleton className="h-10 w-32" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Skeleton className="h-20" />
             <Skeleton className="h-20" />
           </div>
         </CardContent>
       </Card>
       <Card>
-        <CardContent className="p-6 space-y-4">
+        <CardContent className="p-4 sm:p-6 space-y-4">
           <Skeleton className="h-20" />
           <Skeleton className="h-16" />
         </CardContent>
