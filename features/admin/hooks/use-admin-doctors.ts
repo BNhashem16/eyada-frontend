@@ -1,10 +1,15 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { apiGet, apiPatch } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import type { ApiError } from "@/types";
 import { DoctorProfile, PaginatedResponse } from "@/types";
 import { DoctorStatus } from "@/types/enums";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // Filter options for admin doctors list
 export interface AdminDoctorsFilters {
@@ -93,6 +98,7 @@ export function useAdminDoctor(doctorId: string) {
 
 export function useApproveDoctor() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (doctorId: string) => {
@@ -105,11 +111,15 @@ export function useApproveDoctor() {
       queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
       queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useRejectDoctor() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (doctorId: string) => {
@@ -122,11 +132,15 @@ export function useRejectDoctor() {
       queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
       queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useSuspendDoctor() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (doctorId: string) => {
@@ -138,6 +152,9 @@ export function useSuspendDoctor() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
       queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

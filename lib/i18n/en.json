@@ -932,7 +932,8 @@
     },
     "appointmentsPage": {
       "title": "Manage Appointments",
-      "subtitle": "View and manage all appointments in the system"
+      "subtitle": "View and manage all appointments in the system",
+      "cancelledByAdmin": "Cancelled by admin"
     },
     "clinicsPage": {
       "title": "Manage Clinics",

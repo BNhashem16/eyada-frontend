@@ -11,6 +11,7 @@ import { DoctorProfile } from "@/types";
 import { DoctorStatus } from "@/types/enums";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 interface DoctorCardProps {
   doctor: DoctorProfile;
@@ -19,7 +20,7 @@ interface DoctorCardProps {
 export const DoctorCard = React.memo(function DoctorCard({
   doctor,
 }: DoctorCardProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const averageRating = doctor.averageRating ?? 0;
   const totalRatings = doctor.totalRatings ?? 0;
 
@@ -59,7 +60,7 @@ export const DoctorCard = React.memo(function DoctorCard({
                 {t("doctors.doctorPrefix")} {doctor.user?.fullName}
               </Link>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {doctor.specialty?.name?.ar || doctor.specialty?.name?.en}
+                {getLocalizedText(doctor.specialty?.name, locale)}
               </p>
             </div>
 
@@ -82,8 +83,8 @@ export const DoctorCard = React.memo(function DoctorCard({
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
                   <span>
-                    {doctor.clinics[0].city?.name?.ar},{" "}
-                    {doctor.clinics[0].city?.state?.name?.ar}
+                    {getLocalizedText(doctor.clinics[0].city?.name, locale)},{" "}
+                    {getLocalizedText(doctor.clinics[0].city?.state?.name, locale)}
                   </span>
                 </div>
               )}

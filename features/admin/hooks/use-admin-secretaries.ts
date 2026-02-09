@@ -4,6 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import { PaginatedResponse } from "@/types";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // ==================== Types ====================
 
@@ -177,6 +182,7 @@ export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {
 
 export function useCreateAdminSecretary() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateSecretaryData) => {
@@ -185,11 +191,15 @@ export function useCreateAdminSecretary() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useAssignSecretary() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: AssignSecretaryData) => {
@@ -201,11 +211,15 @@ export function useAssignSecretary() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useUpdateAdminSecretary() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -217,11 +231,15 @@ export function useUpdateAdminSecretary() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useRemoveSecretaryAssignment() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (assignmentId: string) => {
@@ -229,6 +247,9 @@ export function useRemoveSecretaryAssignment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

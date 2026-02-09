@@ -32,6 +32,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { State, City } from "@/types";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 // Schema matching backend CreateClinicDto
 const getClinicSchema = (t: (key: string) => string) =>
@@ -66,7 +67,7 @@ interface ClinicFormProps {
 }
 
 export function ClinicForm({ clinicId }: ClinicFormProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const router = useRouter();
   const { toast } = useToast();
   const isEditing = !!clinicId;
@@ -371,7 +372,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               <SearchableSelect
                 options={allStates.map((state) => ({
                   value: state.id,
-                  label: state.name?.ar || state.name?.en || "",
+                  label: getLocalizedText(state.name, locale) || "",
                   icon: <MapPin className="h-4 w-4" />,
                 }))}
                 value={watch("stateId") || ""}
@@ -410,7 +411,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               <SearchableSelect
                 options={allCities.map((city) => ({
                   value: city.id,
-                  label: city.name?.ar || city.name?.en || "",
+                  label: getLocalizedText(city.name, locale) || "",
                   icon: <Building2 className="h-4 w-4" />,
                 }))}
                 value={watch("cityId") || ""}

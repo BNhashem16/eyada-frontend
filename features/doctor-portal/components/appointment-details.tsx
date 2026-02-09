@@ -113,7 +113,7 @@ const getPaymentStatusConfig = (
 export function DoctorAppointmentDetails({
   appointmentId,
 }: AppointmentDetailsProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
 
   const [diagnosis, setDiagnosis] = useState("");
@@ -346,7 +346,7 @@ export function DoctorAppointmentDetails({
                   {t("appointments.clinic")}
                 </span>
                 <span className="font-medium">
-                  {getLocalizedText(appointment.clinic.name, "ar")}
+                  {getLocalizedText(appointment.clinic.name, locale)}
                 </span>
               </div>
               {appointment.clinic.secretaries &&
@@ -453,7 +453,7 @@ export function DoctorAppointmentDetails({
                 {t("appointments.service")}
               </span>
               <span className="font-medium">
-                {getLocalizedText(appointment.serviceName, "ar")}
+                {getLocalizedText(appointment.serviceName, locale)}
               </span>
             </div>
             <Separator />

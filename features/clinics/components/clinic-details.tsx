@@ -21,6 +21,7 @@ import { useClinic } from "../hooks/use-clinics";
 import { BookingWidget } from "./booking-widget";
 import { DayOfWeek } from "@/types/enums";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 import { formatTime } from "@/lib/utils/date";
 
 interface ClinicDetailsProps {
@@ -50,7 +51,7 @@ const dayOrder = [
 ];
 
 export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const dayNames = getDayNames(t);
   const { data: clinic, isLoading, isError } = useClinic(clinicId);
   // Use embedded data from clinic response (reduces API calls from 3 to 1)
@@ -100,7 +101,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                 <div className="flex items-start justify-between">
                   <div>
                     <h1 className="text-2xl font-bold text-foreground">
-                      {clinic.name?.ar || clinic.name?.en}
+                      {getLocalizedText(clinic.name, locale)}
                     </h1>
                     {clinic.isActive && (
                       <Badge variant="success" className="mt-2">
@@ -129,11 +130,11 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                 <div className="flex items-start gap-2 mt-4 text-muted-foreground">
                   <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                   <div>
-                    <p>{clinic.address?.ar || clinic.address?.en}</p>
+                    <p>{getLocalizedText(clinic.address, locale)}</p>
                     <p>
-                      {clinic.city?.name?.ar || clinic.city?.name?.en}
+                      {getLocalizedText(clinic.city?.name, locale)}
                       {clinic.city?.state &&
-                        `, ${clinic.city.state.name?.ar || clinic.city.state.name?.en}`}
+                        `, ${getLocalizedText(clinic.city.state.name, locale)}`}
                     </p>
                   </div>
                 </div>
@@ -243,8 +244,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                       >
                         <div>
                           <p className="font-medium text-foreground">
-                            {service.name?.ar ||
-                              service.name?.en ||
+                            {getLocalizedText(service.name, locale) ||
                               service.serviceType}
                           </p>
                           <p className="text-sm text-muted-foreground mt-1">

@@ -132,6 +132,7 @@ export interface UpdateAssignmentData {
 
 export function useUpdateSecretaryAssignment() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -147,12 +148,16 @@ export function useUpdateSecretaryAssignment() {
       queryClient.invalidateQueries({ queryKey: ["doctor-secretaries"] });
       queryClient.invalidateQueries({ queryKey: ["clinic-secretaries"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 // Remove secretary from clinic
 export function useRemoveSecretaryFromClinic() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (assignmentId: string) => {
@@ -161,6 +166,9 @@ export function useRemoveSecretaryFromClinic() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-secretaries"] });
       queryClient.invalidateQueries({ queryKey: ["clinic-secretaries"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

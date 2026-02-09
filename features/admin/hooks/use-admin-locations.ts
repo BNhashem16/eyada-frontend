@@ -4,6 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import { State, City, Multilingual, PaginatedResponse } from "@/types";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 export interface AdminStatesFilters {
   page?: number;
@@ -44,6 +49,7 @@ interface CreateStateData {
 
 export function useCreateState() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateStateData) => {
@@ -51,6 +57,9 @@ export function useCreateState() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-states"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -65,6 +74,7 @@ interface UpdateStateData {
 
 export function useUpdateState() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({ id, ...data }: UpdateStateData) => {
@@ -73,11 +83,15 @@ export function useUpdateState() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-states"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteState() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -85,6 +99,9 @@ export function useDeleteState() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-states"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -130,6 +147,7 @@ interface CreateCityData {
 
 export function useCreateCity() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateCityData) => {
@@ -137,6 +155,9 @@ export function useCreateCity() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-cities"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -152,6 +173,7 @@ interface UpdateCityData {
 
 export function useUpdateCity() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({ id, ...data }: UpdateCityData) => {
@@ -160,11 +182,15 @@ export function useUpdateCity() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-cities"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteCity() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -172,6 +198,9 @@ export function useDeleteCity() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-cities"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

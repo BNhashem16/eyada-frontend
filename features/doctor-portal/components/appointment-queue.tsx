@@ -34,6 +34,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 import { Appointment } from "@/types";
 import { AppointmentStatus } from "@/types/enums";
 import { formatDate, formatTime, addDays } from "@/lib/utils/date";
@@ -62,7 +63,7 @@ const statusColors: Record<AppointmentStatus, string> = {
 };
 
 export function AppointmentQueue() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState(
     formatDate(new Date(), "yyyy-MM-dd"),
@@ -213,7 +214,7 @@ export function AppointmentQueue() {
                   },
                   ...(clinics?.map((clinic) => ({
                     value: clinic.id,
-                    label: clinic.name?.ar || clinic.name?.en || "",
+                    label: getLocalizedText(clinic.name, locale) || "",
                     icon: <Building2 className="h-4 w-4" />,
                   })) || []),
                 ]}

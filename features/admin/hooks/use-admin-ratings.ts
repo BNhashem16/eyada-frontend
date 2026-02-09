@@ -4,6 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPatch, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import { PaginatedResponse } from "@/types";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // ==================== Types ====================
 
@@ -151,6 +156,7 @@ export interface UpdateRatingData {
 
 export function useUpdateAdminRating() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({ id, ...data }: UpdateRatingData & { id: string }) => {
@@ -161,11 +167,15 @@ export function useUpdateAdminRating() {
       queryClient.invalidateQueries({ queryKey: ["admin-rating"] });
       queryClient.invalidateQueries({ queryKey: ["admin-ratings-statistics"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteAdminRating() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -174,6 +184,9 @@ export function useDeleteAdminRating() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-ratings"] });
       queryClient.invalidateQueries({ queryKey: ["admin-ratings-statistics"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

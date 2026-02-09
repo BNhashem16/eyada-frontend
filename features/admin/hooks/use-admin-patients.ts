@@ -5,6 +5,11 @@ import { apiGet, apiPatch } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import { PatientProfile, PaginatedResponse } from "@/types";
 import { PatientStatus } from "@/types/enums";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // Filter options for admin patients list
 export interface AdminPatientsFilters {
@@ -68,6 +73,7 @@ export function useAdminPatient(patientId: string) {
 
 export function useApprovePatient() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (patientId: string) => {
@@ -80,11 +86,15 @@ export function useApprovePatient() {
       queryClient.invalidateQueries({ queryKey: ["admin-patients"] });
       queryClient.invalidateQueries({ queryKey: ["admin-patient"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useRejectPatient() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (patientId: string) => {
@@ -97,11 +107,15 @@ export function useRejectPatient() {
       queryClient.invalidateQueries({ queryKey: ["admin-patients"] });
       queryClient.invalidateQueries({ queryKey: ["admin-patient"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useSuspendPatient() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (patientId: string) => {
@@ -113,6 +127,9 @@ export function useSuspendPatient() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-patients"] });
       queryClient.invalidateQueries({ queryKey: ["admin-patient"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

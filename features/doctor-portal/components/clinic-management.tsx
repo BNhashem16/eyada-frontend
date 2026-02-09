@@ -35,7 +35,7 @@ const getDayNames = (
 });
 
 export function ClinicManagement() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { data: clinics, isLoading, isError } = useDoctorClinics();
 
   const dayNames = getDayNames(t);
@@ -97,12 +97,10 @@ export function ClinicManagement() {
               (s) => s.isActive,
             )?.price;
 
-            const clinicName = clinic.name?.ar || clinic.name?.en || "";
-            const clinicAddress =
-              clinic.address?.ar || clinic.address?.en || "";
+            const clinicName = getLocalizedText(clinic.name, locale);
+            const clinicAddress = getLocalizedText(clinic.address, locale);
             const cityName =
-              clinic.city?.name?.ar ||
-              clinic.city?.name?.en ||
+              getLocalizedText(clinic.city?.name, locale) ||
               (clinic.city as any)?.nameAr ||
               "";
             const phoneNumber = clinic.phoneNumbers?.[0];
@@ -169,7 +167,7 @@ export function ClinicManagement() {
                       {workingDays && workingDays.length > 0 && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                           <Clock className="h-4 w-4 text-muted-foreground/70" />
-                          <span>{workingDays.join("، ")}</span>
+                          <span>{workingDays.join(locale === "ar" ? "، " : ", ")}</span>
                         </div>
                       )}
 

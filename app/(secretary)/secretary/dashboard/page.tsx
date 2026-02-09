@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import { useTour, SECRETARY_DASHBOARD_TOUR_ID, secretaryDashboardSteps } from "@/lib/tour";
 
 export default function SecretaryDashboardPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { data: clinics } = useSecretaryClinics();
   const { startTour } = useTour();
 
@@ -72,7 +72,7 @@ export default function SecretaryDashboardPage() {
                     className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                   >
                     <span className="font-medium text-sm">
-                      {getLocalizedText(clinic.name, "ar")}
+                      {getLocalizedText(clinic.name, locale)}
                     </span>
                     {clinic.isActive && (
                       <span

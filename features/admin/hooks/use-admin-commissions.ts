@@ -1,9 +1,14 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import type { ApiError } from "@/types";
 import { PaginatedResponse } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // ==================== Types ====================
 
@@ -166,6 +171,7 @@ export interface CreateCommissionData {
 
 export function useCreateCommission() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateCommissionData) => {
@@ -175,6 +181,9 @@ export function useCreateCommission() {
       queryClient.invalidateQueries({ queryKey: ["admin-commissions"] });
       queryClient.invalidateQueries({ queryKey: ["admin-commission"] });
       queryClient.invalidateQueries({ queryKey: ["admin-balances"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -187,6 +196,7 @@ export interface UpdateCommissionData {
 
 export function useUpdateCommission() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -200,11 +210,15 @@ export function useUpdateCommission() {
       queryClient.invalidateQueries({ queryKey: ["admin-commission"] });
       queryClient.invalidateQueries({ queryKey: ["admin-balances"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteCommission() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -214,6 +228,9 @@ export function useDeleteCommission() {
       queryClient.invalidateQueries({ queryKey: ["admin-commissions"] });
       queryClient.invalidateQueries({ queryKey: ["admin-commission"] });
       queryClient.invalidateQueries({ queryKey: ["admin-balances"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -325,6 +342,7 @@ export interface RecordPaymentData {
 
 export function useRecordPayment() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: RecordPaymentData) => {
@@ -338,6 +356,9 @@ export function useRecordPayment() {
       queryClient.invalidateQueries({ queryKey: ["admin-balance-summary"] });
       queryClient.invalidateQueries({ queryKey: ["admin-doctor-report"] });
       queryClient.invalidateQueries({ queryKey: ["admin-payment-history"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

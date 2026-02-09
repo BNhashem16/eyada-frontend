@@ -11,6 +11,7 @@ import { useDoctorClinic } from "@/features/doctor-portal/hooks/use-doctor-porta
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 const ServiceManager = dynamic(
   () =>
@@ -48,7 +49,7 @@ interface ClinicManagePageProps {
 
 export default function ClinicManagePage({ params }: ClinicManagePageProps) {
   const { id } = use(params);
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { data: clinic, isLoading } = useDoctorClinic(id);
 
   if (isLoading) {
@@ -88,7 +89,7 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
         </Link>
         <ChevronRight className="h-4 w-4" />
         <span className="text-foreground">
-          {clinic.name?.ar || clinic.name?.en}
+          {getLocalizedText(clinic.name, locale)}
         </span>
       </nav>
 
@@ -100,7 +101,7 @@ export default function ClinicManagePage({ params }: ClinicManagePageProps) {
           </div>
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
-              {clinic.name?.ar || clinic.name?.en}
+              {getLocalizedText(clinic.name, locale)}
             </h1>
             <p className="text-sm text-muted-foreground">
               {t("app.manageScheduleServices")}

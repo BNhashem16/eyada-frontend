@@ -19,6 +19,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Specialty } from "@/types";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import { useTranslation } from "@/lib/i18n";
 
 interface SpecialtyCardProps {
   specialty: Specialty;
@@ -44,10 +45,11 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 export const SpecialtyCard = React.memo(function SpecialtyCard({
   specialty,
 }: SpecialtyCardProps) {
+  const { locale } = useTranslation();
   const Icon = iconMap[specialty.icon || "default"] || iconMap.default;
-  const name = getLocalizedText(specialty.name, "ar");
+  const name = getLocalizedText(specialty.name, locale);
   const description = specialty.description
-    ? getLocalizedText(specialty.description, "ar")
+    ? getLocalizedText(specialty.description, locale)
     : "";
 
   return (

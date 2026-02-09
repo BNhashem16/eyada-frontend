@@ -1,10 +1,14 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { apiGet, apiPost, apiPatch } from "@/lib/api";
 import { SECRETARY_ENDPOINTS } from "@/lib/api/endpoints";
-import { Appointment, Clinic, PaginatedResponse } from "@/types";
+import { Appointment, Clinic, PaginatedResponse, ApiError } from "@/types";
 import { AppointmentStatus, PaymentStatus } from "@/types/enums";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // Extended filters matching Swagger spec
 export interface UseSecretaryAppointmentsOptions {
@@ -110,6 +114,7 @@ export interface CreateSecretaryAppointmentData {
 
 export function useCreateAppointment() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateSecretaryAppointmentData) => {
@@ -117,6 +122,9 @@ export function useCreateAppointment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["secretary-appointments"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -132,6 +140,7 @@ interface UpdateAppointmentStatusData {
 
 export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -147,6 +156,9 @@ export function useUpdateAppointmentStatus() {
       queryClient.invalidateQueries({ queryKey: ["secretary-appointments"] });
       queryClient.invalidateQueries({ queryKey: ["secretary-appointment"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
@@ -158,6 +170,7 @@ interface UpdatePaymentData {
 
 export function useUpdatePayment() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({ appointmentId, ...data }: UpdatePaymentData) => {
@@ -169,6 +182,9 @@ export function useUpdatePayment() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["secretary-appointments"] });
       queryClient.invalidateQueries({ queryKey: ["secretary-appointment"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

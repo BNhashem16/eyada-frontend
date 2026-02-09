@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Clinic } from "@/types";
 import { DayOfWeek } from "@/types/enums";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 interface ClinicCardProps {
   clinic: Clinic;
@@ -63,7 +64,7 @@ export const ClinicCard = React.memo(function ClinicCard({
                   href={`/clinics/${clinic.id}`}
                   className="text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                 >
-                  {clinic.name?.ar || clinic.name?.en}
+                  {getLocalizedText(clinic.name, locale)}
                 </Link>
                 {clinic.isActive && (
                   <Badge variant="success" className="ms-2 text-xs">
@@ -87,11 +88,11 @@ export const ClinicCard = React.memo(function ClinicCard({
             <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
               <span>
-                {clinic.address?.ar || clinic.address?.en}
+                {getLocalizedText(clinic.address, locale)}
                 {clinic.city &&
-                  `, ${clinic.city.name?.ar || clinic.city.name?.en}`}
+                  `, ${getLocalizedText(clinic.city.name, locale)}`}
                 {clinic.city?.state &&
-                  `, ${clinic.city.state.name?.ar || clinic.city.state.name?.en}`}
+                  `, ${getLocalizedText(clinic.city.state.name, locale)}`}
               </span>
             </div>
 
@@ -123,8 +124,7 @@ export const ClinicCard = React.memo(function ClinicCard({
                     variant="secondary"
                     className="text-xs"
                   >
-                    {service.name?.ar ||
-                      service.name?.en ||
+                    {getLocalizedText(service.name, locale) ||
                       service.serviceType}
                   </Badge>
                 ))}

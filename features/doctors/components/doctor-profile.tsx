@@ -32,7 +32,7 @@ interface DoctorProfileProps {
 }
 
 export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { data: doctor, isLoading, isError } = useDoctor(doctorId);
   const [activeTab, setActiveTab] = useState("about");
 
@@ -88,7 +88,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                   </h1>
                 </div>
                 <p className="text-muted-foreground mt-1">
-                  {getLocalizedText(doctor.specialty?.name, "ar")}
+                  {getLocalizedText(doctor.specialty?.name, locale)}
                 </p>
 
                 {/* Rating */}
@@ -160,7 +160,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               </CardHeader>
               <CardContent>
                 <p className="text-foreground whitespace-pre-line">
-                  {getLocalizedText(doctor.bio, "ar")}
+                  {getLocalizedText(doctor.bio, locale)}
                 </p>
               </CardContent>
             </Card>
@@ -177,7 +177,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
               </CardHeader>
               <CardContent>
                 <p className="text-foreground whitespace-pre-line">
-                  {getLocalizedText(doctor.qualifications, "ar")}
+                  {getLocalizedText(doctor.qualifications, locale)}
                 </p>
               </CardContent>
             </Card>

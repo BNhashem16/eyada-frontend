@@ -4,6 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import { ClinicSchedule } from "@/types";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 export function useAdminClinicSchedules(clinicId: string) {
   return useQuery({
@@ -20,6 +25,7 @@ export function useAdminClinicSchedules(clinicId: string) {
 
 export function useAdminCreateSchedule() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -39,11 +45,15 @@ export function useAdminCreateSchedule() {
         queryKey: ["admin-clinic-schedules", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useAdminUpdateSchedule() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -65,11 +75,15 @@ export function useAdminUpdateSchedule() {
         queryKey: ["admin-clinic-schedules", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useAdminDeleteSchedule() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -85,6 +99,9 @@ export function useAdminDeleteSchedule() {
       queryClient.invalidateQueries({
         queryKey: ["admin-clinic-schedules", clinicId],
       });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

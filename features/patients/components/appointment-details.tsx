@@ -112,7 +112,7 @@ const getPaymentStatusConfig = (
 });
 
 export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showRatingDialog, setShowRatingDialog] = useState(false);
@@ -301,7 +301,7 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
                 <p className="text-muted-foreground">
                   {getLocalizedText(
                     appointment.clinic.doctorProfile.specialty?.name,
-                    "ar",
+                    locale,
                   )}
                 </p>
               </div>
@@ -316,16 +316,16 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
               <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="font-medium">
-                  {getLocalizedText(appointment.clinic?.name, "ar")}
+                  {getLocalizedText(appointment.clinic?.name, locale)}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {getLocalizedText(appointment.clinic?.address, "ar")}
+                  {getLocalizedText(appointment.clinic?.address, locale)}
                 </p>
                 {appointment.clinic?.city && (
                   <p className="text-sm text-muted-foreground">
-                    {getLocalizedText(appointment.clinic.city.name, "ar")}
+                    {getLocalizedText(appointment.clinic.city.name, locale)}
                     {appointment.clinic.city.state &&
-                      ` - ${getLocalizedText(appointment.clinic.city.state.name, "ar")}`}
+                      ` - ${getLocalizedText(appointment.clinic.city.state.name, locale)}`}
                   </p>
                 )}
               </div>
@@ -361,7 +361,7 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
                 {t("appointments.service")}
               </span>
               <span className="font-medium">
-                {getLocalizedText(appointment.serviceName, "ar")}
+                {getLocalizedText(appointment.serviceName, locale)}
               </span>
             </div>
             <Separator />

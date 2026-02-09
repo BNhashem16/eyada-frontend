@@ -46,7 +46,7 @@ export function RatingDialog({
   existingRating,
   onClose,
 }: RatingDialogProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -174,11 +174,11 @@ export function RatingDialog({
             </Avatar>
             <div>
               <p className="font-semibold text-foreground">
-                {t("auth.doctor")}. {doctorName}
+                {t("doctors.doctorPrefix")} {doctorName}
               </p>
               {specialtyName && (
                 <p className="text-sm text-muted-foreground">
-                  {getLocalizedText(specialtyName, "ar")}
+                  {getLocalizedText(specialtyName, locale)}
                 </p>
               )}
             </div>

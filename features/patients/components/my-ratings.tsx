@@ -15,7 +15,7 @@ import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
 
 export function MyRatings() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const {
@@ -94,13 +94,13 @@ export function MyRatings() {
                     </Avatar>
                     <div>
                       <p className="font-semibold text-foreground">
-                        {t("auth.doctor")}. {rating.doctorProfile.user.fullName}
+                        {t("doctors.doctorPrefix")} {rating.doctorProfile.user.fullName}
                       </p>
                       {rating.doctorProfile.specialty && (
                         <p className="text-sm text-muted-foreground">
                           {getLocalizedText(
                             rating.doctorProfile.specialty.name,
-                            "ar",
+                            locale,
                           )}
                         </p>
                       )}
@@ -155,7 +155,7 @@ export function MyRatings() {
                 <div className="flex items-center justify-between pt-2 border-t border-border">
                   <div className="text-xs text-muted-foreground">
                     <span>
-                      {getLocalizedText(rating.appointment.clinic.name, "ar")}
+                      {getLocalizedText(rating.appointment.clinic.name, locale)}
                     </span>
                     <span className="mx-2">•</span>
                     <span>

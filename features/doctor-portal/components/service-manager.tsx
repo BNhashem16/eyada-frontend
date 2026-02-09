@@ -40,6 +40,7 @@ import {
 } from "../hooks/use-doctor-portal";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 import { ServiceType } from "@/types/enums";
 import { ClinicServiceType } from "@/types";
 
@@ -70,7 +71,7 @@ const getServiceSchema = (t: (key: string) => string) =>
 type ServiceFormData = z.infer<ReturnType<typeof getServiceSchema>>;
 
 export function ServiceManager({ clinicId }: ServiceManagerProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
   const [showDialog, setShowDialog] = useState(false);
   const [editingService, setEditingService] =
@@ -252,8 +253,7 @@ export function ServiceManager({ clinicId }: ServiceManagerProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <h4 className="font-semibold text-foreground truncate">
-                        {service.name?.ar ||
-                          service.name?.en ||
+                        {getLocalizedText(service.name, locale) ||
                           service.serviceType}
                       </h4>
                       <Badge variant="secondary" className="text-xs shrink-0">

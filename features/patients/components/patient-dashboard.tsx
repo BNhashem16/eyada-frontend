@@ -26,7 +26,7 @@ import { useEffect } from "react";
 import { useTour, PATIENT_DASHBOARD_TOUR_ID, patientDashboardSteps } from "@/lib/tour";
 
 export function PatientDashboard() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { user } = useAuthStore();
   const { startTour } = useTour();
 
@@ -65,7 +65,7 @@ export function PatientDashboard() {
       {/* Welcome Section */}
       <div data-tour="patient-welcome" className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
         <h1 className="text-2xl font-bold mb-2">
-          {t("patient.greeting")}، {user?.name?.split(" ")[0]}
+          {t("patient.greeting")}{locale === "ar" ? "،" : ","} {user?.name?.split(" ")[0]}
         </h1>
         <p className="text-primary-100 mb-4">{t("patient.greetingMessage")}</p>
         <Button
@@ -209,7 +209,7 @@ export function PatientDashboard() {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-foreground truncate">
-                        {t("auth.doctor")}.{" "}
+                        {t("doctors.doctorPrefix")}{" "}
                         {appointment.clinic?.doctorProfile?.user?.fullName}
                       </p>
                       <p className="text-sm text-muted-foreground">

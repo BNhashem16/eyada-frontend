@@ -108,7 +108,7 @@ const getPaymentStatusConfig = (
 export function SecretaryAppointmentDetails({
   appointmentId,
 }: AppointmentDetailsProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
 
   const {
@@ -218,6 +218,16 @@ export function SecretaryAppointmentDetails({
             label: t("appointments.actionCancel"),
             icon: XCircle,
             variant: "destructive" as const,
+          },
+        ];
+      case AppointmentStatus.CHECKED_IN:
+      case AppointmentStatus.IN_PROGRESS:
+        return [
+          {
+            status: AppointmentStatus.COMPLETED,
+            label: t("appointments.actionComplete"),
+            icon: CheckCircle,
+            variant: "default" as const,
           },
         ];
       default:
@@ -396,7 +406,7 @@ export function SecretaryAppointmentDetails({
               <MapPin className="h-5 w-5 flex-shrink-0 text-muted-foreground mt-0.5" />
               <div className="min-w-0">
                 <p className="font-medium truncate">
-                  {getLocalizedText(appointment.clinic.name, "ar")}
+                  {getLocalizedText(appointment.clinic.name, locale)}
                 </p>
               </div>
             </div>
@@ -419,7 +429,7 @@ export function SecretaryAppointmentDetails({
                 {t("appointments.service")}
               </span>
               <span className="font-medium truncate text-end">
-                {getLocalizedText(appointment.serviceName, "ar")}
+                {getLocalizedText(appointment.serviceName, locale)}
               </span>
             </div>
             <Separator />

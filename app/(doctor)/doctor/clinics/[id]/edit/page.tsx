@@ -7,6 +7,7 @@ import { ClinicForm } from "@/features/doctor-portal";
 import { useDoctorClinic } from "@/features/doctor-portal/hooks/use-doctor-portal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 interface EditClinicPageProps {
   params: Promise<{ id: string }>;
@@ -14,7 +15,7 @@ interface EditClinicPageProps {
 
 export default function EditClinicPage({ params }: EditClinicPageProps) {
   const { id } = use(params);
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { data: clinic, isLoading } = useDoctorClinic(id);
 
   if (isLoading) {
@@ -41,7 +42,7 @@ export default function EditClinicPage({ params }: EditClinicPageProps) {
           href={`/doctor/clinics/${id}`}
           className="hover:text-primary-600 dark:hover:text-primary-400"
         >
-          {clinic?.name?.ar || clinic?.name?.en}
+          {getLocalizedText(clinic?.name, locale)}
         </Link>
         <ChevronRight className="h-4 w-4" />
         <span className="text-foreground">{t("common.edit")}</span>

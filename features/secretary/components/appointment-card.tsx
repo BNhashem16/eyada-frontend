@@ -106,7 +106,7 @@ const getPaymentStatusConfig = (
 export const AppointmentCard = React.memo(function AppointmentCard({
   appointment,
 }: AppointmentCardProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const updateStatus = useUpdateAppointmentStatus();
   const updatePayment = useUpdatePayment();
@@ -116,7 +116,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
 
   const status = statusConfig[appointment.status];
   const paymentStatus = paymentStatusConfig[appointment.paymentStatus];
-  const serviceName = getLocalizedText(appointment.serviceName, "ar");
+  const serviceName = getLocalizedText(appointment.serviceName, locale);
 
   const handleStatusChange = (newStatus: AppointmentStatus) => {
     updateStatus.mutate({
@@ -140,6 +140,9 @@ export const AppointmentCard = React.memo(function AppointmentCard({
   const canCancel =
     appointment.status === AppointmentStatus.PENDING ||
     appointment.status === AppointmentStatus.CONFIRMED;
+  const canComplete =
+    appointment.status === AppointmentStatus.CHECKED_IN ||
+    appointment.status === AppointmentStatus.IN_PROGRESS;
   const canMarkPayment = appointment.paymentStatus === PaymentStatus.PENDING;
 
   return (
@@ -220,6 +223,16 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                 >
                   <CheckCircle className="h-4 w-4 me-2 text-green-600 dark:text-green-400" />
                   {t("secretary.checkIn")}
+                </DropdownMenuItem>
+              )}
+              {canComplete && (
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleStatusChange(AppointmentStatus.COMPLETED)
+                  }
+                >
+                  <CheckCircle className="h-4 w-4 me-2 text-emerald-600 dark:text-emerald-400" />
+                  {t("appointments.actionComplete")}
                 </DropdownMenuItem>
               )}
               {canCancel && (

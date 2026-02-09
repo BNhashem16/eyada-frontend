@@ -20,6 +20,7 @@ import { Specialty, State, City } from "@/types";
 import { apiGet } from "@/lib/api";
 import { PUBLIC_ENDPOINTS } from "@/lib/api/endpoints";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 // Import and re-export from hook for consistency
 import type { ClinicFilters } from "../hooks/use-clinics";
@@ -34,7 +35,7 @@ export function ClinicFiltersComponent({
   filters,
   onFiltersChange,
 }: ClinicFiltersProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
@@ -171,8 +172,7 @@ export function ClinicFiltersComponent({
           ...specialties.map((specialty) => ({
             value: specialty.id,
             label:
-              specialty.name?.ar ||
-              specialty.name?.en ||
+              getLocalizedText(specialty.name, locale) ||
               (specialty as any).nameAr ||
               (specialty as any).nameEn ||
               "",
@@ -200,8 +200,7 @@ export function ClinicFiltersComponent({
           ...states.map((state) => ({
             value: state.id,
             label:
-              state.name?.ar ||
-              state.name?.en ||
+              getLocalizedText(state.name, locale) ||
               (state as any).nameAr ||
               (state as any).nameEn ||
               "",
@@ -229,8 +228,7 @@ export function ClinicFiltersComponent({
           ...cities.map((city) => ({
             value: city.id,
             label:
-              city.name?.ar ||
-              city.name?.en ||
+              getLocalizedText(city.name, locale) ||
               (city as any).nameAr ||
               (city as any).nameEn ||
               "",

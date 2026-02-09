@@ -43,6 +43,7 @@ import { DoctorStatus } from "@/types/enums";
 import type { Specialty } from "@/types";
 import { useAuthStore } from "@/lib/auth/store";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 // Schema factory for creating new profile (specialty required)
 const getCreateProfileSchema = (t: (key: string) => string) =>
@@ -85,7 +86,7 @@ const getStatusLabels = (
 });
 
 export function DoctorProfileForm() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
   const { data: profile, isLoading, error } = useDoctorProfile();
   const updateMutation = useUpdateDoctorProfile();
@@ -336,7 +337,7 @@ export function DoctorProfileForm() {
                 </p>
               ) : (
                 <p className="text-muted-foreground mb-1">
-                  {profile?.specialty?.name?.ar || profile?.specialty?.name?.en}
+                  {getLocalizedText(profile?.specialty?.name, locale)}
                 </p>
               )}
               <p className="text-sm text-muted-foreground">
@@ -396,8 +397,7 @@ export function DoctorProfileForm() {
                 options={specialties.map((specialty) => ({
                   value: specialty.id,
                   label:
-                    specialty.name?.ar ||
-                    specialty.name?.en ||
+                    getLocalizedText(specialty.name, locale) ||
                     (specialty as any).nameAr ||
                     (specialty as any).nameEn ||
                     "",

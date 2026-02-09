@@ -56,7 +56,7 @@ export function BookAppointmentDialog({
   open,
   onOpenChange,
 }: BookAppointmentDialogProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { toast } = useToast();
 
   // Form state
@@ -225,7 +225,7 @@ export function BookAppointmentDialog({
                   options={
                     clinics?.map((clinic) => ({
                       value: clinic.id,
-                      label: getLocalizedText(clinic.name, "ar"),
+                      label: getLocalizedText(clinic.name, locale),
                       icon: <Building2 className="h-4 w-4" />,
                     })) || []
                   }
@@ -246,7 +246,7 @@ export function BookAppointmentDialog({
                       ?.filter((s) => s.isActive)
                       .map((service) => ({
                         value: service.id,
-                        label: `${getLocalizedText(service.name, "ar")} - ${service.price} ${t("common.egp")}`,
+                        label: `${getLocalizedText(service.name, locale)} - ${service.price} ${t("common.egp")}`,
                         description: service.duration
                           ? `${service.duration} ${t("services.minute")}`
                           : undefined,
@@ -277,7 +277,7 @@ export function BookAppointmentDialog({
                     </span>
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">
-                        {getLocalizedText(selectedServiceData.name, "ar")}
+                        {getLocalizedText(selectedServiceData.name, locale)}
                       </Badge>
                       <Badge className="bg-primary-600">
                         {selectedServiceData.price} {t("common.egp")}
@@ -409,12 +409,12 @@ export function BookAppointmentDialog({
                     <span>
                       {getLocalizedText(
                         clinics?.find((c) => c.id === selectedClinic)?.name,
-                        "ar",
+                        locale,
                       )}
                     </span>
                     {" - "}
                     <span>
-                      {getLocalizedText(selectedServiceData?.name, "ar")}
+                      {getLocalizedText(selectedServiceData?.name, locale)}
                     </span>
                     {" - "}
                     <span>{format(selectedDate!, "dd/MM/yyyy")}</span>

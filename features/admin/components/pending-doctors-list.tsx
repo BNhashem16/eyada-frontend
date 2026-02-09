@@ -34,7 +34,7 @@ import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
 
 export function PendingDoctorsList() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const {
@@ -147,10 +147,10 @@ export function PendingDoctorsList() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-lg font-semibold text-foreground">
-                      {t("auth.doctor")}. {doctor.user.fullName}
+                      {t("doctors.doctorPrefix")} {doctor.user.fullName}
                     </h3>
                     <Badge variant="outline">
-                      {getLocalizedText(doctor.specialty.name, "ar")}
+                      {getLocalizedText(doctor.specialty.name, locale)}
                     </Badge>
                   </div>
 
@@ -179,7 +179,7 @@ export function PendingDoctorsList() {
 
                   {doctor.bio && (
                     <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                      {getLocalizedText(doctor.bio, "ar")}
+                      {getLocalizedText(doctor.bio, locale)}
                     </p>
                   )}
                 </div>

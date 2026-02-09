@@ -53,7 +53,7 @@ interface AppointmentListProps {
 export function AppointmentList({
   showBookButton = true,
 }: AppointmentListProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [selectedClinic, setSelectedClinic] = useState<string>("all");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -167,7 +167,7 @@ export function AppointmentList({
       },
       ...(clinics?.map((clinic) => ({
         value: clinic.id,
-        label: getLocalizedText(clinic.name, "ar"),
+        label: getLocalizedText(clinic.name, locale),
         icon: <Building2 className="h-4 w-4" />,
       })) || []),
     ],

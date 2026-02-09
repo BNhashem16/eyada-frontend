@@ -1,9 +1,14 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { apiGet, apiPatch, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
+import type { ApiError } from "@/types";
 import { PaginatedResponse } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // ==================== Types ====================
 
@@ -147,6 +152,7 @@ export interface UpdateClinicData {
 
 export function useUpdateAdminClinic() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({ id, ...data }: UpdateClinicData & { id: string }) => {
@@ -157,11 +163,15 @@ export function useUpdateAdminClinic() {
       queryClient.invalidateQueries({ queryKey: ["admin-clinic"] });
       queryClient.invalidateQueries({ queryKey: ["admin-clinics-statistics"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteAdminClinic() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -170,6 +180,9 @@ export function useDeleteAdminClinic() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-clinics"] });
       queryClient.invalidateQueries({ queryKey: ["admin-clinics-statistics"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

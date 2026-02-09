@@ -151,7 +151,7 @@ export function AdminAppointmentsList() {
       {
         id: selectedAppointment.id,
         status: "CANCELLED",
-        cancellationReason: cancellationReason || "Cancelled by admin",
+        cancellationReason: cancellationReason || t("admin.appointmentsPage.cancelledByAdmin"),
       },
       {
         onSuccess: () => {

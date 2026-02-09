@@ -1,9 +1,13 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { SECRETARY_ENDPOINTS } from "@/lib/api/endpoints";
-import { ClinicSchedule } from "@/types";
+import { ClinicSchedule, ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 export function useSecretaryClinicSchedules(clinicId: string) {
   return useQuery({
@@ -20,6 +24,7 @@ export function useSecretaryClinicSchedules(clinicId: string) {
 
 export function useSecretaryCreateSchedule() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -39,11 +44,15 @@ export function useSecretaryCreateSchedule() {
         queryKey: ["secretary-clinic-schedules", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useSecretaryUpdateSchedule() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -65,11 +74,15 @@ export function useSecretaryUpdateSchedule() {
         queryKey: ["secretary-clinic-schedules", clinicId],
       });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useSecretaryDeleteSchedule() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -87,6 +100,9 @@ export function useSecretaryDeleteSchedule() {
       queryClient.invalidateQueries({
         queryKey: ["secretary-clinic-schedules", clinicId],
       });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

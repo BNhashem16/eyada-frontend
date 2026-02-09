@@ -203,7 +203,7 @@ export function AdminDoctorsList() {
       },
       ...(specialties?.map((specialty) => ({
         value: specialty.id,
-        label: getLocalizedText(specialty.name, "ar"),
+        label: getLocalizedText(specialty.name, locale),
         icon: <Stethoscope className="h-4 w-4" />,
       })) || []),
     ],
@@ -446,7 +446,7 @@ export function AdminDoctorsList() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <h3 className="text-lg font-semibold text-foreground">
-                          د. {doctor.user?.fullName}
+                          {t("doctors.doctorPrefix")} {doctor.user?.fullName}
                         </h3>
                         <Badge variant={statusInfo.variant}>
                           <StatusIcon className="h-3 w-3 me-1" />
@@ -454,7 +454,7 @@ export function AdminDoctorsList() {
                         </Badge>
                         {doctor.specialty && (
                           <Badge variant="outline">
-                            {getLocalizedText(doctor.specialty.name, "ar")}
+                            {getLocalizedText(doctor.specialty.name, locale)}
                           </Badge>
                         )}
                       </div>
@@ -484,7 +484,7 @@ export function AdminDoctorsList() {
 
                       {doctor.bio && (
                         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                          {getLocalizedText(doctor.bio, "ar")}
+                          {getLocalizedText(doctor.bio, locale)}
                         </p>
                       )}
                     </div>

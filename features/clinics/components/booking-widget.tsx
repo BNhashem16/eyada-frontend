@@ -35,13 +35,14 @@ import {
   isBefore,
 } from "@/lib/utils/date";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 
 interface BookingWidgetProps {
   clinicId: string;
 }
 
 export function BookingWidget({ clinicId }: BookingWidgetProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const router = useRouter();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -197,7 +198,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             <SearchableSelect
               options={services.map((service) => ({
                 value: service.id,
-                label: `${service.name?.ar || service.name?.en || service.serviceType} - ${service.price} ${t("common.egp")}`,
+                label: `${getLocalizedText(service.name, locale) || service.serviceType} - ${service.price} ${t("common.egp")}`,
                 description: service.duration
                   ? `${service.duration} ${t("services.minute")}`
                   : undefined,
@@ -391,8 +392,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                     {t("booking.serviceLabel")}
                   </span>
                   <span className="font-medium">
-                    {selectedService?.name?.ar ||
-                      selectedService?.name?.en ||
+                    {getLocalizedText(selectedService?.name, locale) ||
                       selectedService?.serviceType}
                   </span>
                 </div>

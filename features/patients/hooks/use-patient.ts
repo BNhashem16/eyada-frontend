@@ -89,6 +89,7 @@ export function usePatientMedicalData() {
 
 export function useUpdatePatientMedicalData() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: Record<string, unknown>) => {
@@ -97,6 +98,9 @@ export function useUpdatePatientMedicalData() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-medical-data"] });
       queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -189,6 +193,7 @@ export interface BookAppointmentData {
 
 export function useBookAppointment() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: BookAppointmentData) => {
@@ -197,11 +202,15 @@ export function useBookAppointment() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useCancelAppointment() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -217,6 +226,9 @@ export function useCancelAppointment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -254,6 +266,7 @@ export function usePatientFamily() {
 
 export function useAddFamilyMember() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (
@@ -264,11 +277,15 @@ export function useAddFamilyMember() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useUpdateFamilyMember() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -288,11 +305,15 @@ export function useUpdateFamilyMember() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteFamilyMember() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (memberId: string) => {
@@ -300,6 +321,9 @@ export function useDeleteFamilyMember() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-family"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -365,6 +389,7 @@ export function usePatientRatings(
 
 export function useSubmitRating() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateRatingData) => {
@@ -374,11 +399,15 @@ export function useSubmitRating() {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
       queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useUpdateRating() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({
@@ -393,11 +422,15 @@ export function useUpdateRating() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteRating() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (ratingId: string) => {
@@ -406,6 +439,9 @@ export function useDeleteRating() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

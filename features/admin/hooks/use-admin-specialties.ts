@@ -4,6 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import { Specialty, Multilingual, PaginatedResponse } from "@/types";
+import { AxiosError } from "axios";
+import type { ApiError } from "@/types";
+import { toastError } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
+import { extractApiError } from "@/lib/utils";
 
 // Per Swagger: GET /admin/specialties with optional filters and pagination
 export interface UseAdminSpecialtiesOptions {
@@ -45,6 +50,7 @@ interface CreateSpecialtyData {
 
 export function useCreateSpecialty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (data: CreateSpecialtyData) => {
@@ -53,6 +59,9 @@ export function useCreateSpecialty() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-specialties"] });
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }
@@ -68,6 +77,7 @@ interface UpdateSpecialtyData {
 
 export function useUpdateSpecialty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async ({ id, ...data }: UpdateSpecialtyData) => {
@@ -77,11 +87,15 @@ export function useUpdateSpecialty() {
       queryClient.invalidateQueries({ queryKey: ["admin-specialties"] });
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
     },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+    },
   });
 }
 
 export function useDeleteSpecialty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (id: string) => {
@@ -90,6 +104,9 @@ export function useDeleteSpecialty() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-specialties"] });
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
     },
   });
 }

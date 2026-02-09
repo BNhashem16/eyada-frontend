@@ -49,7 +49,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
   onCancel,
   onRate,
 }: AppointmentCardProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
   const statusLabels = useMemo(
@@ -132,7 +132,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                       <p className="text-sm text-muted-foreground">
                         {getLocalizedText(
                           appointment.clinic.doctorProfile.specialty?.name,
-                          "ar",
+                          locale,
                         )}
                       </p>
                     </div>
@@ -154,13 +154,13 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <MapPin className="h-4 w-4" />
                     <span>
-                      {getLocalizedText(appointment.clinic.name, "ar")}
+                      {getLocalizedText(appointment.clinic.name, locale)}
                     </span>
                     {appointment.clinic.city && (
                       <>
                         <span className="text-border">-</span>
                         <span>
-                          {getLocalizedText(appointment.clinic.city.name, "ar")}
+                          {getLocalizedText(appointment.clinic.city.name, locale)}
                         </span>
                       </>
                     )}
@@ -172,7 +172,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span>{t("appointments.service")}:</span>
                     <span>
-                      {getLocalizedText(appointment.serviceName, "ar")}
+                      {getLocalizedText(appointment.serviceName, locale)}
                     </span>
                     <Badge variant="outline" className="text-xs">
                       {appointment.price} {t("common.currency")}
