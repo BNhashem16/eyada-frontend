@@ -127,6 +127,7 @@ export function useAdminClinic(id: string) {
       return apiGet<AdminClinic>(ADMIN_ENDPOINTS.CLINIC(id));
     },
     enabled: !!id,
+    staleTime: 1000 * 30, // 30 seconds
   });
 }
 

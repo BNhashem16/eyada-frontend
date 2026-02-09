@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   User,
   Mail,
@@ -93,7 +93,7 @@ const getStatusConfig = (
 
 export function AdminDoctorsList() {
   const { t, locale } = useTranslation();
-  const statusConfig = getStatusConfig(t);
+  const statusConfig = useMemo(() => getStatusConfig(t), [t]);
 
   // Filters state
   const [filters, setFilters] = useState<AdminDoctorsFilters>({
@@ -123,17 +123,17 @@ export function AdminDoctorsList() {
     null,
   );
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     setFilters((prev) => ({ ...prev, search: searchInput, page: 1 }));
-  };
+  }, [searchInput]);
 
-  const handleFilterChange = (key: keyof AdminDoctorsFilters, value: any) => {
+  const handleFilterChange = useCallback((key: keyof AdminDoctorsFilters, value: any) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value === "all" ? undefined : value,
       page: 1,
     }));
-  };
+  }, []);
 
   const handleAction = () => {
     if (!selectedDoctor || !action) return;
@@ -162,6 +162,53 @@ export function AdminDoctorsList() {
     approveDoctor.isPending ||
     rejectDoctor.isPending ||
     suspendDoctor.isPending;
+
+  const statusFilterOptions = useMemo(
+    () => [
+      {
+        value: "",
+        label: t("admin.doctors.allStatuses"),
+        icon: <Clock className="h-4 w-4" />,
+      },
+      {
+        value: DoctorStatus.PENDING,
+        label: t("admin.doctors.underReview"),
+        icon: <Clock className="h-4 w-4 text-warning-500" />,
+      },
+      {
+        value: DoctorStatus.APPROVED,
+        label: t("admin.doctors.approved"),
+        icon: <UserCheck className="h-4 w-4 text-success-500" />,
+      },
+      {
+        value: DoctorStatus.REJECTED,
+        label: t("admin.doctors.rejected"),
+        icon: <XCircle className="h-4 w-4 text-error-500" />,
+      },
+      {
+        value: DoctorStatus.SUSPENDED,
+        label: t("admin.doctors.suspended"),
+        icon: <Ban className="h-4 w-4 text-error-500" />,
+      },
+    ],
+    [t],
+  );
+
+  const specialtyFilterOptions = useMemo(
+    () => [
+      {
+        value: "",
+        label: t("doctors.allSpecialties"),
+        icon: <Stethoscope className="h-4 w-4" />,
+      },
+      ...(specialties?.map((specialty) => ({
+        value: specialty.id,
+        label: getLocalizedText(specialty.name, "ar"),
+        icon: <Stethoscope className="h-4 w-4" />,
+      })) || []),
+    ],
+    [t, specialties],
+  );
 
   if (isLoading) {
     return (
@@ -236,33 +283,7 @@ export function AdminDoctorsList() {
 
             {/* Status Filter */}
             <SearchableSelect
-              options={[
-                {
-                  value: "",
-                  label: t("admin.doctors.allStatuses"),
-                  icon: <Clock className="h-4 w-4" />,
-                },
-                {
-                  value: DoctorStatus.PENDING,
-                  label: t("admin.doctors.underReview"),
-                  icon: <Clock className="h-4 w-4 text-warning-500" />,
-                },
-                {
-                  value: DoctorStatus.APPROVED,
-                  label: t("admin.doctors.approved"),
-                  icon: <UserCheck className="h-4 w-4 text-success-500" />,
-                },
-                {
-                  value: DoctorStatus.REJECTED,
-                  label: t("admin.doctors.rejected"),
-                  icon: <XCircle className="h-4 w-4 text-error-500" />,
-                },
-                {
-                  value: DoctorStatus.SUSPENDED,
-                  label: t("admin.doctors.suspended"),
-                  icon: <Ban className="h-4 w-4 text-error-500" />,
-                },
-              ]}
+              options={statusFilterOptions}
               value={filters.status || ""}
               onValueChange={(value) =>
                 handleFilterChange("status", value || undefined)
@@ -274,18 +295,7 @@ export function AdminDoctorsList() {
 
             {/* Specialty Filter */}
             <SearchableSelect
-              options={[
-                {
-                  value: "",
-                  label: t("doctors.allSpecialties"),
-                  icon: <Stethoscope className="h-4 w-4" />,
-                },
-                ...(specialties?.map((specialty) => ({
-                  value: specialty.id,
-                  label: getLocalizedText(specialty.name, "ar"),
-                  icon: <Stethoscope className="h-4 w-4" />,
-                })) || []),
-              ]}
+              options={specialtyFilterOptions}
               value={filters.specialtyId || ""}
               onValueChange={(value) =>
                 handleFilterChange("specialtyId", value || undefined)

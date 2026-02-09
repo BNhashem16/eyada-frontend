@@ -123,6 +123,7 @@ export function useAdminRating(id: string) {
       return apiGet<AdminRating>(ADMIN_ENDPOINTS.RATING(id));
     },
     enabled: !!id,
+    staleTime: 1000 * 30, // 30 seconds
   });
 }
 

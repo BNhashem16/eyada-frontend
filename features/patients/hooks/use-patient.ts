@@ -160,6 +160,7 @@ export function usePatientAppointment(appointmentId: string) {
       return apiGet<Appointment>(PATIENT_ENDPOINTS.APPOINTMENT(appointmentId));
     },
     enabled: !!appointmentId,
+    staleTime: 1000 * 60, // 1 minute
   });
 }
 

@@ -87,6 +87,7 @@ export function useAdminDoctor(doctorId: string) {
       return apiGet<DoctorProfile>(ADMIN_ENDPOINTS.DOCTOR(doctorId));
     },
     enabled: !!doctorId,
+    staleTime: 1000 * 60, // 1 minute
   });
 }
 

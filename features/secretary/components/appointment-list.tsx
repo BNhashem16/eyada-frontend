@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import {
@@ -86,71 +86,93 @@ export function AppointmentList({
   const totalPages = data?.meta?.totalPages ?? 1;
   const totalItems = data?.meta?.total ?? 0;
 
-  const statusOptions = [
-    {
-      value: "all",
-      label: t("secretary.allStatuses"),
-      icon: <Clock className="h-4 w-4" />,
-    },
-    {
-      value: AppointmentStatus.PENDING,
-      label: t("secretary.waiting"),
-      icon: <Clock className="h-4 w-4 text-warning-500" />,
-    },
-    {
-      value: AppointmentStatus.CONFIRMED,
-      label: t("secretary.confirmed"),
-      icon: <CheckCircle className="h-4 w-4 text-success-500" />,
-    },
-    {
-      value: AppointmentStatus.CHECKED_IN,
-      label: t("secretary.attended"),
-      icon: <UserCheck className="h-4 w-4 text-primary-500" />,
-    },
-    {
-      value: AppointmentStatus.IN_PROGRESS,
-      label: t("secretary.inProgress"),
-      icon: <Play className="h-4 w-4 text-info-500" />,
-    },
-    {
-      value: AppointmentStatus.COMPLETED,
-      label: t("secretary.completed"),
-      icon: <CheckCircle className="h-4 w-4 text-muted-foreground" />,
-    },
-    {
-      value: AppointmentStatus.CANCELLED,
-      label: t("secretary.cancelled"),
-      icon: <XCircle className="h-4 w-4 text-error-500" />,
-    },
-    {
-      value: AppointmentStatus.NO_SHOW,
-      label: t("secretary.noShow"),
-      icon: <Ban className="h-4 w-4 text-muted-foreground" />,
-    },
-  ];
+  const statusOptions = useMemo(
+    () => [
+      {
+        value: "all",
+        label: t("secretary.allStatuses"),
+        icon: <Clock className="h-4 w-4" />,
+      },
+      {
+        value: AppointmentStatus.PENDING,
+        label: t("secretary.waiting"),
+        icon: <Clock className="h-4 w-4 text-warning-500" />,
+      },
+      {
+        value: AppointmentStatus.CONFIRMED,
+        label: t("secretary.confirmed"),
+        icon: <CheckCircle className="h-4 w-4 text-success-500" />,
+      },
+      {
+        value: AppointmentStatus.CHECKED_IN,
+        label: t("secretary.attended"),
+        icon: <UserCheck className="h-4 w-4 text-primary-500" />,
+      },
+      {
+        value: AppointmentStatus.IN_PROGRESS,
+        label: t("secretary.inProgress"),
+        icon: <Play className="h-4 w-4 text-info-500" />,
+      },
+      {
+        value: AppointmentStatus.COMPLETED,
+        label: t("secretary.completed"),
+        icon: <CheckCircle className="h-4 w-4 text-muted-foreground" />,
+      },
+      {
+        value: AppointmentStatus.CANCELLED,
+        label: t("secretary.cancelled"),
+        icon: <XCircle className="h-4 w-4 text-error-500" />,
+      },
+      {
+        value: AppointmentStatus.NO_SHOW,
+        label: t("secretary.noShow"),
+        icon: <Ban className="h-4 w-4 text-muted-foreground" />,
+      },
+    ],
+    [t],
+  );
 
-  const paymentStatusOptions = [
-    {
-      value: "all",
-      label: t("secretary.allPaymentStatuses"),
-      icon: <CreditCard className="h-4 w-4" />,
-    },
-    {
-      value: PaymentStatus.PENDING,
-      label: t("secretary.unpaid"),
-      icon: <Clock className="h-4 w-4 text-warning-500" />,
-    },
-    {
-      value: PaymentStatus.PAID,
-      label: t("secretary.paid"),
-      icon: <DollarSign className="h-4 w-4 text-success-500" />,
-    },
-    {
-      value: PaymentStatus.REFUNDED,
-      label: t("secretary.refunded"),
-      icon: <Undo className="h-4 w-4 text-info-500" />,
-    },
-  ];
+  const paymentStatusOptions = useMemo(
+    () => [
+      {
+        value: "all",
+        label: t("secretary.allPaymentStatuses"),
+        icon: <CreditCard className="h-4 w-4" />,
+      },
+      {
+        value: PaymentStatus.PENDING,
+        label: t("secretary.unpaid"),
+        icon: <Clock className="h-4 w-4 text-warning-500" />,
+      },
+      {
+        value: PaymentStatus.PAID,
+        label: t("secretary.paid"),
+        icon: <DollarSign className="h-4 w-4 text-success-500" />,
+      },
+      {
+        value: PaymentStatus.REFUNDED,
+        label: t("secretary.refunded"),
+        icon: <Undo className="h-4 w-4 text-info-500" />,
+      },
+    ],
+    [t],
+  );
+
+  const clinicFilterOptions = useMemo(
+    () => [
+      {
+        value: "all",
+        label: t("secretary.allClinics"),
+        icon: <Building2 className="h-4 w-4" />,
+      },
+      ...(clinics?.map((clinic) => ({
+        value: clinic.id,
+        label: getLocalizedText(clinic.name, "ar"),
+        icon: <Building2 className="h-4 w-4" />,
+      })) || []),
+    ],
+    [t, clinics],
+  );
 
   return (
     <div className="space-y-4">
@@ -206,18 +228,7 @@ export function AppointmentList({
 
               {/* Clinic Filter */}
               <SearchableSelect
-                options={[
-                  {
-                    value: "all",
-                    label: t("secretary.allClinics"),
-                    icon: <Building2 className="h-4 w-4" />,
-                  },
-                  ...(clinics?.map((clinic) => ({
-                    value: clinic.id,
-                    label: getLocalizedText(clinic.name, "ar"),
-                    icon: <Building2 className="h-4 w-4" />,
-                  })) || []),
-                ]}
+                options={clinicFilterOptions}
                 value={selectedClinic}
                 onValueChange={setSelectedClinic}
                 placeholder={t("secretary.selectClinic")}

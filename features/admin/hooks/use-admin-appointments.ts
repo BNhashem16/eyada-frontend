@@ -181,6 +181,7 @@ export function useAdminAppointment(id: string) {
       return apiGet<AdminAppointment>(ADMIN_ENDPOINTS.APPOINTMENT(id));
     },
     enabled: !!id,
+    staleTime: 1000 * 30, // 30 seconds
   });
 }
 

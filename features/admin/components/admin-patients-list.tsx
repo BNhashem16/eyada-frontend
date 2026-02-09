@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   User,
   Mail,
@@ -88,7 +88,7 @@ const getStatusConfig = (
 
 export function AdminPatientsList() {
   const { t } = useTranslation();
-  const statusConfig = getStatusConfig(t);
+  const statusConfig = useMemo(() => getStatusConfig(t), [t]);
 
   // Filters state
   const [filters, setFilters] = useState<AdminPatientsFilters>({
@@ -111,17 +111,17 @@ export function AdminPatientsList() {
     null,
   );
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     setFilters((prev) => ({ ...prev, search: searchInput, page: 1 }));
-  };
+  }, [searchInput]);
 
-  const handleFilterChange = (key: keyof AdminPatientsFilters, value: any) => {
+  const handleFilterChange = useCallback((key: keyof AdminPatientsFilters, value: any) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value === "all" ? undefined : value,
       page: 1,
     }));
-  };
+  }, []);
 
   const handleAction = () => {
     if (!selectedPatient || !action) return;
@@ -150,6 +150,37 @@ export function AdminPatientsList() {
     approvePatient.isPending ||
     rejectPatient.isPending ||
     suspendPatient.isPending;
+
+  const statusFilterOptions = useMemo(
+    () => [
+      {
+        value: "",
+        label: t("admin.patients.allStatuses"),
+        icon: <Clock className="h-4 w-4" />,
+      },
+      {
+        value: PatientStatus.PENDING,
+        label: t("admin.patients.underReview"),
+        icon: <Clock className="h-4 w-4 text-warning-500" />,
+      },
+      {
+        value: PatientStatus.APPROVED,
+        label: t("admin.patients.approved"),
+        icon: <UserCheck className="h-4 w-4 text-success-500" />,
+      },
+      {
+        value: PatientStatus.REJECTED,
+        label: t("admin.patients.rejected"),
+        icon: <XCircle className="h-4 w-4 text-error-500" />,
+      },
+      {
+        value: PatientStatus.SUSPENDED,
+        label: t("admin.patients.suspended"),
+        icon: <Ban className="h-4 w-4 text-error-500" />,
+      },
+    ],
+    [t],
+  );
 
   if (isLoading) {
     return (
@@ -223,33 +254,7 @@ export function AdminPatientsList() {
 
             {/* Status Filter */}
             <SearchableSelect
-              options={[
-                {
-                  value: "",
-                  label: t("admin.patients.allStatuses"),
-                  icon: <Clock className="h-4 w-4" />,
-                },
-                {
-                  value: PatientStatus.PENDING,
-                  label: t("admin.patients.underReview"),
-                  icon: <Clock className="h-4 w-4 text-warning-500" />,
-                },
-                {
-                  value: PatientStatus.APPROVED,
-                  label: t("admin.patients.approved"),
-                  icon: <UserCheck className="h-4 w-4 text-success-500" />,
-                },
-                {
-                  value: PatientStatus.REJECTED,
-                  label: t("admin.patients.rejected"),
-                  icon: <XCircle className="h-4 w-4 text-error-500" />,
-                },
-                {
-                  value: PatientStatus.SUSPENDED,
-                  label: t("admin.patients.suspended"),
-                  icon: <Ban className="h-4 w-4 text-error-500" />,
-                },
-              ]}
+              options={statusFilterOptions}
               value={filters.status || ""}
               onValueChange={(value) =>
                 handleFilterChange("status", value || undefined)
