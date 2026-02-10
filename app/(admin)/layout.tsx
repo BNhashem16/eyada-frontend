@@ -14,6 +14,7 @@ import {
   Building,
   Star,
   MessageSquareHeart,
+  Bot,
 } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
@@ -57,6 +58,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       href: "/admin/feedbacks",
       label: t("nav.feedbacks"),
       icon: MessageSquareHeart,
+    },
+    {
+      href: "/admin/ai-settings",
+      label: t("nav.aiSettings"),
+      icon: Bot,
     },
   ];
 

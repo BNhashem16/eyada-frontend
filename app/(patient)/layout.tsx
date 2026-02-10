@@ -14,6 +14,7 @@ import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
 import { ProfileCompletionGuard } from "@/components/common/profile-completion-guard";
 import { DashboardLayout, MenuItem } from "@/components/common";
+import { AiChatButton } from "@/features/ai/components/ai-chat-button";
 import { TourReplayButton } from "@/components/common/tour-replay-button";
 import { useTranslation } from "@/lib/i18n";
 import { PATIENT_DASHBOARD_TOUR_ID, patientDashboardSteps } from "@/lib/tour";
@@ -63,15 +64,18 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <DashboardLayout
-      menuItems={menuItems}
-      userRoleLabel={t("app.patientRole")}
-      basePath="/patient"
-      headerRightContent={headerRightContent}
-      mobileExtraContent={mobileExtraContent}
-    >
-      {children}
-    </DashboardLayout>
+    <>
+      <DashboardLayout
+        menuItems={menuItems}
+        userRoleLabel={t("app.patientRole")}
+        basePath="/patient"
+        headerRightContent={headerRightContent}
+        mobileExtraContent={mobileExtraContent}
+      >
+        {children}
+      </DashboardLayout>
+      <AiChatButton />
+    </>
   );
 }
 

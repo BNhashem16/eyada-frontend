@@ -231,3 +231,11 @@ export const ADMIN_ENDPOINTS = {
   COMMISSION_PAYMENT_HISTORY: (doctorId: string) =>
     `/admin/commissions/payments/${doctorId}`,
 } as const;
+
+// AI endpoints
+export const AI_ENDPOINTS = {
+  ADMIN_SETTINGS: "/admin/ai-settings",
+  CHAT: "/ai/chat",
+  CONVERSATIONS: "/ai/conversations",
+  STATUS: "/ai/status",
+} as const;

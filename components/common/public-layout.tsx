@@ -11,10 +11,12 @@ import {
   MessageSquareHeart,
   Shield,
   FileText,
+  Bot,
 } from "lucide-react";
 import { Header, NavLinkItem } from "./header";
 import { useTranslation } from "@/lib/i18n";
 import { useIsAuthenticated, useIsHydrated } from "@/lib/auth/store";
+import { useAiStatus } from "@/features/ai/hooks/use-ai-status";
 
 export interface PublicLayoutProps {
   children: React.ReactNode;
@@ -26,6 +28,8 @@ export function PublicLayout({ children }: PublicLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isAuthenticated = useIsAuthenticated();
   const isHydrated = useIsHydrated();
+  const { data: aiStatus } = useAiStatus();
+  const isAiEnabled = aiStatus?.isEnabled ?? false;
 
   const navLinks: NavLinkItem[] = [
     { href: "/specialties", label: t("nav.specialties"), icon: Grid3X3 },
@@ -36,6 +40,9 @@ export function PublicLayout({ children }: PublicLayoutProps) {
       label: t("nav.complaintsAndSuggestions"),
       icon: MessageSquareHeart,
     },
+    ...(isAiEnabled
+      ? [{ href: "/ai-assistant", label: t("nav.aiAssistant"), icon: Bot }]
+      : []),
   ];
 
   return (
@@ -91,12 +98,12 @@ export function PublicLayout({ children }: PublicLayoutProps) {
       <main>{children}</main>
 
       {/* Footer */}
-      <Footer />
+      <Footer isAiEnabled={isAiEnabled} />
     </div>
   );
 }
 
-function Footer() {
+function Footer({ isAiEnabled }: { isAiEnabled: boolean }) {
   const { t } = useTranslation();
 
   return (
@@ -144,6 +151,17 @@ function Footer() {
                   {t("nav.joinAsDoctor")}
                 </Link>
               </li>
+              {isAiEnabled && (
+                <li>
+                  <Link
+                    href="/ai-assistant"
+                    className="inline-flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    <Bot className="h-4 w-4" />
+                    {t("nav.aiAssistant")}
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 
