@@ -166,7 +166,7 @@ export function Header({
 
   // Public variant - with navigation
   return (
-    <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-lg border-b border-border/50 shadow-sm">
+    <header className="bg-card/80 backdrop-blur-lg border-b border-border/50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}

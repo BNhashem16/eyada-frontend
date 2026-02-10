@@ -11,6 +11,7 @@ import {
   Settings,
   ChevronLeft,
   Phone,
+  MessageCircle,
   Edit,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -103,7 +104,8 @@ export function ClinicManagement() {
               getLocalizedText(clinic.city?.name, locale) ||
               (clinic.city as any)?.nameAr ||
               "";
-            const phoneNumber = clinic.phoneNumbers?.[0];
+            const phoneNumbers = clinic.phoneNumbers?.filter(Boolean) || [];
+            const whatsappNumbers = clinic.whatsappNumbers?.filter(Boolean) || [];
 
             return (
               <Card
@@ -155,11 +157,19 @@ export function ClinicManagement() {
                         </span>
                       </div>
 
-                      {/* Phone */}
-                      {phoneNumber && (
+                      {/* Phone Numbers */}
+                      {phoneNumbers.length > 0 && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                          <Phone className="h-4 w-4 text-muted-foreground/70" />
-                          <span dir="ltr">{phoneNumber}</span>
+                          <Phone className="h-4 w-4 text-muted-foreground/70 flex-shrink-0" />
+                          <span dir="ltr">{phoneNumbers.join(" / ")}</span>
+                        </div>
+                      )}
+
+                      {/* WhatsApp Numbers */}
+                      {whatsappNumbers.length > 0 && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <MessageCircle className="h-4 w-4 text-muted-foreground/70 flex-shrink-0" />
+                          <span dir="ltr">{whatsappNumbers.join(" / ")}</span>
                         </div>
                       )}
 

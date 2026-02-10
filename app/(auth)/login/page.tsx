@@ -1,23 +1,20 @@
-"use client";
+import { Metadata } from "next";
+import { getTranslation } from "@/lib/i18n";
+import { LoginPageContent } from "./login-content";
 
-import { LoginForm } from "@/features/auth/components";
-import { useTranslation } from "@/lib/i18n";
+export const metadata: Metadata = {
+  title: getTranslation("meta.login.title"),
+  description: getTranslation("meta.login.description"),
+  openGraph: {
+    title: getTranslation("meta.login.title"),
+    description: getTranslation("meta.login.description"),
+    url: "https://clinics-eg.com/login",
+  },
+  alternates: {
+    canonical: "https://clinics-eg.com/login",
+  },
+};
 
 export default function LoginPage() {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      {/* Header */}
-      <div className="mb-8 text-center">
-        <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">
-          {t("auth.loginTitle")}
-        </h1>
-        <p className="text-muted-foreground">{t("auth.loginSubtitle")}</p>
-      </div>
-
-      {/* Form */}
-      <LoginForm />
-    </>
-  );
+  return <LoginPageContent />;
 }

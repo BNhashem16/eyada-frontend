@@ -160,11 +160,9 @@ export interface Clinic extends Timestamps {
   landmark?: Multilingual;
   latitude?: number;
   longitude?: number;
-  phoneNumber?: string;
   phoneNumbers: string[];
   whatsappNumbers: string[];
   images: string[];
-  slotDurationMinutes?: number;
   isActive: boolean;
   doctorProfile?: DoctorProfile;
   city?: City;

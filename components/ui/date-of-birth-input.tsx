@@ -63,7 +63,10 @@ function DateOfBirthInput({
     setDay(externalParts.day);
   }, [externalParts.year, externalParts.month, externalParts.day]);
 
-  const currentYear = new Date().getFullYear();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // 1-based
+  const currentDay = now.getDate();
 
   const years = React.useMemo(() => {
     const arr: number[] = [];
@@ -74,30 +77,52 @@ function DateOfBirthInput({
   }, [currentYear]);
 
   const months = React.useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => {
+    const allMonths = Array.from({ length: 12 }, (_, i) => {
       const date = new Date(2000, i, 1);
       return {
         value: String(i + 1).padStart(2, "0"),
         label: format(date, "MMMM", { locale: locales[locale] }),
       };
     });
-  }, [locale]);
+    // If current year is selected, restrict months
+    if (parseInt(year) === currentYear) {
+      // If it's the 1st of the month, exclude current month (no valid days before today)
+      const maxMonth = currentDay === 1 ? currentMonth - 1 : currentMonth;
+      return allMonths.filter((m) => parseInt(m.value) <= maxMonth);
+    }
+    return allMonths;
+  }, [locale, year, currentYear, currentMonth]);
 
   const maxDays = React.useMemo(
     () => getDaysInMonth(parseInt(month) || 0, parseInt(year) || 0),
     [month, year],
   );
 
-  const days = React.useMemo(
-    () => Array.from({ length: maxDays }, (_, i) => i + 1),
-    [maxDays],
-  );
+  const days = React.useMemo(() => {
+    let max = maxDays;
+    // If current year and month are selected, limit days to yesterday
+    if (parseInt(year) === currentYear && parseInt(month) === currentMonth) {
+      max = Math.min(max, currentDay - 1);
+    }
+    return Array.from({ length: max }, (_, i) => i + 1);
+  }, [maxDays, year, month, currentYear, currentMonth, currentDay]);
 
   const emitChange = (newYear: string, newMonth: string, newDay: string) => {
     if (newYear && newMonth && newDay) {
       // Clamp day if it exceeds max for month/year
       const max = getDaysInMonth(parseInt(newMonth), parseInt(newYear));
-      const clampedDay = Math.min(parseInt(newDay), max);
+      let clampedDay = Math.min(parseInt(newDay), max);
+      // Ensure date is before today
+      if (
+        parseInt(newYear) === currentYear &&
+        parseInt(newMonth) === currentMonth
+      ) {
+        clampedDay = Math.min(clampedDay, currentDay - 1);
+      }
+      if (clampedDay < 1) {
+        onChange?.("");
+        return;
+      }
       const formatted = `${newYear}-${newMonth}-${String(clampedDay).padStart(2, "0")}`;
       onChange?.(formatted);
     } else {
@@ -107,32 +132,40 @@ function DateOfBirthInput({
 
   const handleYearChange = (val: string) => {
     setYear(val);
+    let newMonth = month;
+    let newDay = day;
+    // If switching to current year, clamp month if needed
+    if (parseInt(val) === currentYear && parseInt(month) > currentMonth) {
+      newMonth = "";
+      newDay = "";
+      setMonth("");
+      setDay("");
+    }
     // Clamp day if needed
-    if (val && month && day) {
-      const max = getDaysInMonth(parseInt(month), parseInt(val));
-      if (parseInt(day) > max) {
+    if (val && newMonth && newDay) {
+      const max = getDaysInMonth(parseInt(newMonth), parseInt(val));
+      if (parseInt(newDay) > max) {
         const clamped = String(max).padStart(2, "0");
+        newDay = clamped;
         setDay(clamped);
-        emitChange(val, month, clamped);
-        return;
       }
     }
-    emitChange(val, month, day);
+    emitChange(val, newMonth, newDay);
   };
 
   const handleMonthChange = (val: string) => {
     setMonth(val);
+    let newDay = day;
     // Clamp day if needed
     if (year && val && day) {
       const max = getDaysInMonth(parseInt(val), parseInt(year));
       if (parseInt(day) > max) {
         const clamped = String(max).padStart(2, "0");
+        newDay = clamped;
         setDay(clamped);
-        emitChange(year, val, clamped);
-        return;
       }
     }
-    emitChange(year, val, day);
+    emitChange(year, val, newDay);
   };
 
   const handleDayChange = (val: string) => {

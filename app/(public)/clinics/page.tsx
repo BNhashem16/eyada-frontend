@@ -1,49 +1,21 @@
-"use client";
+import { Metadata } from "next";
+import { getTranslation } from "@/lib/i18n";
+import { ClinicsPageContent } from "@/features/clinics/components/clinics-page-content";
 
-import dynamic from "next/dynamic";
-import { Building2 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useTranslation } from "@/lib/i18n";
-
-const ClinicList = dynamic(
-  () =>
-    import("@/features/clinics/components/clinic-list").then(
-      (mod) => ({ default: mod.ClinicList }),
-    ),
-  {
-    loading: () => (
-      <div className="space-y-4">
-        <Skeleton className="h-12 w-full" />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-48 w-full rounded-xl" />
-          ))}
-        </div>
-      </div>
-    ),
+export const metadata: Metadata = {
+  title: getTranslation("meta.clinics.title"),
+  description: getTranslation("meta.clinics.description"),
+  keywords: getTranslation("meta.clinics.keywords").split(", "),
+  openGraph: {
+    title: getTranslation("meta.clinics.title"),
+    description: getTranslation("meta.clinics.description"),
+    url: "https://clinics-eg.com/clinics",
   },
-);
+  alternates: {
+    canonical: "https://clinics-eg.com/clinics",
+  },
+};
 
 export default function ClinicsPage() {
-  const { t } = useTranslation();
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Page Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-            <Building2 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">
-            {t("pages.clinics.title")}
-          </h1>
-        </div>
-        <p className="text-muted-foreground">{t("pages.clinics.subtitle")}</p>
-      </div>
-
-      {/* Clinic List with Filters */}
-      <ClinicList />
-    </div>
-  );
+  return <ClinicsPageContent />;
 }

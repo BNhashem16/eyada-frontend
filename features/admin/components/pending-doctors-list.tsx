@@ -116,7 +116,7 @@ export function PendingDoctorsList() {
     return (
       <Card>
         <CardContent className="py-16 text-center">
-          <CheckCircle className="h-16 w-16 mx-auto text-green-300 dark:text-green-700 mb-4" />
+          <CheckCircle className="h-16 w-16 mx-auto text-green-300 dark:text-green-400 mb-4" />
           <h3 className="text-lg font-semibold text-foreground mb-2">
             {t("admin.noPendingRequests")}
           </h3>

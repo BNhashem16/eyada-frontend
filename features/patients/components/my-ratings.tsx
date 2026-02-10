@@ -119,7 +119,7 @@ export function MyRatings() {
                   ) : (
                     <Badge
                       variant="outline"
-                      className="bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-900/20 dark:text-warning-400 dark:border-warning-800"
+                      className="bg-warning-50 text-warning-700 border-warning-200 dark:bg-warning-900/30 dark:text-warning-400 dark:border-warning-800"
                     >
                       <Clock className="h-3 w-3 me-1" />
                       {t("rating.pendingApproval")}
@@ -136,7 +136,7 @@ export function MyRatings() {
                         className={`h-4 w-4 ${
                           i < rating.rating
                             ? "fill-warning-400 text-warning-400"
-                            : "text-muted-foreground/30"
+                            : "text-gray-300 dark:text-gray-500"
                         }`}
                       />
                     ))}

@@ -112,12 +112,17 @@ export interface UpdateFamilyMemberDto {
 
 export interface CreateClinicDto {
   name: MultilingualDto; // required, ar/en minLength: 2, maxLength: 200
+  description?: MultilingualDto; // optional
   address?: MultilingualDto;
   cityId: string; // UUID, required
-  phoneNumber?: string; // maxLength: 20
+  buildingNumber?: string; // maxLength: 20
+  floorNumber?: string; // maxLength: 20
+  clinicNumber?: string; // maxLength: 20
+  landmark?: MultilingualDto; // optional
   latitude?: number; // -90 to 90
   longitude?: number; // -180 to 180
-  slotDurationMinutes?: number; // 1-60, default: 15
+  phoneNumbers?: string[]; // array of Egyptian phone numbers, max 5
+  whatsappNumbers?: string[]; // array of Egyptian phone numbers, max 5
   isActive?: boolean; // default: true
 }
 

@@ -139,17 +139,20 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                   </div>
                 </div>
 
-                {/* Phone */}
+                {/* Phone Numbers */}
                 {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
                   <div className="flex items-center gap-2 mt-3 text-muted-foreground">
-                    <Phone className="h-5 w-5 text-muted-foreground" />
-                    <a
-                      href={`tel:${clinic.phoneNumbers[0]}`}
-                      dir="ltr"
-                      className="hover:text-primary-600"
-                    >
-                      {clinic.phoneNumbers[0]}
-                    </a>
+                    <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <span dir="ltr">
+                      {clinic.phoneNumbers.map((phone, i) => (
+                        <span key={i}>
+                          {i > 0 && " / "}
+                          <a href={`tel:${phone}`} className="hover:text-primary-600">
+                            {phone}
+                          </a>
+                        </span>
+                      ))}
+                    </span>
                   </div>
                 )}
               </div>
@@ -276,7 +279,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
       {/* Sidebar - Quick Booking */}
       <div className="lg:col-span-1">
         <div className="sticky top-24">
-          <Card className="border-primary-200 dark:border-primary-800 bg-primary-50/50 dark:bg-primary-900/20">
+          <Card className="border-primary-200 dark:border-primary-800 bg-primary-50/50 dark:bg-primary-900/30">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary-600 dark:text-primary-400" />

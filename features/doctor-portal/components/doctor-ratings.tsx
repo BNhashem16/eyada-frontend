@@ -218,7 +218,7 @@ export function DoctorRatings() {
                                 className={`h-4 w-4 ${
                                   i < rating.rating
                                     ? "fill-warning-400 text-warning-400"
-                                    : "text-muted-foreground/30"
+                                    : "text-gray-300 dark:text-gray-500"
                                 }`}
                               />
                             ))}

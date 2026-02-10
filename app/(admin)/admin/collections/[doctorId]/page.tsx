@@ -1,36 +1,19 @@
-"use client";
+import { Metadata } from "next";
+import { getTranslation } from "@/lib/i18n";
+import { AdminCollectionDetailsContent } from "./page-content";
 
-import { useParams } from "next/navigation";
-import { FileText } from "lucide-react";
-import { DoctorReport } from "@/features/admin";
-import { useTranslation } from "@/lib/i18n";
+export const metadata: Metadata = {
+  title: getTranslation("meta.adminCollectionDetails.title"),
+  description: getTranslation("meta.adminCollectionDetails.description"),
+  robots: { index: false, follow: false },
+};
 
-export default function DoctorReportPage() {
-  const { t } = useTranslation();
-  const params = useParams();
-  const doctorId = params.doctorId as string;
+interface PageProps {
+  params: Promise<{ doctorId: string }>;
+}
 
-  return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-            <FileText className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {t("admin.doctorReportPage.title")}
-            </h1>
-            <p className="text-muted-foreground">
-              {t("admin.doctorReportPage.subtitle")}
-            </p>
-          </div>
-        </div>
-      </div>
+export default async function DoctorReportPage({ params }: PageProps) {
+  const { doctorId } = await params;
 
-      {/* Doctor Report */}
-      <DoctorReport doctorProfileId={doctorId} />
-    </div>
-  );
+  return <AdminCollectionDetailsContent doctorId={doctorId} />;
 }

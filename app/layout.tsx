@@ -21,6 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://clinics-eg.com"),
   title: {
     default: getTranslation("meta.defaultTitle"),
     template: getTranslation("meta.titleTemplate"),
@@ -29,6 +30,15 @@ export const metadata: Metadata = {
   keywords: getTranslation("meta.keywords").split(", "),
   authors: [{ name: "Eyada Team" }],
   creator: "Eyada",
+  applicationName: getTranslation("meta.siteName"),
+  category: "health",
+  alternates: {
+    canonical: "https://clinics-eg.com",
+    languages: {
+      "ar-EG": "https://clinics-eg.com",
+      "en-US": "https://clinics-eg.com",
+    },
+  },
   openGraph: {
     type: "website",
     locale: "ar_EG",
@@ -36,6 +46,7 @@ export const metadata: Metadata = {
     siteName: getTranslation("meta.siteName"),
     title: getTranslation("meta.ogTitle"),
     description: getTranslation("meta.ogDescription"),
+    url: "https://clinics-eg.com",
   },
   twitter: {
     card: "summary_large_image",
@@ -45,6 +56,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

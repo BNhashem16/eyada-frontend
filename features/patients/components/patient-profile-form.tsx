@@ -37,7 +37,19 @@ const getProfileSchema = (t: (key: string) => string) =>
       .min(3, t("validation.fullNameMinLength"))
       .max(100, t("validation.fullNameMaxLength")),
     phone: z.string().regex(/^01[0125][0-9]{8}$/, t("validation.phoneInvalid")),
-    dateOfBirth: z.string().optional(),
+    dateOfBirth: z
+      .string()
+      .optional()
+      .refine(
+        (val) => {
+          if (!val) return true;
+          const date = new Date(val);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return date < today;
+        },
+        { message: t("validation.dateOfBirthFuture") },
+      ),
     gender: z.nativeEnum(Gender).optional(),
     whatsappNumber: z
       .string()
@@ -196,7 +208,7 @@ function PatientProfileFormContent({
 
       {/* Pending Approval Banner */}
       {!isNewProfile && profile?.status === PatientStatus.PENDING && (
-        <Card className="mb-4 border-warning-300 bg-warning-50 dark:border-warning-700 dark:bg-warning-900/20">
+        <Card className="mb-4 border-warning-300 bg-warning-50 dark:border-warning-700 dark:bg-warning-900/30">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="h-10 w-10 rounded-full bg-warning-100 dark:bg-warning-800 flex items-center justify-center flex-shrink-0">
@@ -290,6 +302,11 @@ function PatientProfileFormContent({
                 />
               )}
             />
+            {errors.dateOfBirth?.message && (
+              <p className="text-sm text-error-600">
+                {errors.dateOfBirth.message}
+              </p>
+            )}
           </div>
 
           {/* Gender */}

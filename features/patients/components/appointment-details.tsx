@@ -99,11 +99,11 @@ const getPaymentStatusConfig = (
 ): Record<PaymentStatus, { label: string; color: string }> => ({
   [PaymentStatus.PENDING]: {
     label: t("payment.unpaid"),
-    color: "bg-warning-100 text-warning-800",
+    color: "bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400",
   },
   [PaymentStatus.PAID]: {
     label: t("payment.paid"),
-    color: "bg-success-100 text-success-800",
+    color: "bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400",
   },
   [PaymentStatus.REFUNDED]: {
     label: t("secretary.refunded"),
@@ -330,15 +330,15 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
                 )}
               </div>
             </div>
-            {appointment.clinic?.phoneNumber && (
+            {appointment.clinic?.phoneNumbers && appointment.clinic.phoneNumbers.length > 0 && (
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-muted-foreground" />
                 <a
-                  href={`tel:${appointment.clinic.phoneNumber}`}
+                  href={`tel:${appointment.clinic.phoneNumbers[0]}`}
                   className="hover:text-primary-600"
                   dir="ltr"
                 >
-                  {appointment.clinic.phoneNumber}
+                  {appointment.clinic.phoneNumbers.join(" / ")}
                 </a>
               </div>
             )}
@@ -477,7 +477,7 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
                   className={`h-6 w-6 ${
                     i < appointment.rating!.rating
                       ? "fill-warning-400 text-warning-400"
-                      : "text-muted-foreground/30"
+                      : "text-gray-300 dark:text-gray-500"
                   }`}
                 />
               ))}

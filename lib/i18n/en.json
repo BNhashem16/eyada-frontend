@@ -278,7 +278,14 @@
     "detailedAddressEnPlaceholder": "e.g., Tahrir St., Nile Tower, 5th Floor",
     "phone": "Phone",
     "clinicPhone": "Clinic Phone Number",
+    "phoneNumbers": "Phone Numbers",
+    "addPhone": "Add Phone Number",
+    "removePhone": "Remove",
     "phonePlaceholder": "01xxxxxxxxx",
+    "whatsappNumbers": "WhatsApp Numbers",
+    "addWhatsapp": "Add WhatsApp Number",
+    "removeWhatsapp": "Remove",
+    "contactInfo": "Contact Information",
     "schedule": "Schedule",
     "scheduleTitle": "Work Schedule",
     "scheduleSaved": "Schedule saved successfully",
@@ -297,6 +304,17 @@
     "selectStateFirst": "Select State First",
     "city": "City",
     "selectCity": "Select City",
+    "descriptionAr": "Clinic Description (Arabic)",
+    "descriptionEn": "Clinic Description (English)",
+    "descriptionArPlaceholder": "Brief description of the clinic...",
+    "descriptionEnPlaceholder": "Brief description of the clinic...",
+    "buildingNumber": "Building Number",
+    "floorNumber": "Floor Number",
+    "clinicNumber": "Clinic Number",
+    "landmarkAr": "Landmark (Arabic)",
+    "landmarkEn": "Landmark (English)",
+    "landmarkArPlaceholder": "e.g., Next to the National Bank",
+    "landmarkEnPlaceholder": "e.g., Next to the National Bank",
     "additionalInfo": "Additional Information",
     "buildingInfo": "Building / Floor / Clinic Number",
     "googleMapsLink": "Google Maps Link",
@@ -1276,7 +1294,8 @@
     "addressArRequired": "Address in Arabic is required",
     "addressEnRequired": "Address in English is required",
     "maxWhatsappNumbers": "Cannot add more than 5 WhatsApp numbers",
-    "reviewMaxLength": "Review cannot exceed 1000 characters"
+    "reviewMaxLength": "Review cannot exceed 1000 characters",
+    "dateOfBirthFuture": "Date of birth must be before today"
   },
   "toast": {
     "updated": "Updated",
@@ -1443,46 +1462,214 @@
     "noVisitHistory": "No visit history found"
   },
   "meta": {
-    "defaultTitle": "Eyada - Medical Appointment Booking System",
-    "titleTemplate": "%s | Eyada",
-    "defaultDescription": "Book your appointment with the best doctors in Egypt easily and quickly",
-    "keywords": "appointment booking, doctors, clinics, medicine, health, Egypt",
+    "defaultTitle": "Eyada - Book Appointments with the Best Doctors in Egypt | Online Booking",
+    "titleTemplate": "%s | Eyada - Doctor Booking Egypt",
+    "defaultDescription": "Eyada is Egypt's leading medical appointment booking platform. Find the best doctors and clinics in Cairo, Alexandria, Giza and all governorates. Book your appointment online easily and quickly with specialists in all medical fields.",
+    "keywords": "doctor booking Egypt, medical appointments, best doctors Egypt, online booking, doctor near me, Cairo clinics, Alexandria doctors, book doctor appointment, Eyada, dentist, ophthalmologist, internist, orthopedic, pediatrician, dermatologist, cardiologist, gynecologist, neurologist, ENT doctor, medical consultation, best clinic, doctor schedule, online consultation, clinic booking, specialist doctor, consultant, medical centers, healthcare, medicine",
     "siteName": "Eyada",
-    "ogTitle": "Eyada - Medical Appointment Booking System",
-    "ogDescription": "Book your appointment with the best doctors in Egypt easily and quickly",
-    "twitterTitle": "Eyada - Medical Appointment Booking System",
-    "twitterDescription": "Book your appointment with the best doctors in Egypt easily and quickly",
+    "ogTitle": "Eyada - Book Appointments with the Best Doctors in Egypt",
+    "ogDescription": "Find and book with the best doctors in Egypt. All medical specialties available. Easy and fast online booking.",
+    "twitterTitle": "Eyada - Book Appointments with the Best Doctors in Egypt",
+    "twitterDescription": "Find and book with the best doctors in Egypt. All medical specialties available. Easy and fast online booking.",
+    "home": {
+      "title": "Eyada - Book Appointments with the Best Doctors in Egypt | Online Booking",
+      "description": "Eyada is Egypt's leading medical appointment booking platform. Find the best doctors and clinics across all medical specialties. Book your appointment online now easily and quickly.",
+      "keywords": "doctor booking Egypt, best doctor, clinics, online booking, doctor near me, medical consultation"
+    },
+    "doctors": {
+      "title": "Doctors in Egypt - Find the Best Doctors & Book Appointments",
+      "description": "Browse the list of best doctors in Egypt. Search by specialty, location, and rating. Book your appointment with a specialist in Cairo, Alexandria, Giza and all governorates.",
+      "keywords": "doctors Egypt, best doctor, find doctor, doctor near me, book doctor, Cairo doctors, Alexandria doctors"
+    },
+    "clinics": {
+      "title": "Clinics & Medical Centers in Egypt - Find & Book",
+      "description": "Discover the best clinics and medical centers in Egypt. Browse clinics by specialty and location. Book your appointment at the nearest clinic.",
+      "keywords": "clinics Egypt, medical centers, nearby clinic, best clinic, Cairo clinics, Alexandria medical centers"
+    },
+    "specialties": {
+      "title": "Medical Specialties - All Specialties Available for Booking",
+      "description": "Browse all medical specialties available on Eyada. Internal medicine, pediatrics, ophthalmology, orthopedics, dentistry, dermatology, cardiology, obstetrics & gynecology, neurology, and more.",
+      "keywords": "medical specialties, internal medicine, pediatrics, ophthalmology, orthopedics, dentistry, dermatology, cardiology, OB/GYN, neurology"
+    },
+    "feedback": {
+      "title": "Complaints & Suggestions",
+      "description": "Share your opinion or submit a complaint or suggestion to improve our services. We value your feedback and always strive to provide the best service."
+    },
+    "track": {
+      "title": "Track Your Appointment - Check Booking Status",
+      "description": "Track your medical appointment status and know your position in the waiting queue. Enter your booking number to see details."
+    },
+    "trackDetails": {
+      "title": "Appointment Status - Track Booking",
+      "description": "View your medical appointment details and status, and know your position in the waiting queue."
+    },
+    "login": {
+      "title": "Login",
+      "description": "Log in to Eyada to book doctor appointments and manage your medical account easily."
+    },
+    "register": {
+      "title": "Create New Account",
+      "description": "Create your free Eyada account and start booking doctor appointments. Register as a patient or as a doctor."
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "description": "Reset your Eyada account password."
+    },
     "patientDashboard": {
       "title": "Dashboard - Patient",
-      "description": "Patient dashboard"
+      "description": "Patient dashboard - manage appointments and bookings"
+    },
+    "patientAppointments": {
+      "title": "My Appointments - Patient",
+      "description": "View and manage all my medical appointments"
     },
     "patientAppointmentDetails": {
       "title": "Appointment Details - Patient",
       "description": "View appointment details"
     },
+    "patientFamily": {
+      "title": "Family Members",
+      "description": "Manage family members and book for them"
+    },
+    "patientProfile": {
+      "title": "Profile - Patient",
+      "description": "Edit profile information"
+    },
     "doctorDashboard": {
       "title": "Dashboard - Doctor",
-      "description": "Doctor dashboard"
+      "description": "Doctor dashboard - manage appointments and clinics"
+    },
+    "doctorAppointments": {
+      "title": "Appointments - Doctor",
+      "description": "View and manage patient appointments"
     },
     "doctorAppointmentDetails": {
       "title": "Appointment Details - Doctor",
       "description": "View and manage appointment details"
     },
+    "doctorNewAppointment": {
+      "title": "New Appointment - Doctor",
+      "description": "Create a new appointment for a patient"
+    },
+    "doctorClinics": {
+      "title": "My Clinics - Doctor",
+      "description": "Manage clinics and schedules"
+    },
     "doctorNewClinic": {
       "title": "Add New Clinic",
       "description": "Add a new clinic"
+    },
+    "doctorClinicDetails": {
+      "title": "Clinic Details - Doctor",
+      "description": "View and manage clinic details"
+    },
+    "doctorClinicEdit": {
+      "title": "Edit Clinic - Doctor",
+      "description": "Edit clinic information"
+    },
+    "doctorProfilePage": {
+      "title": "Profile - Doctor",
+      "description": "Edit doctor profile information"
+    },
+    "doctorRatings": {
+      "title": "Ratings - Doctor",
+      "description": "View patient ratings"
+    },
+    "doctorSecretaries": {
+      "title": "Secretaries - Doctor",
+      "description": "Manage secretaries"
+    },
+    "doctorNewSecretary": {
+      "title": "Add New Secretary",
+      "description": "Add a new secretary for the clinic"
+    },
+    "doctorEditSecretary": {
+      "title": "Edit Secretary",
+      "description": "Edit secretary information"
+    },
+    "secretaryDashboard": {
+      "title": "Dashboard - Secretary",
+      "description": "Secretary dashboard"
+    },
+    "secretaryAppointments": {
+      "title": "Appointments - Secretary",
+      "description": "View and manage appointments"
+    },
+    "secretaryNewAppointment": {
+      "title": "New Appointment - Secretary",
+      "description": "Create a new appointment for a patient"
     },
     "secretaryAppointmentDetails": {
       "title": "Appointment Details - Secretary",
       "description": "View and manage appointment details"
     },
+    "secretaryRatings": {
+      "title": "Ratings - Secretary",
+      "description": "View patient ratings"
+    },
+    "secretarySchedules": {
+      "title": "Schedules - Secretary",
+      "description": "Manage appointment schedules"
+    },
+    "adminDashboard": {
+      "title": "Dashboard - Admin",
+      "description": "Admin dashboard"
+    },
+    "adminDoctors": {
+      "title": "Manage Doctors",
+      "description": "View and manage doctors"
+    },
+    "adminPatients": {
+      "title": "Manage Patients",
+      "description": "View and manage patients"
+    },
+    "adminClinics": {
+      "title": "Manage Clinics",
+      "description": "View and manage clinics"
+    },
+    "adminAppointments": {
+      "title": "Manage Appointments",
+      "description": "View and manage appointments"
+    },
+    "adminSecretaries": {
+      "title": "Manage Secretaries",
+      "description": "View and manage secretaries"
+    },
+    "adminRatings": {
+      "title": "Manage Ratings",
+      "description": "View and manage ratings"
+    },
+    "adminSpecialties": {
+      "title": "Manage Specialties",
+      "description": "View and manage medical specialties"
+    },
+    "adminLocations": {
+      "title": "Manage Locations",
+      "description": "View and manage governorates and cities"
+    },
+    "adminCommissions": {
+      "title": "Manage Commissions",
+      "description": "View and manage commissions"
+    },
+    "adminCollections": {
+      "title": "Manage Collections",
+      "description": "View and manage collections"
+    },
+    "adminCollectionDetails": {
+      "title": "Collection Details",
+      "description": "View doctor collection details"
+    },
+    "adminFeedbacks": {
+      "title": "Manage Feedback",
+      "description": "View and manage complaints and suggestions"
+    },
     "clinicDetails": {
-      "title": "Clinic Details",
-      "description": "View clinic details and book appointment"
+      "title": "Clinic Details - Book Your Appointment Now",
+      "description": "View clinic details and available appointments. Book your appointment with the doctor easily."
     },
     "doctorProfile": {
-      "title": "Doctor Profile",
-      "description": "View doctor profile and book appointment"
+      "title": "Doctor Profile - Book Your Appointment Now",
+      "description": "View doctor profile, specialty, ratings, and available clinics. Book your appointment now."
     }
   },
   "placeholder": {

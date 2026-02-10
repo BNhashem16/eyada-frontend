@@ -38,50 +38,52 @@ export function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with integrated nav */}
-      <Header
-        variant="public"
-        navLinks={navLinks}
-        onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-      />
+      {/* Header + Mobile Nav wrapped in sticky container */}
+      <div className="sticky top-0 z-40">
+        <Header
+          variant="public"
+          navLinks={navLinks}
+          onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        />
 
-      {/* Mobile Nav */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border/50 bg-card/95 backdrop-blur-lg shadow-lg">
-          <nav className="container mx-auto px-4 py-3 space-y-1">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              const isActive = pathname.startsWith(link.href);
+        {/* Mobile Nav */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border/50 bg-card/95 backdrop-blur-lg shadow-lg">
+            <nav className="container mx-auto px-4 py-3 space-y-1">
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                const isActive = pathname.startsWith(link.href);
 
-              return (
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                      isActive
+                        ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 shadow-sm"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span className="font-medium">{link.label}</span>
+                  </Link>
+                );
+              })}
+              {isHydrated && !isAuthenticated && (
                 <Link
-                  key={link.href}
-                  href={link.href}
+                  href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                    isActive
-                      ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 shadow-sm"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                  }`}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-200"
                 >
-                  <Icon className="h-5 w-5" />
-                  <span className="font-medium">{link.label}</span>
+                  <LogIn className="h-5 w-5" />
+                  <span className="font-medium">{t("nav.login")}</span>
                 </Link>
-              );
-            })}
-            {isHydrated && !isAuthenticated && (
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-200"
-              >
-                <LogIn className="h-5 w-5" />
-                <span className="font-medium">{t("nav.login")}</span>
-              </Link>
-            )}
-          </nav>
-        </div>
-      )}
+              )}
+            </nav>
+          </div>
+        )}
+      </div>
 
       {/* Main Content */}
       <main>{children}</main>

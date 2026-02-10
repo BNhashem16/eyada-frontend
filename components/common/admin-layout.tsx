@@ -53,7 +53,7 @@ export function AdminLayout({ children, menuItems, headerRightContent }: AdminLa
               </div>
               <div className="hidden sm:block">
                 <span className="text-xl font-bold">{t("app.name")}</span>
-                <span className="text-xs text-gray-400 block">
+                <span className="text-xs text-gray-300 block">
                   {t("app.adminPanel")}
                 </span>
               </div>
@@ -76,7 +76,7 @@ export function AdminLayout({ children, menuItems, headerRightContent }: AdminLa
                 <p className="text-sm font-medium max-w-[150px] truncate">
                   {user?.name}
                 </p>
-                <p className="text-xs text-gray-400">{t("app.systemAdmin")}</p>
+                <p className="text-xs text-gray-300">{t("app.systemAdmin")}</p>
               </div>
             </div>
           </div>
@@ -137,13 +137,13 @@ export function AdminLayout({ children, menuItems, headerRightContent }: AdminLa
                   </Avatar>
                   <div>
                     <p className="font-semibold">{user?.name}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-300">
                       {t("app.systemAdmin")}
                     </p>
                   </div>
                 </div>
                 <button onClick={() => setSidebarOpen(false)}>
-                  <X className="h-6 w-6 text-gray-400" />
+                  <X className="h-6 w-6 text-gray-300" />
                 </button>
               </div>
 

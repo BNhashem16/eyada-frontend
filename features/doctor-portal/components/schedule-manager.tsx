@@ -272,7 +272,7 @@ export function ScheduleManager({
           {localSchedules.map((schedule, index) => (
             <div
               key={schedule.dayOfWeek}
-              className={`flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-lg transition-colors ${
+              className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg transition-colors ${
                 schedule.isActive ? "bg-muted" : "bg-muted/50"
               }`}
             >
@@ -297,9 +297,9 @@ export function ScheduleManager({
 
               {/* Time Inputs */}
               {schedule.isActive && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap lg:items-center gap-3 lg:gap-4 flex-1">
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap lg:items-center gap-3 lg:gap-4">
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
+                    <Label className="text-sm text-muted-foreground w-32 shrink-0 sm:w-auto">
                       {t("common.from")}
                     </Label>
                     <Input
@@ -313,7 +313,7 @@ export function ScheduleManager({
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
+                    <Label className="text-sm text-muted-foreground w-32 shrink-0 sm:w-auto">
                       {t("common.to")}
                     </Label>
                     <Input
@@ -327,7 +327,7 @@ export function ScheduleManager({
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
+                    <Label className="text-sm text-muted-foreground w-32 shrink-0 sm:w-auto">
                       {t("common.break")}
                     </Label>
                     <Input
@@ -342,7 +342,7 @@ export function ScheduleManager({
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap">
+                    <Label className="text-sm text-muted-foreground w-32 shrink-0 sm:w-auto">
                       {t("clinics.slotDuration")}
                     </Label>
                     <select
@@ -360,7 +360,7 @@ export function ScheduleManager({
                     </select>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Label className="text-sm text-muted-foreground whitespace-nowrap flex items-center gap-1">
+                    <Label className="text-sm text-muted-foreground w-32 shrink-0 sm:w-auto whitespace-nowrap flex items-center gap-1">
                       <Users className="h-3.5 w-3.5" />
                       {t("clinics.maxPatients")}
                     </Label>

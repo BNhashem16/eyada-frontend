@@ -1,0 +1,21 @@
+{
+  "name": "عيادة - حجز مواعيد الأطباء",
+  "short_name": "عيادة",
+  "description": "احجز موعدك مع أفضل الأطباء في مصر بسهولة وسرعة",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar",
+  "categories": ["health", "medical", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

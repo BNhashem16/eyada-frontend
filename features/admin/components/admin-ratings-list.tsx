@@ -165,7 +165,7 @@ export function AdminRatingsList() {
             className={`h-4 w-4 ${
               star <= rating
                 ? "text-yellow-500 fill-yellow-500"
-                : "text-gray-300 dark:text-gray-600"
+                : "text-gray-300 dark:text-gray-500"
             }`}
           />
         ))}

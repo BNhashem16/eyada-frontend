@@ -5,6 +5,7 @@ import { getTranslation } from "@/lib/i18n";
 export const metadata: Metadata = {
   title: getTranslation("meta.patientDashboard.title"),
   description: getTranslation("meta.patientDashboard.description"),
+  robots: { index: false, follow: false },
 };
 
 export default function PatientDashboardPage() {

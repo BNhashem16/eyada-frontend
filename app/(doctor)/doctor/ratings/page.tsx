@@ -1,19 +1,13 @@
-"use client";
+import { Metadata } from "next";
+import { getTranslation } from "@/lib/i18n";
+import { DoctorRatingsContent } from "./page-content";
 
-import { PageHeader } from "@/components/common";
-import { DoctorRatings } from "@/features/doctor-portal/components";
-import { useTranslation } from "@/lib/i18n";
+export const metadata: Metadata = {
+  title: getTranslation("meta.doctorRatings.title"),
+  description: getTranslation("meta.doctorRatings.description"),
+  robots: { index: false, follow: false },
+};
 
 export default function DoctorRatingsPage() {
-  const { t } = useTranslation();
-
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title={t("nav.ratings")}
-        description={t("doctor.ratingsPageDescription")}
-      />
-      <DoctorRatings />
-    </div>
-  );
+  return <DoctorRatingsContent />;
 }

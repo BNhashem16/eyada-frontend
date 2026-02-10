@@ -65,7 +65,7 @@ function HighlightText({ text, query }: { text: string; query: string }) {
         regex.test(part) ? (
           <mark
             key={i}
-            className="bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded px-0.5"
+            className="bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-200 rounded px-0.5"
           >
             {part}
           </mark>
@@ -290,7 +290,7 @@ export function SearchableSelect({
           <span
             className={cn(
               "block truncate font-medium",
-              isSelected && "text-primary-700 dark:text-primary-300",
+              isSelected && "text-primary-700 dark:text-primary-200",
             )}
           >
             <HighlightText text={option.label} query={searchQuery} />

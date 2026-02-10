@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -11,13 +11,16 @@ import {
   Loader2,
   Navigation,
   Phone,
-  Clock,
+  Plus,
+  Trash2,
+  MessageCircle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -34,21 +37,24 @@ import { State, City } from "@/types";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 
+const phoneRegex = /^01[0125][0-9]{8}$/;
+
 // Schema matching backend CreateClinicDto
 const getClinicSchema = (t: (key: string) => string) =>
   z.object({
     nameAr: z.string().min(2, t("validation.clinicNameArRequired")).max(200),
     nameEn: z.string().min(2, t("validation.clinicNameEnRequired")).max(200),
+    descriptionAr: z.string().max(2000).optional().or(z.literal("")),
+    descriptionEn: z.string().max(2000).optional().or(z.literal("")),
     addressAr: z.string().min(2, t("validation.addressArRequired")).max(200),
     addressEn: z.string().min(2, t("validation.addressEnRequired")).max(200),
     stateId: z.string().min(1, t("validation.stateRequired")),
     cityId: z.string().min(1, t("validation.cityRequired")),
-    phoneNumber: z
-      .string()
-      .max(20)
-      .regex(/^01[0125][0-9]{8}$/, t("validation.phoneInvalid"))
-      .optional()
-      .or(z.literal("")),
+    buildingNumber: z.string().max(20).optional().or(z.literal("")),
+    floorNumber: z.string().max(20).optional().or(z.literal("")),
+    clinicNumber: z.string().max(20).optional().or(z.literal("")),
+    landmarkAr: z.string().max(2000).optional().or(z.literal("")),
+    landmarkEn: z.string().max(2000).optional().or(z.literal("")),
     latitude: z.coerce.number().min(-90).max(90).optional().or(z.literal("")),
     longitude: z.coerce
       .number()
@@ -56,7 +62,22 @@ const getClinicSchema = (t: (key: string) => string) =>
       .max(180)
       .optional()
       .or(z.literal("")),
-    slotDurationMinutes: z.coerce.number().min(1).max(60).optional(),
+    phoneNumbers: z.array(
+      z.object({
+        value: z
+          .string()
+          .regex(phoneRegex, t("validation.phoneInvalid"))
+          .or(z.literal("")),
+      }),
+    ),
+    whatsappNumbers: z.array(
+      z.object({
+        value: z
+          .string()
+          .regex(phoneRegex, t("validation.phoneInvalid"))
+          .or(z.literal("")),
+      }),
+    ),
     isActive: z.boolean(),
   });
 
@@ -100,21 +121,41 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
     setValue,
     watch,
     reset,
+    control,
     formState: { errors, isDirty },
   } = useForm<ClinicFormData>({
     resolver: zodResolver(clinicSchema),
     defaultValues: {
       nameAr: "",
       nameEn: "",
+      descriptionAr: "",
+      descriptionEn: "",
       addressAr: "",
       addressEn: "",
       stateId: "",
       cityId: "",
-      phoneNumber: "",
-      slotDurationMinutes: 15,
+      buildingNumber: "",
+      floorNumber: "",
+      clinicNumber: "",
+      landmarkAr: "",
+      landmarkEn: "",
+      phoneNumbers: [{ value: "" }],
+      whatsappNumbers: [],
       isActive: true,
     },
   });
+
+  const {
+    fields: phoneFields,
+    append: appendPhone,
+    remove: removePhone,
+  } = useFieldArray({ control, name: "phoneNumbers" });
+
+  const {
+    fields: whatsappFields,
+    append: appendWhatsapp,
+    remove: removeWhatsapp,
+  } = useFieldArray({ control, name: "whatsappNumbers" });
 
   const selectedStateId = watch("stateId");
   const citiesQuery = usePublicCities({
@@ -220,17 +261,34 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
         });
       }
 
+      const phones =
+        clinic.phoneNumbers && clinic.phoneNumbers.length > 0
+          ? clinic.phoneNumbers.map((p) => ({ value: p }))
+          : [{ value: "" }];
+
+      const whatsapps =
+        clinic.whatsappNumbers && clinic.whatsappNumbers.length > 0
+          ? clinic.whatsappNumbers.map((w) => ({ value: w }))
+          : [];
+
       reset({
         nameAr: clinic.name?.ar || "",
         nameEn: clinic.name?.en || "",
+        descriptionAr: clinic.description?.ar || "",
+        descriptionEn: clinic.description?.en || "",
         addressAr: clinic.address?.ar || "",
         addressEn: clinic.address?.en || "",
         stateId: stateId,
         cityId: clinic.cityId || "",
-        phoneNumber: (clinic as any).phoneNumber || "",
+        buildingNumber: clinic.buildingNumber || "",
+        floorNumber: clinic.floorNumber || "",
+        clinicNumber: clinic.clinicNumber || "",
+        landmarkAr: clinic.landmark?.ar || "",
+        landmarkEn: clinic.landmark?.en || "",
         latitude: clinic.latitude || "",
         longitude: clinic.longitude || "",
-        slotDurationMinutes: (clinic as any).slotDurationMinutes || 15,
+        phoneNumbers: phones,
+        whatsappNumbers: whatsapps,
         isActive: clinic.isActive ?? true,
       });
     }
@@ -238,21 +296,47 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
 
   const onSubmit = async (data: ClinicFormData) => {
     try {
+      // Filter out empty phone/whatsapp entries
+      const phoneNumbers = data.phoneNumbers
+        .map((p) => p.value)
+        .filter((v) => v.length > 0);
+      const whatsappNumbers = data.whatsappNumbers
+        .map((w) => w.value)
+        .filter((v) => v.length > 0);
+
       // Build the payload matching backend DTO
       const payload = {
         name: {
           ar: data.nameAr,
           en: data.nameEn,
         },
+        description:
+          data.descriptionAr || data.descriptionEn
+            ? {
+                ar: data.descriptionAr || "",
+                en: data.descriptionEn || "",
+              }
+            : undefined,
         address: {
           ar: data.addressAr,
           en: data.addressEn,
         },
         cityId: data.cityId,
-        phoneNumber: data.phoneNumber || undefined,
+        buildingNumber: data.buildingNumber || undefined,
+        floorNumber: data.floorNumber || undefined,
+        clinicNumber: data.clinicNumber || undefined,
+        landmark:
+          data.landmarkAr || data.landmarkEn
+            ? {
+                ar: data.landmarkAr || "",
+                en: data.landmarkEn || "",
+              }
+            : undefined,
         latitude: data.latitude ? Number(data.latitude) : undefined,
         longitude: data.longitude ? Number(data.longitude) : undefined,
-        slotDurationMinutes: data.slotDurationMinutes || undefined,
+        phoneNumbers: phoneNumbers.length > 0 ? phoneNumbers : undefined,
+        whatsappNumbers:
+          whatsappNumbers.length > 0 ? whatsappNumbers : undefined,
         isActive: data.isActive,
       };
 
@@ -308,7 +392,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Clinic Name Card */}
+      {/* Clinic Name & Description Card */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -350,6 +434,45 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             {errors.nameEn && (
               <p className="text-sm text-error-600 dark:text-error-400">
                 {errors.nameEn.message}
+              </p>
+            )}
+          </div>
+
+          {/* Description Arabic */}
+          <div className="space-y-2">
+            <Label htmlFor="descriptionAr">
+              {t("clinics.descriptionAr")}
+            </Label>
+            <Textarea
+              id="descriptionAr"
+              {...register("descriptionAr")}
+              placeholder={t("clinics.descriptionArPlaceholder")}
+              className="bg-background text-foreground min-h-[80px]"
+              rows={3}
+            />
+            {errors.descriptionAr && (
+              <p className="text-sm text-error-600 dark:text-error-400">
+                {errors.descriptionAr.message}
+              </p>
+            )}
+          </div>
+
+          {/* Description English */}
+          <div className="space-y-2">
+            <Label htmlFor="descriptionEn">
+              {t("clinics.descriptionEn")}
+            </Label>
+            <Textarea
+              id="descriptionEn"
+              {...register("descriptionEn")}
+              placeholder={t("clinics.descriptionEnPlaceholder")}
+              dir="ltr"
+              className="bg-background text-foreground min-h-[80px]"
+              rows={3}
+            />
+            {errors.descriptionEn && (
+              <p className="text-sm text-error-600 dark:text-error-400">
+                {errors.descriptionEn.message}
               </p>
             )}
           </div>
@@ -487,6 +610,68 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             )}
           </div>
 
+          {/* Building / Floor / Clinic Number */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="buildingNumber">
+                {t("clinics.buildingNumber")}
+              </Label>
+              <Input
+                id="buildingNumber"
+                {...register("buildingNumber")}
+                placeholder="10"
+                dir="ltr"
+                className="bg-background text-foreground"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="floorNumber">{t("clinics.floorNumber")}</Label>
+              <Input
+                id="floorNumber"
+                {...register("floorNumber")}
+                placeholder="3"
+                dir="ltr"
+                className="bg-background text-foreground"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="clinicNumber">{t("clinics.clinicNumber")}</Label>
+              <Input
+                id="clinicNumber"
+                {...register("clinicNumber")}
+                placeholder="5A"
+                dir="ltr"
+                className="bg-background text-foreground"
+              />
+            </div>
+          </div>
+
+          {/* Landmark */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="landmarkAr">{t("clinics.landmarkAr")}</Label>
+              <Input
+                id="landmarkAr"
+                {...register("landmarkAr")}
+                placeholder={t("clinics.landmarkArPlaceholder")}
+                className="bg-background text-foreground"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="landmarkEn">{t("clinics.landmarkEn")}</Label>
+              <Input
+                id="landmarkEn"
+                {...register("landmarkEn")}
+                placeholder={t("clinics.landmarkEnPlaceholder")}
+                dir="ltr"
+                className="bg-background text-foreground"
+              />
+            </div>
+          </div>
+
           {/* Coordinates */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -537,52 +722,127 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
               )}
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Phone Number */}
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber">
+      {/* Contact Info Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Phone className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+            {t("clinics.contactInfo")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Phone Numbers */}
+          <div className="space-y-3">
+            <Label>
               <span className="flex items-center gap-1">
                 <Phone className="h-4 w-4" />
-                {t("clinics.clinicPhone")}
+                {t("clinics.phoneNumbers")}
               </span>
             </Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              inputMode="tel"
-              {...register("phoneNumber")}
-              placeholder={t("clinics.phonePlaceholder")}
-              maxLength={11}
-              dir="ltr"
-              className="bg-background text-foreground"
-            />
-            {errors.phoneNumber && (
-              <p className="text-sm text-error-600 dark:text-error-400">
-                {errors.phoneNumber.message}
-              </p>
+            {phoneFields.map((field, index) => (
+              <div key={field.id} className="flex items-start gap-2">
+                <div className="flex-1 space-y-1">
+                  <Input
+                    type="tel"
+                    inputMode="tel"
+                    {...register(`phoneNumbers.${index}.value`)}
+                    placeholder={t("clinics.phonePlaceholder")}
+                    maxLength={11}
+                    dir="ltr"
+                    className="bg-background text-foreground"
+                  />
+                  {errors.phoneNumbers?.[index]?.value && (
+                    <p className="text-sm text-error-600 dark:text-error-400">
+                      {errors.phoneNumbers[index].value?.message}
+                    </p>
+                  )}
+                </div>
+                {phoneFields.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removePhone(index)}
+                    className="text-error-600 hover:text-error-700 hover:bg-error-50 dark:text-error-400 dark:hover:bg-error-900/20 mt-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+            {phoneFields.length < 5 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => appendPhone({ value: "" })}
+                className="gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                {t("clinics.addPhone")}
+              </Button>
             )}
           </div>
 
-          {/* Slot Duration */}
-          <div className="space-y-2">
-            <Label htmlFor="slotDurationMinutes">
+          {/* WhatsApp Numbers */}
+          <div className="space-y-3">
+            <Label>
               <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                {t("clinics.defaultSlotDuration")}
+                <MessageCircle className="h-4 w-4" />
+                {t("clinics.whatsappNumbers")}
               </span>
             </Label>
-            <select
-              id="slotDurationMinutes"
-              {...register("slotDurationMinutes", { valueAsNumber: true })}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
-            >
-              <option value={10}>{t("common.duration10")}</option>
-              <option value={15}>{t("common.duration15")}</option>
-              <option value={20}>{t("common.duration20")}</option>
-              <option value={30}>{t("common.duration30")}</option>
-              <option value={45}>{t("common.duration45")}</option>
-              <option value={60}>{t("common.duration60")}</option>
-            </select>
+            {whatsappFields.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                {locale === "ar"
+                  ? "لم يتم إضافة أرقام واتساب بعد"
+                  : "No WhatsApp numbers added yet"}
+              </p>
+            )}
+            {whatsappFields.map((field, index) => (
+              <div key={field.id} className="flex items-start gap-2">
+                <div className="flex-1 space-y-1">
+                  <Input
+                    type="tel"
+                    inputMode="tel"
+                    {...register(`whatsappNumbers.${index}.value`)}
+                    placeholder={t("clinics.phonePlaceholder")}
+                    maxLength={11}
+                    dir="ltr"
+                    className="bg-background text-foreground"
+                  />
+                  {errors.whatsappNumbers?.[index]?.value && (
+                    <p className="text-sm text-error-600 dark:text-error-400">
+                      {errors.whatsappNumbers[index].value?.message}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeWhatsapp(index)}
+                  className="text-error-600 hover:text-error-700 hover:bg-error-50 dark:text-error-400 dark:hover:bg-error-900/20 mt-0"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            {whatsappFields.length < 5 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => appendWhatsapp({ value: "" })}
+                className="gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                {t("clinics.addWhatsapp")}
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

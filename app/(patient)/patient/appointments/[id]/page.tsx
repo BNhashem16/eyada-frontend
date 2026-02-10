@@ -5,6 +5,7 @@ import { getTranslation } from "@/lib/i18n";
 export const metadata: Metadata = {
   title: getTranslation("meta.patientAppointmentDetails.title"),
   description: getTranslation("meta.patientAppointmentDetails.description"),
+  robots: { index: false, follow: false },
 };
 
 interface PageProps {

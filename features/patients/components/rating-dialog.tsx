@@ -200,7 +200,7 @@ export function RatingDialog({
                   className={`h-10 w-10 transition-colors ${
                     star <= (hoveredRating || rating)
                       ? "fill-warning-400 text-warning-400"
-                      : "text-muted-foreground/30"
+                      : "text-gray-300 dark:text-gray-500"
                   }`}
                 />
               </button>
@@ -242,7 +242,7 @@ export function RatingDialog({
 
           {/* Pending approval notice for edit mode */}
           {isEditMode && (
-            <p className="text-center text-xs text-muted-foreground bg-warning-50 dark:bg-warning-900/20 p-2 rounded-lg">
+            <p className="text-center text-xs text-muted-foreground bg-warning-50 dark:bg-warning-900/30 p-2 rounded-lg">
               {t("rating.pendingApprovalNotice")}
             </p>
           )}

@@ -545,7 +545,7 @@ export function AdminFeedbacksList() {
                   <p className="text-sm text-muted-foreground mb-2">
                     {t("admin.feedbacks.adminNotes")}
                   </p>
-                  <p className="bg-yellow-50 dark:bg-yellow-900/10 p-3 rounded-lg text-sm border border-yellow-200 dark:border-yellow-800">
+                  <p className="bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded-lg text-sm border border-yellow-200 dark:border-yellow-800">
                     {selectedFeedback.adminNotes}
                   </p>
                 </div>

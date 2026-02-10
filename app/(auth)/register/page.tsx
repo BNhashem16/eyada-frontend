@@ -1,33 +1,20 @@
-"use client";
+import { Metadata } from "next";
+import { getTranslation } from "@/lib/i18n";
+import { RegisterPageContent } from "./register-content";
 
-import { Suspense } from "react";
-import { RegisterForm } from "@/features/auth/components";
-import { Spinner } from "@/components/ui/spinner";
-import { useTranslation } from "@/lib/i18n";
+export const metadata: Metadata = {
+  title: getTranslation("meta.register.title"),
+  description: getTranslation("meta.register.description"),
+  openGraph: {
+    title: getTranslation("meta.register.title"),
+    description: getTranslation("meta.register.description"),
+    url: "https://clinics-eg.com/register",
+  },
+  alternates: {
+    canonical: "https://clinics-eg.com/register",
+  },
+};
 
 export default function RegisterPage() {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      {/* Header */}
-      <div className="mb-8 text-center">
-        <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">
-          {t("auth.registerTitle")}
-        </h1>
-        <p className="text-muted-foreground">{t("auth.registerSubtitle")}</p>
-      </div>
-
-      {/* Form - Wrapped in Suspense for useSearchParams */}
-      <Suspense
-        fallback={
-          <div className="flex justify-center py-8">
-            <Spinner />
-          </div>
-        }
-      >
-        <RegisterForm />
-      </Suspense>
-    </>
-  );
+  return <RegisterPageContent />;
 }

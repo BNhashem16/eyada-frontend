@@ -100,7 +100,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                         className={`h-5 w-5 ${
                           i < Math.round(averageRating)
                             ? "fill-warning-400 text-warning-400"
-                            : "text-muted-foreground/30"
+                            : "text-gray-300 dark:text-gray-500"
                         }`}
                       />
                     ))}
