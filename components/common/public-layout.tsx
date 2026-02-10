@@ -9,6 +9,8 @@ import {
   Grid3X3,
   LogIn,
   MessageSquareHeart,
+  Shield,
+  FileText,
 } from "lucide-react";
 import { Header, NavLinkItem } from "./header";
 import { useTranslation } from "@/lib/i18n";
@@ -100,7 +102,7 @@ function Footer() {
   return (
     <footer className="bg-gray-900 dark:bg-gray-950 text-white mt-16">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           {/* Logo & Description */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
@@ -142,6 +144,31 @@ function Footer() {
                   {t("nav.joinAsDoctor")}
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="font-bold mb-4">{t("nav.legal")}</h4>
+            <ul className="space-y-2 text-gray-400">
+              <li>
+                <Link
+                  href="/privacy"
+                  className="inline-flex items-center gap-2 hover:text-white transition-colors"
+                >
+                  <Shield className="h-4 w-4" />
+                  {t("nav.privacyPolicy")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="inline-flex items-center gap-2 hover:text-white transition-colors"
+                >
+                  <FileText className="h-4 w-4" />
+                  {t("nav.termsAndConditions")}
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/feedback"
@@ -180,11 +207,19 @@ function Footer() {
             </Link>
           </div>
 
-          <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-500 dark:text-gray-400 text-sm">
             <p>
-              © {new Date().getFullYear()} {t("app.name")}. {t("app.copyright")}
-              .
+              © {new Date().getFullYear()} {t("app.name")}. {t("app.copyright")}.
             </p>
+            <div className="flex items-center gap-4">
+              <Link href="/privacy" className="hover:text-white transition-colors">
+                {t("nav.privacyPolicy")}
+              </Link>
+              <span className="text-gray-600">|</span>
+              <Link href="/terms" className="hover:text-white transition-colors">
+                {t("nav.termsAndConditions")}
+              </Link>
+            </div>
           </div>
         </div>
       </div>

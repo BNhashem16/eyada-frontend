@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import Link from "next/link";
 import {
   User,
   Mail,
@@ -18,6 +19,7 @@ import {
   Clock,
   AlertTriangle,
   Stethoscope,
+  Eye,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -491,6 +493,12 @@ export function AdminDoctorsList() {
 
                     {/* Actions */}
                     <div className="flex gap-2 flex-wrap md:flex-nowrap mt-4 md:mt-0">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/admin/doctors/${doctor.id}`}>
+                          <Eye className="h-4 w-4 me-1" />
+                          {t("common.viewDetails")}
+                        </Link>
+                      </Button>
                       {doctor.status === DoctorStatus.PENDING && (
                         <>
                           <Button

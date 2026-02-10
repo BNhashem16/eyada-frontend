@@ -8,6 +8,15 @@ Postman Collection : C:\React\eyada-frontend\postman
 Frontend (Next.js React):
 Path: C:\React\eyada-frontend
 
+/add-dir C:\Nest\eyada_backend\src
+/add-dir C:\Nest\eyada_backend\prisma
+/add-dir C:\Nest\eyada_backend\config
+
+/add-dir C:\React\eyada-frontend\app
+/add-dir C:\React\eyada-frontend\components
+/add-dir C:\React\eyada-frontend\lib
+/add-dir C:\React\eyada-frontend\styles
+
 Rules:
 - Do NOT modify backend code at all
 - Backend is the source of truth

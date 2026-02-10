@@ -138,6 +138,7 @@ function PatientProfileFormContent({
   });
 
   // Reset form when profile data changes (after save/refetch)
+  // Also handles new profile case where user data arrives after initial render (auth hydration)
   useEffect(() => {
     if (profile) {
       reset({
@@ -154,6 +155,16 @@ function PatientProfileFormContent({
         gender: profile.gender || undefined,
         whatsappNumber: profile.whatsappNumber || "",
         bloodType: profile.bloodType || "",
+      });
+    } else if (user) {
+      // New profile: populate form from auth store user data
+      reset({
+        name: user.fullName || user.name || "",
+        phone: user.phoneNumber || "",
+        dateOfBirth: "",
+        gender: undefined,
+        whatsappNumber: "",
+        bloodType: "",
       });
     }
   }, [profile, user, reset]);
@@ -279,7 +290,7 @@ function PatientProfileFormContent({
             <Input
               id="email"
               type="email"
-              value={profile?.user?.email || ""}
+              value={profile?.user?.email || user?.email || ""}
               disabled
               icon={<Mail className="h-5 w-5" />}
               iconPosition="start"

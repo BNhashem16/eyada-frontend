@@ -12,3 +12,5 @@ export * from "./admin-clinics-list";
 export * from "./admin-ratings-list";
 export * from "./admin-secretaries-list";
 export * from "./admin-feedbacks-list";
+export * from "./admin-doctor-details";
+export * from "./admin-patient-details";
