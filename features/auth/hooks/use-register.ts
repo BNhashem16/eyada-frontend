@@ -61,8 +61,6 @@ export function useRegister() {
 
       if (!error.response) {
         message = t("auth.registerNetworkError");
-      } else if (error.response.status === 409) {
-        message = t("auth.registerConflictError");
       } else if (error.response.status === 429) {
         message = t("auth.registerRateLimitError");
       } else {
