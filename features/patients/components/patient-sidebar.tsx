@@ -14,14 +14,15 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/lib/auth/store";
+import { useUser, useLogout } from "@/lib/auth/store";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 
 export function PatientSidebar() {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const { user, logout } = useAuthStore();
+  const user = useUser();
+  const logout = useLogout();
 
   const menuItems = [
     {

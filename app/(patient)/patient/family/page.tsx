@@ -3,11 +3,11 @@
 import { Users } from "lucide-react";
 import { FamilyList } from "@/features/patients";
 import { useTranslation } from "@/lib/i18n";
-import { useAuthStore } from "@/lib/auth/store";
+import { useUser } from "@/lib/auth/store";
 
 export default function PatientFamilyPage() {
   const { t } = useTranslation();
-  const { user } = useAuthStore();
+  const user = useUser();
 
   return (
     <div className="space-y-6">

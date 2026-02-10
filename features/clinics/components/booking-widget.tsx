@@ -22,7 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useClinicServices } from "../hooks/use-clinics";
 import { usePatientFamily } from "@/features/patients/hooks/use-patient";
-import { useAuthStore } from "@/lib/auth/store";
+import { useUser, useIsAuthenticated } from "@/lib/auth/store";
 import { apiPost } from "@/lib/api";
 import { PATIENT_ENDPOINTS } from "@/lib/api/endpoints";
 import { useToast } from "@/hooks/use-toast";
@@ -46,7 +46,8 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
   const router = useRouter();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { isAuthenticated, user } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
+  const user = useUser();
 
   // State
   const [weekStart, setWeekStart] = useState(() => {

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuthStore, useIsHydrated } from "./store";
+import { useUser, useIsAuthenticated, useIsAuthLoading, useIsHydrated } from "./store";
 import { Role } from "@/types";
 
 interface ProtectedRouteProps {
@@ -21,7 +21,9 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated, isLoading } = useAuthStore();
+  const user = useUser();
+  const isAuthenticated = useIsAuthenticated();
+  const isLoading = useIsAuthLoading();
   const isHydrated = useIsHydrated();
 
   useEffect(() => {
@@ -87,7 +89,8 @@ export function ProtectedRoute({
  */
 export function GuestRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const user = useUser();
+  const isAuthenticated = useIsAuthenticated();
   const isHydrated = useIsHydrated();
 
   useEffect(() => {
@@ -137,7 +140,7 @@ function getRoleDashboard(role: Role): string {
  * Hook to check if user has specific role
  */
 export function useHasRole(roles: Role | Role[]): boolean {
-  const user = useAuthStore((state) => state.user);
+  const user = useUser();
 
   if (!user) return false;
 
@@ -149,7 +152,7 @@ export function useHasRole(roles: Role | Role[]): boolean {
  * Hook to get current user's dashboard path
  */
 export function useUserDashboard(): string {
-  const user = useAuthStore((state) => state.user);
+  const user = useUser();
 
   if (!user) return "/login";
 

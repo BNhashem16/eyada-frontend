@@ -1,8 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Users } from "lucide-react";
-import { AdminSecretariesList } from "@/features/admin";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
+
+const AdminSecretariesList = dynamic(
+  () =>
+    import("@/features/admin/components/admin-secretaries-list").then(
+      (mod) => ({ default: mod.AdminSecretariesList }),
+    ),
+  {
+    loading: () => (
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    ),
+  },
+);
 
 export default function AdminSecretariesPage() {
   const { t } = useTranslation();

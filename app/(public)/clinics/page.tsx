@@ -1,8 +1,28 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Building2 } from "lucide-react";
-import { ClinicList } from "@/features/clinics";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
+
+const ClinicList = dynamic(
+  () =>
+    import("@/features/clinics/components/clinic-list").then(
+      (mod) => ({ default: mod.ClinicList }),
+    ),
+  {
+    loading: () => (
+      <div className="space-y-4">
+        <Skeleton className="h-12 w-full" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-48 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    ),
+  },
+);
 
 export default function ClinicsPage() {
   const { t } = useTranslation();

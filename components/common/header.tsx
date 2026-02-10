@@ -17,9 +17,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { LanguageToggle } from "@/components/common/language-toggle";
 import { useTranslation } from "@/lib/i18n";
-import { useAuthStore, useIsHydrated } from "@/lib/auth/store";
+import { useUser, useIsAuthenticated, useLogout, useIsHydrated } from "@/lib/auth/store";
 import { getInitials } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { LucideIcon } from "lucide-react";
 
 export interface NavLinkItem {
@@ -49,9 +49,24 @@ export function Header({
 }: HeaderProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const user = useUser();
+  const isAuthenticated = useIsAuthenticated();
+  const logout = useLogout();
   const isHydrated = useIsHydrated();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const toggleUserMenu = useCallback(() => {
+    setUserMenuOpen((prev) => !prev);
+  }, []);
+
+  const closeUserMenu = useCallback(() => {
+    setUserMenuOpen(false);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    logout();
+    setUserMenuOpen(false);
+  }, [logout]);
 
   const getDashboardLink = () => {
     switch (user?.role) {
@@ -199,7 +214,7 @@ export function Header({
             ) : isAuthenticated && user ? (
               <div className="relative">
                 <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  onClick={toggleUserMenu}
                   className="flex items-center gap-2 p-1.5 rounded-full hover:bg-accent transition-colors"
                 >
                   <Avatar className="h-8 w-8 ring-2 ring-primary-100 dark:ring-primary-900/50">
@@ -219,7 +234,7 @@ export function Header({
                   <>
                     <div
                       className="fixed inset-0 z-40"
-                      onClick={() => setUserMenuOpen(false)}
+                      onClick={closeUserMenu}
                     />
                     <div className="absolute end-0 mt-2 w-56 rounded-xl bg-card border border-border shadow-xl z-50 py-1 overflow-hidden">
                       <div className="px-4 py-3 border-b border-border bg-muted/30">
@@ -232,17 +247,14 @@ export function Header({
                       </div>
                       <Link
                         href={getDashboardLink()}
-                        onClick={() => setUserMenuOpen(false)}
+                        onClick={closeUserMenu}
                         className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-accent transition-colors"
                       >
                         <LayoutDashboard className="h-4 w-4" />
                         {t("nav.dashboard")}
                       </Link>
                       <button
-                        onClick={() => {
-                          logout();
-                          setUserMenuOpen(false);
-                        }}
+                        onClick={handleLogout}
                         className="flex items-center gap-2 px-4 py-2.5 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20 w-full transition-colors"
                       >
                         <LogOut className="h-4 w-4" />

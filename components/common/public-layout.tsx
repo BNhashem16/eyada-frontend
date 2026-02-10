@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Header, NavLinkItem } from "./header";
 import { useTranslation } from "@/lib/i18n";
-import { useAuthStore, useIsHydrated } from "@/lib/auth/store";
+import { useIsAuthenticated, useIsHydrated } from "@/lib/auth/store";
 
 export interface PublicLayoutProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useIsAuthenticated();
   const isHydrated = useIsHydrated();
 
   const navLinks: NavLinkItem[] = [

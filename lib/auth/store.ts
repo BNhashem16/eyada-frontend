@@ -292,3 +292,4 @@ export const useIsAuthenticated = () =>
   useAuthStore((state) => state.isAuthenticated);
 export const useIsAuthLoading = () => useAuthStore((state) => state.isLoading);
 export const useIsHydrated = () => useAuthStore((state) => state.isHydrated);
+export const useLogout = () => useAuthStore((state) => state.logout);

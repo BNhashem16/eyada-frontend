@@ -25,17 +25,17 @@ import {
   useDoctorProfile,
 } from "../hooks/use-doctor-portal";
 import { useTodayOverview } from "../hooks/use-doctor-statistics";
-import { useAuthStore } from "@/lib/auth/store";
+import { useUser } from "@/lib/auth/store";
 import { AppointmentStatus } from "@/types/enums";
 import { formatDate, formatTime } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
-import { useEffect } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useTour, DOCTOR_DASHBOARD_TOUR_ID, doctorDashboardSteps } from "@/lib/tour";
 
 export function DoctorDashboard() {
   const { t, locale } = useTranslation();
-  const { user } = useAuthStore();
+  const user = useUser();
   const { startTour } = useTour();
 
   useEffect(() => {
@@ -61,44 +61,53 @@ export function DoctorDashboard() {
 
   const appointments = todayAppointments?.data ?? [];
 
-  // Use the new API for stats, fallback to local calculation
-  const pendingCount =
-    todayOverview?.pending ??
-    appointments.filter(
-      (a) =>
-        a.status === AppointmentStatus.PENDING ||
-        a.status === AppointmentStatus.CONFIRMED,
-    ).length;
-  const waitingCount =
-    todayOverview?.waiting ??
-    appointments.filter((a) => a.status === AppointmentStatus.CHECKED_IN)
-      .length;
-  const completedCount =
-    todayOverview?.completed ??
-    appointments.filter((a) => a.status === AppointmentStatus.COMPLETED).length;
-  const todayRevenue = todayOverview?.todayRevenue ?? 0;
-  const totalAppointments =
-    todayOverview?.totalAppointments ?? appointments.length;
+  // Memoize stats calculations to avoid recalculating on every render
+  const { pendingCount, waitingCount, completedCount, todayRevenue, totalAppointments } = useMemo(() => ({
+    pendingCount: todayOverview?.pending ??
+      appointments.filter(
+        (a) =>
+          a.status === AppointmentStatus.PENDING ||
+          a.status === AppointmentStatus.CONFIRMED,
+      ).length,
+    waitingCount: todayOverview?.waiting ??
+      appointments.filter((a) => a.status === AppointmentStatus.CHECKED_IN)
+        .length,
+    completedCount: todayOverview?.completed ??
+      appointments.filter((a) => a.status === AppointmentStatus.COMPLETED).length,
+    todayRevenue: todayOverview?.todayRevenue ?? 0,
+    totalAppointments: todayOverview?.totalAppointments ?? appointments.length,
+  }), [todayOverview, appointments]);
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-EG", {
-      style: "currency",
-      currency: "EGP",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
+  // Memoize currency formatter to avoid creating new Intl instance on every render
+  const currencyFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-EG", {
+        style: "currency",
+        currency: "EGP",
+        minimumFractionDigits: 0,
+      }),
+    [locale],
+  );
 
-  // Queue - only confirmed and checked-in appointments, sorted by queue number
-  const queueAppointments = appointments
-    .filter(
-      (a) =>
-        a.status === AppointmentStatus.CONFIRMED ||
-        a.status === AppointmentStatus.CHECKED_IN,
-    )
-    .sort((a, b) => (a.queueNumber || 0) - (b.queueNumber || 0));
+  const formatCurrency = useCallback(
+    (amount: number) => currencyFormatter.format(amount),
+    [currencyFormatter],
+  );
 
-  const getStatusLabel = (status: AppointmentStatus) => {
+  // Memoize queue appointments to avoid filtering/sorting on every render
+  const queueAppointments = useMemo(
+    () =>
+      appointments
+        .filter(
+          (a) =>
+            a.status === AppointmentStatus.CONFIRMED ||
+            a.status === AppointmentStatus.CHECKED_IN,
+        )
+        .sort((a, b) => (a.queueNumber || 0) - (b.queueNumber || 0)),
+    [appointments],
+  );
+
+  const getStatusLabel = useCallback((status: AppointmentStatus) => {
     const statusMap: Record<AppointmentStatus, string> = {
       [AppointmentStatus.PENDING]: t("status.pending"),
       [AppointmentStatus.CONFIRMED]: t("status.confirmed"),
@@ -109,7 +118,7 @@ export function DoctorDashboard() {
       [AppointmentStatus.NO_SHOW]: t("status.noShow"),
     };
     return statusMap[status];
-  };
+  }, [t]);
 
   return (
     <div className="space-y-6">

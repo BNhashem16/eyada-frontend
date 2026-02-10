@@ -26,7 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PublicLayout } from "@/components/common";
 import { useTranslation } from "@/lib/i18n";
 import { useSpecialties } from "@/features/specialties";
-import { useAuthStore, useIsHydrated } from "@/lib/auth/store";
+import { useUser, useIsAuthenticated, useIsHydrated } from "@/lib/auth/store";
 import { useLanguage } from "@/components/providers";
 
 // Default icons for specialties
@@ -53,7 +53,8 @@ export default function HomePage() {
   const [trackingNumber, setTrackingNumber] = useState("");
 
   // Auth state
-  const { isAuthenticated, user } = useAuthStore();
+  const user = useUser();
+  const isAuthenticated = useIsAuthenticated();
   const isHydrated = useIsHydrated();
 
   // Fetch specialties from backend

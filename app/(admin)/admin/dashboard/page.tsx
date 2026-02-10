@@ -1,10 +1,37 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { LayoutDashboard } from "lucide-react";
-import { AdminDashboardStats, PendingDoctorsList } from "@/features/admin";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
 import { useEffect } from "react";
 import { useTour, ADMIN_DASHBOARD_TOUR_ID, adminDashboardSteps } from "@/lib/tour";
+
+const AdminDashboardStats = dynamic(
+  () =>
+    import("@/features/admin/components/admin-dashboard-stats").then(
+      (mod) => ({ default: mod.AdminDashboardStats }),
+    ),
+  {
+    loading: () => (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-24 w-full rounded-xl" />
+        ))}
+      </div>
+    ),
+  },
+);
+
+const PendingDoctorsList = dynamic(
+  () =>
+    import("@/features/admin/components/pending-doctors-list").then(
+      (mod) => ({ default: mod.PendingDoctorsList }),
+    ),
+  {
+    loading: () => <Skeleton className="h-48 w-full" />,
+  },
+);
 
 export default function AdminDashboardPage() {
   const { t } = useTranslation();

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { X, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslation } from "@/lib/i18n";
-import { useAuthStore } from "@/lib/auth/store";
+import { useUser, useLogout } from "@/lib/auth/store";
 import { getInitials } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
@@ -29,7 +29,7 @@ export interface SidebarProps {
 export function Sidebar({ menuItems, basePath = "" }: SidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const { logout } = useAuthStore();
+  const logout = useLogout();
 
   const isActive = (href: string) => {
     const dashboardPath = `${basePath}/dashboard`;
@@ -87,7 +87,8 @@ export function MobileSidebar({
 }: SidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const { user, logout } = useAuthStore();
+  const user = useUser();
+  const logout = useLogout();
 
   if (!isOpen) return null;
 

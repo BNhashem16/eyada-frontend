@@ -40,7 +40,8 @@
       "WebSearch",
       "WebFetch(domain:onboardjs.com)",
       "WebFetch(domain:medium.com)",
-      "WebFetch(domain:userguiding.com)"
+      "WebFetch(domain:userguiding.com)",
+      "Bash(wc:*)"
     ]
   }
 }

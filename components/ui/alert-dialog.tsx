@@ -38,7 +38,7 @@ const AlertDialogContent = React.forwardRef<
       className={cn(
         "fixed inset-x-0 bottom-0 z-50 mx-auto grid w-full max-w-lg gap-4 border bg-background p-4 shadow-lg duration-200",
         "sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:p-6 sm:rounded-lg",
-        "max-h-[85vh] overflow-y-auto rounded-t-xl sm:rounded-lg",
+        "max-h-[85dvh] overflow-y-auto rounded-t-xl sm:rounded-lg",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",

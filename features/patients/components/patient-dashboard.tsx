@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { usePatientAppointments } from "../hooks/use-patient";
-import { useAuthStore } from "@/lib/auth/store";
+import { useUser } from "@/lib/auth/store";
 import { AppointmentStatus } from "@/types/enums";
 import { formatDate, formatTime, isPast } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
@@ -27,7 +27,7 @@ import { useTour, PATIENT_DASHBOARD_TOUR_ID, patientDashboardSteps } from "@/lib
 
 export function PatientDashboard() {
   const { t, locale } = useTranslation();
-  const { user } = useAuthStore();
+  const user = useUser();
   const { startTour } = useTour();
 
   useEffect(() => {

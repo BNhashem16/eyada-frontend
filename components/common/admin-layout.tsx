@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { LanguageToggle } from "@/components/common/language-toggle";
 import { useTranslation } from "@/lib/i18n";
-import { useAuthStore } from "@/lib/auth/store";
+import { useUser, useLogout } from "@/lib/auth/store";
 import { getInitials } from "@/lib/utils";
 import type { MenuItem } from "./sidebar";
 import { TourProvider } from "@/lib/tour";
@@ -23,7 +23,8 @@ export function AdminLayout({ children, menuItems, headerRightContent }: AdminLa
   const { t } = useTranslation();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, logout } = useAuthStore();
+  const user = useUser();
+  const logout = useLogout();
 
   const isActive = (href: string) => {
     return (

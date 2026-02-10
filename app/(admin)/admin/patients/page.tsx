@@ -1,8 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Users } from "lucide-react";
-import { AdminPatientsList } from "@/features/admin";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
+
+const AdminPatientsList = dynamic(
+  () =>
+    import("@/features/admin/components/admin-patients-list").then(
+      (mod) => ({ default: mod.AdminPatientsList }),
+    ),
+  {
+    loading: () => (
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    ),
+  },
+);
 
 export default function AdminPatientsPage() {
   const { t } = useTranslation();

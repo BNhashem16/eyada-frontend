@@ -1,10 +1,30 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Stethoscope } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { DoctorList } from "@/features/doctors";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo } from "react";
 import { useTranslation } from "@/lib/i18n";
+
+const DoctorList = dynamic(
+  () =>
+    import("@/features/doctors/components/doctor-list").then(
+      (mod) => ({ default: mod.DoctorList }),
+    ),
+  {
+    loading: () => (
+      <div className="space-y-4">
+        <Skeleton className="h-12 w-full" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-48 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    ),
+  },
+);
 
 export default function DoctorsPage() {
   const { t } = useTranslation();
