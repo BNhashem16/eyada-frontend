@@ -9,6 +9,7 @@ import {
   Grid3X3,
   LogIn,
   MessageSquareHeart,
+  Phone,
   Shield,
   FileText,
   Bot,
@@ -40,6 +41,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
       label: t("nav.complaintsAndSuggestions"),
       icon: MessageSquareHeart,
     },
+    { href: "/contact", label: t("nav.contactUs"), icon: Phone },
     ...(isAiEnabled
       ? [{ href: "/ai-assistant", label: t("nav.aiAssistant"), icon: Bot }]
       : []),
@@ -203,8 +205,15 @@ function Footer({ isAiEnabled }: { isAiEnabled: boolean }) {
           <div>
             <h4 className="font-bold mb-4">{t("nav.contactUs")}</h4>
             <ul className="space-y-2 text-gray-400">
-              <li dir="ltr">+20 123 456 7890</li>
-              <li>support@eyada.com</li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 hover:text-white transition-colors"
+                >
+                  <Phone className="h-4 w-4" />
+                  {t("contact.title")}
+                </Link>
+              </li>
               <li>{t("app.location")}</li>
             </ul>
           </div>

@@ -4,6 +4,8 @@ import { getTranslation } from "@/lib/i18n";
 import { JsonLd } from "@/components/seo/json-ld";
 import { DoctorsPageContent } from "@/features/doctors/components/doctors-page-content";
 
+const BASE_URL = "https://clinics-eg.com";
+
 export const metadata: Metadata = {
   title: getTranslation("meta.doctors.title"),
   description: getTranslation("meta.doctors.description"),
@@ -11,10 +13,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: getTranslation("meta.doctors.title"),
     description: getTranslation("meta.doctors.description"),
-    url: "https://clinics-eg.com/doctors",
+    url: `${BASE_URL}/doctors`,
   },
   alternates: {
-    canonical: "https://clinics-eg.com/doctors",
+    canonical: `${BASE_URL}/doctors`,
   },
 };
 
@@ -23,18 +25,38 @@ const doctorsJsonLd = {
   "@type": "CollectionPage",
   name: getTranslation("meta.doctors.title"),
   description: getTranslation("meta.doctors.description"),
-  url: "https://clinics-eg.com/doctors",
+  url: `${BASE_URL}/doctors`,
   isPartOf: {
     "@type": "WebSite",
     name: "عيادة - Eyada",
-    url: "https://clinics-eg.com",
+    url: BASE_URL,
   },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "الرئيسية",
+      item: BASE_URL,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "الأطباء",
+      item: `${BASE_URL}/doctors`,
+    },
+  ],
 };
 
 export default function DoctorsPage() {
   return (
     <>
       <JsonLd data={doctorsJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <Suspense>
         <DoctorsPageContent />
       </Suspense>

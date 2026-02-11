@@ -8,6 +8,7 @@ import {
   DoctorStatus,
   PatientStatus,
   RelationshipType,
+  ContactLinkPlatform,
 } from "./enums";
 
 // Bilingual text support
@@ -341,6 +342,17 @@ export interface SecretaryWithClinics extends User {
     isActive: boolean;
     assignedAt: string;
   }[];
+}
+
+// Contact Link model
+export interface ContactLink extends Timestamps {
+  id: string;
+  platform: ContactLinkPlatform;
+  label: Multilingual;
+  value: string;
+  icon?: string;
+  isActive: boolean;
+  sortOrder: number;
 }
 
 // Secretary ratings response

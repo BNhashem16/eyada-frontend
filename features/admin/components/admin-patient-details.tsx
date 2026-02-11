@@ -301,10 +301,13 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
                   <Mail className="h-4 w-4" />
                   {patient.user?.email}
                 </span>
-                <span className="flex items-center gap-2">
+                <a
+                  href={`tel:${patient.user?.phoneNumber}`}
+                  className="flex items-center gap-2 hover:text-primary-600"
+                >
                   <Phone className="h-4 w-4" />
                   <span dir="ltr">{patient.user?.phoneNumber}</span>
-                </span>
+                </a>
               </div>
             </div>
           </div>
@@ -329,7 +332,15 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
             <Separator />
             <InfoRow
               label={t("admin.patientDetails.phone")}
-              value={<span dir="ltr">{patient.user?.phoneNumber}</span>}
+              value={
+                <a
+                  href={`tel:${patient.user?.phoneNumber}`}
+                  className="hover:text-primary-600 hover:underline"
+                  dir="ltr"
+                >
+                  {patient.user?.phoneNumber}
+                </a>
+              }
             />
             {patient.whatsappNumber && (
               <>
@@ -337,10 +348,16 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
                 <InfoRow
                   label={t("admin.patientDetails.whatsappNumber")}
                   value={
-                    <span className="flex items-center gap-1" dir="ltr">
+                    <a
+                      href={`https://wa.me/${patient.whatsappNumber.replace(/[^0-9]/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-green-600 hover:underline"
+                      dir="ltr"
+                    >
                       <MessageCircle className="h-3 w-3 text-green-500" />
                       {patient.whatsappNumber}
-                    </span>
+                    </a>
                   }
                 />
               </>

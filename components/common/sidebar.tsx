@@ -40,7 +40,7 @@ export function Sidebar({ menuItems, basePath = "" }: SidebarProps) {
 
   return (
     <aside className="hidden lg:block w-64 bg-card border-e border-border min-h-[calc(100vh-4rem)]">
-      <nav data-tour="sidebar-nav" className="p-4 space-y-1">
+      <nav className="p-4 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);

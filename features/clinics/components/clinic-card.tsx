@@ -111,7 +111,13 @@ export const ClinicCard = React.memo(function ClinicCard({
             {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
               <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />
-                <span dir="ltr">{clinic.phoneNumbers[0]}</span>
+                <a
+                  href={`tel:${clinic.phoneNumbers[0]}`}
+                  className="hover:text-primary-600 hover:underline"
+                  dir="ltr"
+                >
+                  {clinic.phoneNumbers[0]}
+                </a>
               </div>
             )}
 

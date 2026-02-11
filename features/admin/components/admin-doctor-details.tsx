@@ -278,10 +278,13 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
                   <Mail className="h-4 w-4" />
                   {doctor.user?.email}
                 </span>
-                <span className="flex items-center gap-2">
+                <a
+                  href={`tel:${doctor.user?.phoneNumber}`}
+                  className="flex items-center gap-2 hover:text-primary-600"
+                >
                   <Phone className="h-4 w-4" />
                   <span dir="ltr">{doctor.user?.phoneNumber}</span>
-                </span>
+                </a>
               </div>
             </div>
           </div>
@@ -306,7 +309,15 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
             <Separator />
             <InfoRow
               label={t("admin.doctorDetails.phone")}
-              value={<span dir="ltr">{doctor.user?.phoneNumber}</span>}
+              value={
+                <a
+                  href={`tel:${doctor.user?.phoneNumber}`}
+                  className="hover:text-primary-600 hover:underline"
+                  dir="ltr"
+                >
+                  {doctor.user?.phoneNumber}
+                </a>
+              }
             />
             <Separator />
             <InfoRow
@@ -354,14 +365,17 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
                   value={
                     <div className="flex flex-col gap-1">
                       {doctor.whatsappNumbers.map((num, idx) => (
-                        <span
+                        <a
                           key={idx}
-                          className="flex items-center gap-1"
+                          href={`https://wa.me/${num.replace(/[^0-9]/g, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-green-600 hover:underline"
                           dir="ltr"
                         >
                           <MessageCircle className="h-3 w-3 text-green-500" />
                           {num}
-                        </span>
+                        </a>
                       ))}
                     </div>
                   }

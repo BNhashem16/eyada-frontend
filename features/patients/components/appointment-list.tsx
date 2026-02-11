@@ -138,7 +138,7 @@ export function AppointmentList() {
   return (
     <div className="space-y-6">
       {/* Status Filter */}
-      <div data-tour="patient-status-filter">
+      <div>
         <SearchableSelect
           options={statusFilterOptions}
           value={selectedStatus}
@@ -206,7 +206,7 @@ export function AppointmentList() {
 
       {/* Appointments List */}
       {!isLoading && !isError && appointments.length > 0 && (
-        <div className="space-y-4" data-tour="patient-appointments-list">
+        <div className="space-y-4">
           {appointments.map((appointment) => (
             <AppointmentCard
               key={appointment.id}

@@ -28,10 +28,16 @@ export const metadata: Metadata = {
   },
   description: getTranslation("meta.defaultDescription"),
   keywords: getTranslation("meta.keywords").split(", "),
-  authors: [{ name: "Eyada Team" }],
+  authors: [{ name: "Eyada Team", url: "https://clinics-eg.com" }],
   creator: "Eyada",
+  publisher: "Eyada",
   applicationName: getTranslation("meta.siteName"),
   category: "health",
+  formatDetection: {
+    telephone: true,
+    email: true,
+    address: true,
+  },
   alternates: {
     canonical: "https://clinics-eg.com",
     languages: {
@@ -64,6 +70,12 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "عيادة",
+  },
 };
 
 export const viewport: Viewport = {
@@ -85,8 +97,6 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body

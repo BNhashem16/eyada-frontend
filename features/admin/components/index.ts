@@ -14,3 +14,4 @@ export * from "./admin-secretaries-list";
 export * from "./admin-feedbacks-list";
 export * from "./admin-doctor-details";
 export * from "./admin-patient-details";
+export * from "./contact-links-management";

@@ -177,10 +177,7 @@ export function AppointmentQueue() {
         <CardContent className="p-4">
           <div className="flex flex-col gap-4">
             {/* Date Navigation */}
-            <div
-              className="flex items-center gap-2"
-              data-tour="doctor-date-nav"
-            >
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 className="text-xs"
@@ -207,10 +204,7 @@ export function AppointmentQueue() {
             </div>
 
             {/* Clinic & Status Filters */}
-            <div
-              className="flex flex-col sm:flex-row gap-3"
-              data-tour="doctor-queue-filters"
-            >
+            <div className="flex flex-col sm:flex-row gap-3">
               <SearchableSelect
                 options={[
                   {
@@ -343,7 +337,7 @@ export function AppointmentQueue() {
 
       {/* Appointments List */}
       {!isLoading && appointments.length > 0 && (
-        <div className="space-y-3" data-tour="doctor-queue-list">
+        <div className="space-y-3">
           {appointments
             .sort((a, b) =>
               (a.appointmentTime || "").localeCompare(b.appointmentTime || ""),

@@ -1,6 +1,9 @@
 import { Metadata } from "next";
 import { getTranslation } from "@/lib/i18n";
+import { JsonLd } from "@/components/seo/json-ld";
 import { SpecialtiesPageContent } from "@/features/specialties/components/specialties-page-content";
+
+const BASE_URL = "https://clinics-eg.com";
 
 export const metadata: Metadata = {
   title: getTranslation("meta.specialties.title"),
@@ -9,13 +12,51 @@ export const metadata: Metadata = {
   openGraph: {
     title: getTranslation("meta.specialties.title"),
     description: getTranslation("meta.specialties.description"),
-    url: "https://clinics-eg.com/specialties",
+    url: `${BASE_URL}/specialties`,
   },
   alternates: {
-    canonical: "https://clinics-eg.com/specialties",
+    canonical: `${BASE_URL}/specialties`,
   },
 };
 
+const specialtiesJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: getTranslation("meta.specialties.title"),
+  description: getTranslation("meta.specialties.description"),
+  url: `${BASE_URL}/specialties`,
+  isPartOf: {
+    "@type": "WebSite",
+    name: "عيادة - Eyada",
+    url: BASE_URL,
+  },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "الرئيسية",
+      item: BASE_URL,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "التخصصات",
+      item: `${BASE_URL}/specialties`,
+    },
+  ],
+};
+
 export default function SpecialtiesPage() {
-  return <SpecialtiesPageContent />;
+  return (
+    <>
+      <JsonLd data={specialtiesJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+      <SpecialtiesPageContent />
+    </>
+  );
 }

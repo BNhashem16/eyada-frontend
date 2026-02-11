@@ -8,32 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
-import { useEffect } from "react";
-import {
-  useTour,
-  SECRETARY_DASHBOARD_TOUR_ID,
-  secretaryDashboardSteps,
-} from "@/lib/tour";
 
 export function SecretaryDashboardContent() {
   const { t, locale } = useTranslation();
   const { data: clinics } = useSecretaryClinics();
-  const { startTour } = useTour();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startTour(SECRETARY_DASHBOARD_TOUR_ID, secretaryDashboardSteps);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div
-        data-tour="secretary-header"
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />
@@ -56,14 +39,14 @@ export function SecretaryDashboardContent() {
       </div>
 
       {/* Stats */}
-      <div data-tour="secretary-stats">
+      <div>
         <DashboardStats />
       </div>
 
       {/* Quick Actions & Assigned Clinics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Assigned Clinics Card */}
-        <Card data-tour="secretary-clinics">
+        <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" />
@@ -99,7 +82,7 @@ export function SecretaryDashboardContent() {
         </Card>
 
         {/* Quick Actions */}
-        <Card data-tour="secretary-quick-actions" className="lg:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">{t("common.actions")}</CardTitle>
           </CardHeader>
@@ -131,7 +114,7 @@ export function SecretaryDashboardContent() {
       </div>
 
       {/* Today's Appointments */}
-      <div data-tour="secretary-today">
+      <div>
         <h2 className="text-lg font-semibold text-foreground mb-4">
           {t("secretary.dashboardPage.todayAppointments")}
         </h2>

@@ -13,9 +13,7 @@ import { Role } from "@/types";
 import { ProfileCompletionGuard } from "@/components/common/profile-completion-guard";
 import { DashboardLayout, MenuItem } from "@/components/common";
 import { AiChatButton } from "@/features/ai/components/ai-chat-button";
-import { TourReplayButton } from "@/components/common/tour-replay-button";
 import { useTranslation } from "@/lib/i18n";
-import { DOCTOR_DASHBOARD_TOUR_ID, doctorDashboardSteps } from "@/lib/tour";
 
 function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -37,13 +35,6 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
     { href: "/doctor/profile", label: t("nav.profile"), icon: User },
   ];
 
-  const headerRightContent = (
-    <TourReplayButton
-      tourId={DOCTOR_DASHBOARD_TOUR_ID}
-      steps={doctorDashboardSteps}
-    />
-  );
-
   return (
     <>
       <DashboardLayout
@@ -51,7 +42,6 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
         userRoleLabel={t("app.doctorRole")}
         showDoctorPrefix={true}
         basePath="/doctor"
-        headerRightContent={headerRightContent}
       >
         {children}
       </DashboardLayout>

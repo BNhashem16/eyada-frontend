@@ -14,14 +14,13 @@ import {
   Building,
   Star,
   MessageSquareHeart,
+  Link2,
   Bot,
 } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
 import { AdminLayout, MenuItem } from "@/components/common";
-import { TourReplayButton } from "@/components/common/tour-replay-button";
 import { useTranslation } from "@/lib/i18n";
-import { ADMIN_DASHBOARD_TOUR_ID, adminDashboardSteps } from "@/lib/tour";
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -60,25 +59,18 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       icon: MessageSquareHeart,
     },
     {
+      href: "/admin/contact-links",
+      label: t("nav.contactLinks"),
+      icon: Link2,
+    },
+    {
       href: "/admin/ai-settings",
       label: t("nav.aiSettings"),
       icon: Bot,
     },
   ];
 
-  const headerRightContent = (
-    <TourReplayButton
-      tourId={ADMIN_DASHBOARD_TOUR_ID}
-      steps={adminDashboardSteps}
-      variant="dark"
-    />
-  );
-
-  return (
-    <AdminLayout menuItems={menuItems} headerRightContent={headerRightContent}>
-      {children}
-    </AdminLayout>
-  );
+  return <AdminLayout menuItems={menuItems}>{children}</AdminLayout>;
 }
 
 export default function AdminLayoutWrapper({

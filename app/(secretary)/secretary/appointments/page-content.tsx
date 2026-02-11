@@ -1,27 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import { Calendar, Plus } from "lucide-react";
 import { AppointmentList } from "@/features/secretary";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
-import {
-  useTour,
-  SECRETARY_APPOINTMENTS_TOUR_ID,
-  secretaryAppointmentsSteps,
-} from "@/lib/tour";
 
 export function SecretaryAppointmentsContent() {
   const { t } = useTranslation();
-  const { startTour } = useTour();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startTour(SECRETARY_APPOINTMENTS_TOUR_ID, secretaryAppointmentsSteps);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, [startTour]);
 
   return (
     <div className="space-y-6">
@@ -40,7 +26,7 @@ export function SecretaryAppointmentsContent() {
             </p>
           </div>
         </div>
-        <Button asChild data-tour="secretary-book-btn">
+        <Button asChild>
           <Link href="/secretary/appointments/new">
             <Plus className="h-4 w-4 me-2" />
             {t("secretary.bookAppointment")}

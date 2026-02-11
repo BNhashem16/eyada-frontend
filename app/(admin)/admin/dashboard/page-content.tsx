@@ -4,12 +4,6 @@ import dynamic from "next/dynamic";
 import { LayoutDashboard } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
-import { useEffect } from "react";
-import {
-  useTour,
-  ADMIN_DASHBOARD_TOUR_ID,
-  adminDashboardSteps,
-} from "@/lib/tour";
 
 const AdminDashboardStats = dynamic(
   () =>
@@ -39,19 +33,11 @@ const PendingDoctorsList = dynamic(
 
 export function AdminDashboardContent() {
   const { t } = useTranslation();
-  const { startTour } = useTour();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startTour(ADMIN_DASHBOARD_TOUR_ID, adminDashboardSteps);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div data-tour="admin-header">
+      <div>
         <div className="flex items-center gap-3 mb-2">
           <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />
@@ -68,12 +54,12 @@ export function AdminDashboardContent() {
       </div>
 
       {/* Stats */}
-      <div data-tour="admin-stats">
+      <div>
         <AdminDashboardStats />
       </div>
 
       {/* Pending Doctors */}
-      <div data-tour="admin-pending">
+      <div>
         <h2 className="text-lg font-semibold text-foreground mb-4">
           {t("admin.pendingDoctors")}
         </h2>

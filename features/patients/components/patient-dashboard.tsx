@@ -22,24 +22,10 @@ import { AppointmentStatus } from "@/types/enums";
 import { formatDate, formatTime, isPast } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
-import { useEffect } from "react";
-import {
-  useTour,
-  PATIENT_DASHBOARD_TOUR_ID,
-  patientDashboardSteps,
-} from "@/lib/tour";
 
 export function PatientDashboard() {
   const { t, locale } = useTranslation();
   const user = useUser();
-  const { startTour } = useTour();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startTour(PATIENT_DASHBOARD_TOUR_ID, patientDashboardSteps);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const { data: appointmentsData, isLoading } = usePatientAppointments({
     limit: 5,
   });
@@ -67,10 +53,7 @@ export function PatientDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div
-        data-tour="patient-welcome"
-        className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white"
-      >
+      <div className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
         <h1 className="text-2xl font-bold mb-2">
           {t("patient.greeting")}
           {locale === "ar" ? "،" : ","} {user?.name?.split(" ")[0]}
@@ -89,10 +72,7 @@ export function PatientDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div
-        data-tour="patient-stats"
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-      >
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -166,7 +146,7 @@ export function PatientDashboard() {
       </div>
 
       {/* Upcoming Appointments */}
-      <Card data-tour="patient-upcoming">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
@@ -262,10 +242,7 @@ export function PatientDashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <div
-        data-tour="patient-quick-actions"
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-      >
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Link href="/doctors">
           <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">

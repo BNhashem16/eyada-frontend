@@ -42,6 +42,9 @@ export const PUBLIC_ENDPOINTS = {
   SPECIALTIES: "/specialties",
   SPECIALTY: (id: string) => `/specialties/${id}`,
 
+  // Contact Links
+  CONTACT_LINKS: "/contact-links",
+
   // Locations
   STATES: "/states",
   STATE: (id: string) => `/states/${id}`,
@@ -214,6 +217,10 @@ export const ADMIN_ENDPOINTS = {
   RATINGS: "/admin/ratings",
   RATING: (id: string) => `/admin/ratings/${id}`,
   RATINGS_STATISTICS: "/admin/ratings/statistics",
+
+  // Contact Links management
+  CONTACT_LINKS: "/admin/contact-links",
+  CONTACT_LINK: (id: string) => `/admin/contact-links/${id}`,
 
   // Feedbacks management
   FEEDBACKS: "/admin/feedbacks",

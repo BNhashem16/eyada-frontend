@@ -130,6 +130,7 @@
     "schedules": "Schedules",
     "feedbacks": "Complaints & Suggestions",
     "complaintsAndSuggestions": "Complaints & Suggestions",
+    "contactLinks": "Contact Links",
     "aiSettings": "AI Settings",
     "aiAssistant": "AI Medical Assistant",
     "legal": "Legal",
@@ -267,6 +268,8 @@
     "noReviews": "No reviews yet",
     "licenseNumber": "License Number",
     "contactInfo": "Contact Information",
+    "phoneNumber": "Phone Number",
+    "whatsappNumber": "WhatsApp",
     "backToSearch": "Back to Search",
     "loadError": "Error loading doctor data. Please try again.",
     "doctorPrefix": "Dr."
@@ -504,6 +507,12 @@
     "selectBloodType": "Select Blood Type",
     "chronicDiseases": "Chronic Diseases",
     "allergies": "Allergies",
+    "usePhoneAsWhatsapp": "Use phone number as WhatsApp",
+    "addChronicDisease": "Add disease",
+    "addAllergy": "Add allergy",
+    "medicalData": "Medical Data",
+    "chronicDiseasePlaceholder": "Type a disease and press Enter",
+    "allergyPlaceholder": "Type an allergy and press Enter",
     "family": "Family Members",
     "manageFamilyMembers": "Manage your family members",
     "addFamilyMember": "Add Family Member",
@@ -1285,7 +1294,47 @@
       "noContact": "No contact info",
       "filterByType": "Filter by type",
       "filterByStatus": "Filter by status"
+    },
+    "contactLinksPage": {
+      "title": "Contact Links",
+      "subtitle": "Manage social media links and customer service contact information"
+    },
+    "contactLinks": {
+      "addNew": "Add Contact Link",
+      "editLink": "Edit Contact Link",
+      "deleteLink": "Delete Contact Link",
+      "deleteConfirmation": "Are you sure you want to delete this contact link?",
+      "platform": "Platform",
+      "labelAr": "Label (Arabic)",
+      "labelEn": "Label (English)",
+      "value": "Value (URL / Phone / Email)",
+      "icon": "Icon Name",
+      "sortOrder": "Display Order",
+      "isActive": "Active",
+      "noLinks": "No contact links found",
+      "platforms": {
+        "FACEBOOK": "Facebook",
+        "TWITTER": "Twitter / X",
+        "INSTAGRAM": "Instagram",
+        "WHATSAPP": "WhatsApp",
+        "PHONE": "Phone",
+        "EMAIL": "Email",
+        "WEBSITE": "Website",
+        "TIKTOK": "TikTok",
+        "YOUTUBE": "YouTube",
+        "LINKEDIN": "LinkedIn",
+        "SNAPCHAT": "Snapchat",
+        "TELEGRAM": "Telegram",
+        "OTHER": "Other"
+      }
     }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with us through any of the following channels",
+    "directContact": "Direct Contact",
+    "socialMedia": "Follow Us",
+    "noLinks": "No contact information available at the moment"
   },
   "table": {
     "nameAr": "Name (Arabic)",
@@ -1747,6 +1796,14 @@
       "title": "Manage Feedback",
       "description": "View and manage complaints and suggestions"
     },
+    "adminContactLinks": {
+      "title": "Contact Links Management - Eyada Admin",
+      "description": "Manage contact and social media links"
+    },
+    "contact": {
+      "title": "Contact Us - Eyada",
+      "description": "Get in touch with Eyada medical booking platform"
+    },
     "adminAiSettings": {
       "title": "AI Settings - Admin",
       "description": "Manage AI assistant configuration"
@@ -1893,93 +1950,6 @@
     "contactEmail": "support@eyada.com",
     "contactPhone": "+20 123 456 7890",
     "updateDate": "January 1, 2025"
-  },
-  "tour": {
-    "next": "Next",
-    "previous": "Previous",
-    "done": "Got it!",
-    "skip": "Skip",
-    "replayTour": "Replay Tour",
-    "patient": {
-      "dashboard": {
-        "welcomeTitle": "Welcome to Eyada!",
-        "welcomeDesc": "This is your personal dashboard. Here you'll find a quick overview of your appointments and health journey.",
-        "statsTitle": "Your Appointment Stats",
-        "statsDesc": "Track your upcoming and completed appointments at a glance.",
-        "upcomingTitle": "Upcoming Appointments",
-        "upcomingDesc": "Your next appointments appear here with doctor details, date, and status.",
-        "quickActionsTitle": "Quick Actions",
-        "quickActionsDesc": "Jump to common tasks: find a doctor, update your profile, or manage family members.",
-        "sidebarTitle": "Navigation Menu",
-        "sidebarDesc": "Use the sidebar to navigate between your dashboard, appointments, profile, and family pages.",
-        "bookBtnTitle": "Book an Appointment",
-        "bookBtnDesc": "Click here anytime to browse doctors and book a new appointment."
-      },
-      "appointments": {
-        "filterTitle": "Filter Appointments",
-        "filterDesc": "Filter your appointments by status to quickly find what you're looking for.",
-        "listTitle": "Your Appointments",
-        "listDesc": "Browse all your appointments here. You can cancel upcoming ones or rate completed visits."
-      }
-    },
-    "doctor": {
-      "dashboard": {
-        "welcomeTitle": "Welcome, Doctor!",
-        "welcomeDesc": "This is your command center. See today's overview and manage your practice.",
-        "statsTitle": "Today's Statistics",
-        "statsDesc": "Monitor pending, waiting, and completed appointments along with today's revenue.",
-        "queueTitle": "Patient Queue",
-        "queueDesc": "Your current patient queue shows checked-in patients ready to be seen.",
-        "quickActionsTitle": "Quick Actions",
-        "quickActionsDesc": "Access your appointments, manage clinics, or update your profile.",
-        "sidebarTitle": "Navigation",
-        "sidebarDesc": "Navigate to appointments, clinics, secretaries, ratings, and your profile."
-      },
-      "appointments": {
-        "dateNavTitle": "Date Navigation",
-        "dateNavDesc": "Navigate between days using the arrows or pick a specific date.",
-        "filtersTitle": "Filter Queue",
-        "filtersDesc": "Filter appointments by clinic or status to focus on specific patients.",
-        "queueListTitle": "Patient Queue",
-        "queueListDesc": "Your patient queue for the day. Manage statuses and view patient details."
-      }
-    },
-    "secretary": {
-      "dashboard": {
-        "headerTitle": "Secretary Dashboard",
-        "headerDesc": "Welcome! This dashboard helps you manage appointments and clinics efficiently.",
-        "statsTitle": "Dashboard Statistics",
-        "statsDesc": "View today's appointment counts, statuses, and revenue at a glance.",
-        "clinicsTitle": "Assigned Clinics",
-        "clinicsDesc": "See which clinics you're assigned to manage.",
-        "quickActionsTitle": "Quick Actions",
-        "quickActionsDesc": "Book new appointments or view the full appointment list from here.",
-        "todayTitle": "Today's Appointments",
-        "todayDesc": "See all appointments scheduled for today with their current status."
-      },
-      "appointments": {
-        "bookBtnTitle": "Book Appointment",
-        "bookBtnDesc": "Click here to book a new appointment for a patient.",
-        "searchTitle": "Search Patients",
-        "searchDesc": "Search for specific patients by name or phone number.",
-        "filtersTitle": "Filter Appointments",
-        "filtersDesc": "Filter by clinic, date, status, and payment to find specific appointments.",
-        "cardsTitle": "Appointment Cards",
-        "cardsDesc": "View and manage each appointment. Update status, payments, and see details."
-      }
-    },
-    "admin": {
-      "dashboard": {
-        "headerTitle": "Admin Panel",
-        "headerDesc": "Welcome to the system administration panel. Manage all aspects of the platform.",
-        "statsTitle": "System Statistics",
-        "statsDesc": "Overview of pending doctors, specialties, states, and cities across the platform.",
-        "pendingTitle": "Pending Doctor Approvals",
-        "pendingDesc": "Review and approve new doctor registrations waiting for verification.",
-        "sidebarTitle": "Admin Navigation",
-        "sidebarDesc": "Access all management sections: doctors, patients, clinics, appointments, specialties, and more."
-      }
-    }
   },
   "ai": {
     "title": "AI Medical Assistant",

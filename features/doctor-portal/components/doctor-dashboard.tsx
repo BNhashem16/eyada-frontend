@@ -30,24 +30,11 @@ import { AppointmentStatus } from "@/types/enums";
 import { formatDate, formatTime } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
-import { useEffect, useMemo, useCallback } from "react";
-import {
-  useTour,
-  DOCTOR_DASHBOARD_TOUR_ID,
-  doctorDashboardSteps,
-} from "@/lib/tour";
+import { useMemo, useCallback } from "react";
 
 export function DoctorDashboard() {
   const { t, locale } = useTranslation();
   const user = useUser();
-  const { startTour } = useTour();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startTour(DOCTOR_DASHBOARD_TOUR_ID, doctorDashboardSteps);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const { data: profile, isLoading: profileLoading } = useDoctorProfile();
   const { data: clinics, isLoading: clinicsLoading } = useDoctorClinics();
 
@@ -144,10 +131,7 @@ export function DoctorDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div
-        data-tour="doctor-welcome"
-        className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-4 sm:p-6 text-white"
-      >
+      <div className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-4 sm:p-6 text-white">
         <h1 className="text-xl sm:text-2xl font-bold mb-2">
           {t("doctor.greeting")} {user?.name?.split(" ")[0]}
         </h1>
@@ -180,10 +164,7 @@ export function DoctorDashboard() {
       </div>
 
       {/* Today's Stats */}
-      <div
-        data-tour="doctor-stats"
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
-      >
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -279,7 +260,7 @@ export function DoctorDashboard() {
       </div>
 
       {/* Patient Queue */}
-      <Card data-tour="doctor-queue">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary-600 dark:text-primary-400" />
@@ -377,10 +358,7 @@ export function DoctorDashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <div
-        data-tour="doctor-quick-actions"
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-      >
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Link href="/doctor/appointments">
           <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">

@@ -84,6 +84,23 @@ export enum RelationshipType {
   OTHER = "OTHER",
 }
 
+// Contact link platforms
+export enum ContactLinkPlatform {
+  FACEBOOK = "FACEBOOK",
+  TWITTER = "TWITTER",
+  INSTAGRAM = "INSTAGRAM",
+  WHATSAPP = "WHATSAPP",
+  PHONE = "PHONE",
+  EMAIL = "EMAIL",
+  WEBSITE = "WEBSITE",
+  TIKTOK = "TIKTOK",
+  YOUTUBE = "YOUTUBE",
+  LINKEDIN = "LINKEDIN",
+  SNAPCHAT = "SNAPCHAT",
+  TELEGRAM = "TELEGRAM",
+  OTHER = "OTHER",
+}
+
 // Blood types
 export enum BloodType {
   A_POSITIVE = "A+",

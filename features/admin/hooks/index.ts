@@ -9,3 +9,4 @@ export * from "./use-admin-ratings";
 export * from "./use-admin-secretaries";
 export * from "./use-admin-schedules";
 export * from "./use-admin-feedbacks";
+export * from "./use-admin-contact-links";

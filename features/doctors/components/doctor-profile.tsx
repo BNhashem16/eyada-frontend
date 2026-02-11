@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   Building2,
   Stethoscope,
+  MessageCircle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -184,7 +185,8 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
           )}
 
           {/* Contact Info */}
-          {(doctor.user?.phoneNumber || doctor.showPhoneNumber) && (
+          {(doctor.user?.phoneNumber ||
+            (doctor.whatsappNumbers && doctor.whatsappNumbers.length > 0)) && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -192,10 +194,51 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
                   {t("doctors.contactInfo")}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-foreground" dir="ltr">
-                  {doctor.user?.phoneNumber}
-                </p>
+              <CardContent className="space-y-4">
+                {doctor.user?.phoneNumber && (
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {t("doctors.phoneNumber")}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                      <a
+                        href={`tel:${doctor.user.phoneNumber}`}
+                        className="text-foreground hover:text-primary-600 dark:hover:text-primary-400 hover:underline"
+                        dir="ltr"
+                      >
+                        {doctor.user.phoneNumber}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {doctor.whatsappNumbers &&
+                  doctor.whatsappNumbers.length > 0 && (
+                    <>
+                      {doctor.user?.phoneNumber && <Separator />}
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-muted-foreground">
+                          {t("doctors.whatsappNumber")}
+                        </p>
+                        {doctor.whatsappNumbers.map(
+                          (num: string, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <MessageCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                              <a
+                                href={`https://wa.me/${num.replace(/[^0-9]/g, "")}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-green-600 dark:text-green-400 hover:underline"
+                                dir="ltr"
+                              >
+                                {num}
+                              </a>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </>
+                  )}
               </CardContent>
             </Card>
           )}

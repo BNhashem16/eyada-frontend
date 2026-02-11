@@ -15,9 +15,7 @@ import { Role } from "@/types";
 import { ProfileCompletionGuard } from "@/components/common/profile-completion-guard";
 import { DashboardLayout, MenuItem } from "@/components/common";
 import { AiChatButton } from "@/features/ai/components/ai-chat-button";
-import { TourReplayButton } from "@/components/common/tour-replay-button";
 import { useTranslation } from "@/lib/i18n";
-import { PATIENT_DASHBOARD_TOUR_ID, patientDashboardSteps } from "@/lib/tour";
 
 function PatientLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -38,24 +36,12 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
   ];
 
   const headerRightContent = (
-    <>
-      <TourReplayButton
-        tourId={PATIENT_DASHBOARD_TOUR_ID}
-        steps={patientDashboardSteps}
-      />
-      <Button
-        data-tour="header-book-btn"
-        asChild
-        variant="outline"
-        size="sm"
-        className="hidden sm:flex"
-      >
-        <Link href="/doctors">
-          <Stethoscope className="h-4 w-4 ms-2" />
-          {t("doctors.bookAppointment")}
-        </Link>
-      </Button>
-    </>
+    <Button asChild variant="outline" size="sm" className="hidden sm:flex">
+      <Link href="/doctors">
+        <Stethoscope className="h-4 w-4 ms-2" />
+        {t("doctors.bookAppointment")}
+      </Link>
+    </Button>
   );
 
   const mobileExtraContent = (
