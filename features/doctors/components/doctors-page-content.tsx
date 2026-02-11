@@ -9,9 +9,9 @@ import { useTranslation } from "@/lib/i18n";
 
 const DoctorList = dynamic(
   () =>
-    import("@/features/doctors/components/doctor-list").then(
-      (mod) => ({ default: mod.DoctorList }),
-    ),
+    import("@/features/doctors/components/doctor-list").then((mod) => ({
+      default: mod.DoctorList,
+    })),
   {
     loading: () => (
       <div className="space-y-4">

@@ -45,7 +45,10 @@ export function useSecretaryCreateSchedule() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -75,7 +78,10 @@ export function useSecretaryUpdateSchedule() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -102,7 +108,10 @@ export function useSecretaryDeleteSchedule() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

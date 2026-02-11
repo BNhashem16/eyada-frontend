@@ -23,7 +23,11 @@ import { formatDate, formatTime, isPast } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useEffect } from "react";
-import { useTour, PATIENT_DASHBOARD_TOUR_ID, patientDashboardSteps } from "@/lib/tour";
+import {
+  useTour,
+  PATIENT_DASHBOARD_TOUR_ID,
+  patientDashboardSteps,
+} from "@/lib/tour";
 
 export function PatientDashboard() {
   const { t, locale } = useTranslation();
@@ -63,9 +67,13 @@ export function PatientDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div data-tour="patient-welcome" className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
+      <div
+        data-tour="patient-welcome"
+        className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white"
+      >
         <h1 className="text-2xl font-bold mb-2">
-          {t("patient.greeting")}{locale === "ar" ? "،" : ","} {user?.name?.split(" ")[0]}
+          {t("patient.greeting")}
+          {locale === "ar" ? "،" : ","} {user?.name?.split(" ")[0]}
         </h1>
         <p className="text-primary-100 mb-4">{t("patient.greetingMessage")}</p>
         <Button
@@ -81,7 +89,10 @@ export function PatientDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div data-tour="patient-stats" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        data-tour="patient-stats"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -251,7 +262,10 @@ export function PatientDashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <div data-tour="patient-quick-actions" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        data-tour="patient-quick-actions"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      >
         <Link href="/doctors">
           <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">

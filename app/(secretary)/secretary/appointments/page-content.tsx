@@ -6,7 +6,11 @@ import { Calendar, Plus } from "lucide-react";
 import { AppointmentList } from "@/features/secretary";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
-import { useTour, SECRETARY_APPOINTMENTS_TOUR_ID, secretaryAppointmentsSteps } from "@/lib/tour";
+import {
+  useTour,
+  SECRETARY_APPOINTMENTS_TOUR_ID,
+  secretaryAppointmentsSteps,
+} from "@/lib/tour";
 
 export function SecretaryAppointmentsContent() {
   const { t } = useTranslation();

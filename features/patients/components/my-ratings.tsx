@@ -94,7 +94,8 @@ export function MyRatings() {
                     </Avatar>
                     <div>
                       <p className="font-semibold text-foreground">
-                        {t("doctors.doctorPrefix")} {rating.doctorProfile.user.fullName}
+                        {t("doctors.doctorPrefix")}{" "}
+                        {rating.doctorProfile.user.fullName}
                       </p>
                       {rating.doctorProfile.specialty && (
                         <p className="text-sm text-muted-foreground">
@@ -127,23 +128,50 @@ export function MyRatings() {
                   )}
                 </div>
 
-                {/* Star Rating */}
+                {/* Overall Star Rating */}
                 <div className="flex items-center gap-2">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         className={`h-4 w-4 ${
-                          i < rating.rating
+                          i < Math.round(rating.overallRating)
                             ? "fill-warning-400 text-warning-400"
                             : "text-gray-300 dark:text-gray-500"
                         }`}
                       />
                     ))}
                   </div>
+                  <span className="text-sm font-medium text-foreground">
+                    {rating.overallRating.toFixed(1)}
+                  </span>
                   <span className="text-sm text-muted-foreground">
                     {formatRelativeDate(rating.createdAt)}
                   </span>
+                </div>
+
+                {/* Criteria Breakdown */}
+                <div className="flex flex-wrap gap-3 text-xs">
+                  {[
+                    {
+                      label: t("rating.doctorExpertise"),
+                      value: rating.doctorRating,
+                    },
+                    {
+                      label: t("rating.communicationExplanation"),
+                      value: rating.communicationRating,
+                    },
+                    {
+                      label: t("rating.waitTime"),
+                      value: rating.waitTimeRating,
+                    },
+                  ].map((c) => (
+                    <div key={c.label} className="flex items-center gap-1">
+                      <span className="text-muted-foreground">{c.label}:</span>
+                      <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+                      <span className="font-medium">{c.value}</span>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Review Text */}

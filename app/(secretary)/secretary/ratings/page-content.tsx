@@ -167,7 +167,7 @@ export function SecretaryRatingsContent() {
                           <Star
                             key={star}
                             className={`h-4 w-4 ${
-                              star <= rating.rating
+                              star <= Math.round(rating.overallRating)
                                 ? "text-yellow-500 fill-yellow-500"
                                 : "text-gray-300 dark:text-gray-500"
                             }`}
@@ -178,6 +178,33 @@ export function SecretaryRatingsContent() {
                             locale: dateLocale,
                           })}
                         </span>
+                      </div>
+                      <div className="flex flex-wrap gap-3 text-xs mt-1">
+                        {[
+                          {
+                            label: t("rating.doctorExpertise"),
+                            value: rating.doctorRating,
+                          },
+                          {
+                            label: t("rating.communicationExplanation"),
+                            value: rating.communicationRating,
+                          },
+                          {
+                            label: t("rating.waitTime"),
+                            value: rating.waitTimeRating,
+                          },
+                        ].map((c) => (
+                          <div
+                            key={c.label}
+                            className="flex items-center gap-1"
+                          >
+                            <span className="text-muted-foreground">
+                              {c.label}:
+                            </span>
+                            <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+                            <span className="font-medium">{c.value}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>

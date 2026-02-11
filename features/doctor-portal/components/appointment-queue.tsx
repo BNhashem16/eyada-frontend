@@ -177,7 +177,10 @@ export function AppointmentQueue() {
         <CardContent className="p-4">
           <div className="flex flex-col gap-4">
             {/* Date Navigation */}
-            <div className="flex items-center gap-2" data-tour="doctor-date-nav">
+            <div
+              className="flex items-center gap-2"
+              data-tour="doctor-date-nav"
+            >
               <Button
                 variant="outline"
                 className="text-xs"
@@ -204,7 +207,10 @@ export function AppointmentQueue() {
             </div>
 
             {/* Clinic & Status Filters */}
-            <div className="flex flex-col sm:flex-row gap-3" data-tour="doctor-queue-filters">
+            <div
+              className="flex flex-col sm:flex-row gap-3"
+              data-tour="doctor-queue-filters"
+            >
               <SearchableSelect
                 options={[
                   {

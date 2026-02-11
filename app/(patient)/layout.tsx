@@ -43,7 +43,13 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
         tourId={PATIENT_DASHBOARD_TOUR_ID}
         steps={patientDashboardSteps}
       />
-      <Button data-tour="header-book-btn" asChild variant="outline" size="sm" className="hidden sm:flex">
+      <Button
+        data-tour="header-book-btn"
+        asChild
+        variant="outline"
+        size="sm"
+        className="hidden sm:flex"
+      >
         <Link href="/doctors">
           <Stethoscope className="h-4 w-4 ms-2" />
           {t("doctors.bookAppointment")}

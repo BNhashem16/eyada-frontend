@@ -99,11 +99,13 @@ const getPaymentStatusConfig = (
 ): Record<PaymentStatus, { label: string; color: string }> => ({
   [PaymentStatus.PENDING]: {
     label: t("payment.unpaid"),
-    color: "bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400",
+    color:
+      "bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400",
   },
   [PaymentStatus.PAID]: {
     label: t("payment.paid"),
-    color: "bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400",
+    color:
+      "bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400",
   },
   [PaymentStatus.REFUNDED]: {
     label: t("secretary.refunded"),
@@ -252,11 +254,7 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               <div>
-                <p className="text-sm text-muted-foreground">
-                  {t("appointments.time")}
-                </p>
                 <p className="font-semibold" dir="ltr">
                   {formatTime(appointment.appointmentTime)}
                 </p>
@@ -330,18 +328,19 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
                 )}
               </div>
             </div>
-            {appointment.clinic?.phoneNumbers && appointment.clinic.phoneNumbers.length > 0 && (
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-muted-foreground" />
-                <a
-                  href={`tel:${appointment.clinic.phoneNumbers[0]}`}
-                  className="hover:text-primary-600"
-                  dir="ltr"
-                >
-                  {appointment.clinic.phoneNumbers.join(" / ")}
-                </a>
-              </div>
-            )}
+            {appointment.clinic?.phoneNumbers &&
+              appointment.clinic.phoneNumbers.length > 0 && (
+                <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-muted-foreground" />
+                  <a
+                    href={`tel:${appointment.clinic.phoneNumbers[0]}`}
+                    className="hover:text-primary-600"
+                    dir="ltr"
+                  >
+                    {appointment.clinic.phoneNumbers.join(" / ")}
+                  </a>
+                </div>
+              )}
           </div>
         </CardContent>
       </Card>
@@ -469,19 +468,63 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
               {t("rating.yourRating")}
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 mb-2">
+          <CardContent className="space-y-4">
+            {/* Overall Rating */}
+            <div className="flex items-center gap-2">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={`h-6 w-6 ${
-                    i < appointment.rating!.rating
+                    i < Math.round(appointment.rating!.overallRating)
                       ? "fill-warning-400 text-warning-400"
                       : "text-gray-300 dark:text-gray-500"
                   }`}
                 />
               ))}
+              <span className="text-lg font-semibold">
+                {appointment.rating!.overallRating.toFixed(1)}
+              </span>
             </div>
+
+            {/* Criteria Breakdown */}
+            <div className="space-y-2">
+              {[
+                {
+                  label: t("rating.doctorExpertise"),
+                  value: appointment.rating!.doctorRating,
+                },
+                {
+                  label: t("rating.communicationExplanation"),
+                  value: appointment.rating!.communicationRating,
+                },
+                {
+                  label: t("rating.waitTime"),
+                  value: appointment.rating!.waitTimeRating,
+                },
+              ].map((c) => (
+                <div
+                  key={c.label}
+                  className="flex items-center justify-between"
+                >
+                  <span className="text-sm text-muted-foreground">
+                    {c.label}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-3.5 w-3.5 ${
+                          i < c.value
+                            ? "fill-warning-400 text-warning-400"
+                            : "text-gray-300 dark:text-gray-500"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
             {appointment.rating.review && (
               <p className="text-muted-foreground mt-2">
                 {appointment.rating.review}

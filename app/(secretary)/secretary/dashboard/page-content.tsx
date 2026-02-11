@@ -9,7 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import { useEffect } from "react";
-import { useTour, SECRETARY_DASHBOARD_TOUR_ID, secretaryDashboardSteps } from "@/lib/tour";
+import {
+  useTour,
+  SECRETARY_DASHBOARD_TOUR_ID,
+  secretaryDashboardSteps,
+} from "@/lib/tour";
 
 export function SecretaryDashboardContent() {
   const { t, locale } = useTranslation();
@@ -26,7 +30,10 @@ export function SecretaryDashboardContent() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div data-tour="secretary-header" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div
+        data-tour="secretary-header"
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
             <LayoutDashboard className="h-6 w-6 text-primary-600 dark:text-primary-400" />

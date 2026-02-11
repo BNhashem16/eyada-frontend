@@ -235,7 +235,10 @@ export function useUpdateAdminAppointment() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

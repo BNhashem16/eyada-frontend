@@ -84,7 +84,10 @@ export const DoctorCard = React.memo(function DoctorCard({
                   <MapPin className="h-4 w-4" />
                   <span>
                     {getLocalizedText(doctor.clinics[0].city?.name, locale)},{" "}
-                    {getLocalizedText(doctor.clinics[0].city?.state?.name, locale)}
+                    {getLocalizedText(
+                      doctor.clinics[0].city?.state?.name,
+                      locale,
+                    )}
                   </span>
                 </div>
               )}

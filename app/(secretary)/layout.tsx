@@ -6,7 +6,10 @@ import { Role } from "@/types";
 import { DashboardLayout, MenuItem } from "@/components/common";
 import { TourReplayButton } from "@/components/common/tour-replay-button";
 import { useTranslation } from "@/lib/i18n";
-import { SECRETARY_DASHBOARD_TOUR_ID, secretaryDashboardSteps } from "@/lib/tour";
+import {
+  SECRETARY_DASHBOARD_TOUR_ID,
+  secretaryDashboardSteps,
+} from "@/lib/tour";
 
 function SecretaryLayoutContent({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();

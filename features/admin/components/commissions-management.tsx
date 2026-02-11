@@ -315,12 +315,15 @@ export function CommissionsManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        {togglingId === commission.id && updateCommission.isPending ? (
+                        {togglingId === commission.id &&
+                        updateCommission.isPending ? (
                           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                         ) : (
                           <Switch
                             checked={commission.isActive}
-                            onCheckedChange={() => handleToggleActive(commission)}
+                            onCheckedChange={() =>
+                              handleToggleActive(commission)
+                            }
                             disabled={updateCommission.isPending}
                           />
                         )}

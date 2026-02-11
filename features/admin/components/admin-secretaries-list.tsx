@@ -388,7 +388,8 @@ export function AdminSecretariesList() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {togglingId === secretary.id && updateSecretary.isPending ? (
+                          {togglingId === secretary.id &&
+                          updateSecretary.isPending ? (
                             <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                           ) : (
                             <Switch

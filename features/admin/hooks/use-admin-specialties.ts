@@ -61,7 +61,10 @@ export function useCreateSpecialty() {
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -88,7 +91,10 @@ export function useUpdateSpecialty() {
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -106,7 +112,10 @@ export function useDeleteSpecialty() {
       queryClient.invalidateQueries({ queryKey: ["specialties"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

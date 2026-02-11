@@ -79,7 +79,11 @@ export function LocationsManagement() {
   const [statesLimit, setStatesLimit] = useState(50);
   const [citiesPage, setCitiesPage] = useState(1);
 
-  const { data: statesResponse, isLoading: statesLoading, isError: statesError } = useAdminStates({
+  const {
+    data: statesResponse,
+    isLoading: statesLoading,
+    isError: statesError,
+  } = useAdminStates({
     search: searchStates || undefined,
     page: statesPage,
     limit: statesLimit,
@@ -335,7 +339,8 @@ export function LocationsManagement() {
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              {togglingStateId === state.id && updateState.isPending ? (
+                              {togglingStateId === state.id &&
+                              updateState.isPending ? (
                                 <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                               ) : (
                                 <Switch
@@ -422,7 +427,8 @@ export function LocationsManagement() {
                                         </span>
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        {togglingCityId === city.id && updateCity.isPending ? (
+                                        {togglingCityId === city.id &&
+                                        updateCity.isPending ? (
                                           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                                         ) : (
                                           <Switch

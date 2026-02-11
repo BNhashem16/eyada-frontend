@@ -43,7 +43,10 @@ export function useUpdateDoctorProfile() {
       queryClient.invalidateQueries({ queryKey: ["doctor-profile"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -63,7 +66,10 @@ export function useCreateDoctorProfile() {
       queryClient.invalidateQueries({ queryKey: ["doctor-profile"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -101,7 +107,10 @@ export function useCreateClinic() {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinics"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -125,7 +134,10 @@ export function useUpdateClinic() {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinic", clinicId] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -146,7 +158,10 @@ export function useToggleClinicActive() {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinic", clinicId] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -163,7 +178,10 @@ export function useDeleteClinic() {
       queryClient.invalidateQueries({ queryKey: ["doctor-clinics"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -205,7 +223,10 @@ export function useCreateSchedule() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -235,7 +256,10 @@ export function useUpdateSchedule() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -262,7 +286,10 @@ export function useDeleteSchedule() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -304,7 +331,10 @@ export function useCreateService() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -334,7 +364,10 @@ export function useUpdateService() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -361,7 +394,10 @@ export function useDeleteService() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -389,7 +425,10 @@ export function useToggleServiceActive() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -498,7 +537,10 @@ export function useUpdateAppointmentStatus() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -533,7 +575,10 @@ export function useUpdateAppointmentPayment() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -585,7 +630,10 @@ export function useAddMedicalNotes() {
       });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -641,7 +689,10 @@ export function useCreateDoctorAppointment() {
       queryClient.invalidateQueries({ queryKey: ["doctor-appointments"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

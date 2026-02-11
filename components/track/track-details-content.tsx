@@ -142,7 +142,8 @@ export function TrackDetailsContent() {
       default:
         return {
           label: status,
-          color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+          color:
+            "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
           icon: Clock,
         };
     }

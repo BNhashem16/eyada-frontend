@@ -164,7 +164,10 @@ export function useUpdateAdminClinic() {
       queryClient.invalidateQueries({ queryKey: ["admin-clinics-statistics"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -182,7 +185,10 @@ export function useDeleteAdminClinic() {
       queryClient.invalidateQueries({ queryKey: ["admin-clinics-statistics"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

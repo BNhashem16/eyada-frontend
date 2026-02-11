@@ -183,7 +183,10 @@ export function useCreateCommission() {
       queryClient.invalidateQueries({ queryKey: ["admin-balances"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -211,7 +214,10 @@ export function useUpdateCommission() {
       queryClient.invalidateQueries({ queryKey: ["admin-balances"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -230,7 +236,10 @@ export function useDeleteCommission() {
       queryClient.invalidateQueries({ queryKey: ["admin-balances"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -358,7 +367,10 @@ export function useRecordPayment() {
       queryClient.invalidateQueries({ queryKey: ["admin-payment-history"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

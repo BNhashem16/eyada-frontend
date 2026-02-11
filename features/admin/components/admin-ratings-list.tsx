@@ -70,7 +70,7 @@ export function AdminRatingsList() {
   const { t, locale } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState<string | undefined>(undefined);
-  const [ratingFilter, setRatingFilter] = useState<number | undefined>(
+  const [overallRatingFilter, setRatingFilter] = useState<number | undefined>(
     undefined,
   );
   const [isVisible, setIsVisible] = useState<boolean | undefined>(undefined);
@@ -89,7 +89,7 @@ export function AdminRatingsList() {
     page,
     limit,
     search,
-    rating: ratingFilter,
+    overallRating: overallRatingFilter,
     isVisible,
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
@@ -303,7 +303,7 @@ export function AdminRatingsList() {
 
             <div className="flex gap-2 flex-wrap flex-1">
               <Select
-                value={ratingFilter?.toString() || "all"}
+                value={overallRatingFilter?.toString() || "all"}
                 onValueChange={(value) => {
                   setRatingFilter(
                     value === "all" ? undefined : parseInt(value),
@@ -456,7 +456,9 @@ export function AdminRatingsList() {
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell>{renderStars(rating.rating)}</TableCell>
+                      <TableCell>
+                        {renderStars(Math.round(rating.overallRating))}
+                      </TableCell>
                       <TableCell className="max-w-xs">
                         {rating.review ? (
                           <p className="truncate text-sm">{rating.review}</p>
@@ -579,7 +581,31 @@ export function AdminRatingsList() {
                     <p className="text-sm text-muted-foreground mb-1">
                       {t("admin.ratings.rating")}
                     </p>
-                    {renderStars(selectedRating.rating)}
+                    {renderStars(Math.round(selectedRating.overallRating))}
+                    <div className="flex flex-wrap gap-3 text-xs mt-2">
+                      {[
+                        {
+                          label: t("rating.doctorExpertise"),
+                          value: selectedRating.doctorRating,
+                        },
+                        {
+                          label: t("rating.communicationExplanation"),
+                          value: selectedRating.communicationRating,
+                        },
+                        {
+                          label: t("rating.waitTime"),
+                          value: selectedRating.waitTimeRating,
+                        },
+                      ].map((c) => (
+                        <div key={c.label} className="flex items-center gap-1">
+                          <span className="text-muted-foreground">
+                            {c.label}:
+                          </span>
+                          <Star className="h-3 w-3 fill-warning-400 text-warning-400" />
+                          <span className="font-medium">{c.value}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">

@@ -66,9 +66,16 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     useState<string>("");
 
   // Queries
-  const { data: services, isLoading: servicesLoading, isError: servicesError } =
-    useClinicServices(clinicId);
-  const { data: familyMembers, isLoading: familyLoading, isError: familyError } = usePatientFamily();
+  const {
+    data: services,
+    isLoading: servicesLoading,
+    isError: servicesError,
+  } = useClinicServices(clinicId);
+  const {
+    data: familyMembers,
+    isLoading: familyLoading,
+    isError: familyError,
+  } = usePatientFamily();
 
   // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({

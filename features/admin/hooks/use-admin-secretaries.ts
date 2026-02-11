@@ -192,7 +192,10 @@ export function useCreateAdminSecretary() {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -212,7 +215,10 @@ export function useAssignSecretary() {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -232,7 +238,10 @@ export function useUpdateAdminSecretary() {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -249,7 +258,10 @@ export function useRemoveSecretaryAssignment() {
       queryClient.invalidateQueries({ queryKey: ["admin-secretaries"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

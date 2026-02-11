@@ -342,7 +342,9 @@ export function SecretaryAppointmentDetails({
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="font-semibold text-base sm:text-lg truncate">{appointment.patientName}</p>
+              <p className="font-semibold text-base sm:text-lg truncate">
+                {appointment.patientName}
+              </p>
               {appointment.patientAge && (
                 <p className="text-muted-foreground text-sm">
                   {appointment.patientAge} {t("common.years")}
@@ -367,7 +369,9 @@ export function SecretaryAppointmentDetails({
             {appointment.bookedForPatient?.user?.email && (
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                <span className="truncate">{appointment.bookedForPatient.user.email}</span>
+                <span className="truncate">
+                  {appointment.bookedForPatient.user.email}
+                </span>
               </div>
             )}
           </div>

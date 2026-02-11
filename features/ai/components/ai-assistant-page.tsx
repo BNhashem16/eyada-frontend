@@ -140,9 +140,7 @@ function AiChatFullPage() {
     ? [...historyData.data].reverse()
     : [];
   const sessionIds = new Set(sessionMessages.map((m) => m.id));
-  const filteredHistory = historyMessages.filter(
-    (m) => !sessionIds.has(m.id),
-  );
+  const filteredHistory = historyMessages.filter((m) => !sessionIds.has(m.id));
   const hasMessages = filteredHistory.length > 0 || sessionMessages.length > 0;
 
   return (
@@ -155,9 +153,7 @@ function AiChatFullPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold">{t("ai.title")}</h1>
-            <p className="text-sm text-muted-foreground">
-              {t("ai.subtitle")}
-            </p>
+            <p className="text-sm text-muted-foreground">{t("ai.subtitle")}</p>
           </div>
           <Badge variant="outline" className="ms-auto text-xs">
             {t("ai.remainingQuestions")

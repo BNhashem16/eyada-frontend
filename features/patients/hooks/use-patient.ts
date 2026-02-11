@@ -55,7 +55,10 @@ export function useCreatePatientProfile() {
       queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -72,7 +75,10 @@ export function useUpdatePatientProfile() {
       queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -100,7 +106,10 @@ export function useUpdatePatientMedicalData() {
       queryClient.invalidateQueries({ queryKey: ["patient-profile"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -203,7 +212,10 @@ export function useBookAppointment() {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -228,7 +240,10 @@ export function useCancelAppointment() {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -278,7 +293,10 @@ export function useAddFamilyMember() {
       queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -306,7 +324,10 @@ export function useUpdateFamilyMember() {
       queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -323,7 +344,10 @@ export function useDeleteFamilyMember() {
       queryClient.invalidateQueries({ queryKey: ["patient-family"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -331,18 +355,25 @@ export function useDeleteFamilyMember() {
 // Ratings hooks - matching Swagger CreateRatingDto
 export interface CreateRatingData {
   appointmentId: string;
-  rating: number; // 1-5
+  doctorRating: number; // 1-5
+  communicationRating: number; // 1-5
+  waitTimeRating: number; // 1-5
   review?: string; // max 1000 chars
 }
 
 export interface UpdateRatingData {
-  rating?: number; // 1-5
+  doctorRating?: number; // 1-5
+  communicationRating?: number; // 1-5
+  waitTimeRating?: number; // 1-5
   review?: string; // max 1000 chars
 }
 
 export interface PatientRating {
   id: string;
-  rating: number;
+  doctorRating: number;
+  communicationRating: number;
+  waitTimeRating: number;
+  overallRating: number;
   review?: string;
   isVisible: boolean;
   createdAt: string;
@@ -400,7 +431,10 @@ export function useSubmitRating() {
       queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -423,7 +457,10 @@ export function useUpdateRating() {
       queryClient.invalidateQueries({ queryKey: ["patient-ratings"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -441,7 +478,10 @@ export function useDeleteRating() {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

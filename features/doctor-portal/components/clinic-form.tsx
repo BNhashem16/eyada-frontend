@@ -440,9 +440,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
 
           {/* Description Arabic */}
           <div className="space-y-2">
-            <Label htmlFor="descriptionAr">
-              {t("clinics.descriptionAr")}
-            </Label>
+            <Label htmlFor="descriptionAr">{t("clinics.descriptionAr")}</Label>
             <Textarea
               id="descriptionAr"
               {...register("descriptionAr")}
@@ -459,9 +457,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
 
           {/* Description English */}
           <div className="space-y-2">
-            <Label htmlFor="descriptionEn">
-              {t("clinics.descriptionEn")}
-            </Label>
+            <Label htmlFor="descriptionEn">{t("clinics.descriptionEn")}</Label>
             <Textarea
               id="descriptionEn"
               {...register("descriptionEn")}

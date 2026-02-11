@@ -124,7 +124,10 @@ export function useCreateAppointment() {
       queryClient.invalidateQueries({ queryKey: ["secretary-appointments"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -157,7 +160,10 @@ export function useUpdateAppointmentStatus() {
       queryClient.invalidateQueries({ queryKey: ["secretary-appointment"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -184,7 +190,10 @@ export function useUpdatePayment() {
       queryClient.invalidateQueries({ queryKey: ["secretary-appointment"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

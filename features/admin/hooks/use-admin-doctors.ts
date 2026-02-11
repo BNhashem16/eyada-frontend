@@ -112,7 +112,10 @@ export function useApproveDoctor() {
       queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -133,7 +136,10 @@ export function useRejectDoctor() {
       queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -154,7 +160,10 @@ export function useSuspendDoctor() {
       queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

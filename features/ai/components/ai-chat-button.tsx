@@ -32,11 +32,7 @@ export function AiChatButton() {
       </Button>
 
       {isOpen && (
-        <AiChatDialog
-          open={isOpen}
-          onOpenChange={setIsOpen}
-          status={status}
-        />
+        <AiChatDialog open={isOpen} onOpenChange={setIsOpen} status={status} />
       )}
     </>
   );

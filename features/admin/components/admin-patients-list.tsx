@@ -117,13 +117,16 @@ export function AdminPatientsList() {
     setFilters((prev) => ({ ...prev, search: searchInput, page: 1 }));
   }, [searchInput]);
 
-  const handleFilterChange = useCallback((key: keyof AdminPatientsFilters, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value === "all" ? undefined : value,
-      page: 1,
-    }));
-  }, []);
+  const handleFilterChange = useCallback(
+    (key: keyof AdminPatientsFilters, value: any) => {
+      setFilters((prev) => ({
+        ...prev,
+        [key]: value === "all" ? undefined : value,
+        page: 1,
+      }));
+    },
+    [],
+  );
 
   const handleAction = () => {
     if (!selectedPatient || !action) return;

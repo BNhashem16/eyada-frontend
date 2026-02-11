@@ -303,7 +303,8 @@ export function SpecialtiesManagement() {
                       <TableCell>{specialty.icon || "-"}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {togglingId === specialty.id && updateSpecialty.isPending ? (
+                          {togglingId === specialty.id &&
+                          updateSpecialty.isPending ? (
                             <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                           ) : (
                             <Switch

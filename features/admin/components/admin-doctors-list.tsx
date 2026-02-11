@@ -129,13 +129,16 @@ export function AdminDoctorsList() {
     setFilters((prev) => ({ ...prev, search: searchInput, page: 1 }));
   }, [searchInput]);
 
-  const handleFilterChange = useCallback((key: keyof AdminDoctorsFilters, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value === "all" ? undefined : value,
-      page: 1,
-    }));
-  }, []);
+  const handleFilterChange = useCallback(
+    (key: keyof AdminDoctorsFilters, value: any) => {
+      setFilters((prev) => ({
+        ...prev,
+        [key]: value === "all" ? undefined : value,
+        page: 1,
+      }));
+    },
+    [],
+  );
 
   const handleAction = () => {
     if (!selectedDoctor || !action) return;

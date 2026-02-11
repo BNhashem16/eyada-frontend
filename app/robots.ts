@@ -5,14 +5,15 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/doctors", "/clinics", "/specialties", "/feedback", "/track"],
-        disallow: [
-          "/admin/",
-          "/doctor/",
-          "/patient/",
-          "/secretary/",
-          "/api/",
+        allow: [
+          "/",
+          "/doctors",
+          "/clinics",
+          "/specialties",
+          "/feedback",
+          "/track",
         ],
+        disallow: ["/admin/", "/doctor/", "/patient/", "/secretary/", "/api/"],
       },
     ],
     sitemap: "https://clinics-eg.com/sitemap.xml",

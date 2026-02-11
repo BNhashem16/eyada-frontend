@@ -6,7 +6,11 @@ import { Calendar, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppointmentQueue } from "@/features/doctor-portal";
 import { useTranslation } from "@/lib/i18n";
-import { useTour, DOCTOR_APPOINTMENTS_TOUR_ID, doctorAppointmentsSteps } from "@/lib/tour";
+import {
+  useTour,
+  DOCTOR_APPOINTMENTS_TOUR_ID,
+  doctorAppointmentsSteps,
+} from "@/lib/tour";
 
 export function DoctorAppointmentsContent() {
   const { t } = useTranslation();

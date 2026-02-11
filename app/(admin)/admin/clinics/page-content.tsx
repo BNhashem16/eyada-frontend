@@ -7,9 +7,9 @@ import { useTranslation } from "@/lib/i18n";
 
 const AdminClinicsList = dynamic(
   () =>
-    import("@/features/admin/components/admin-clinics-list").then(
-      (mod) => ({ default: mod.AdminClinicsList }),
-    ),
+    import("@/features/admin/components/admin-clinics-list").then((mod) => ({
+      default: mod.AdminClinicsList,
+    })),
   {
     loading: () => (
       <div className="space-y-4">

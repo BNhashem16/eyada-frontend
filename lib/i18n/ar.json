@@ -571,7 +571,12 @@
     "deleteConfirmTitle": "حذف التقييم",
     "deleteConfirmDescription": "هل أنت متأكد من حذف هذا التقييم؟ لا يمكن التراجع عن هذا الإجراء.",
     "filterByStars": "فلتر حسب النجوم",
-    "allRatings": "كل التقييمات"
+    "allRatings": "كل التقييمات",
+    "doctorExpertise": "كفاءة الطبيب",
+    "communicationExplanation": "التواصل والشرح",
+    "waitTime": "وقت الانتظار",
+    "overallRating": "التقييم العام",
+    "rateCriteria": "قيّم كل جانب من تجربتك"
   },
   "doctor": {
     "dashboard": "لوحة تحكم الطبيب",

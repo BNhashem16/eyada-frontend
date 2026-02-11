@@ -17,7 +17,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { LanguageToggle } from "@/components/common/language-toggle";
 import { useTranslation } from "@/lib/i18n";
-import { useUser, useIsAuthenticated, useLogout, useIsHydrated } from "@/lib/auth/store";
+import {
+  useUser,
+  useIsAuthenticated,
+  useLogout,
+  useIsHydrated,
+} from "@/lib/auth/store";
 import { getInitials } from "@/lib/utils";
 import { useState, useCallback } from "react";
 import { LucideIcon } from "lucide-react";

@@ -39,7 +39,10 @@ const defaultSpecialtyIcons: Record<
   ophthalmology: { icon: Eye, color: "text-blue-500 dark:text-blue-400" },
   orthopedics: { icon: Bone, color: "text-amber-500 dark:text-amber-400" },
   neurology: { icon: Brain, color: "text-purple-500 dark:text-purple-400" },
-  "general-medicine": { icon: Stethoscope, color: "text-teal-500 dark:text-teal-400" },
+  "general-medicine": {
+    icon: Stethoscope,
+    color: "text-teal-500 dark:text-teal-400",
+  },
 };
 
 // Fallback icon

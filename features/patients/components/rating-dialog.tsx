@@ -41,6 +41,10 @@ interface RatingDialogProps {
   onClose: () => void;
 }
 
+type CriteriaKey = "doctor" | "communication" | "waitTime";
+
+const CRITERIA_KEYS: CriteriaKey[] = ["doctor", "communication", "waitTime"];
+
 export function RatingDialog({
   appointment,
   existingRating,
@@ -48,8 +52,16 @@ export function RatingDialog({
 }: RatingDialogProps) {
   const { t, locale } = useTranslation();
   const { toast } = useToast();
-  const [rating, setRating] = useState(0);
-  const [hoveredRating, setHoveredRating] = useState(0);
+  const [ratings, setRatings] = useState<Record<CriteriaKey, number>>({
+    doctor: 0,
+    communication: 0,
+    waitTime: 0,
+  });
+  const [hovered, setHovered] = useState<Record<CriteriaKey, number>>({
+    doctor: 0,
+    communication: 0,
+    waitTime: 0,
+  });
   const [comment, setComment] = useState("");
 
   const submitMutation = useSubmitRating();
@@ -58,26 +70,47 @@ export function RatingDialog({
 
   const isEditMode = !!existingRating;
 
+  const criteriaLabels: Record<CriteriaKey, string> = {
+    doctor: t("rating.doctorExpertise"),
+    communication: t("rating.communicationExplanation"),
+    waitTime: t("rating.waitTime"),
+  };
+
   // Initialize form with existing rating data
   useEffect(() => {
     if (existingRating) {
-      setRating(existingRating.rating);
+      setRatings({
+        doctor: existingRating.doctorRating,
+        communication: existingRating.communicationRating,
+        waitTime: existingRating.waitTimeRating,
+      });
       setComment(existingRating.review || "");
     } else {
-      setRating(0);
+      setRatings({ doctor: 0, communication: 0, waitTime: 0 });
       setComment("");
     }
   }, [existingRating]);
 
+  const allRated =
+    ratings.doctor > 0 && ratings.communication > 0 && ratings.waitTime > 0;
+
+  const overallAverage = allRated
+    ? ((ratings.doctor + ratings.communication + ratings.waitTime) / 3).toFixed(
+        1,
+      )
+    : null;
+
   const handleSubmit = async () => {
-    if (rating === 0) return;
+    if (!allRated) return;
 
     try {
       if (isEditMode && existingRating) {
         await updateMutation.mutateAsync({
           ratingId: existingRating.id,
           data: {
-            rating,
+            doctorRating: ratings.doctor,
+            communicationRating: ratings.communication,
+            waitTimeRating: ratings.waitTime,
             review: comment.trim() || undefined,
           },
         });
@@ -89,7 +122,9 @@ export function RatingDialog({
       } else if (appointment) {
         await submitMutation.mutateAsync({
           appointmentId: appointment.id,
-          rating,
+          doctorRating: ratings.doctor,
+          communicationRating: ratings.communication,
+          waitTimeRating: ratings.waitTime,
           review: comment.trim() || undefined,
         });
         toast({
@@ -129,8 +164,8 @@ export function RatingDialog({
   };
 
   const handleClose = () => {
-    setRating(0);
-    setHoveredRating(0);
+    setRatings({ doctor: 0, communication: 0, waitTime: 0 });
+    setHovered({ doctor: 0, communication: 0, waitTime: 0 });
     setComment("");
     onClose();
   };
@@ -184,38 +219,63 @@ export function RatingDialog({
             </div>
           </div>
 
-          {/* Star Rating */}
-          <div className="flex justify-center gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onMouseEnter={() => setHoveredRating(star)}
-                onMouseLeave={() => setHoveredRating(0)}
-                onClick={() => setRating(star)}
-                className="transition-transform hover:scale-110"
-                disabled={isPending}
-              >
-                <Star
-                  className={`h-10 w-10 transition-colors ${
-                    star <= (hoveredRating || rating)
-                      ? "fill-warning-400 text-warning-400"
-                      : "text-gray-300 dark:text-gray-500"
-                  }`}
-                />
-              </button>
+          {/* Multi-Criteria Star Ratings */}
+          <div className="space-y-4">
+            <p className="text-center text-sm text-muted-foreground">
+              {t("rating.rateCriteria")}
+            </p>
+
+            {CRITERIA_KEYS.map((key) => (
+              <div key={key} className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">
+                  {criteriaLabels[key]}
+                </label>
+                <div className="flex gap-1.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onMouseEnter={() =>
+                        setHovered((prev) => ({ ...prev, [key]: star }))
+                      }
+                      onMouseLeave={() =>
+                        setHovered((prev) => ({ ...prev, [key]: 0 }))
+                      }
+                      onClick={() =>
+                        setRatings((prev) => ({ ...prev, [key]: star }))
+                      }
+                      className="transition-transform hover:scale-110"
+                      disabled={isPending}
+                    >
+                      <Star
+                        className={`h-8 w-8 transition-colors ${
+                          star <= (hovered[key] || ratings[key])
+                            ? "fill-warning-400 text-warning-400"
+                            : "text-gray-300 dark:text-gray-500"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
 
-          {/* Rating Label */}
-          <p className="text-center text-sm text-muted-foreground">
-            {rating === 0 && t("rating.selectRating")}
-            {rating === 1 && t("rating.veryBad")}
-            {rating === 2 && t("rating.bad")}
-            {rating === 3 && t("rating.okay")}
-            {rating === 4 && t("rating.good")}
-            {rating === 5 && t("rating.excellent")}
-          </p>
+          {/* Overall Average Display */}
+          {allRated && (
+            <div className="text-center p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+              <p className="text-sm text-muted-foreground mb-1">
+                {t("rating.overallRating")}
+              </p>
+              <div className="flex items-center justify-center gap-2">
+                <Star className="h-5 w-5 fill-warning-400 text-warning-400" />
+                <span className="text-xl font-bold text-foreground">
+                  {overallAverage}
+                </span>
+                <span className="text-sm text-muted-foreground">/ 5</span>
+              </div>
+            </div>
+          )}
 
           {/* Comment */}
           <div>
@@ -289,7 +349,7 @@ export function RatingDialog({
           <Button variant="outline" onClick={handleClose} disabled={isPending}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSubmit} disabled={rating === 0 || isPending}>
+          <Button onClick={handleSubmit} disabled={!allRated || isPending}>
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin ms-2" />

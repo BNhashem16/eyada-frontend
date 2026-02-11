@@ -213,9 +213,7 @@ function Footer({ isAiEnabled }: { isAiEnabled: boolean }) {
         {/* Feedback CTA */}
         <div className="mt-8 pt-8 border-t border-gray-800 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-            <p className="text-gray-400 text-sm">
-              {t("feedback.subtitle")}
-            </p>
+            <p className="text-gray-400 text-sm">{t("feedback.subtitle")}</p>
             <Link
               href="/feedback"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors"
@@ -227,14 +225,21 @@ function Footer({ isAiEnabled }: { isAiEnabled: boolean }) {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-500 dark:text-gray-400 text-sm">
             <p>
-              © {new Date().getFullYear()} {t("app.name")}. {t("app.copyright")}.
+              © {new Date().getFullYear()} {t("app.name")}. {t("app.copyright")}
+              .
             </p>
             <div className="flex items-center gap-4">
-              <Link href="/privacy" className="hover:text-white transition-colors">
+              <Link
+                href="/privacy"
+                className="hover:text-white transition-colors"
+              >
                 {t("nav.privacyPolicy")}
               </Link>
               <span className="text-gray-600">|</span>
-              <Link href="/terms" className="hover:text-white transition-colors">
+              <Link
+                href="/terms"
+                className="hover:text-white transition-colors"
+              >
                 {t("nav.termsAndConditions")}
               </Link>
             </div>

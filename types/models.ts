@@ -257,7 +257,10 @@ export interface Rating extends Timestamps {
   appointmentId: string;
   doctorProfileId: string;
   patientProfileId: string;
-  rating: number;
+  doctorRating: number;
+  communicationRating: number;
+  waitTimeRating: number;
+  overallRating: number;
   review?: string;
   isVisible: boolean;
   appointment?: Appointment;

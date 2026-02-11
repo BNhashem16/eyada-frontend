@@ -4,7 +4,11 @@ import { useEffect } from "react";
 import { Calendar } from "lucide-react";
 import { AppointmentList } from "@/features/patients";
 import { useTranslation } from "@/lib/i18n";
-import { useTour, PATIENT_APPOINTMENTS_TOUR_ID, patientAppointmentsSteps } from "@/lib/tour";
+import {
+  useTour,
+  PATIENT_APPOINTMENTS_TOUR_ID,
+  patientAppointmentsSteps,
+} from "@/lib/tour";
 
 export function PatientAppointmentsContent() {
   const { t } = useTranslation();

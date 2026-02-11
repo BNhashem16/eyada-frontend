@@ -242,7 +242,9 @@ export interface PatientAppointmentFilterDto {
 
 export interface CreateRatingDto {
   appointmentId: string; // UUID, required
-  rating: number; // 1-5, required
+  doctorRating: number; // 1-5, required
+  communicationRating: number; // 1-5, required
+  waitTimeRating: number; // 1-5, required
   review?: string; // maxLength: 1000
 }
 

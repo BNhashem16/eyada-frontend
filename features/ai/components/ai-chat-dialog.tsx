@@ -85,9 +85,7 @@ export function AiChatDialog({
 
   // Filter out history messages that are also in session (by id)
   const sessionIds = new Set(sessionMessages.map((m) => m.id));
-  const filteredHistory = historyMessages.filter(
-    (m) => !sessionIds.has(m.id),
-  );
+  const filteredHistory = historyMessages.filter((m) => !sessionIds.has(m.id));
 
   const hasMessages = filteredHistory.length > 0 || sessionMessages.length > 0;
 

@@ -109,12 +109,19 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
   const { t, locale } = useTranslation();
   const statusConfig = useMemo(() => getStatusConfig(t), [t]);
 
-  const { data: patient, isLoading, isError, error } = useAdminPatient(patientId);
+  const {
+    data: patient,
+    isLoading,
+    isError,
+    error,
+  } = useAdminPatient(patientId);
   const approvePatient = useApprovePatient();
   const rejectPatient = useRejectPatient();
   const suspendPatient = useSuspendPatient();
 
-  const [action, setAction] = useState<"approve" | "reject" | "suspend" | null>(null);
+  const [action, setAction] = useState<"approve" | "reject" | "suspend" | null>(
+    null,
+  );
 
   const handleAction = () => {
     if (!action) return;
@@ -191,7 +198,9 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
               {t("admin.loadError")}
             </p>
             <p className="text-sm text-error-500 mt-2">
-              {error instanceof Error ? error.message : t("common.unknownError")}
+              {error instanceof Error
+                ? error.message
+                : t("common.unknownError")}
             </p>
           </CardContent>
         </Card>
@@ -313,7 +322,10 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <InfoRow label={t("admin.patientDetails.email")} value={patient.user?.email} />
+            <InfoRow
+              label={t("admin.patientDetails.email")}
+              value={patient.user?.email}
+            />
             <Separator />
             <InfoRow
               label={t("admin.patientDetails.phone")}
@@ -341,7 +353,11 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
             <Separator />
             <InfoRow
               label={t("admin.patientDetails.dateOfBirth")}
-              value={patient.dateOfBirth ? formatDate(patient.dateOfBirth, "PPP", locale) : t("admin.patientDetails.notAvailable")}
+              value={
+                patient.dateOfBirth
+                  ? formatDate(patient.dateOfBirth, "PPP", locale)
+                  : t("admin.patientDetails.notAvailable")
+              }
             />
             {patient.age !== undefined && (
               <>
@@ -431,7 +447,11 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
           <CardContent className="space-y-4">
             <InfoRow
               label={t("admin.patientDetails.registeredAt")}
-              value={patient.createdAt ? formatDate(patient.createdAt, "PPP", locale) : t("admin.patientDetails.notAvailable")}
+              value={
+                patient.createdAt
+                  ? formatDate(patient.createdAt, "PPP", locale)
+                  : t("admin.patientDetails.notAvailable")
+              }
             />
             {patient.approvedAt && (
               <>
@@ -499,7 +519,10 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
                       <td className="p-3 text-foreground">{member.fullName}</td>
                       <td className="p-3">
                         <Badge variant="outline">
-                          {getRelationshipLabel(t, member.relationshipToHead || member.relationship)}
+                          {getRelationshipLabel(
+                            t,
+                            member.relationshipToHead || member.relationship,
+                          )}
                         </Badge>
                       </td>
                       <td className="p-3 text-foreground">
@@ -527,10 +550,7 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
       </Card>
 
       {/* Confirmation Dialog */}
-      <AlertDialog
-        open={!!action}
-        onOpenChange={() => setAction(null)}
-      >
+      <AlertDialog open={!!action} onOpenChange={() => setAction(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
@@ -569,13 +589,7 @@ export function AdminPatientDetails({ patientId }: AdminPatientDetailsProps) {
   );
 }
 
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) {
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
       <span className="text-sm font-medium text-muted-foreground">{label}</span>

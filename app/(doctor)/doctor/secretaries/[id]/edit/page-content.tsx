@@ -37,7 +37,9 @@ interface EditSecretaryContentProps {
   secretaryId: string;
 }
 
-export function EditSecretaryContent({ secretaryId }: EditSecretaryContentProps) {
+export function EditSecretaryContent({
+  secretaryId,
+}: EditSecretaryContentProps) {
   const { t, locale } = useTranslation();
   const router = useRouter();
   const { toast } = useToast();

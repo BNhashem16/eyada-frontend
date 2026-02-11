@@ -95,7 +95,9 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
   const rejectDoctor = useRejectDoctor();
   const suspendDoctor = useSuspendDoctor();
 
-  const [action, setAction] = useState<"approve" | "reject" | "suspend" | null>(null);
+  const [action, setAction] = useState<"approve" | "reject" | "suspend" | null>(
+    null,
+  );
 
   const handleAction = () => {
     if (!action) return;
@@ -172,7 +174,9 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
               {t("admin.loadError")}
             </p>
             <p className="text-sm text-error-500 mt-2">
-              {error instanceof Error ? error.message : t("common.unknownError")}
+              {error instanceof Error
+                ? error.message
+                : t("common.unknownError")}
             </p>
           </CardContent>
         </Card>
@@ -295,7 +299,10 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <InfoRow label={t("admin.doctorDetails.email")} value={doctor.user?.email} />
+            <InfoRow
+              label={t("admin.doctorDetails.email")}
+              value={doctor.user?.email}
+            />
             <Separator />
             <InfoRow
               label={t("admin.doctorDetails.phone")}
@@ -307,9 +314,15 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
               value={
                 <span className="flex items-center gap-1">
                   {doctor.showPhoneNumber ? (
-                    <><Eye className="h-4 w-4 text-green-500" /> {t("admin.doctorDetails.yes")}</>
+                    <>
+                      <Eye className="h-4 w-4 text-green-500" />{" "}
+                      {t("admin.doctorDetails.yes")}
+                    </>
                   ) : (
-                    <><EyeOff className="h-4 w-4 text-muted-foreground" /> {t("admin.doctorDetails.no")}</>
+                    <>
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />{" "}
+                      {t("admin.doctorDetails.no")}
+                    </>
                   )}
                 </span>
               }
@@ -320,9 +333,15 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
               value={
                 <span className="flex items-center gap-1">
                   {doctor.showWhatsappNumber ? (
-                    <><Eye className="h-4 w-4 text-green-500" /> {t("admin.doctorDetails.yes")}</>
+                    <>
+                      <Eye className="h-4 w-4 text-green-500" />{" "}
+                      {t("admin.doctorDetails.yes")}
+                    </>
                   ) : (
-                    <><EyeOff className="h-4 w-4 text-muted-foreground" /> {t("admin.doctorDetails.no")}</>
+                    <>
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />{" "}
+                      {t("admin.doctorDetails.no")}
+                    </>
                   )}
                 </span>
               }
@@ -335,7 +354,11 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
                   value={
                     <div className="flex flex-col gap-1">
                       {doctor.whatsappNumbers.map((num, idx) => (
-                        <span key={idx} className="flex items-center gap-1" dir="ltr">
+                        <span
+                          key={idx}
+                          className="flex items-center gap-1"
+                          dir="ltr"
+                        >
                           <MessageCircle className="h-3 w-3 text-green-500" />
                           {num}
                         </span>
@@ -359,24 +382,37 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
           <CardContent className="space-y-4">
             <InfoRow
               label={t("admin.doctorDetails.specialty")}
-              value={doctor.specialty ? getLocalizedText(doctor.specialty.name, locale) : t("admin.doctorDetails.notAvailable")}
+              value={
+                doctor.specialty
+                  ? getLocalizedText(doctor.specialty.name, locale)
+                  : t("admin.doctorDetails.notAvailable")
+              }
             />
             <Separator />
             <InfoRow
               label={t("admin.doctorDetails.licenseNumber")}
-              value={doctor.licenseNumber || t("admin.doctorDetails.notAvailable")}
+              value={
+                doctor.licenseNumber || t("admin.doctorDetails.notAvailable")
+              }
             />
             <Separator />
             <InfoRow
               label={t("admin.doctorDetails.yearsOfExperience")}
-              value={doctor.yearsOfExperience !== undefined ? String(doctor.yearsOfExperience) : t("admin.doctorDetails.notAvailable")}
+              value={
+                doctor.yearsOfExperience !== undefined
+                  ? String(doctor.yearsOfExperience)
+                  : t("admin.doctorDetails.notAvailable")
+              }
             />
             {doctor.qualifications && (
               <>
                 <Separator />
                 <InfoRow
                   label={t("admin.doctorDetails.qualifications")}
-                  value={getLocalizedText(doctor.qualifications, locale) || t("admin.doctorDetails.notAvailable")}
+                  value={
+                    getLocalizedText(doctor.qualifications, locale) ||
+                    t("admin.doctorDetails.notAvailable")
+                  }
                 />
               </>
             )}
@@ -448,7 +484,11 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
           <CardContent className="space-y-4">
             <InfoRow
               label={t("admin.doctorDetails.registeredAt")}
-              value={doctor.createdAt ? formatDate(doctor.createdAt, "PPP", locale) : t("admin.doctorDetails.notAvailable")}
+              value={
+                doctor.createdAt
+                  ? formatDate(doctor.createdAt, "PPP", locale)
+                  : t("admin.doctorDetails.notAvailable")
+              }
             />
             {doctor.approvedAt && (
               <>
@@ -509,7 +549,9 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
                     </div>
                   </div>
                   <Badge variant={clinic.isActive ? "success" : "secondary"}>
-                    {clinic.isActive ? t("common.active") : t("common.inactive")}
+                    {clinic.isActive
+                      ? t("common.active")
+                      : t("common.inactive")}
                   </Badge>
                 </div>
               ))}
@@ -519,10 +561,7 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
       </Card>
 
       {/* Confirmation Dialog */}
-      <AlertDialog
-        open={!!action}
-        onOpenChange={() => setAction(null)}
-      >
+      <AlertDialog open={!!action} onOpenChange={() => setAction(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
@@ -561,13 +600,7 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
   );
 }
 
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) {
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
       <span className="text-sm font-medium text-muted-foreground">{label}</span>

@@ -31,7 +31,11 @@ import { formatDate, formatTime } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useEffect, useMemo, useCallback } from "react";
-import { useTour, DOCTOR_DASHBOARD_TOUR_ID, doctorDashboardSteps } from "@/lib/tour";
+import {
+  useTour,
+  DOCTOR_DASHBOARD_TOUR_ID,
+  doctorDashboardSteps,
+} from "@/lib/tour";
 
 export function DoctorDashboard() {
   const { t, locale } = useTranslation();
@@ -62,21 +66,35 @@ export function DoctorDashboard() {
   const appointments = todayAppointments?.data ?? [];
 
   // Memoize stats calculations to avoid recalculating on every render
-  const { pendingCount, waitingCount, completedCount, todayRevenue, totalAppointments } = useMemo(() => ({
-    pendingCount: todayOverview?.pending ??
-      appointments.filter(
-        (a) =>
-          a.status === AppointmentStatus.PENDING ||
-          a.status === AppointmentStatus.CONFIRMED,
-      ).length,
-    waitingCount: todayOverview?.waiting ??
-      appointments.filter((a) => a.status === AppointmentStatus.CHECKED_IN)
-        .length,
-    completedCount: todayOverview?.completed ??
-      appointments.filter((a) => a.status === AppointmentStatus.COMPLETED).length,
-    todayRevenue: todayOverview?.todayRevenue ?? 0,
-    totalAppointments: todayOverview?.totalAppointments ?? appointments.length,
-  }), [todayOverview, appointments]);
+  const {
+    pendingCount,
+    waitingCount,
+    completedCount,
+    todayRevenue,
+    totalAppointments,
+  } = useMemo(
+    () => ({
+      pendingCount:
+        todayOverview?.pending ??
+        appointments.filter(
+          (a) =>
+            a.status === AppointmentStatus.PENDING ||
+            a.status === AppointmentStatus.CONFIRMED,
+        ).length,
+      waitingCount:
+        todayOverview?.waiting ??
+        appointments.filter((a) => a.status === AppointmentStatus.CHECKED_IN)
+          .length,
+      completedCount:
+        todayOverview?.completed ??
+        appointments.filter((a) => a.status === AppointmentStatus.COMPLETED)
+          .length,
+      todayRevenue: todayOverview?.todayRevenue ?? 0,
+      totalAppointments:
+        todayOverview?.totalAppointments ?? appointments.length,
+    }),
+    [todayOverview, appointments],
+  );
 
   // Memoize currency formatter to avoid creating new Intl instance on every render
   const currencyFormatter = useMemo(
@@ -107,23 +125,29 @@ export function DoctorDashboard() {
     [appointments],
   );
 
-  const getStatusLabel = useCallback((status: AppointmentStatus) => {
-    const statusMap: Record<AppointmentStatus, string> = {
-      [AppointmentStatus.PENDING]: t("status.pending"),
-      [AppointmentStatus.CONFIRMED]: t("status.confirmed"),
-      [AppointmentStatus.CHECKED_IN]: t("status.checkedIn"),
-      [AppointmentStatus.IN_PROGRESS]: t("status.inProgress"),
-      [AppointmentStatus.COMPLETED]: t("status.completed"),
-      [AppointmentStatus.CANCELLED]: t("status.cancelled"),
-      [AppointmentStatus.NO_SHOW]: t("status.noShow"),
-    };
-    return statusMap[status];
-  }, [t]);
+  const getStatusLabel = useCallback(
+    (status: AppointmentStatus) => {
+      const statusMap: Record<AppointmentStatus, string> = {
+        [AppointmentStatus.PENDING]: t("status.pending"),
+        [AppointmentStatus.CONFIRMED]: t("status.confirmed"),
+        [AppointmentStatus.CHECKED_IN]: t("status.checkedIn"),
+        [AppointmentStatus.IN_PROGRESS]: t("status.inProgress"),
+        [AppointmentStatus.COMPLETED]: t("status.completed"),
+        [AppointmentStatus.CANCELLED]: t("status.cancelled"),
+        [AppointmentStatus.NO_SHOW]: t("status.noShow"),
+      };
+      return statusMap[status];
+    },
+    [t],
+  );
 
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div data-tour="doctor-welcome" className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-4 sm:p-6 text-white">
+      <div
+        data-tour="doctor-welcome"
+        className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-4 sm:p-6 text-white"
+      >
         <h1 className="text-xl sm:text-2xl font-bold mb-2">
           {t("doctor.greeting")} {user?.name?.split(" ")[0]}
         </h1>
@@ -156,7 +180,10 @@ export function DoctorDashboard() {
       </div>
 
       {/* Today's Stats */}
-      <div data-tour="doctor-stats" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div
+        data-tour="doctor-stats"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
+      >
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -350,7 +377,10 @@ export function DoctorDashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <div data-tour="doctor-quick-actions" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        data-tour="doctor-quick-actions"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      >
         <Link href="/doctor/appointments">
           <Card className="hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer h-full">
             <CardContent className="p-5 flex items-center gap-4">

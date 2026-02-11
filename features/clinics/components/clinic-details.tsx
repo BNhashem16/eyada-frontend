@@ -147,7 +147,10 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
                       {clinic.phoneNumbers.map((phone, i) => (
                         <span key={i}>
                           {i > 0 && " / "}
-                          <a href={`tel:${phone}`} className="hover:text-primary-600">
+                          <a
+                            href={`tel:${phone}`}
+                            className="hover:text-primary-600"
+                          >
                             {phone}
                           </a>
                         </span>

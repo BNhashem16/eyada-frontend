@@ -46,7 +46,9 @@ interface ClinicManageContentProps {
   clinicId: string;
 }
 
-export function ClinicManageContent({ clinicId: id }: ClinicManageContentProps) {
+export function ClinicManageContent({
+  clinicId: id,
+}: ClinicManageContentProps) {
   const { t, locale } = useTranslation();
   const { data: clinic, isLoading } = useDoctorClinic(id);
 

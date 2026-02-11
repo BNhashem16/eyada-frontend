@@ -14,7 +14,10 @@ import { extractApiError } from "@/lib/utils";
 
 export interface AdminRating {
   id: string;
-  rating: number;
+  doctorRating: number;
+  communicationRating: number;
+  waitTimeRating: number;
+  overallRating: number;
   review: string | null;
   isVisible: boolean;
   createdAt: string;
@@ -63,7 +66,7 @@ export interface AdminRatingFilters {
   search?: string;
   doctorProfileId?: string;
   patientProfileId?: string;
-  rating?: number;
+  overallRating?: number;
   isVisible?: boolean;
   dateFrom?: string;
   dateTo?: string;
@@ -78,7 +81,7 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
     search,
     doctorProfileId,
     patientProfileId,
-    rating,
+    overallRating,
     isVisible,
     dateFrom,
     dateTo,
@@ -93,7 +96,7 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
         search,
         doctorProfileId,
         patientProfileId,
-        rating,
+        overallRating,
         isVisible,
         dateFrom,
         dateTo,
@@ -107,7 +110,8 @@ export function useAdminRatings(filters: AdminRatingFilters = {}) {
       if (search) params.append("search", search);
       if (doctorProfileId) params.append("doctorProfileId", doctorProfileId);
       if (patientProfileId) params.append("patientProfileId", patientProfileId);
-      if (rating) params.append("rating", rating.toString());
+      if (overallRating)
+        params.append("overallRating", overallRating.toString());
       if (isVisible !== undefined)
         params.append("isVisible", isVisible.toString());
       if (dateFrom) params.append("dateFrom", dateFrom);
@@ -168,7 +172,10 @@ export function useUpdateAdminRating() {
       queryClient.invalidateQueries({ queryKey: ["admin-ratings-statistics"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }
@@ -186,7 +193,10 @@ export function useDeleteAdminRating() {
       queryClient.invalidateQueries({ queryKey: ["admin-ratings-statistics"] });
     },
     onError: (error: AxiosError<ApiError>) => {
-      toastError(t("toast.error"), extractApiError(error, t("errors.somethingWentWrong")));
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
     },
   });
 }

@@ -2,7 +2,12 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUser, useIsAuthenticated, useIsAuthLoading, useIsHydrated } from "./store";
+import {
+  useUser,
+  useIsAuthenticated,
+  useIsAuthLoading,
+  useIsHydrated,
+} from "./store";
 import { Role } from "@/types";
 
 interface ProtectedRouteProps {

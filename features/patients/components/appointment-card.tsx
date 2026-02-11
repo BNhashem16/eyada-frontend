@@ -160,7 +160,10 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                       <>
                         <span className="text-border">-</span>
                         <span>
-                          {getLocalizedText(appointment.clinic.city.name, locale)}
+                          {getLocalizedText(
+                            appointment.clinic.city.name,
+                            locale,
+                          )}
                         </span>
                       </>
                     )}
@@ -188,7 +191,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                 </Badge>
 
                 {/* Actions Menu */}
-                {(canCancel || canRate) && (
+                {canCancel && (
                   <div className="relative">
                     <Button
                       variant="ghost"
@@ -205,30 +208,16 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                           onClick={() => setShowMenu(false)}
                         />
                         <div className="absolute end-0 mt-1 w-40 rounded-lg bg-card border border-border shadow-lg z-50 py-1">
-                          {canCancel && (
-                            <button
-                              onClick={() => {
-                                setShowMenu(false);
-                                onCancel?.(appointment.id);
-                              }}
-                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
-                            >
-                              <X className="h-4 w-4" />
-                              {t("appointments.cancel")}
-                            </button>
-                          )}
-                          {canRate && (
-                            <button
-                              onClick={() => {
-                                setShowMenu(false);
-                                onRate?.(appointment);
-                              }}
-                              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-warning-600 dark:text-warning-400 hover:bg-warning-50 dark:hover:bg-warning-900/20"
-                            >
-                              <Star className="h-4 w-4" />
-                              {t("patient.rateDoctor")}
-                            </button>
-                          )}
+                          <button
+                            onClick={() => {
+                              setShowMenu(false);
+                              onCancel?.(appointment.id);
+                            }}
+                            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error-600 dark:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/20"
+                          >
+                            <X className="h-4 w-4" />
+                            {t("appointments.cancel")}
+                          </button>
                         </div>
                       </>
                     )}
@@ -248,13 +237,27 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                     <Star
                       key={i}
                       className={`h-4 w-4 ${
-                        i < appointment.rating!.rating
+                        i < Math.round(appointment.rating!.overallRating)
                           ? "fill-warning-400 text-warning-400"
                           : "text-gray-300 dark:text-gray-500"
                       }`}
                     />
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Rate Doctor Button - Prominent for completed appointments */}
+            {canRate && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <Button
+                  variant="outline"
+                  className="w-full border-warning-300 text-warning-600 hover:bg-warning-50 hover:text-warning-700 dark:border-warning-700 dark:text-warning-400 dark:hover:bg-warning-900/20"
+                  onClick={() => onRate?.(appointment)}
+                >
+                  <Star className="h-4 w-4 me-2" />
+                  {t("patient.rateDoctor")}
+                </Button>
               </div>
             )}
 
