@@ -1201,7 +1201,11 @@
       "percentageHint": "النسبة من سعر الخدمة",
       "activeLabel": "تفعيل العمولة",
       "selectDoctor": "اختر الدكتور",
-      "selectDoctorPlaceholder": "اختر دكتور..."
+      "selectDoctorPlaceholder": "اختر دكتور...",
+      "maxUnpaidBalance": "الحد الأقصى للرصيد المستحق",
+      "maxUnpaidBalancePlaceholder": "مثال: 5000",
+      "maxUnpaidBalanceHint": "الحد الأقصى للرصيد غير المدفوع قبل حظر الحجوزات الجديدة (اتركه فارغاً بدون حد)",
+      "noLimit": "بدون حد"
     },
     "collections": {
       "totalDoctors": "إجمالي الأطباء",
@@ -1378,7 +1382,10 @@
     "pageNotFound": "الصفحة غير موجودة",
     "pageNotFoundDesc": "عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "goHome": "الصفحة الرئيسية",
-    "searchDoctor": "ابحث عن طبيب"
+    "searchDoctor": "ابحث عن طبيب",
+    "doctorCommissionBlocked": "هذا الطبيب غير متاح مؤقتاً للحجوزات الجديدة بسبب رصيد مستحق",
+    "duplicateAppointment": "لديك بالفعل موعد نشط مع هذا الطبيب في هذا التاريخ",
+    "maxDailyBookingsReached": "لقد وصلت للحد الأقصى من الحجوزات لهذا اليوم"
   },
   "validation": {
     "required": "هذا الحقل مطلوب",

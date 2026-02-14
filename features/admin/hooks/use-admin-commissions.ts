@@ -26,6 +26,7 @@ export interface Commission {
   doctorProfileId: string;
   commissionType: CommissionType;
   commissionValue: number;
+  maxUnpaidBalance: number | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -166,6 +167,7 @@ export interface CreateCommissionData {
   doctorProfileId: string;
   commissionType: CommissionType;
   commissionValue: number;
+  maxUnpaidBalance?: number | null;
   isActive?: boolean;
 }
 
@@ -194,6 +196,7 @@ export function useCreateCommission() {
 export interface UpdateCommissionData {
   commissionType?: CommissionType;
   commissionValue?: number;
+  maxUnpaidBalance?: number | null;
   isActive?: boolean;
 }
 

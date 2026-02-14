@@ -33,7 +33,6 @@ import { PUBLIC_TRACKING_ENDPOINTS, API_BASE_URL } from "@/lib/api/endpoints";
 interface QueueData {
   found: boolean;
   bookingNumber: string;
-  queueNumber: number | null;
   positionInQueue: number | null;
   estimatedWaitMinutes: number | null;
   status: string;
@@ -282,11 +281,6 @@ export function TrackDetailsContent() {
               </div>
               <div>
                 <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
-                {data.queueNumber && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {t("appointments.queueNumber")}: {data.queueNumber}
-                  </p>
-                )}
               </div>
             </div>
           </CardContent>

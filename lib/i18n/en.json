@@ -1201,7 +1201,11 @@
       "percentageHint": "Percentage of service price",
       "activeLabel": "Enable Commission",
       "selectDoctor": "Select Doctor",
-      "selectDoctorPlaceholder": "Select a doctor..."
+      "selectDoctorPlaceholder": "Select a doctor...",
+      "maxUnpaidBalance": "Max Unpaid Balance",
+      "maxUnpaidBalancePlaceholder": "e.g., 5000",
+      "maxUnpaidBalanceHint": "Max unpaid balance before new bookings are blocked (leave empty for no limit)",
+      "noLimit": "No limit"
     },
     "collections": {
       "totalDoctors": "Total Doctors",
@@ -1378,7 +1382,10 @@
     "pageNotFound": "Page not found",
     "pageNotFoundDesc": "Sorry, the page you are looking for does not exist or has been moved.",
     "goHome": "Home Page",
-    "searchDoctor": "Find a Doctor"
+    "searchDoctor": "Find a Doctor",
+    "doctorCommissionBlocked": "This doctor is temporarily unavailable for new bookings due to outstanding balance",
+    "duplicateAppointment": "You already have an active appointment with this doctor on this date",
+    "maxDailyBookingsReached": "You have reached the maximum number of bookings per day"
   },
   "validation": {
     "required": "This field is required",

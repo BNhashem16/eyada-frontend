@@ -182,6 +182,8 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
   const isUpcoming =
     !isPast(new Date(appointmentDateStr + "T12:00:00")) && canCancel;
   const canTrack = appointment.bookingNumber && isUpcoming;
+  const doctorProfile =
+    appointment.clinic?.doctorProfile || appointment.doctorProfile;
 
   return (
     <div className="space-y-6">
@@ -273,32 +275,32 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {appointment.clinic?.doctorProfile && (
+          {doctorProfile && (
             <Link
-              href={`/doctors/${appointment.clinic.doctorProfile.id}`}
+              href={`/doctors/${doctorProfile.id}`}
               className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
             >
               <Avatar className="h-16 w-16">
                 <AvatarImage
                   src={
-                    appointment.clinic.doctorProfile.user?.profilePicture ||
+                    doctorProfile.user?.profilePicture ||
                     undefined
                   }
                 />
                 <AvatarFallback className="text-xl">
                   {getInitials(
-                    appointment.clinic.doctorProfile.user?.fullName || "",
+                    doctorProfile.user?.fullName || "",
                   )}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">
                   {t("doctors.doctorPrefix")}{" "}
-                  {appointment.clinic.doctorProfile.user?.fullName}
+                  {doctorProfile.user?.fullName}
                 </p>
                 <p className="text-muted-foreground">
                   {getLocalizedText(
-                    appointment.clinic.doctorProfile.specialty?.name,
+                    doctorProfile.specialty?.name,
                     locale,
                   )}
                 </p>

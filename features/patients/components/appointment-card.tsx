@@ -78,6 +78,9 @@ export const AppointmentCard = React.memo(function AppointmentCard({
   const isUpcoming =
     !isPast(new Date(appointmentDateStr + "T12:00:00")) && canCancel;
 
+  const doctorProfile =
+    appointment.clinic?.doctorProfile || appointment.doctorProfile;
+
   return (
     <Card
       className={`overflow-hidden ${isUpcoming ? "border-primary-200 dark:border-primary-800" : ""}`}
@@ -106,32 +109,31 @@ export const AppointmentCard = React.memo(function AppointmentCard({
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 {/* Doctor Info */}
-                {appointment.clinic?.doctorProfile && (
+                {doctorProfile && (
                   <Link
-                    href={`/doctors/${appointment.clinic.doctorProfile.id}`}
+                    href={`/doctors/${doctorProfile.id}`}
                     className="flex items-center gap-3 mb-3 group"
                   >
                     <Avatar className="h-10 w-10">
                       <AvatarImage
                         src={
-                          appointment.clinic.doctorProfile.user
-                            ?.profilePicture || undefined
+                          doctorProfile.user?.profilePicture || undefined
                         }
                       />
                       <AvatarFallback>
                         {getInitials(
-                          appointment.clinic.doctorProfile.user?.name || "",
+                          doctorProfile.user?.fullName || "",
                         )}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="font-semibold text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                         {t("doctors.doctorPrefix")}{" "}
-                        {appointment.clinic.doctorProfile.user?.name}
+                        {doctorProfile.user?.fullName}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {getLocalizedText(
-                          appointment.clinic.doctorProfile.specialty?.name,
+                          doctorProfile.specialty?.name,
                           locale,
                         )}
                       </p>
@@ -145,7 +147,6 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                   <span dir="ltr">
                     {formatTime(appointment.appointmentTime)}
                   </span>
-                  <span className="text-border">|</span>
                   <span>{formatDate(appointmentDateStr, "EEEE")}</span>
                 </div>
 

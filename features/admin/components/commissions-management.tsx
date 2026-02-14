@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Plus,
   Edit2,
@@ -52,6 +52,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
+import {
   useCommissions,
   useCreateCommission,
   useUpdateCommission,
@@ -69,6 +73,7 @@ interface CommissionFormData {
   doctorProfileId: string;
   commissionType: CommissionType;
   commissionValue: string;
+  maxUnpaidBalance: string;
   isActive: boolean;
 }
 
@@ -76,6 +81,7 @@ const initialFormData: CommissionFormData = {
   doctorProfileId: "",
   commissionType: "PERCENTAGE",
   commissionValue: "",
+  maxUnpaidBalance: "",
   isActive: true,
 };
 
@@ -93,11 +99,70 @@ export function CommissionsManagement() {
   } = useCommissions({ search, page, limit });
   const commissions = commissionsResponse?.data || [];
   const meta = commissionsResponse?.meta;
-  const { data: doctorsResponse } = useAdminDoctors({
-    limit: 100,
-    status: DoctorStatus.APPROVED,
-  });
-  const doctors = doctorsResponse?.data || [];
+  // Doctor selection: paginated + server-side search
+  const [doctorSearch, setDoctorSearch] = useState("");
+  const [doctorPage, setDoctorPage] = useState(1);
+  const [accumulatedDoctorOpts, setAccumulatedDoctorOpts] = useState<
+    SearchableSelectOption[]
+  >([]);
+  const [selectedDoctorOpt, setSelectedDoctorOpt] =
+    useState<SearchableSelectOption | null>(null);
+
+  const DOCTOR_PAGE_SIZE = 20;
+
+  const { data: doctorsResponse, isFetching: doctorsLoading } =
+    useAdminDoctors({
+      limit: DOCTOR_PAGE_SIZE,
+      page: doctorPage,
+      status: DoctorStatus.APPROVED,
+      search: doctorSearch || undefined,
+    });
+
+  // Accumulate doctor options across pages for infinite scroll
+  useEffect(() => {
+    if (!doctorsResponse?.data) return;
+    const newOpts = doctorsResponse.data.map((d) => ({
+      value: d.id,
+      label: d.user.fullName,
+      description: getLocalizedText(d.specialty?.name, locale),
+    }));
+    setAccumulatedDoctorOpts((prev) =>
+      doctorPage === 1
+        ? newOpts
+        : [
+            ...prev,
+            ...newOpts.filter((o) => !prev.some((p) => p.value === o.value)),
+          ],
+    );
+  }, [doctorsResponse?.data, doctorPage, locale]);
+
+  const hasMoreDoctors = doctorsResponse?.meta?.hasNextPage ?? false;
+
+  // Filter out doctors who already have a commission, ensure selected is always visible
+  const doctorSelectOptions = useMemo(() => {
+    const commissionDoctorIds = new Set(
+      commissions.map((c) => c.doctorProfileId),
+    );
+    const filtered = accumulatedDoctorOpts.filter(
+      (o) => !commissionDoctorIds.has(o.value),
+    );
+    if (
+      selectedDoctorOpt &&
+      !filtered.some((o) => o.value === selectedDoctorOpt.value)
+    ) {
+      return [selectedDoctorOpt, ...filtered];
+    }
+    return filtered;
+  }, [accumulatedDoctorOpts, commissions, selectedDoctorOpt]);
+
+  const handleDoctorSearch = useCallback((search: string) => {
+    setDoctorSearch(search);
+    setDoctorPage(1);
+  }, []);
+
+  const handleDoctorLoadMore = useCallback(() => {
+    if (!doctorsLoading) setDoctorPage((p) => p + 1);
+  }, [doctorsLoading]);
 
   const createCommission = useCreateCommission();
   const updateCommission = useUpdateCommission();
@@ -111,11 +176,6 @@ export function CommissionsManagement() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [formData, setFormData] = useState<CommissionFormData>(initialFormData);
 
-  // Filter out doctors who already have commission
-  const availableDoctors = doctors.filter(
-    (doctor) => !commissions.some((c) => c.doctorProfileId === doctor.id),
-  );
-
   const handleSearch = () => {
     setSearch(searchInput);
     setPage(1);
@@ -124,6 +184,9 @@ export function CommissionsManagement() {
   const handleOpenCreate = () => {
     setEditingCommission(null);
     setFormData(initialFormData);
+    setDoctorSearch("");
+    setDoctorPage(1);
+    setSelectedDoctorOpt(null);
     setIsDialogOpen(true);
   };
 
@@ -133,6 +196,10 @@ export function CommissionsManagement() {
       doctorProfileId: commission.doctorProfileId,
       commissionType: commission.commissionType,
       commissionValue: commission.commissionValue.toString(),
+      maxUnpaidBalance:
+        commission.maxUnpaidBalance != null
+          ? commission.maxUnpaidBalance.toString()
+          : "",
       isActive: commission.isActive,
     });
     setIsDialogOpen(true);
@@ -142,12 +209,17 @@ export function CommissionsManagement() {
     const value = parseFloat(formData.commissionValue);
     if (isNaN(value) || value <= 0) return;
 
+    const maxBalance = formData.maxUnpaidBalance
+      ? parseFloat(formData.maxUnpaidBalance)
+      : null;
+
     if (editingCommission) {
       updateCommission.mutate(
         {
           id: editingCommission.id,
           commissionType: formData.commissionType,
           commissionValue: value,
+          maxUnpaidBalance: maxBalance,
           isActive: formData.isActive,
         },
         {
@@ -164,6 +236,7 @@ export function CommissionsManagement() {
           doctorProfileId: formData.doctorProfileId,
           commissionType: formData.commissionType,
           commissionValue: value,
+          maxUnpaidBalance: maxBalance,
           isActive: formData.isActive,
         },
         {
@@ -275,6 +348,7 @@ export function CommissionsManagement() {
                   <TableHead>{t("admin.commissions.specialty")}</TableHead>
                   <TableHead>{t("admin.commissions.type")}</TableHead>
                   <TableHead>{t("admin.commissions.value")}</TableHead>
+                  <TableHead>{t("admin.commissions.maxUnpaidBalance")}</TableHead>
                   <TableHead>{t("table.status")}</TableHead>
                   <TableHead>{t("table.actions")}</TableHead>
                 </TableRow>
@@ -312,6 +386,11 @@ export function CommissionsManagement() {
                     </TableCell>
                     <TableCell className="font-semibold">
                       {formatCommissionValue(commission)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {commission.maxUnpaidBalance != null
+                        ? `${commission.maxUnpaidBalance} ${t("common.currency")}`
+                        : t("admin.commissions.noLimit")}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -395,28 +474,28 @@ export function CommissionsManagement() {
             {!editingCommission && (
               <div>
                 <Label>{t("admin.commissions.selectDoctor")} *</Label>
-                <Select
+                <SearchableSelect
+                  options={doctorSelectOptions}
                   value={formData.doctorProfileId}
-                  onValueChange={(value) =>
-                    setFormData((f) => ({ ...f, doctorProfileId: value }))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={t(
-                        "admin.commissions.selectDoctorPlaceholder",
-                      )}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableDoctors.map((doctor) => (
-                      <SelectItem key={doctor.id} value={doctor.id}>
-                        {doctor.user.fullName} -{" "}
-                        {getLocalizedText(doctor.specialty.name, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onValueChange={(value) => {
+                    setFormData((f) => ({ ...f, doctorProfileId: value }));
+                    const opt = doctorSelectOptions.find(
+                      (o) => o.value === value,
+                    );
+                    if (opt) setSelectedDoctorOpt(opt);
+                  }}
+                  placeholder={t(
+                    "admin.commissions.selectDoctorPlaceholder",
+                  )}
+                  searchPlaceholder={t(
+                    "admin.commissions.searchDoctor",
+                  )}
+                  onSearchChange={handleDoctorSearch}
+                  hasMore={hasMoreDoctors}
+                  onLoadMore={handleDoctorLoadMore}
+                  serverLoading={doctorsLoading}
+                  clearable
+                />
               </div>
             )}
 
@@ -479,6 +558,28 @@ export function CommissionsManagement() {
                   {t("admin.commissions.percentageHint")}
                 </p>
               )}
+            </div>
+
+            <div>
+              <Label>{t("admin.commissions.maxUnpaidBalance")} ({t("common.currency")})</Label>
+              <Input
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="1"
+                value={formData.maxUnpaidBalance}
+                onChange={(e) =>
+                  setFormData((f) => ({
+                    ...f,
+                    maxUnpaidBalance: e.target.value,
+                  }))
+                }
+                placeholder={t("admin.commissions.maxUnpaidBalancePlaceholder")}
+                dir="ltr"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {t("admin.commissions.maxUnpaidBalanceHint")}
+              </p>
             </div>
 
             <div className="flex items-center gap-2">
