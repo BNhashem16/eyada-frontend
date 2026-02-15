@@ -94,7 +94,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
             }`}
           >
             <span
-              className={`text-3xl font-bold ${isUpcoming ? "text-primary-600 dark:text-primary-400" : "text-foreground"}`}
+              className={`text-2xl sm:text-3xl font-bold ${isUpcoming ? "text-primary-600 dark:text-primary-400" : "text-foreground"}`}
             >
               {formatDate(appointmentDateStr, "d")}
             </span>
@@ -208,7 +208,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                           className="fixed inset-0 z-40"
                           onClick={() => setShowMenu(false)}
                         />
-                        <div className="absolute end-0 mt-1 w-40 rounded-lg bg-card border border-border shadow-lg z-50 py-1">
+                        <div className="absolute end-0 mt-1 w-40 max-w-[calc(100vw-2rem)] rounded-lg bg-card border border-border shadow-lg z-50 py-1">
                           <button
                             onClick={() => {
                               setShowMenu(false);

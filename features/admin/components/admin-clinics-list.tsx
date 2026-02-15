@@ -428,7 +428,8 @@ export function AdminClinicsList() {
             </div>
           ) : (
             <>
-              <Table>
+              <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t("admin.clinics.name")}</TableHead>
@@ -541,6 +542,7 @@ export function AdminClinicsList() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
 
               <PaginationControls
                 meta={meta}
@@ -663,7 +665,7 @@ export function AdminClinicsList() {
               {selectedClinic._count && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t">
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.appointments}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -671,7 +673,7 @@ export function AdminClinicsList() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.services}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -679,7 +681,7 @@ export function AdminClinicsList() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.schedules}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -687,7 +689,7 @@ export function AdminClinicsList() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.secretaryAssignments}
                     </p>
                     <p className="text-xs text-muted-foreground">

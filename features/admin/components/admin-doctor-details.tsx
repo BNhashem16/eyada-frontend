@@ -455,7 +455,7 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
               <div className="space-y-1">
                 <div className="flex items-center justify-center gap-1">
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />

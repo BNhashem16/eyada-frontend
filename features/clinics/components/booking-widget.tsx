@@ -334,7 +334,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {weekDays.map((date) => {
               const isPast = isBefore(date, new Date()) && !isToday(date);
               const isSelected = selectedDate && isSameDay(date, selectedDate);
@@ -346,16 +346,16 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                   onClick={() => !isPast && handleDateSelect(date)}
                   disabled={isPast}
                   className={`
-                    flex flex-col items-center justify-center p-2 rounded-lg text-center transition-all
+                    flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-lg text-center transition-all
                     ${isPast ? "opacity-40 cursor-not-allowed" : "hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer"}
                     ${isSelected ? "bg-primary-500 text-white hover:bg-primary-600" : ""}
                     ${today && !isSelected ? "border-2 border-primary-500" : ""}
                   `}
                 >
-                  <span className="text-xs font-medium">
+                  <span className="text-[10px] sm:text-xs font-medium">
                     {formatDate(date, "EEE")}
                   </span>
-                  <span className="text-lg font-bold">
+                  <span className="text-base sm:text-lg font-bold">
                     {formatDate(date, "d")}
                   </span>
                 </button>

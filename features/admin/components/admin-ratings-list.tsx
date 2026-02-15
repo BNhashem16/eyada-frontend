@@ -417,7 +417,8 @@ export function AdminRatingsList() {
             </div>
           ) : (
             <>
-              <Table>
+              <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t("admin.ratings.patient")}</TableHead>
@@ -515,6 +516,7 @@ export function AdminRatingsList() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
 
               <PaginationControls
                 meta={meta}

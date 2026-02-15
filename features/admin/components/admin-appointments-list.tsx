@@ -430,7 +430,7 @@ export function AdminAppointmentsList() {
 
           {showFilters && (
             <div className="flex gap-4 mt-4 pt-4 border-t flex-wrap">
-              <div className="flex-1 min-w-[180px]">
+              <div className="flex-1 min-w-0 sm:min-w-[180px]">
                 <Label>{t("admin.appointments.dateFrom")}</Label>
                 <DatePickerInput
                   value={dateFrom}
@@ -442,7 +442,7 @@ export function AdminAppointmentsList() {
                   placeholder={t("admin.appointments.dateFrom")}
                 />
               </div>
-              <div className="flex-1 min-w-[180px]">
+              <div className="flex-1 min-w-0 sm:min-w-[180px]">
                 <Label>{t("admin.appointments.dateTo")}</Label>
                 <DatePickerInput
                   value={dateTo}
@@ -454,7 +454,7 @@ export function AdminAppointmentsList() {
                   placeholder={t("admin.appointments.dateTo")}
                 />
               </div>
-              <div className="flex-1 min-w-[180px]">
+              <div className="flex-1 min-w-0 sm:min-w-[180px]">
                 <Label>{t("admin.appointments.filterBySpecialty")}</Label>
                 <Select
                   value={specialtyId || "all"}
@@ -519,7 +519,8 @@ export function AdminAppointmentsList() {
             </div>
           ) : (
             <>
-              <Table>
+              <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[900px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>
@@ -652,6 +653,7 @@ export function AdminAppointmentsList() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
 
               <PaginationControls
                 meta={meta}

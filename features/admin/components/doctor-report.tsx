@@ -409,7 +409,8 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                   </p>
                 </div>
               ) : (
-                <Table>
+                <div className="overflow-x-auto -mx-6 px-6">
+                <Table className="min-w-[800px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>
@@ -461,6 +462,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                     ))}
                   </TableBody>
                 </Table>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -477,7 +479,8 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                   </p>
                 </div>
               ) : (
-                <Table>
+                <div className="overflow-x-auto -mx-6 px-6">
+                <Table className="min-w-[600px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t("admin.collections.amount")}</TableHead>
@@ -527,6 +530,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                     ))}
                   </TableBody>
                 </Table>
+                </div>
               )}
             </CardContent>
           </Card>

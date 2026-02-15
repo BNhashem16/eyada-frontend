@@ -52,7 +52,7 @@ export function StatsCards({ cards, isLoading, columns = 4 }: StatsCardsProps) {
               >
                 <Icon className="h-5 w-5" />
               </div>
-              <p className="text-2xl font-bold text-foreground">{card.value}</p>
+              <p className="text-xl sm:text-2xl font-bold text-foreground">{card.value}</p>
               <p className="text-sm text-muted-foreground">{card.label}</p>
             </CardContent>
           </Card>

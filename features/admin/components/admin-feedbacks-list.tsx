@@ -370,6 +370,7 @@ export function AdminFeedbacksList() {
             </div>
           ) : (
             <>
+              <div className="overflow-x-auto -mx-6 px-6">
               <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
@@ -460,6 +461,7 @@ export function AdminFeedbacksList() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
 
               <PaginationControls
                 meta={meta}

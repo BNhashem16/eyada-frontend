@@ -95,7 +95,7 @@ export function OverviewCards({ data }: OverviewCardsProps) {
               >
                 <Icon className="h-5 w-5" />
               </div>
-              <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+              <p className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</p>
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </CardContent>
           </Card>

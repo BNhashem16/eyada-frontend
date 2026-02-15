@@ -467,7 +467,7 @@ export function SecretaryAppointmentDetails({
                   <p className="text-sm text-muted-foreground mb-3">
                     {t("appointments.markPayment")}
                   </p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <Button
                       variant="outline"
                       size="sm"
