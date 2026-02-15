@@ -793,9 +793,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             </Label>
             {whatsappFields.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                {locale === "ar"
-                  ? "لم يتم إضافة أرقام واتساب بعد"
-                  : "No WhatsApp numbers added yet"}
+                {t("clinics.noWhatsappYet")}
               </p>
             )}
             {whatsappFields.map((field, index) => (

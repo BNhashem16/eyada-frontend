@@ -292,6 +292,7 @@
     "phonePlaceholder": "01xxxxxxxxx",
     "whatsappNumbers": "WhatsApp Numbers",
     "addWhatsapp": "Add WhatsApp Number",
+    "noWhatsappYet": "No WhatsApp numbers added yet",
     "removeWhatsapp": "Remove",
     "contactInfo": "Contact Information",
     "schedule": "Schedule",
@@ -2147,5 +2148,43 @@
     "section9Content": "These terms and conditions are governed by the laws of the Arab Republic of Egypt, and Egyptian courts shall have jurisdiction over any disputes arising from the use of the platform.",
     "section10Title": "Contact Us",
     "section10Content": "If you have any questions or inquiries about these terms and conditions, you can contact us at:"
+  },
+  "seo": {
+    "siteName": "Eyada - عيادة",
+    "country": "Egypt",
+    "serviceType": "Medical Appointment Booking",
+    "langArabic": "Arabic",
+    "langEnglish": "English",
+    "breadcrumbs": {
+      "home": "Home",
+      "doctors": "Doctors",
+      "clinics": "Clinics",
+      "specialties": "Specialties",
+      "doctor": "Doctor",
+      "clinic": "Clinic"
+    },
+    "doctorTitle": "Dr. {name} - {specialty} | Book Your Appointment Now",
+    "doctorDescWithBio": "{bio}... Book your appointment with Dr. {name} online.",
+    "doctorDescNoBio": "Book your appointment with Dr. {name} - {specialty}. View ratings, available clinics and book online.",
+    "doctorPrefix": "Dr.",
+    "bookAppointment": "Book Appointment",
+    "doctorKeyword": "Doctor",
+    "clinicKeyword": "Clinic",
+    "clinicTitleWithDoctor": "Dr. {doctorName}'s Clinic - {specialty}{location}",
+    "clinicTitleNoDoctor": "{clinicName}{location}",
+    "clinicDescWithDesc": "{description}... Book your appointment now.",
+    "clinicDescNoDesc": "Book your appointment at {clinicName}{doctor}{specialty}{location}. Easy and fast online booking.",
+    "faq": {
+      "q1": "How do I book an appointment with a doctor on Eyada?",
+      "a1": "You can easily book an appointment by searching for the doctor or specialty you need, then selecting the clinic and suitable time slot and clicking the book button. You can book online 24/7.",
+      "q2": "Is booking on Eyada free?",
+      "a2": "Yes, the booking service on Eyada platform is completely free. You only pay the consultation fee to the doctor when visiting the clinic.",
+      "q3": "How do I track my appointment on Eyada?",
+      "a3": "You can track your appointment through the appointment tracking page using your booking number. You'll know your position in the waiting queue and the appointment status.",
+      "q4": "What medical specialties are available on Eyada?",
+      "a4": "Eyada offers all medical specialties such as internal medicine, pediatrics, ophthalmology, orthopedics, dentistry, dermatology, cardiology, obstetrics & gynecology, neurology, ENT, and many more.",
+      "q5": "Can I cancel or modify my appointment?",
+      "a5": "Yes, you can cancel or modify your appointment through your account on the platform. The cancellation policy varies according to each clinic's terms."
+    }
   }
 }

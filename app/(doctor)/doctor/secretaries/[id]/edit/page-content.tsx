@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, UserCog, Save } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslation, getTranslation, type Locale } from "@/lib/i18n";
 import {
   useDoctorSecretaries,
   useUpdateSecretary,
@@ -25,13 +25,23 @@ import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
-const updateSecretarySchema = z.object({
-  fullName: z.string().min(2).max(100),
-  phoneNumber: z.string().regex(/^01[0125][0-9]{8}$/),
-  isActive: z.boolean(),
-});
+const createUpdateSecretarySchema = (locale: Locale = "ar") => {
+  const t = (key: string) => getTranslation(key, locale);
+  return z.object({
+    fullName: z
+      .string()
+      .min(1, t("validation.fullNameRequired"))
+      .min(2, t("validation.fullNameMinLength"))
+      .max(100, t("validation.fullNameMaxLength")),
+    phoneNumber: z
+      .string()
+      .min(1, t("validation.phoneRequired"))
+      .regex(/^01[0125][0-9]{8}$/, t("validation.phoneInvalid")),
+    isActive: z.boolean(),
+  });
+};
 
-type UpdateSecretaryFormData = z.infer<typeof updateSecretarySchema>;
+type UpdateSecretaryFormData = z.infer<ReturnType<typeof createUpdateSecretarySchema>>;
 
 interface EditSecretaryContentProps {
   secretaryId: string;
@@ -58,7 +68,7 @@ export function EditSecretaryContent({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<UpdateSecretaryFormData>({
-    resolver: zodResolver(updateSecretarySchema),
+    resolver: zodResolver(createUpdateSecretarySchema(locale)),
   });
 
   const isActive = watch("isActive");

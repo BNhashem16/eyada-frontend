@@ -62,11 +62,12 @@ export async function generateMetadata({
   const specialtyAr = doctor.specialty?.name?.ar || "";
   const specialtyEn = doctor.specialty?.name?.en || "";
   const bio = doctor.bio?.ar || "";
+  const drPrefix = getTranslation("seo.doctorPrefix");
 
-  const titleAr = `د. ${name} - ${specialtyAr} | احجز موعدك الآن`;
+  const titleAr = `${drPrefix} ${name} - ${specialtyAr} | ${getTranslation("seo.bookAppointment")}`;
   const descriptionAr = bio
-    ? `${bio.substring(0, 150)}... احجز موعدك مع د. ${name} أونلاين.`
-    : `احجز موعدك مع د. ${name} - ${specialtyAr}. شاهد التقييمات والعيادات المتاحة واحجز أونلاين.`;
+    ? `${bio.substring(0, 150)}... ${getTranslation("seo.bookAppointment")} ${drPrefix} ${name}.`
+    : `${getTranslation("seo.bookAppointment")} ${drPrefix} ${name} - ${specialtyAr}.`;
 
   const url = `${BASE_URL}/doctors/${id}`;
 
@@ -74,12 +75,12 @@ export async function generateMetadata({
     title: titleAr,
     description: descriptionAr,
     keywords: [
-      `د. ${name}`,
+      `${drPrefix} ${name}`,
       specialtyAr,
       specialtyEn,
-      "حجز موعد",
-      "دكتور",
-      "عيادة",
+      getTranslation("seo.bookAppointment"),
+      getTranslation("seo.doctorKeyword"),
+      getTranslation("seo.clinicKeyword"),
     ],
     openGraph: {
       title: titleAr,
@@ -87,7 +88,7 @@ export async function generateMetadata({
       url,
       type: "profile",
       ...(doctor.profileImage && {
-        images: [{ url: doctor.profileImage, alt: `د. ${name}` }],
+        images: [{ url: doctor.profileImage, alt: `${drPrefix} ${name}` }],
       }),
     },
     twitter: {
@@ -109,10 +110,11 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
   const specialtyAr = doctor?.specialty?.name?.ar || "";
   const specialtyEn = doctor?.specialty?.name?.en || "";
 
+  const drPrefix = getTranslation("seo.doctorPrefix");
   const physicianJsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Physician",
-    name: name ? `د. ${name}` : undefined,
+    name: name ? `${drPrefix} ${name}` : undefined,
     description:
       doctor?.bio?.ar || getTranslation("meta.doctorProfile.description"),
     url: `${BASE_URL}/doctors/${id}`,
@@ -132,7 +134,7 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
     }),
     isPartOf: {
       "@type": "WebSite",
-      name: "عيادة - Eyada",
+      name: getTranslation("seo.siteName"),
       url: BASE_URL,
     },
   };
@@ -160,19 +162,19 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
       {
         "@type": "ListItem",
         position: 1,
-        name: "الرئيسية",
+        name: getTranslation("seo.breadcrumbs.home"),
         item: BASE_URL,
       },
       {
         "@type": "ListItem",
         position: 2,
-        name: "الأطباء",
+        name: getTranslation("seo.breadcrumbs.doctors"),
         item: `${BASE_URL}/doctors`,
       },
       {
         "@type": "ListItem",
         position: 3,
-        name: name ? `د. ${name}` : "الطبيب",
+        name: name ? `${drPrefix} ${name}` : getTranslation("seo.breadcrumbs.doctor"),
         item: `${BASE_URL}/doctors/${id}`,
       },
     ],

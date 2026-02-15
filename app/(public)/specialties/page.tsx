@@ -27,7 +27,7 @@ const specialtiesJsonLd = {
   url: `${BASE_URL}/specialties`,
   isPartOf: {
     "@type": "WebSite",
-    name: "عيادة - Eyada",
+    name: getTranslation("seo.siteName"),
     url: BASE_URL,
   },
 };
@@ -39,13 +39,13 @@ const breadcrumbJsonLd = {
     {
       "@type": "ListItem",
       position: 1,
-      name: "الرئيسية",
+      name: getTranslation("seo.breadcrumbs.home"),
       item: BASE_URL,
     },
     {
       "@type": "ListItem",
       position: 2,
-      name: "التخصصات",
+      name: getTranslation("seo.breadcrumbs.specialties"),
       item: `${BASE_URL}/specialties`,
     },
   ],

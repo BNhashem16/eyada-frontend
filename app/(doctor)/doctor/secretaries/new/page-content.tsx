@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, UserPlus, Eye, EyeOff } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslation, getTranslation, type Locale } from "@/lib/i18n";
 import {
   useCreateSecretary,
   CreateSecretaryData,
@@ -32,15 +32,32 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 
-const createSecretarySchema = z.object({
-  fullName: z.string().min(2).max(100),
-  email: z.string().email(),
-  phoneNumber: z.string().regex(/^01[0125][0-9]{8}$/),
-  password: z.string().min(8).max(50),
-  clinicId: z.string().uuid(),
-});
+const createSecretarySchemaFn = (locale: Locale = "ar") => {
+  const t = (key: string) => getTranslation(key, locale);
+  return z.object({
+    fullName: z
+      .string()
+      .min(1, t("validation.fullNameRequired"))
+      .min(2, t("validation.fullNameMinLength"))
+      .max(100, t("validation.fullNameMaxLength")),
+    email: z
+      .string()
+      .min(1, t("validation.emailRequired"))
+      .email(t("validation.emailInvalid")),
+    phoneNumber: z
+      .string()
+      .min(1, t("validation.phoneRequired"))
+      .regex(/^01[0125][0-9]{8}$/, t("validation.phoneInvalid")),
+    password: z
+      .string()
+      .min(1, t("validation.passwordRequired"))
+      .min(8, t("validation.passwordMinLength"))
+      .max(50, t("validation.passwordMaxLength")),
+    clinicId: z.string().uuid(),
+  });
+};
 
-type CreateSecretaryFormData = z.infer<typeof createSecretarySchema>;
+type CreateSecretaryFormData = z.infer<ReturnType<typeof createSecretarySchemaFn>>;
 
 export function NewSecretaryContent() {
   const { t, locale } = useTranslation();
@@ -59,7 +76,7 @@ export function NewSecretaryContent() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateSecretaryFormData>({
-    resolver: zodResolver(createSecretarySchema),
+    resolver: zodResolver(createSecretarySchemaFn(locale)),
   });
 
   const selectedClinicId = watch("clinicId");
