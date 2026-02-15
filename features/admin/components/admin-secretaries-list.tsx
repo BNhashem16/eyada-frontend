@@ -247,7 +247,7 @@ export function AdminSecretariesList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue
                     placeholder={t("admin.secretaries.filterByClinic")}
                   />
@@ -271,7 +271,7 @@ export function AdminSecretariesList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue placeholder={t("admin.secretaries.status")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -450,7 +450,7 @@ export function AdminSecretariesList() {
 
           {selectedSecretary && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("admin.secretaries.name")}

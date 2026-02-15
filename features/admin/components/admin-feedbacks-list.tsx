@@ -288,7 +288,7 @@ export function AdminFeedbacksList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-44">
+                <SelectTrigger className="w-full sm:w-44">
                   <SelectValue
                     placeholder={t("admin.feedbacks.filterByType")}
                   />
@@ -315,7 +315,7 @@ export function AdminFeedbacksList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-44">
+                <SelectTrigger className="w-full sm:w-44">
                   <SelectValue
                     placeholder={t("admin.feedbacks.filterByStatus")}
                   />

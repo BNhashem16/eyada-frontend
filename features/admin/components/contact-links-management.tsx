@@ -259,7 +259,7 @@ export function ContactLinksManagement() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-44">
+              <SelectTrigger className="w-full sm:w-44">
                 <SelectValue placeholder={t("admin.contactLinks.platform")} />
               </SelectTrigger>
               <SelectContent>
@@ -282,7 +282,7 @@ export function ContactLinksManagement() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder={t("table.status")} />
               </SelectTrigger>
               <SelectContent>

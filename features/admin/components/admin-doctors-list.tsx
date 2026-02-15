@@ -332,7 +332,7 @@ export function AdminDoctorsList() {
                   handleFilterChange("cityId", undefined);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.doctors.filterByState")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -356,7 +356,7 @@ export function AdminDoctorsList() {
                   )
                 }
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.doctors.filterByCity")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -384,7 +384,7 @@ export function AdminDoctorsList() {
                   )
                 }
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t("admin.doctors.activeStatus")} />
                 </SelectTrigger>
                 <SelectContent>

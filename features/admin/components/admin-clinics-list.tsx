@@ -298,7 +298,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue placeholder={t("admin.clinics.status")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -346,7 +346,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue
                     placeholder={t("admin.clinics.filterBySpecialty")}
                   />
@@ -371,7 +371,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.clinics.filterByState")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -393,7 +393,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.clinics.filterByCity")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -569,7 +569,7 @@ export function AdminClinicsList() {
 
           {selectedClinic && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2">
                     <Building className="h-4 w-4" />
@@ -604,7 +604,7 @@ export function AdminClinicsList() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("admin.clinics.specialty")}
@@ -661,7 +661,7 @@ export function AdminClinicsList() {
               </div>
 
               {selectedClinic._count && (
-                <div className="grid grid-cols-4 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t">
                   <div className="text-center">
                     <p className="text-2xl font-bold">
                       {selectedClinic._count.appointments}

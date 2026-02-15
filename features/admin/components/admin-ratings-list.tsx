@@ -311,7 +311,7 @@ export function AdminRatingsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue
                     placeholder={t("admin.ratings.filterByRating")}
                   />
@@ -333,7 +333,7 @@ export function AdminRatingsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue placeholder={t("admin.ratings.visibility")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -543,7 +543,7 @@ export function AdminRatingsList() {
 
           {selectedRating && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2">
                     <User className="h-4 w-4" />
@@ -641,7 +641,7 @@ export function AdminRatingsList() {
                   <h4 className="font-semibold mb-2">
                     {t("admin.ratings.appointmentInfo")}
                   </h4>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">
                         {t("admin.ratings.bookingNumber")}

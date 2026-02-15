@@ -303,7 +303,7 @@ export function DoctorBalances() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t("admin.collections.period")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -331,7 +331,7 @@ export function DoctorBalances() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue
                     placeholder={t("admin.collections.balanceFilter")}
                   />

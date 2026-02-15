@@ -345,7 +345,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                   )
                 }
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t("admin.collections.allTime")} />
                 </SelectTrigger>
                 <SelectContent>

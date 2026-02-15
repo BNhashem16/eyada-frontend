@@ -266,7 +266,7 @@ export function AdminPatientsList() {
               }
               placeholder={t("appointments.status")}
               showSearch={false}
-              className="w-40"
+              className="w-full sm:w-40"
             />
 
             {/* Active Status Filter */}
@@ -283,7 +283,7 @@ export function AdminPatientsList() {
                 )
               }
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder={t("admin.patients.activeStatus")} />
               </SelectTrigger>
               <SelectContent>

@@ -373,7 +373,7 @@ export function AdminAppointmentsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue placeholder={t("admin.appointments.status")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -395,7 +395,7 @@ export function AdminAppointmentsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue placeholder={t("payment.status")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -415,7 +415,7 @@ export function AdminAppointmentsList() {
                   setPage(1);
                 }}
                 placeholder={t("admin.appointments.date")}
-                className="w-44"
+                className="w-full sm:w-44"
               />
 
               <Button
@@ -680,7 +680,7 @@ export function AdminAppointmentsList() {
 
           {selectedAppointment && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2">
                     <User className="h-4 w-4" />
@@ -713,7 +713,7 @@ export function AdminAppointmentsList() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("admin.appointments.date")}

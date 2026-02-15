@@ -257,7 +257,7 @@ export function SpecialtiesManagement() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder={t("table.status")} />
               </SelectTrigger>
               <SelectContent>
