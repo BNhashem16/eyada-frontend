@@ -915,7 +915,15 @@
       "filterByCity": "تصفية حسب المدينة",
       "activeStatus": "حالة النشاط",
       "allStates": "كل المحافظات",
-      "allCities": "كل المدن"
+      "allCities": "كل المدن",
+      "stats": {
+        "total": "إجمالي الأطباء",
+        "approved": "معتمد",
+        "pending": "قيد الانتظار",
+        "rejected": "مرفوض",
+        "suspended": "موقوف",
+        "newThisMonth": "جدد هذا الشهر"
+      }
     },
     "patients": {
       "title": "إدارة المرضى",
@@ -937,7 +945,15 @@
       "approveMessage": "سيتم تفعيل حساب المريض وسيتمكن من حجز المواعيد.",
       "rejectMessage": "سيتم رفض طلب المريض ولن يتمكن من استخدام المنصة.",
       "suspendMessage": "سيتم إيقاف حساب المريض مؤقتاً ولن يتمكن من حجز المواعيد.",
-      "activeStatus": "حالة النشاط"
+      "activeStatus": "حالة النشاط",
+      "stats": {
+        "total": "إجمالي المرضى",
+        "approved": "معتمد",
+        "pending": "قيد الانتظار",
+        "rejected": "مرفوض",
+        "suspended": "موقوف",
+        "newThisMonth": "جدد هذا الشهر"
+      }
     },
     "locations": {
       "title": "إدارة المواقع",
@@ -961,28 +977,65 @@
     "specialtiesPage": {
       "title": "إدارة التخصصات",
       "subtitle": "إضافة وتعديل وحذف التخصصات الطبية",
-      "searchPlaceholder": "البحث في التخصصات..."
+      "searchPlaceholder": "البحث في التخصصات...",
+      "stats": {
+        "total": "إجمالي التخصصات",
+        "active": "نشط",
+        "inactive": "غير نشط"
+      }
     },
     "commissionsPage": {
       "title": "إدارة العمولات",
-      "subtitle": "تحديد عمولات الأطباء وإدارتها"
+      "subtitle": "تحديد عمولات الأطباء وإدارتها",
+      "stats": {
+        "totalDoctors": "إجمالي الأطباء",
+        "totalCommission": "إجمالي العمولات",
+        "totalPaid": "إجمالي المدفوع",
+        "totalBalance": "إجمالي الرصيد"
+      }
     },
     "appointmentsPage": {
       "title": "إدارة المواعيد",
       "subtitle": "عرض وإدارة جميع المواعيد في النظام",
-      "cancelledByAdmin": "تم الإلغاء بواسطة الإدارة"
+      "cancelledByAdmin": "تم الإلغاء بواسطة الإدارة",
+      "stats": {
+        "total": "إجمالي المواعيد",
+        "completed": "مكتمل",
+        "pending": "قيد الانتظار",
+        "cancelled": "ملغي",
+        "totalRevenue": "إجمالي الإيرادات",
+        "paidRevenue": "الإيرادات المدفوعة",
+        "unpaidRevenue": "الإيرادات غير المدفوعة"
+      }
     },
     "clinicsPage": {
       "title": "إدارة العيادات",
-      "subtitle": "عرض وإدارة جميع العيادات في النظام"
+      "subtitle": "عرض وإدارة جميع العيادات في النظام",
+      "stats": {
+        "total": "إجمالي العيادات",
+        "active": "نشطة",
+        "inactive": "غير نشطة"
+      }
     },
     "ratingsPage": {
       "title": "إدارة التقييمات",
-      "subtitle": "عرض وإدارة جميع التقييمات في النظام"
+      "subtitle": "عرض وإدارة جميع التقييمات في النظام",
+      "stats": {
+        "total": "إجمالي التقييمات",
+        "averageRating": "متوسط التقييم",
+        "visible": "مرئي",
+        "hidden": "مخفي"
+      }
     },
     "secretariesPage": {
       "title": "إدارة السكرتارية",
-      "subtitle": "عرض وإدارة جميع السكرتارية في النظام"
+      "subtitle": "عرض وإدارة جميع السكرتارية في النظام",
+      "stats": {
+        "total": "إجمالي السكرتارية",
+        "activeAssignments": "التعيينات النشطة",
+        "inactiveAssignments": "التعيينات غير النشطة",
+        "totalAssignments": "إجمالي التعيينات"
+      }
     },
     "secretaries": {
       "list": "قائمة السكرتارية",
@@ -1106,7 +1159,12 @@
     },
     "collectionsPage": {
       "title": "التحصيل والأرصدة",
-      "subtitle": "متابعة أرصدة الأطباء وتسجيل المدفوعات"
+      "subtitle": "متابعة أرصدة الأطباء وتسجيل المدفوعات",
+      "stats": {
+        "totalBalance": "الرصيد المعلق",
+        "totalPaid": "إجمالي المحصّل",
+        "doctorsWithBalance": "أطباء لديهم رصيد"
+      }
     },
     "doctorReportPage": {
       "title": "تقرير تفصيلي",
@@ -1263,7 +1321,15 @@
     },
     "feedbacksPage": {
       "title": "الشكاوى والاقتراحات",
-      "subtitle": "عرض وإدارة جميع الشكاوى والاقتراحات"
+      "subtitle": "عرض وإدارة جميع الشكاوى والاقتراحات",
+      "stats": {
+        "total": "إجمالي الملاحظات",
+        "new": "جديد",
+        "inReview": "قيد المراجعة",
+        "resolved": "تم الحل",
+        "complaints": "شكاوى",
+        "suggestions": "اقتراحات"
+      }
     },
     "feedbacks": {
       "total": "الإجمالي",

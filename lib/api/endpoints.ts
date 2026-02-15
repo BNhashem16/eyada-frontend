@@ -166,9 +166,13 @@ export const DOCTOR_SECRETARIES_ENDPOINTS = {
 
 // Admin endpoints (requires ADMIN role)
 export const ADMIN_ENDPOINTS = {
+  // Dashboard
+  DASHBOARD_STATISTICS: "/admin/dashboard/statistics",
+
   // Doctors management
   DOCTORS: "/admin/doctors",
   DOCTOR: (id: string) => `/admin/doctors/${id}`,
+  DOCTORS_STATISTICS: "/admin/doctors/statistics",
   APPROVE_DOCTOR: (id: string) => `/admin/doctors/${id}/approve`,
   REJECT_DOCTOR: (id: string) => `/admin/doctors/${id}/reject`,
   SUSPEND_DOCTOR: (id: string) => `/admin/doctors/${id}/suspend`,
@@ -176,12 +180,14 @@ export const ADMIN_ENDPOINTS = {
   // Patients management
   PATIENTS: "/admin/patients",
   PATIENT: (id: string) => `/admin/patients/${id}`,
+  PATIENTS_STATISTICS: "/admin/patients/statistics",
   APPROVE_PATIENT: (id: string) => `/admin/patients/${id}/approve`,
   REJECT_PATIENT: (id: string) => `/admin/patients/${id}/reject`,
   SUSPEND_PATIENT: (id: string) => `/admin/patients/${id}/suspend`,
 
   // Specialties (CRUD) - per Swagger: /admin/specialties
   SPECIALTIES: "/admin/specialties",
+  SPECIALTIES_STATISTICS: "/admin/specialties/statistics",
   SPECIALTY: (id: string) => `/admin/specialties/${id}`,
 
   // Locations (CRUD) - per Swagger: /admin/states, /admin/cities
@@ -193,6 +199,7 @@ export const ADMIN_ENDPOINTS = {
   // Secretaries management
   SECRETARIES: "/admin/secretaries",
   SECRETARY: (id: string) => `/admin/secretaries/${id}`,
+  SECRETARIES_STATISTICS: "/admin/secretaries/statistics",
   ASSIGN_SECRETARY: "/admin/secretaries/assign",
   SECRETARY_ASSIGNMENT: (assignmentId: string) =>
     `/admin/secretaries/assignment/${assignmentId}`,
@@ -224,6 +231,7 @@ export const ADMIN_ENDPOINTS = {
 
   // Feedbacks management
   FEEDBACKS: "/admin/feedbacks",
+  FEEDBACKS_STATISTICS: "/admin/feedbacks/statistics",
   FEEDBACK: (id: string) => `/admin/feedbacks/${id}`,
   FEEDBACK_STATUS: (id: string) => `/admin/feedbacks/${id}/status`,
 

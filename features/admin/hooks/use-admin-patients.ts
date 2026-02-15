@@ -11,6 +11,27 @@ import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
 
+// ==================== Statistics ====================
+
+export interface PatientStatistics {
+  totalPatients: number;
+  approved: number;
+  pending: number;
+  rejected: number;
+  suspended: number;
+  newThisMonth: number;
+}
+
+export function useAdminPatientStatistics() {
+  return useQuery({
+    queryKey: ["admin-patients-statistics"],
+    queryFn: async () => {
+      return apiGet<PatientStatistics>(ADMIN_ENDPOINTS.PATIENTS_STATISTICS);
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
 // Filter options for admin patients list
 export interface AdminPatientsFilters {
   page?: number;

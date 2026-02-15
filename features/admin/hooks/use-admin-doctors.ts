@@ -11,6 +11,28 @@ import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
 
+// ==================== Statistics ====================
+
+export interface DoctorStatistics {
+  totalDoctors: number;
+  approved: number;
+  pending: number;
+  rejected: number;
+  suspended: number;
+  newThisMonth: number;
+  averageRating: number;
+}
+
+export function useAdminDoctorStatistics() {
+  return useQuery({
+    queryKey: ["admin-doctors-statistics"],
+    queryFn: async () => {
+      return apiGet<DoctorStatistics>(ADMIN_ENDPOINTS.DOCTORS_STATISTICS);
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
 // Filter options for admin doctors list
 export interface AdminDoctorsFilters {
   page?: number;

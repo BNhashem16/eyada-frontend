@@ -915,7 +915,15 @@
       "filterByCity": "Filter by city",
       "activeStatus": "Active status",
       "allStates": "All States",
-      "allCities": "All Cities"
+      "allCities": "All Cities",
+      "stats": {
+        "total": "Total Doctors",
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected",
+        "suspended": "Suspended",
+        "newThisMonth": "New This Month"
+      }
     },
     "patients": {
       "title": "Manage Patients",
@@ -937,7 +945,15 @@
       "approveMessage": "The patient's account will be activated and they can book appointments.",
       "rejectMessage": "The patient's request will be rejected and they won't be able to use the platform.",
       "suspendMessage": "The patient's account will be temporarily suspended and they won't be able to book appointments.",
-      "activeStatus": "Active status"
+      "activeStatus": "Active status",
+      "stats": {
+        "total": "Total Patients",
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected",
+        "suspended": "Suspended",
+        "newThisMonth": "New This Month"
+      }
     },
     "locations": {
       "title": "Manage Locations",
@@ -961,28 +977,65 @@
     "specialtiesPage": {
       "title": "Manage Specialties",
       "subtitle": "Add, edit, and delete medical specialties",
-      "searchPlaceholder": "Search specialties..."
+      "searchPlaceholder": "Search specialties...",
+      "stats": {
+        "total": "Total Specialties",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
     },
     "commissionsPage": {
       "title": "Manage Commissions",
-      "subtitle": "Set and manage doctor commissions"
+      "subtitle": "Set and manage doctor commissions",
+      "stats": {
+        "totalDoctors": "Total Doctors",
+        "totalCommission": "Total Commissions",
+        "totalPaid": "Total Paid",
+        "totalBalance": "Total Balance"
+      }
     },
     "appointmentsPage": {
       "title": "Manage Appointments",
       "subtitle": "View and manage all appointments in the system",
-      "cancelledByAdmin": "Cancelled by admin"
+      "cancelledByAdmin": "Cancelled by admin",
+      "stats": {
+        "total": "Total Appointments",
+        "completed": "Completed",
+        "pending": "Pending",
+        "cancelled": "Cancelled",
+        "totalRevenue": "Total Revenue",
+        "paidRevenue": "Paid Revenue",
+        "unpaidRevenue": "Unpaid Revenue"
+      }
     },
     "clinicsPage": {
       "title": "Manage Clinics",
-      "subtitle": "View and manage all clinics in the system"
+      "subtitle": "View and manage all clinics in the system",
+      "stats": {
+        "total": "Total Clinics",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
     },
     "ratingsPage": {
       "title": "Manage Ratings",
-      "subtitle": "View and manage all ratings in the system"
+      "subtitle": "View and manage all ratings in the system",
+      "stats": {
+        "total": "Total Ratings",
+        "averageRating": "Average Rating",
+        "visible": "Visible",
+        "hidden": "Hidden"
+      }
     },
     "secretariesPage": {
       "title": "Manage Secretaries",
-      "subtitle": "View and manage all secretaries in the system"
+      "subtitle": "View and manage all secretaries in the system",
+      "stats": {
+        "total": "Total Secretaries",
+        "activeAssignments": "Active Assignments",
+        "inactiveAssignments": "Inactive Assignments",
+        "totalAssignments": "Total Assignments"
+      }
     },
     "secretaries": {
       "list": "Secretaries List",
@@ -1106,7 +1159,12 @@
     },
     "collectionsPage": {
       "title": "Collections & Balances",
-      "subtitle": "Track doctor balances and record payments"
+      "subtitle": "Track doctor balances and record payments",
+      "stats": {
+        "totalBalance": "Outstanding Balance",
+        "totalPaid": "Total Collected",
+        "doctorsWithBalance": "Doctors With Balance"
+      }
     },
     "doctorReportPage": {
       "title": "Detailed Report",
@@ -1263,7 +1321,15 @@
     },
     "feedbacksPage": {
       "title": "Complaints & Suggestions",
-      "subtitle": "View and manage all complaints and suggestions"
+      "subtitle": "View and manage all complaints and suggestions",
+      "stats": {
+        "total": "Total Feedbacks",
+        "new": "New",
+        "inReview": "In Review",
+        "resolved": "Resolved",
+        "complaints": "Complaints",
+        "suggestions": "Suggestions"
+      }
     },
     "feedbacks": {
       "total": "Total",

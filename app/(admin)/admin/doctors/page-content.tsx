@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Users } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
+import { DoctorsStatsCards } from "@/features/admin";
 
 const AdminDoctorsList = dynamic(
   () =>
@@ -41,6 +42,9 @@ export function AdminDoctorsContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <DoctorsStatsCards />
 
       {/* All Doctors List with Filters */}
       <AdminDoctorsList />

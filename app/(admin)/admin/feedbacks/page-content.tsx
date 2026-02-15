@@ -1,7 +1,7 @@
 "use client";
 
 import { MessageSquareHeart } from "lucide-react";
-import { AdminFeedbacksList } from "@/features/admin";
+import { AdminFeedbacksList, FeedbacksStatsCards } from "@/features/admin";
 import { useTranslation } from "@/lib/i18n";
 
 export function AdminFeedbacksContent() {
@@ -25,6 +25,9 @@ export function AdminFeedbacksContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <FeedbacksStatsCards />
 
       {/* Feedbacks Management */}
       <AdminFeedbacksList />

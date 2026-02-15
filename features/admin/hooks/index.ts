@@ -1,3 +1,4 @@
+export * from "./use-admin-dashboard";
 export * from "./use-admin-doctors";
 export * from "./use-admin-patients";
 export * from "./use-admin-specialties";
