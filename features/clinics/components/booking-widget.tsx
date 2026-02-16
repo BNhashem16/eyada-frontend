@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { useClinicServices, useClinicPrepaymentInfo } from "../hooks/use-clinics";
+import { useClinicServices, useClinicPrepaymentInfo, useClinic } from "../hooks/use-clinics";
 import { PrepaymentInstructions } from "./prepayment-instructions";
 import { usePatientFamily } from "@/features/patients/hooks/use-patient";
 import { useUser, useIsAuthenticated } from "@/lib/auth/store";
@@ -75,6 +75,11 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     price: number;
     paymentAccounts: DoctorPaymentAccount[];
     whatsappNumber?: string;
+    patientName: string;
+    appointmentDate: string;
+    serviceName: string;
+    doctorName: string;
+    clinicName: string;
   } | null>(null);
 
   // Queries
@@ -89,6 +94,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     isError: familyError,
   } = usePatientFamily();
   const { data: prepaymentInfo } = useClinicPrepaymentInfo(clinicId);
+  const { data: clinic } = useClinic(clinicId);
 
   // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({
@@ -141,11 +147,37 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         prepaymentInfo?.requirePrepayment &&
         prepaymentInfo.paymentAccounts.length > 0
       ) {
+        // Compute patient name
+        const patientName =
+          bookingFor === "self"
+            ? user?.fullName || user?.name || ""
+            : (() => {
+                const member = familyMembers?.find(
+                  (m) => m.id === selectedFamilyMemberId,
+                );
+                return (
+                  member?.fullName ||
+                  member?.user?.fullName ||
+                  member?.user?.name ||
+                  ""
+                );
+              })();
+
         setBookingResult({
           bookingNumber: data.bookingNumber || "",
           price: data.price || selectedService?.price as number || 0,
           paymentAccounts: prepaymentInfo.paymentAccounts,
           whatsappNumber: prepaymentInfo.prepaymentWhatsapp,
+          patientName,
+          appointmentDate: selectedDate
+            ? formatDate(selectedDate, "EEEE, d MMMM yyyy")
+            : "",
+          serviceName:
+            getLocalizedText(selectedService?.name, locale) ||
+            selectedService?.serviceType ||
+            "",
+          doctorName: clinic?.doctorProfile?.user?.fullName || "",
+          clinicName: getLocalizedText(clinic?.name, locale) || "",
         });
         setShowPrepaymentDialog(true);
       } else {
@@ -509,6 +541,11 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
           price={bookingResult.price}
           paymentAccounts={bookingResult.paymentAccounts}
           whatsappNumber={bookingResult.whatsappNumber}
+          patientName={bookingResult.patientName}
+          appointmentDate={bookingResult.appointmentDate}
+          serviceName={bookingResult.serviceName}
+          doctorName={bookingResult.doctorName}
+          clinicName={bookingResult.clinicName}
         />
       )}
     </Card>

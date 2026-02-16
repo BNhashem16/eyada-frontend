@@ -375,9 +375,12 @@ export function SecretaryAppointmentDetails({
             {appointment.bookedForPatient?.user?.email && (
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                <span className="truncate">
+                <a
+                  href={`mailto:${appointment.bookedForPatient.user.email}`}
+                  className="truncate hover:text-primary-600 hover:underline"
+                >
                   {appointment.bookedForPatient.user.email}
-                </span>
+                </a>
               </div>
             )}
           </div>

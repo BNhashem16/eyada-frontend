@@ -438,7 +438,17 @@
     "actionCancel": "Cancel",
     "actionArrived": "Arrived",
     "actionNoShow": "No Show",
-    "actionComplete": "Complete"
+    "actionComplete": "Complete",
+    "bookingDetails": "Booking Details",
+    "bookingSource": "Booking Source",
+    "bookingSourcePhone": "Phone",
+    "bookingSourceClinic": "Clinic",
+    "paymentStatusLabel": "Payment Status",
+    "paymentPending": "Pending",
+    "paymentPaid": "Paid",
+    "appointmentStatusLabel": "Appointment Status",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed"
   },
   "status": {
     "pending": "Pending",
@@ -472,7 +482,7 @@
     "enabled": "Prepayment is enabled",
     "disabled": "Prepayment is disabled",
     "whatsappNumber": "WhatsApp Number for Receipts",
-    "whatsappHint": "Patients will send payment receipts to this number",
+    "whatsappHint": "Patients will send payment receipts to this number (supports international numbers)",
     "paymentAccounts": "Payment Accounts",
     "addAccount": "Add Payment Account",
     "editAccount": "Edit Payment Account",
@@ -496,7 +506,9 @@
     "amount": "Amount to Pay",
     "viewInstructions": "View Payment Instructions",
     "bookingNumber": "Booking Number",
-    "whatsappMessage": "Booking Number: {bookingNumber} - Amount: {amount} EGP",
+    "whatsappMessage": "*Prepayment Receipt*\n\nBooking Number: {bookingNumber}\nPatient Name: {patientName}\nAppointment Date: {appointmentDate}\nClinic: {clinicName}\nDoctor: {doctorName}\nService: {serviceName}\nAmount Paid: {amount} EGP\nPayment Method: {paymentMethod}",
+    "selectPaymentMethod": "Select Payment Method",
+    "paymentMethodRequired": "You must select a payment method before sending",
     "doneButton": "Done - Go to Appointments",
     "importantNote": "Important: Your booking will be confirmed after payment verification",
     "stats": {
@@ -1065,6 +1077,8 @@
       "title": "Manage Appointments",
       "subtitle": "View and manage all appointments in the system",
       "cancelledByAdmin": "Cancelled by admin",
+      "bookAppointment": "Book Appointment",
+      "bookAppointmentDesc": "Book a new appointment for a patient at any clinic",
       "stats": {
         "total": "Total Appointments",
         "completed": "Completed",

@@ -674,6 +674,9 @@ export interface CreateWalkInAppointmentData {
   patientName: string;
   patientDateOfBirth: string;
   patientPhone?: string;
+  bookingSource: "PHONE" | "CLINIC";
+  paymentStatus: "PENDING" | "PAID";
+  status: "PENDING" | "CONFIRMED";
   notes?: string;
   symptoms?: string;
 }

@@ -438,7 +438,17 @@
     "actionCancel": "إلغاء",
     "actionArrived": "وصل",
     "actionNoShow": "لم يحضر",
-    "actionComplete": "إنهاء"
+    "actionComplete": "إنهاء",
+    "bookingDetails": "تفاصيل الحجز",
+    "bookingSource": "مصدر الحجز",
+    "bookingSourcePhone": "تليفون",
+    "bookingSourceClinic": "عيادة",
+    "paymentStatusLabel": "حالة الدفع",
+    "paymentPending": "قيد الانتظار",
+    "paymentPaid": "مدفوع",
+    "appointmentStatusLabel": "حالة الحجز",
+    "statusPending": "قيد الانتظار",
+    "statusConfirmed": "مؤكد"
   },
   "status": {
     "pending": "قيد الانتظار",
@@ -472,7 +482,7 @@
     "enabled": "الدفع المسبق مفعّل",
     "disabled": "الدفع المسبق معطّل",
     "whatsappNumber": "رقم واتساب لاستقبال الإيصالات",
-    "whatsappHint": "المرضى سيرسلون إيصالات الدفع إلى هذا الرقم",
+    "whatsappHint": "المرضى سيرسلون إيصالات الدفع إلى هذا الرقم (يدعم الأرقام الدولية)",
     "paymentAccounts": "حسابات الدفع",
     "addAccount": "إضافة حساب دفع",
     "editAccount": "تعديل حساب دفع",
@@ -496,7 +506,9 @@
     "amount": "المبلغ المطلوب",
     "viewInstructions": "عرض تعليمات الدفع",
     "bookingNumber": "رقم الحجز",
-    "whatsappMessage": "رقم الحجز: {bookingNumber} - المبلغ: {amount} جنيه",
+    "whatsappMessage": "*إيصال دفع مسبق*\n\nرقم الحجز: {bookingNumber}\nاسم المريض: {patientName}\nتاريخ الموعد: {appointmentDate}\nالعيادة: {clinicName}\nالدكتور: {doctorName}\nالخدمة: {serviceName}\nالمبلغ المدفوع: {amount} جنيه\nطريقة الدفع: {paymentMethod}",
+    "selectPaymentMethod": "اختر طريقة الدفع",
+    "paymentMethodRequired": "يجب اختيار طريقة الدفع قبل الإرسال",
     "doneButton": "تم - الذهاب للمواعيد",
     "importantNote": "مهم: سيتم تأكيد حجزك بعد التحقق من الدفع",
     "stats": {
@@ -1065,6 +1077,8 @@
       "title": "إدارة المواعيد",
       "subtitle": "عرض وإدارة جميع المواعيد في النظام",
       "cancelledByAdmin": "تم الإلغاء بواسطة الإدارة",
+      "bookAppointment": "حجز موعد",
+      "bookAppointmentDesc": "حجز موعد جديد لمريض في أي عيادة",
       "stats": {
         "total": "إجمالي المواعيد",
         "completed": "مكتمل",

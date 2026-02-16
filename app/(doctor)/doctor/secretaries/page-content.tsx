@@ -226,14 +226,21 @@ export function DoctorSecretariesContent() {
               <CardContent className="space-y-3">
                 {/* Contact Info */}
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <a
+                    href={`mailto:${secretary.email}`}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-primary-600"
+                  >
                     <Mail className="h-4 w-4" />
                     <span>{secretary.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  </a>
+                  <a
+                    href={`tel:${secretary.phoneNumber}`}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-primary-600"
+                    dir="ltr"
+                  >
                     <Phone className="h-4 w-4" />
-                    <span dir="ltr">{secretary.phoneNumber}</span>
-                  </div>
+                    <span>{secretary.phoneNumber}</span>
+                  </a>
                 </div>
 
                 {/* Assigned Clinics */}

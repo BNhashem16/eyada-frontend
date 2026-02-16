@@ -459,9 +459,13 @@ export function AdminClinicsList() {
                           <p className="font-medium">
                             {clinic.doctorProfile?.user.fullName}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <a
+                            href={`tel:${clinic.doctorProfile?.user.phoneNumber}`}
+                            className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                            dir="ltr"
+                          >
                             {clinic.doctorProfile?.user.phoneNumber}
-                          </p>
+                          </a>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -489,10 +493,14 @@ export function AdminClinicsList() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
+                        <a
+                          href={`tel:${clinic.phone}`}
+                          className="flex items-center gap-1 text-sm hover:text-primary-600"
+                          dir="ltr"
+                        >
                           <Phone className="h-3 w-3" />
                           {clinic.phone}
-                        </div>
+                        </a>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -583,10 +591,14 @@ export function AdminClinicsList() {
                   <p className="text-sm text-muted-foreground">
                     {getLocalizedText(selectedClinic.address, locale)}
                   </p>
-                  <div className="flex items-center gap-1 text-sm">
+                  <a
+                    href={`tel:${selectedClinic.phone}`}
+                    className="flex items-center gap-1 text-sm hover:text-primary-600"
+                    dir="ltr"
+                  >
                     <Phone className="h-3 w-3" />
                     {selectedClinic.phone}
-                  </div>
+                  </a>
                 </div>
 
                 <div className="space-y-2">
@@ -597,12 +609,19 @@ export function AdminClinicsList() {
                   <p className="font-medium">
                     {selectedClinic.doctorProfile?.user.fullName}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <a
+                    href={`tel:${selectedClinic.doctorProfile?.user.phoneNumber}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                    dir="ltr"
+                  >
                     {selectedClinic.doctorProfile?.user.phoneNumber}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
+                  </a>
+                  <a
+                    href={`mailto:${selectedClinic.doctorProfile?.user.email}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                  >
                     {selectedClinic.doctorProfile?.user.email}
-                  </p>
+                  </a>
                 </div>
               </div>
 

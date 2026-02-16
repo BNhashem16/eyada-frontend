@@ -42,6 +42,12 @@ export enum PaymentMethod {
   ETISALAT_CASH = "ETISALAT_CASH",
 }
 
+// Booking source (how the appointment was booked)
+export enum BookingSource {
+  PHONE = "PHONE",
+  CLINIC = "CLINIC",
+}
+
 // Types of medical services
 export enum ServiceType {
   FIRST_VISIT = "FIRST_VISIT",

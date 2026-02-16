@@ -30,6 +30,11 @@ interface PrepaymentInstructionsProps {
   price: number;
   paymentAccounts: DoctorPaymentAccount[];
   whatsappNumber?: string;
+  patientName: string;
+  appointmentDate: string;
+  serviceName: string;
+  doctorName: string;
+  clinicName: string;
 }
 
 export function PrepaymentInstructions({
@@ -39,10 +44,16 @@ export function PrepaymentInstructions({
   price,
   paymentAccounts,
   whatsappNumber,
+  patientName,
+  appointmentDate,
+  serviceName,
+  doctorName,
+  clinicName,
 }: PrepaymentInstructionsProps) {
   const { t, locale } = useTranslation();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string>("");
 
   const handleCopyBookingNumber = async () => {
     try {
@@ -75,13 +86,25 @@ export function PrepaymentInstructions({
     }
   };
 
+  const selectedAccount = paymentAccounts.find((a) => a.id === selectedPaymentMethodId);
+  const selectedPaymentMethodName = selectedAccount?.paymentMethod
+    ? getLocalizedText(selectedAccount.paymentMethod.name, locale)
+    : "";
+
   const whatsappMessage = t("prepayment.whatsappMessage")
     .replace("{bookingNumber}", bookingNumber)
-    .replace("{amount}", price.toString());
+    .replace("{patientName}", patientName)
+    .replace("{appointmentDate}", appointmentDate)
+    .replace("{clinicName}", clinicName)
+    .replace("{doctorName}", doctorName)
+    .replace("{serviceName}", serviceName)
+    .replace("{amount}", price.toString())
+    .replace("{paymentMethod}", selectedPaymentMethodName);
 
-  const whatsappLink = whatsappNumber
-    ? `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(whatsappMessage)}`
-    : null;
+  const whatsappLink =
+    whatsappNumber && selectedPaymentMethodId
+      ? `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(whatsappMessage)}`
+      : null;
 
   const handleDone = () => {
     onOpenChange(false);
@@ -90,7 +113,7 @@ export function PrepaymentInstructions({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-primary-600" />
@@ -103,12 +126,12 @@ export function PrepaymentInstructions({
 
         <div className="space-y-4">
           {/* Booking Number */}
-          <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 text-center">
+          <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 sm:p-4 text-center">
             <p className="text-sm text-muted-foreground mb-1">
               {t("prepayment.bookingNumber")}
             </p>
             <div className="flex items-center justify-center gap-2">
-              <span className="text-2xl font-bold text-primary-600 dark:text-primary-400 font-mono" dir="ltr">
+              <span className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 font-mono break-all" dir="ltr">
                 {bookingNumber}
               </span>
               <Button
@@ -127,11 +150,11 @@ export function PrepaymentInstructions({
           </div>
 
           {/* Amount */}
-          <div className="bg-warning-50 dark:bg-warning-900/20 rounded-lg p-4 text-center">
+          <div className="bg-warning-50 dark:bg-warning-900/20 rounded-lg p-3 sm:p-4 text-center">
             <p className="text-sm text-muted-foreground mb-1">
               {t("prepayment.amount")}
             </p>
-            <span className="text-2xl font-bold text-warning-600 dark:text-warning-400">
+            <span className="text-lg sm:text-2xl font-bold text-warning-600 dark:text-warning-400">
               {price} {t("common.egp")}
             </span>
           </div>
@@ -145,37 +168,59 @@ export function PrepaymentInstructions({
                 {t("prepayment.paymentAccounts")}
               </h4>
               <div className="space-y-2">
-                {paymentAccounts.map((account) => (
-                  <div
-                    key={account.id}
-                    className="flex items-center justify-between p-3 rounded-lg border"
-                  >
-                    <div>
-                      <p className="font-medium text-foreground text-sm">
-                        {account.paymentMethod
-                          ? getLocalizedText(account.paymentMethod.name, locale)
-                          : ""}
-                      </p>
-                      <p className="text-sm text-muted-foreground font-mono" dir="ltr">
-                        {account.accountNumber}
-                      </p>
-                      {account.accountName && (
-                        <p className="text-xs text-muted-foreground">
-                          {account.accountName}
-                        </p>
-                      )}
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleCopyAccount(account.accountNumber)}
+                {paymentAccounts.map((account) => {
+                  const isSelected = selectedPaymentMethodId === account.id;
+                  return (
+                    <button
+                      key={account.id}
+                      type="button"
+                      onClick={() => setSelectedPaymentMethodId(account.id)}
+                      className={`flex items-center justify-between gap-2 p-3 rounded-lg border w-full text-start transition-colors ${
+                        isSelected
+                          ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20 ring-1 ring-primary-500"
+                          : "hover:bg-muted/50"
+                      }`}
                     >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-foreground text-sm truncate">
+                          {account.paymentMethod
+                            ? getLocalizedText(account.paymentMethod.name, locale)
+                            : ""}
+                        </p>
+                        <p className="text-xs sm:text-sm text-muted-foreground font-mono break-all" dir="ltr">
+                          {account.accountNumber}
+                        </p>
+                        {account.accountName && (
+                          <p className="text-xs text-muted-foreground">
+                            {account.accountName}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {isSelected && (
+                          <Check className="h-5 w-5 text-primary-600" />
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopyAccount(account.accountNumber);
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+              {!selectedPaymentMethodId && (
+                <p className="text-xs text-warning-600 dark:text-warning-400 mt-2">
+                  {t("prepayment.paymentMethodRequired")}
+                </p>
+              )}
             </div>
           )}
 
@@ -194,15 +239,24 @@ export function PrepaymentInstructions({
           </div>
 
           {/* WhatsApp Button */}
-          {whatsappLink && (
+          {whatsappNumber && (
             <a
-              href={whatsappLink}
-              target="_blank"
+              href={whatsappLink || "#"}
+              target={whatsappLink ? "_blank" : undefined}
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full p-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors"
+              onClick={(e) => {
+                if (!whatsappLink) e.preventDefault();
+              }}
+              className={`flex items-center justify-center gap-2 w-full p-3 rounded-lg font-medium transition-colors ${
+                whatsappLink
+                  ? "bg-green-600 hover:bg-green-700 text-white"
+                  : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              }`}
             >
               <MessageCircle className="h-5 w-5" />
-              {t("prepayment.sendViaWhatsapp")}
+              {whatsappLink
+                ? t("prepayment.sendViaWhatsapp")
+                : t("prepayment.selectPaymentMethod")}
             </a>
           )}
 

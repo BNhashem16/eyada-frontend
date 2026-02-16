@@ -124,6 +124,7 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
   const [showRatingDialog, setShowRatingDialog] = useState(false);
 
   const [copiedBooking, setCopiedBooking] = useState(false);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string>("");
 
   const {
     data: appointment,
@@ -482,43 +483,71 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
                   {t("prepayment.paymentAccounts")}
                 </h4>
                 <div className="space-y-2">
-                  {prepaymentInfo.paymentAccounts.map((account) => (
-                    <div
-                      key={account.id}
-                      className="flex items-center justify-between p-3 rounded-lg border"
-                    >
-                      <div>
-                        <p className="font-medium text-foreground text-sm">
-                          {account.paymentMethod
-                            ? getLocalizedText(
-                                account.paymentMethod.name,
-                                locale,
-                              )
-                            : ""}
-                        </p>
-                        <p
-                          className="text-sm text-muted-foreground font-mono"
-                          dir="ltr"
-                        >
-                          {account.accountNumber}
-                        </p>
-                        {account.accountName && (
-                          <p className="text-xs text-muted-foreground">
-                            {account.accountName}
-                          </p>
-                        )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => handleCopyText(account.accountNumber)}
+                  {prepaymentInfo.paymentAccounts.map((account) => {
+                    const isSelected = selectedPaymentMethodId === account.id;
+                    return (
+                      <button
+                        key={account.id}
+                        type="button"
+                        onClick={() => setSelectedPaymentMethodId(account.id)}
+                        className={`flex items-center justify-between p-3 rounded-lg border w-full text-start transition-colors ${
+                          isSelected
+                            ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20 ring-1 ring-primary-500"
+                            : "hover:bg-muted/50"
+                        }`}
                       >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
+                        <div>
+                          <p className="font-medium text-foreground text-sm">
+                            {account.paymentMethod
+                              ? getLocalizedText(
+                                  account.paymentMethod.name,
+                                  locale,
+                                )
+                              : ""}
+                          </p>
+                          <p
+                            className="text-sm text-muted-foreground font-mono"
+                            dir="ltr"
+                          >
+                            {account.accountNumber}
+                          </p>
+                          {account.accountName && (
+                            <p className="text-xs text-muted-foreground">
+                              {account.accountName}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {isSelected && (
+                            <Check className="h-5 w-5 text-primary-600" />
+                          )}
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyText(account.accountNumber);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.stopPropagation();
+                                handleCopyText(account.accountNumber);
+                              }
+                            }}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
+                {!selectedPaymentMethodId && (
+                  <p className="text-xs text-warning-600 dark:text-warning-400 mt-2">
+                    {t("prepayment.paymentMethodRequired")}
+                  </p>
+                )}
               </div>
             )}
 
@@ -546,21 +575,46 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
             </div>
 
             {/* WhatsApp Button */}
-            {prepaymentInfo.prepaymentWhatsapp && (
-              <a
-                href={`https://wa.me/${prepaymentInfo.prepaymentWhatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                  t("prepayment.whatsappMessage")
-                    .replace("{bookingNumber}", appointment.bookingNumber || "")
-                    .replace("{amount}", appointment.price.toString()),
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full p-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors"
-              >
-                <MessageCircle className="h-5 w-5" />
-                {t("prepayment.sendViaWhatsapp")}
-              </a>
-            )}
+            {prepaymentInfo.prepaymentWhatsapp && (() => {
+              const selectedAccount = prepaymentInfo.paymentAccounts.find(
+                (a) => a.id === selectedPaymentMethodId,
+              );
+              const selectedMethodName = selectedAccount?.paymentMethod
+                ? getLocalizedText(selectedAccount.paymentMethod.name, locale)
+                : "";
+              const whatsappMessage = t("prepayment.whatsappMessage")
+                .replace("{bookingNumber}", appointment.bookingNumber || "")
+                .replace("{patientName}", appointment.patientName || "")
+                .replace("{appointmentDate}", formatDate(appointment.appointmentDate, "EEEE, d MMMM yyyy"))
+                .replace("{clinicName}", getLocalizedText(appointment.clinic?.name, locale) || "")
+                .replace("{doctorName}", doctorProfile?.user?.fullName || "")
+                .replace("{serviceName}", getLocalizedText(appointment.serviceName, locale) || "")
+                .replace("{amount}", appointment.price.toString())
+                .replace("{paymentMethod}", selectedMethodName);
+              const whatsappLink = selectedPaymentMethodId
+                ? `https://wa.me/${prepaymentInfo.prepaymentWhatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(whatsappMessage)}`
+                : null;
+              return (
+                <a
+                  href={whatsappLink || "#"}
+                  target={whatsappLink ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (!whatsappLink) e.preventDefault();
+                  }}
+                  className={`flex items-center justify-center gap-2 w-full p-3 rounded-lg font-medium transition-colors ${
+                    whatsappLink
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  {whatsappLink
+                    ? t("prepayment.sendViaWhatsapp")
+                    : t("prepayment.selectPaymentMethod")}
+                </a>
+              );
+            })()}
           </CardContent>
         </Card>
       )}

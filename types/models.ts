@@ -247,6 +247,7 @@ export interface Appointment extends Timestamps {
   cancelledAt?: string;
   bookedBy: string;
   bookedById: string;
+  bookingSource?: string;
   completedAt?: string;
   clinic?: Clinic;
   doctorProfile?: DoctorProfile;

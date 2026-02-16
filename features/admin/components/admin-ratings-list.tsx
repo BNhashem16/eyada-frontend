@@ -438,9 +438,13 @@ export function AdminRatingsList() {
                           <p className="font-medium">
                             {rating.patientProfile?.user.fullName}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <a
+                            href={`tel:${rating.patientProfile?.user.phoneNumber}`}
+                            className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                            dir="ltr"
+                          >
                             {rating.patientProfile?.user.phoneNumber}
-                          </p>
+                          </a>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -554,9 +558,13 @@ export function AdminRatingsList() {
                   <p className="font-medium">
                     {selectedRating.patientProfile?.user.fullName}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <a
+                    href={`tel:${selectedRating.patientProfile?.user.phoneNumber}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                    dir="ltr"
+                  >
                     {selectedRating.patientProfile?.user.phoneNumber}
-                  </p>
+                  </a>
                 </div>
 
                 <div className="space-y-2">

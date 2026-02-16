@@ -408,21 +408,25 @@ export function AdminFeedbacksList() {
                       <TableCell>
                         <div className="space-y-1 text-sm">
                           {feedback.email && (
-                            <div className="flex items-center gap-1 text-muted-foreground">
+                            <a
+                              href={`mailto:${feedback.email}`}
+                              className="flex items-center gap-1 text-muted-foreground hover:text-primary-600"
+                            >
                               <Mail className="h-3 w-3" />
                               <span className="truncate max-w-[150px]">
                                 {feedback.email}
                               </span>
-                            </div>
+                            </a>
                           )}
                           {feedback.phone && (
-                            <div
-                              className="flex items-center gap-1 text-muted-foreground"
+                            <a
+                              href={`tel:${feedback.phone}`}
+                              className="flex items-center gap-1 text-muted-foreground hover:text-primary-600"
                               dir="ltr"
                             >
                               <Phone className="h-3 w-3" />
                               {feedback.phone}
-                            </div>
+                            </a>
                           )}
                         </div>
                       </TableCell>
@@ -513,19 +517,23 @@ export function AdminFeedbacksList() {
                 </h4>
                 <div className="flex flex-col gap-1">
                   {selectedFeedback.email && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <a
+                      href={`mailto:${selectedFeedback.email}`}
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary-600"
+                    >
                       <Mail className="h-4 w-4" />
                       {selectedFeedback.email}
-                    </div>
+                    </a>
                   )}
                   {selectedFeedback.phone && (
-                    <div
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
+                    <a
+                      href={`tel:${selectedFeedback.phone}`}
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary-600"
                       dir="ltr"
                     >
                       <Phone className="h-4 w-4" />
                       {selectedFeedback.phone}
-                    </div>
+                    </a>
                   )}
                 </div>
               </div>

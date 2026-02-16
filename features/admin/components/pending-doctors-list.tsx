@@ -155,14 +155,21 @@ export function PendingDoctorsList() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-2">
+                    <a
+                      href={`mailto:${doctor.user.email}`}
+                      className="flex items-center gap-2 hover:text-primary-600"
+                    >
                       <Mail className="h-4 w-4" />
                       {doctor.user.email}
-                    </span>
-                    <span className="flex items-center gap-2">
+                    </a>
+                    <a
+                      href={`tel:${doctor.user.phoneNumber}`}
+                      className="flex items-center gap-2 hover:text-primary-600"
+                      dir="ltr"
+                    >
                       <Phone className="h-4 w-4" />
                       {doctor.user.phoneNumber}
-                    </span>
+                    </a>
                     {doctor.licenseNumber && (
                       <span className="flex items-center gap-2">
                         <Award className="h-4 w-4" />

@@ -5,18 +5,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
-  Frown,
   Clock,
   CheckCircle,
-  UserCheck,
-  Stethoscope,
   XCircle,
-  Ban,
+  Plus,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SearchableSelect } from "@/components/ui/searchable-select";
 import { AppointmentCard } from "./appointment-card";
 import { RatingDialog } from "./rating-dialog";
 import { CancelDialog } from "./cancel-dialog";
@@ -29,74 +25,57 @@ import { AppointmentStatus } from "@/types/enums";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+
+type FilterTab = "upcoming" | "past" | "cancelled" | "all";
+
+const FILTER_TABS: {
+  key: FilterTab;
+  labelKey: string;
+  icon: React.ElementType;
+  iconColor?: string;
+}[] = [
+  { key: "upcoming", labelKey: "appointments.upcoming", icon: Clock, iconColor: "text-primary-500" },
+  { key: "past", labelKey: "appointments.past", icon: CheckCircle, iconColor: "text-muted-foreground" },
+  { key: "cancelled", labelKey: "appointments.cancelled", icon: XCircle, iconColor: "text-error-500" },
+  { key: "all", labelKey: "common.all", icon: Calendar },
+];
+
+function getFilterParams(tab: FilterTab): {
+  upcoming?: boolean;
+  status?: AppointmentStatus;
+} {
+  switch (tab) {
+    case "upcoming":
+      return { upcoming: true };
+    case "past":
+      return { status: AppointmentStatus.COMPLETED };
+    case "cancelled":
+      return { status: AppointmentStatus.CANCELLED };
+    case "all":
+    default:
+      return {};
+  }
+}
 
 export function AppointmentList() {
   const { t } = useTranslation();
   const { toast } = useToast();
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<FilterTab>("upcoming");
   const [page, setPage] = useState(1);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [ratingAppointment, setRatingAppointment] =
     useState<Appointment | null>(null);
 
-  const statusFilterOptions = useMemo(
-    () => [
-      {
-        value: "all",
-        label: t("common.all"),
-        icon: <Calendar className="h-4 w-4" />,
-      },
-      {
-        value: AppointmentStatus.PENDING,
-        label: t("status.pending"),
-        icon: <Clock className="h-4 w-4 text-warning-500" />,
-      },
-      {
-        value: AppointmentStatus.CONFIRMED,
-        label: t("status.confirmed"),
-        icon: <CheckCircle className="h-4 w-4 text-primary-500" />,
-      },
-      {
-        value: AppointmentStatus.CHECKED_IN,
-        label: t("status.checkedIn"),
-        icon: <UserCheck className="h-4 w-4 text-success-500" />,
-      },
-      {
-        value: AppointmentStatus.IN_PROGRESS,
-        label: t("status.inProgress"),
-        icon: <Stethoscope className="h-4 w-4 text-info-500" />,
-      },
-      {
-        value: AppointmentStatus.COMPLETED,
-        label: t("status.completed"),
-        icon: <CheckCircle className="h-4 w-4 text-muted-foreground" />,
-      },
-      {
-        value: AppointmentStatus.CANCELLED,
-        label: t("status.cancelled"),
-        icon: <XCircle className="h-4 w-4 text-error-500" />,
-      },
-      {
-        value: AppointmentStatus.NO_SHOW,
-        label: t("status.noShow"),
-        icon: <Ban className="h-4 w-4 text-muted-foreground" />,
-      },
-    ],
-    [t],
-  );
-
-  const handleStatusChange = useCallback((value: string) => {
-    setSelectedStatus(value);
+  const handleTabChange = useCallback((tab: FilterTab) => {
+    setActiveTab(tab);
     setPage(1);
   }, []);
 
-  const statusFilter =
-    selectedStatus === "all"
-      ? undefined
-      : (selectedStatus as AppointmentStatus);
+  const filterParams = useMemo(() => getFilterParams(activeTab), [activeTab]);
 
   const { data, isLoading, isError } = usePatientAppointments({
-    status: statusFilter,
+    ...filterParams,
     page,
     limit: 10,
   });
@@ -137,16 +116,24 @@ export function AppointmentList() {
 
   return (
     <div className="space-y-6">
-      {/* Status Filter */}
-      <div>
-        <SearchableSelect
-          options={statusFilterOptions}
-          value={selectedStatus}
-          onValueChange={handleStatusChange}
-          placeholder={t("appointments.status")}
-          showSearch={false}
-          className="w-full sm:w-56"
-        />
+      {/* Filter Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        {FILTER_TABS.map(({ key, labelKey, icon: Icon, iconColor }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => handleTabChange(key)}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors border",
+              activeTab === key
+                ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                : "bg-background text-muted-foreground border-border hover:bg-muted/60 hover:text-foreground",
+            )}
+          >
+            <Icon className={cn("h-4 w-4", activeTab === key ? "text-white" : iconColor)} />
+            {t(labelKey)}
+          </button>
+        ))}
       </div>
 
       {/* Loading */}
@@ -244,6 +231,20 @@ export function AppointmentList() {
           </Button>
         </div>
       )}
+
+      {/* Floating Action Button - Mobile Only */}
+      <div className="fixed bottom-6 left-6 z-50 sm:hidden">
+        <Button
+          asChild
+          size="lg"
+          className="h-14 w-14 rounded-full shadow-lg shadow-primary-500/30"
+        >
+          <Link href="/doctors">
+            <Plus className="h-6 w-6" />
+            <span className="sr-only">{t("appointments.bookNew")}</span>
+          </Link>
+        </Button>
+      </div>
 
       {/* Cancel Dialog */}
       <CancelDialog

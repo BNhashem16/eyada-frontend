@@ -11,13 +11,13 @@ import {
   ArrowRight,
   Building2,
   Stethoscope,
-  Phone,
   CheckCircle2,
   Copy,
   ExternalLink,
   Clock,
   ChevronLeft,
   ChevronRight,
+  Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,14 +46,9 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import { useAdminClinics, useCreateAdminAppointment } from "@/features/admin/hooks";
+import { useClinicServices } from "@/features/clinics/hooks/use-clinics";
 import {
-  useDoctorClinics,
-  useClinicServices,
-  useClinicSchedules,
-  useCreateDoctorAppointment,
-} from "@/features/doctor-portal";
-import {
-  utcTimeToLocal,
   formatDate,
   getWeekDays,
   addDays,
@@ -85,7 +80,21 @@ const dayOrder = [
   DayOfWeek.FRIDAY,
 ];
 
-export function DoctorNewAppointmentContent() {
+function calculateAge(dateOfBirth: string): number {
+  const today = new Date();
+  const birthDate = new Date(dateOfBirth);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+  return age;
+}
+
+export function AdminNewAppointmentContent() {
   const { t, locale } = useTranslation();
   const { toast } = useToast();
   const router = useRouter();
@@ -142,13 +151,12 @@ export function DoctorNewAppointmentContent() {
   } | null>(null);
 
   // Data fetching
-  const { data: clinics, isLoading: clinicsLoading } = useDoctorClinics();
+  const { data: clinicsResponse, isLoading: clinicsLoading } = useAdminClinics({ limit: 100, isActive: true });
+  const clinics = clinicsResponse?.data || [];
   const { data: services, isLoading: servicesLoading } =
     useClinicServices(selectedClinic);
-  const { data: schedules, isLoading: schedulesLoading } =
-    useClinicSchedules(selectedClinic);
 
-  const createAppointment = useCreateDoctorAppointment();
+  const createAppointment = useCreateAdminAppointment();
 
   // Reset dependent fields when clinic changes
   useEffect(() => {
@@ -158,15 +166,6 @@ export function DoctorNewAppointmentContent() {
 
   const selectedClinicData = clinics?.find((c) => c.id === selectedClinic);
   const selectedServiceData = services?.find((s) => s.id === selectedService);
-
-  const sortedSchedules = schedules
-    ? [...schedules]
-        .filter((s) => s.isActive)
-        .sort(
-          (a, b) =>
-            dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek),
-        )
-    : [];
 
   const canSubmit =
     selectedClinic &&
@@ -197,8 +196,8 @@ export function DoctorNewAppointmentContent() {
       });
 
       setSuccessData({
-        bookingNumber: result.bookingNumber,
-        queueNumber: result.queueNumber ?? 0,
+        bookingNumber: (result as any).bookingNumber,
+        queueNumber: (result as any).queueNumber ?? 0,
       });
     } catch (error: unknown) {
       const errorMessage =
@@ -219,309 +218,204 @@ export function DoctorNewAppointmentContent() {
     navigator.clipboard.writeText(trackingUrl);
     toast({
       title: t("toast.success"),
-      description: t("doctor.walkIn.linkCopied"),
+      description: t("secretary.linkCopied"),
       variant: "success",
     });
-  };
-
-  const calculateAge = (dob: string) => {
-    const birthDate = new Date(dob);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age;
   };
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center shrink-0">
-            <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div>
-            <h1 className="text-lg sm:text-2xl font-bold text-foreground">
-              {t("doctor.walkIn.title")}
-            </h1>
-            <p className="text-sm text-muted-foreground hidden sm:block">
-              {t("doctor.walkIn.subtitle")}
-            </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-12 w-12 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+              <Plus className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                {t("admin.appointmentsPage.bookAppointment")}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {t("admin.appointmentsPage.bookAppointmentDesc")}
+              </p>
+            </div>
           </div>
         </div>
         <Button
           variant="outline"
-          onClick={() => router.back()}
-          className="w-full sm:w-auto"
+          onClick={() => router.push("/admin/appointments")}
         >
-          <ArrowRight className="h-4 w-4 ms-2" />
+          <ArrowRight className="h-4 w-4 me-2" />
           {t("common.back")}
         </Button>
       </div>
 
-      {/* No Clinics Warning */}
-      {!clinicsLoading && (!clinics || clinics.length === 0) && (
-        <Alert className="bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <p className="font-medium">{t("doctor.walkIn.noClinics")}</p>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Main Form */}
+      {/* Form Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
           {/* Patient Information */}
           <Card>
             <CardHeader className="pb-3 sm:pb-6">
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t("doctor.walkIn.patientInfo")}
+              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                <User className="h-5 w-5" />
+                {t("secretary.patientInfo")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Patient Name */}
               <div className="space-y-2">
-                <Label>{t("doctor.walkIn.patientName")} *</Label>
+                <Label htmlFor="patientName">
+                  {t("doctor.walkIn.patientName")} *
+                </Label>
                 <Input
+                  id="patientName"
                   value={patientName}
-                  onChange={(e) => setPatientName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setPatientName(e.target.value)
+                  }
                   placeholder={t("doctor.walkIn.patientNamePlaceholder")}
                   maxLength={100}
                 />
               </div>
 
-              {/* Date of Birth & Phone */}
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>{t("doctor.walkIn.patientDob")} *</Label>
                   <DateOfBirthInput
                     value={patientDateOfBirth}
-                    onChange={(val) => setPatientDateOfBirth(val)}
+                    onChange={setPatientDateOfBirth}
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1">
-                    <Phone className="h-3.5 w-3.5" />
+                  <Label htmlFor="patientPhone">
                     {t("doctor.walkIn.patientPhone")}
                   </Label>
                   <Input
+                    id="patientPhone"
                     value={patientPhone}
-                    onChange={(e) => setPatientPhone(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setPatientPhone(e.target.value)
+                    }
                     placeholder={t("doctor.walkIn.patientPhonePlaceholder")}
                     dir="ltr"
                   />
                 </div>
               </div>
-
-              {/* Age display */}
-              {patientDateOfBirth && (
-                <p className="text-sm text-muted-foreground">
-                  {t("family.age")}:{" "}
-                  <span className="font-medium text-foreground">
-                    {calculateAge(patientDateOfBirth)} {t("family.yearsOld")}
-                  </span>
-                </p>
-              )}
             </CardContent>
           </Card>
 
-          {/* Clinic & Service Selection */}
+          {/* Clinic & Service */}
           <Card>
             <CardHeader className="pb-3 sm:pb-6">
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t("doctor.walkIn.clinicAndService")}
+              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                {t("secretary.clinicAndService")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>{t("doctor.walkIn.selectClinic")} *</Label>
+              <div className="space-y-2">
+                <Label>{t("secretary.selectClinic")} *</Label>
+                {clinicsLoading ? (
+                  <div className="h-10 bg-muted animate-pulse rounded-md" />
+                ) : clinics.length === 0 ? (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      {t("secretary.noClinicsAssigned")}
+                    </AlertDescription>
+                  </Alert>
+                ) : (
                   <SearchableSelect
-                    options={
-                      clinics
-                        ?.filter((c) => c.isActive)
-                        .map((clinic) => ({
-                          value: clinic.id,
-                          label: getLocalizedText(clinic.name, locale),
-                          icon: <Building2 className="h-4 w-4" />,
-                        })) || []
-                    }
+                    options={clinics.map((c) => ({
+                      value: c.id,
+                      label: getLocalizedText(c.name, locale),
+                    }))}
                     value={selectedClinic}
                     onValueChange={setSelectedClinic}
-                    placeholder={t("doctor.walkIn.selectClinic")}
-                    searchPlaceholder={t("common.search")}
-                    emptyMessage={t("common.noResults")}
-                    loading={clinicsLoading}
+                    placeholder={t("secretary.selectClinic")}
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t("doctor.walkIn.selectService")} *</Label>
-                  <SearchableSelect
-                    options={
-                      services
-                        ?.filter((s) => s.isActive)
-                        .map((service) => ({
-                          value: service.id,
-                          label: `${getLocalizedText(service.name, locale)} - ${service.price} ${t("common.egp")}`,
-                          description: service.duration
-                            ? `${service.duration} ${t("services.minute")}`
-                            : undefined,
-                          icon: <Stethoscope className="h-4 w-4" />,
-                        })) || []
-                    }
-                    value={selectedService}
-                    onValueChange={setSelectedService}
-                    placeholder={t("doctor.walkIn.selectService")}
-                    searchPlaceholder={t("common.search")}
-                    emptyMessage={
-                      servicesLoading
-                        ? t("common.loading")
-                        : t("clinics.noServicesAvailable")
-                    }
-                    disabled={!selectedClinic}
-                    loading={servicesLoading}
-                  />
-                </div>
+                )}
               </div>
 
-              {selectedServiceData && (
-                <div className="p-3 sm:p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-2">
-                      <Stethoscope className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                      <span className="font-medium">
-                        {getLocalizedText(selectedServiceData.name, locale)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-primary-600">
-                        {selectedServiceData.price} {t("common.egp")}
-                      </Badge>
-                      <Badge variant="outline">
-                        {selectedServiceData.duration} {t("services.minute")}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Clinic Schedule Display */}
               {selectedClinic && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Clock className="h-4 w-4" />
-                    {t("doctor.walkIn.clinicSchedule")}
-                  </div>
-                  {schedulesLoading ? (
-                    <div className="flex items-center justify-center py-4">
-                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : sortedSchedules.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      {t("doctor.walkIn.noSchedules")}
-                    </p>
+                <div className="space-y-2">
+                  <Label>{t("secretary.selectService")} *</Label>
+                  {servicesLoading ? (
+                    <div className="h-10 bg-muted animate-pulse rounded-md" />
                   ) : (
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {sortedSchedules.map((schedule) => (
-                        <div
-                          key={schedule.id}
-                          className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 border text-sm"
-                        >
-                          <span className="font-medium">
-                            {dayNames[schedule.dayOfWeek]}
-                          </span>
-                          <div className="flex flex-col items-end gap-0.5">
-                            {schedule.shifts.map((shift, idx) => (
-                              <span
-                                key={idx}
-                                className="text-muted-foreground text-xs"
-                                dir="ltr"
-                              >
-                                {utcTimeToLocal(shift.startTime)} -{" "}
-                                {utcTimeToLocal(shift.endTime)}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <SearchableSelect
+                      options={
+                        services
+                          ?.filter((s) => s.isActive)
+                          .map((s) => ({
+                            value: s.id,
+                            label: `${getLocalizedText(s.name, locale)} - ${s.price} ${t("common.egp")}`,
+                          })) || []
+                      }
+                      value={selectedService}
+                      onValueChange={setSelectedService}
+                      placeholder={t("secretary.selectService")}
+                    />
                   )}
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Date Selection - Week Calendar */}
+          {/* Date Selection */}
           <Card>
             <CardHeader className="pb-3 sm:pb-6">
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <CalendarIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                {t("doctor.walkIn.selectDate")}
+              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                <CalendarIcon className="h-5 w-5" />
+                {t("secretary.dateAndTime")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between">
-                  <Label>{t("appointments.date")} *</Label>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={goToPreviousWeek}
-                      disabled={!canGoPrevious || !selectedClinic}
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                    <span className="text-sm text-muted-foreground min-w-[80px] text-center">
-                      {formatDate(weekStart, "MMM yyyy")}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={goToNextWeek}
-                      disabled={!selectedClinic}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={goToPreviousWeek}
+                    disabled={!canGoPrevious}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm font-medium">
+                    {formatDate(weekStart, "d MMM")} -{" "}
+                    {formatDate(addDays(weekStart, 6), "d MMM yyyy")}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={goToNextWeek}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
                 </div>
 
-                {/* Week Days Grid */}
-                <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
-                  {weekDays.map((date) => {
+                {/* Week Days */}
+                <div className="grid grid-cols-7 gap-1 sm:gap-2">
+                  {weekDays.map((date, index) => {
                     const isPast = isBefore(date, new Date()) && !isToday(date);
-                    const isSelected =
-                      selectedDate && isSameDay(date, selectedDate);
-                    const today = isToday(date);
-                    const isDisabled = isPast || !selectedClinic;
+                    const isSelected = selectedDate && isSameDay(date, selectedDate);
 
                     return (
                       <button
-                        key={date.toISOString()}
-                        type="button"
-                        onClick={() => !isDisabled && setSelectedDate(date)}
-                        disabled={isDisabled}
+                        key={index}
+                        onClick={() => !isPast && setSelectedDate(date)}
+                        disabled={isPast}
                         className={cn(
-                          "flex flex-col items-center justify-center p-1.5 sm:p-2.5 rounded-lg text-center transition-all",
-                          isDisabled && "opacity-40 cursor-not-allowed",
-                          !isDisabled &&
-                            "hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer",
-                          isSelected &&
-                            "bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-600",
-                          today && !isSelected && "border-2 border-primary-500",
+                          "flex flex-col items-center p-1.5 sm:p-3 rounded-lg transition-all border",
+                          isPast && "opacity-40 cursor-not-allowed bg-muted",
+                          isSelected
+                            ? "bg-primary-600 text-white border-primary-600 shadow-md"
+                            : "hover:bg-accent border-transparent",
+                          isToday(date) &&
+                            !isSelected &&
+                            "border-primary-300 dark:border-primary-700",
                         )}
                       >
                         <span className="text-[10px] sm:text-xs font-medium">
@@ -634,32 +528,32 @@ export function DoctorNewAppointmentContent() {
           <Card>
             <CardHeader className="pb-3 sm:pb-6">
               <CardTitle className="text-base sm:text-lg">
-                {t("doctor.walkIn.additionalInfo")}
+                {t("secretary.additionalInfo")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="symptoms">{t("doctor.walkIn.symptoms")}</Label>
+                <Label htmlFor="symptoms">{t("appointments.symptoms")}</Label>
                 <Textarea
                   id="symptoms"
                   value={symptoms}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setSymptoms(e.target.value)
                   }
-                  placeholder={t("doctor.walkIn.symptomsPlaceholder")}
+                  placeholder={t("secretary.symptomsPlaceholder")}
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes">{t("doctor.walkIn.notes")}</Label>
+                <Label htmlFor="notes">{t("appointments.notes")}</Label>
                 <Textarea
                   id="notes"
                   value={notes}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setNotes(e.target.value)
                   }
-                  placeholder={t("doctor.walkIn.notesPlaceholder")}
+                  placeholder={t("secretary.notesPlaceholder")}
                   rows={3}
                 />
               </div>
@@ -672,14 +566,14 @@ export function DoctorNewAppointmentContent() {
           <Card className="lg:sticky lg:top-4">
             <CardHeader className="pb-3 sm:pb-6">
               <CardTitle className="text-base sm:text-lg">
-                {t("doctor.walkIn.bookingSummary")}
+                {t("secretary.bookingSummary")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 sm:space-y-4">
               {/* Patient Name */}
               <div className="flex items-center justify-between py-2 border-b gap-2">
                 <span className="text-sm text-muted-foreground shrink-0">
-                  {t("doctor.walkIn.patientName")}
+                  {t("patient.fullName")}
                 </span>
                 <span className="font-medium text-sm truncate text-end">
                   {patientName || "-"}
@@ -803,7 +697,7 @@ export function DoctorNewAppointmentContent() {
                 ) : (
                   <>
                     <Plus className="h-4 w-4 me-2" />
-                    {t("doctor.walkIn.confirmBooking")}
+                    {t("secretary.confirmBooking")}
                   </>
                 )}
               </Button>
@@ -819,83 +713,74 @@ export function DoctorNewAppointmentContent() {
       </div>
 
       {/* Success Dialog */}
-      <Dialog open={!!successData} onOpenChange={() => setSuccessData(null)}>
-        <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
+      <Dialog
+        open={!!successData}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSuccessData(null);
+            router.push("/admin/appointments");
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <div className="mx-auto w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
-              <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
-            </div>
-            <DialogTitle className="text-center text-xl">
-              {t("doctor.walkIn.bookingSuccess")}
+            <DialogTitle className="flex items-center gap-2 text-success-600 dark:text-success-400">
+              <CheckCircle2 className="h-5 w-5" />
+              {t("secretary.bookingSuccess")}
             </DialogTitle>
-            <DialogDescription className="text-center">
-              {t("doctor.walkIn.bookingSuccessDesc")}
+            <DialogDescription>
+              {t("secretary.trackingLinkHint")}
             </DialogDescription>
           </DialogHeader>
+          {successData && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-3 bg-muted rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    {t("appointments.bookingNumber")}
+                  </p>
+                  <p className="font-bold text-lg">{successData.bookingNumber}</p>
+                </div>
+                <div className="text-center p-3 bg-muted rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    {t("appointments.queueNumber")}
+                  </p>
+                  <p className="font-bold text-lg">{successData.queueNumber}</p>
+                </div>
+              </div>
 
-          <div className="space-y-4 py-4">
-            {/* Booking Number */}
-            <div className="p-4 bg-muted rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-1">
-                {t("appointments.bookingNumber")}
-              </p>
-              <p className="font-mono text-lg sm:text-xl font-bold text-primary break-all">
-                {successData?.bookingNumber}
-              </p>
-            </div>
-
-            {/* Queue Number */}
-            <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-1">
-                {t("appointments.queueNumber")}
-              </p>
-              <p className="text-3xl font-bold text-primary">
-                {successData?.queueNumber}
-              </p>
-            </div>
-
-            {/* Tracking Link */}
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground text-center">
-                {t("doctor.walkIn.trackingLinkHint")}
-              </p>
-              <div className="flex items-center gap-2">
-                <Input
-                  value={trackingUrl}
-                  readOnly
-                  className="font-mono text-xs sm:text-sm"
-                  dir="ltr"
-                />
+              <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="shrink-0"
+                  className="flex-1"
                   onClick={copyTrackingLink}
                 >
-                  <Copy className="h-4 w-4" />
+                  <Copy className="h-4 w-4 me-2" />
+                  {t("common.copy")}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() =>
+                    window.open(`/track/${successData.bookingNumber}`, "_blank")
+                  }
+                >
+                  <ExternalLink className="h-4 w-4 me-2" />
+                  {t("secretary.openTrackingPage")}
                 </Button>
               </div>
-            </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <Button asChild className="w-full">
-              <a href={trackingUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 me-2" />
-                {t("doctor.walkIn.openTrackingPage")}
-              </a>
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => {
-                setSuccessData(null);
-                router.push("/doctor/appointments");
-              }}
-            >
-              {t("common.back")}
-            </Button>
-          </div>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  setSuccessData(null);
+                  router.push("/admin/appointments");
+                }}
+              >
+                {t("secretary.goToAppointments")}
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

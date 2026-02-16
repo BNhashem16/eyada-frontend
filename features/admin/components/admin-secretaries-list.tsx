@@ -347,16 +347,23 @@ export function AdminSecretariesList() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
+                        <a
+                          href={`mailto:${secretary.email}`}
+                          className="flex items-center gap-1 text-sm hover:text-primary-600"
+                        >
                           <Mail className="h-3 w-3" />
                           {secretary.email}
-                        </div>
+                        </a>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
+                        <a
+                          href={`tel:${secretary.phoneNumber}`}
+                          className="flex items-center gap-1 text-sm hover:text-primary-600"
+                          dir="ltr"
+                        >
                           <Phone className="h-3 w-3" />
                           {secretary.phoneNumber}
-                        </div>
+                        </a>
                       </TableCell>
                       <TableCell>
                         {secretary.assignments?.length ? (
@@ -463,13 +470,24 @@ export function AdminSecretariesList() {
                   <p className="text-sm text-muted-foreground">
                     {t("admin.secretaries.email")}
                   </p>
-                  <p className="font-medium">{selectedSecretary.email}</p>
+                  <a
+                    href={`mailto:${selectedSecretary.email}`}
+                    className="font-medium hover:text-primary-600 hover:underline"
+                  >
+                    {selectedSecretary.email}
+                  </a>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("admin.secretaries.phone")}
                   </p>
-                  <p className="font-medium">{selectedSecretary.phoneNumber}</p>
+                  <a
+                    href={`tel:${selectedSecretary.phoneNumber}`}
+                    className="font-medium hover:text-primary-600 hover:underline"
+                    dir="ltr"
+                  >
+                    {selectedSecretary.phoneNumber}
+                  </a>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">

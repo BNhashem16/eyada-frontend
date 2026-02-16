@@ -293,10 +293,13 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                <span className="flex items-center gap-2">
+                <a
+                  href={`mailto:${doctor.user?.email}`}
+                  className="flex items-center gap-2 hover:text-primary-600"
+                >
                   <Mail className="h-4 w-4" />
                   {doctor.user?.email}
-                </span>
+                </a>
                 <a
                   href={`tel:${doctor.user?.phoneNumber}`}
                   className="flex items-center gap-2 hover:text-primary-600"
@@ -323,7 +326,14 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
           <CardContent className="space-y-4">
             <InfoRow
               label={t("admin.doctorDetails.email")}
-              value={doctor.user?.email}
+              value={
+                <a
+                  href={`mailto:${doctor.user?.email}`}
+                  className="hover:text-primary-600 hover:underline"
+                >
+                  {doctor.user?.email}
+                </a>
+              }
             />
             <Separator />
             <InfoRow

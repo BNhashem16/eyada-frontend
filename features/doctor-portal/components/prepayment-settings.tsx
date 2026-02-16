@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PhoneInputWithCode } from "@/components/ui/phone-input-with-code";
 import {
   useDoctorProfile,
   useUpdateDoctorProfile,
@@ -170,35 +171,36 @@ export function PrepaymentSettings() {
 
           <Separator />
 
-          <div className="flex gap-2 items-end">
-            <div className="flex-1">
-              <Label className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4 text-green-600" />
-                {t("prepayment.whatsappNumber")}
-              </Label>
-              <Input
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
-                placeholder="01xxxxxxxxx"
-                dir="ltr"
-                className="mt-1"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {t("prepayment.whatsappHint")}
-              </p>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4 text-green-600" />
+              {t("prepayment.whatsappNumber")}
+            </Label>
+            <div className="flex gap-2 items-start">
+              <div className="flex-1">
+                <PhoneInputWithCode
+                  value={whatsapp}
+                  onChange={setWhatsapp}
+                  disabled={updateProfile.isPending}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t("prepayment.whatsappHint")}
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleSaveWhatsapp}
+                disabled={updateProfile.isPending}
+                className="mt-0"
+              >
+                {updateProfile.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  t("common.save")
+                )}
+              </Button>
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleSaveWhatsapp}
-              disabled={updateProfile.isPending}
-            >
-              {updateProfile.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                t("common.save")
-              )}
-            </Button>
           </div>
         </CardContent>
       </Card>

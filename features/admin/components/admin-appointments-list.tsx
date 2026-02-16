@@ -18,6 +18,7 @@ import {
   DollarSign,
   Filter,
   Users,
+  Plus,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -361,6 +362,12 @@ export function AdminAppointmentsList() {
               <Button variant="outline" size="icon" onClick={handleSearch}>
                 <Search className="h-4 w-4" />
               </Button>
+              <Button
+                onClick={() => window.location.href = "/admin/appointments/new"}
+              >
+                <Plus className="h-4 w-4 me-2" />
+                {t("admin.appointmentsPage.bookAppointment")}
+              </Button>
             </div>
 
             <div className="flex gap-2 flex-wrap">
@@ -547,9 +554,13 @@ export function AdminAppointmentsList() {
                           <p className="font-medium">
                             {appointment.patientName}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <a
+                            href={`tel:${appointment.bookedForPatient?.user.phoneNumber}`}
+                            className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                            dir="ltr"
+                          >
                             {appointment.bookedForPatient?.user.phoneNumber}
-                          </p>
+                          </a>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -696,12 +707,19 @@ export function AdminAppointmentsList() {
                     {t("admin.appointments.patientInfo")}
                   </h4>
                   <p>{selectedAppointment.patientName}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <a
+                    href={`tel:${selectedAppointment.bookedForPatient?.user.phoneNumber}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                    dir="ltr"
+                  >
                     {selectedAppointment.bookedForPatient?.user.phoneNumber}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
+                  </a>
+                  <a
+                    href={`mailto:${selectedAppointment.bookedForPatient?.user.email}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                  >
                     {selectedAppointment.bookedForPatient?.user.email}
-                  </p>
+                  </a>
                 </div>
 
                 <div className="space-y-2">
@@ -716,9 +734,13 @@ export function AdminAppointmentsList() {
                   <p className="text-sm text-muted-foreground">
                     {selectedAppointment.clinic?.doctorProfile?.user.fullName}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <a
+                    href={`tel:${selectedAppointment.clinic?.phone}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                    dir="ltr"
+                  >
                     {selectedAppointment.clinic?.phone}
-                  </p>
+                  </a>
                 </div>
               </div>
 
