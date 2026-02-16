@@ -16,6 +16,7 @@ import {
   MessageSquareHeart,
   Link2,
   Bot,
+  CreditCard,
 } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
@@ -57,6 +58,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       href: "/admin/feedbacks",
       label: t("nav.feedbacks"),
       icon: MessageSquareHeart,
+    },
+    {
+      href: "/admin/payment-methods",
+      label: t("nav.paymentMethods"),
+      icon: CreditCard,
     },
     {
       href: "/admin/contact-links",

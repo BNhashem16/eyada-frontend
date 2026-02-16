@@ -37,6 +37,9 @@ export enum PaymentMethod {
   CASH = "CASH",
   CARD = "CARD",
   INSURANCE = "INSURANCE",
+  INSTAPAY = "INSTAPAY",
+  VODAFONE_CASH = "VODAFONE_CASH",
+  ETISALAT_CASH = "ETISALAT_CASH",
 }
 
 // Types of medical services

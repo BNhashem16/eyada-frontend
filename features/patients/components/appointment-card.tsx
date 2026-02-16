@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Appointment } from "@/types";
-import { AppointmentStatus } from "@/types/enums";
+import { AppointmentStatus, PaymentStatus } from "@/types/enums";
 import { formatDate, formatTime, isPast } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { getLocalizedText } from "@/lib/utils/multilingual";
@@ -190,6 +190,12 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                 <Badge variant={statusVariants[appointment.status]}>
                   {statusLabels[appointment.status]}
                 </Badge>
+                {appointment.requiresPrepayment &&
+                  appointment.paymentStatus === PaymentStatus.PENDING && (
+                    <Badge variant="warning" className="text-xs">
+                      {t("prepayment.awaitingPayment")}
+                    </Badge>
+                  )}
 
                 {/* Actions Menu */}
                 {canCancel && (

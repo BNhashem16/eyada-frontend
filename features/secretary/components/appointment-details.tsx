@@ -263,6 +263,12 @@ export function SecretaryAppointmentDetails({
                 <Badge className={paymentStatus.color}>
                   {paymentStatus.label}
                 </Badge>
+                {appointment.requiresPrepayment &&
+                  appointment.paymentStatus === PaymentStatus.PENDING && (
+                    <Badge variant="warning" className="text-xs">
+                      {t("prepayment.awaitingPayment")}
+                    </Badge>
+                  )}
               </div>
               <p className="text-sm text-muted-foreground break-all">
                 {t("appointments.bookingNumber")}: {appointment.bookingNumber}

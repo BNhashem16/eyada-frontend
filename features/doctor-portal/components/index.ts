@@ -7,3 +7,4 @@ export * from "./schedule-manager";
 export * from "./service-manager";
 export * from "./doctor-profile-form";
 export * from "./doctor-ratings";
+export * from "./prepayment-settings";

@@ -26,3 +26,5 @@ export * from "./specialties-stats-cards";
 export * from "./commissions-stats-cards";
 export * from "./collections-stats-cards";
 export * from "./feedbacks-stats-cards";
+export * from "./payment-methods-management";
+export * from "./payment-methods-stats-cards";

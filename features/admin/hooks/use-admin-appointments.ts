@@ -29,6 +29,7 @@ export interface AdminAppointment {
   appointmentDate: string;
   status: AppointmentStatus;
   paymentStatus: PaymentStatus;
+  requiresPrepayment: boolean;
   price: number;
   queueNumber: number | null;
   patientName: string;

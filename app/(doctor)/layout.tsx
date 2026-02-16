@@ -7,6 +7,7 @@ import {
   User,
   Star,
   UserCog,
+  CreditCard,
 } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
@@ -32,6 +33,11 @@ function DoctorLayoutContent({ children }: { children: React.ReactNode }) {
     { href: "/doctor/clinics", label: t("nav.clinics"), icon: Building2 },
     { href: "/doctor/secretaries", label: t("nav.secretaries"), icon: UserCog },
     { href: "/doctor/ratings", label: t("nav.ratings"), icon: Star },
+    {
+      href: "/doctor/prepayment",
+      label: t("nav.paymentMethods"),
+      icon: CreditCard,
+    },
     { href: "/doctor/profile", label: t("nav.profile"), icon: User },
   ];
 

@@ -278,6 +278,39 @@ export interface UpdateSpecialtyDto {
 }
 
 // ============================================
+// PAYMENT METHOD DTOs (Admin)
+// ============================================
+
+export interface CreatePaymentMethodDto {
+  name: MultilingualDto; // required
+  code: string; // required, unique, auto-uppercased
+  icon?: string;
+  sortOrder?: number;
+  isActive?: boolean; // default: true
+}
+
+export interface UpdatePaymentMethodDto extends Partial<CreatePaymentMethodDto> {}
+
+// ============================================
+// DOCTOR PAYMENT ACCOUNT DTOs
+// ============================================
+
+export interface CreateDoctorPaymentAccountDto {
+  paymentMethodId: string; // UUID, required
+  accountNumber: string; // required
+  accountName?: string;
+}
+
+// ============================================
+// DOCTOR PREPAYMENT SETTINGS DTOs
+// ============================================
+
+export interface UpdatePrepaymentDto {
+  requirePrepayment: boolean; // required
+  prepaymentWhatsapp?: string; // Egyptian phone format
+}
+
+// ============================================
 // ADMIN - STATE DTOs
 // ============================================
 

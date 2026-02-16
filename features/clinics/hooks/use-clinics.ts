@@ -7,6 +7,7 @@ import {
   Clinic,
   ClinicSchedule,
   ClinicServiceType,
+  ClinicPrepaymentInfo,
   PaginatedResponse,
 } from "@/types";
 
@@ -97,6 +98,19 @@ export function useClinicServices(clinicId: string) {
     queryFn: async () => {
       return apiGet<ClinicServiceType[]>(
         `${PUBLIC_ENDPOINTS.CLINICS}/${clinicId}/services`,
+      );
+    },
+    enabled: !!clinicId,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useClinicPrepaymentInfo(clinicId: string) {
+  return useQuery({
+    queryKey: ["clinic-prepayment-info", clinicId],
+    queryFn: async () => {
+      return apiGet<ClinicPrepaymentInfo>(
+        PUBLIC_ENDPOINTS.CLINIC_PREPAYMENT_INFO(clinicId),
       );
     },
     enabled: !!clinicId,

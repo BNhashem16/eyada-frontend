@@ -605,26 +605,33 @@ export function AdminAppointmentsList() {
                         </Select>
                       </TableCell>
                       <TableCell>
-                        <Select
-                          value={appointment.paymentStatus}
-                          onValueChange={(value) =>
-                            handleUpdatePaymentStatus(
-                              appointment,
-                              value as PaymentStatus,
-                            )
-                          }
-                        >
-                          <SelectTrigger className="w-28 h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {paymentStatusOptions.map((s) => (
-                              <SelectItem key={s} value={s}>
-                                {t(`payment.${s.toLowerCase()}`)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="space-y-1">
+                          <Select
+                            value={appointment.paymentStatus}
+                            onValueChange={(value) =>
+                              handleUpdatePaymentStatus(
+                                appointment,
+                                value as PaymentStatus,
+                              )
+                            }
+                          >
+                            <SelectTrigger className="w-28 h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {paymentStatusOptions.map((s) => (
+                                <SelectItem key={s} value={s}>
+                                  {t(`payment.${s.toLowerCase()}`)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {appointment.requiresPrepayment && (
+                            <Badge variant="warning" className="text-[10px]">
+                              {t("prepayment.badge")}
+                            </Badge>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">

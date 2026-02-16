@@ -21,6 +21,9 @@ import {
   Pill,
   ClipboardList,
   Navigation,
+  Copy,
+  Check,
+  MessageCircle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +45,7 @@ import { AppointmentStatus, PaymentStatus } from "@/types/enums";
 import { formatDate, formatTime, isPast } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import { useClinicPrepaymentInfo } from "@/features/clinics/hooks/use-clinics";
 
 interface AppointmentDetailsProps {
   appointmentId: string;
@@ -119,6 +123,8 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showRatingDialog, setShowRatingDialog] = useState(false);
 
+  const [copiedBooking, setCopiedBooking] = useState(false);
+
   const {
     data: appointment,
     isLoading,
@@ -126,6 +132,13 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
   } = usePatientAppointment(appointmentId);
   const { data: medicalNotes } = useAppointmentMedicalNotes(appointmentId);
   const cancelMutation = useCancelAppointment();
+
+  const showPrepaymentInfo =
+    appointment?.requiresPrepayment === true &&
+    appointment?.paymentStatus === PaymentStatus.PENDING;
+  const { data: prepaymentInfo } = useClinicPrepaymentInfo(
+    appointment?.clinic?.id || "",
+  );
 
   const statusConfig = getStatusConfig(t);
   const paymentStatusConfig = getPaymentStatusConfig(t);
@@ -146,6 +159,25 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
         variant: "error",
       });
     }
+  };
+
+  const handleCopyText = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    }
+  };
+
+  const handleCopyBookingNumber = async () => {
+    await handleCopyText(appointment?.bookingNumber || "");
+    setCopiedBooking(true);
+    setTimeout(() => setCopiedBooking(false), 2000);
   };
 
   if (isLoading) {
@@ -390,6 +422,148 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Prepayment Instructions (inline) */}
+      {showPrepaymentInfo && prepaymentInfo && (
+        <Card className="border-warning-200 dark:border-warning-800">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+              {t("prepayment.instructionsTitle")}
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              {t("prepayment.importantNote")}
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Booking Number */}
+            <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 text-center">
+              <p className="text-sm text-muted-foreground mb-1">
+                {t("prepayment.bookingNumber")}
+              </p>
+              <div className="flex items-center justify-center gap-2">
+                <span
+                  className="text-2xl font-bold text-primary-600 dark:text-primary-400 font-mono"
+                  dir="ltr"
+                >
+                  {appointment.bookingNumber}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={handleCopyBookingNumber}
+                >
+                  {copiedBooking ? (
+                    <Check className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Amount */}
+            <div className="bg-warning-50 dark:bg-warning-900/20 rounded-lg p-4 text-center">
+              <p className="text-sm text-muted-foreground mb-1">
+                {t("prepayment.amount")}
+              </p>
+              <span className="text-2xl font-bold text-warning-600 dark:text-warning-400">
+                {appointment.price} {t("common.egp")}
+              </span>
+            </div>
+
+            <Separator />
+
+            {/* Payment Accounts */}
+            {prepaymentInfo.paymentAccounts.length > 0 && (
+              <div>
+                <h4 className="font-medium text-foreground mb-3">
+                  {t("prepayment.paymentAccounts")}
+                </h4>
+                <div className="space-y-2">
+                  {prepaymentInfo.paymentAccounts.map((account) => (
+                    <div
+                      key={account.id}
+                      className="flex items-center justify-between p-3 rounded-lg border"
+                    >
+                      <div>
+                        <p className="font-medium text-foreground text-sm">
+                          {account.paymentMethod
+                            ? getLocalizedText(
+                                account.paymentMethod.name,
+                                locale,
+                              )
+                            : ""}
+                        </p>
+                        <p
+                          className="text-sm text-muted-foreground font-mono"
+                          dir="ltr"
+                        >
+                          {account.accountNumber}
+                        </p>
+                        {account.accountName && (
+                          <p className="text-xs text-muted-foreground">
+                            {account.accountName}
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleCopyText(account.accountNumber)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Separator />
+
+            {/* Steps */}
+            <div>
+              <h4 className="font-medium text-foreground mb-3">
+                {t("prepayment.instructions")}
+              </h4>
+              <div className="space-y-3">
+                {[1, 2, 3].map((num) => (
+                  <div key={num} className="flex items-start gap-3">
+                    <div className="h-6 w-6 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
+                        {num}
+                      </span>
+                    </div>
+                    <p className="text-sm text-foreground">
+                      {t(`prepayment.step${num}`)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* WhatsApp Button */}
+            {prepaymentInfo.prepaymentWhatsapp && (
+              <a
+                href={`https://wa.me/${prepaymentInfo.prepaymentWhatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                  t("prepayment.whatsappMessage")
+                    .replace("{bookingNumber}", appointment.bookingNumber || "")
+                    .replace("{amount}", appointment.price.toString()),
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full p-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors"
+              >
+                <MessageCircle className="h-5 w-5" />
+                {t("prepayment.sendViaWhatsapp")}
+              </a>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Patient Notes */}
       {appointment.patientNotes && (

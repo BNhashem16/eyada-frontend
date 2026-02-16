@@ -33,6 +33,7 @@ import {
   useDoctorAppointment,
   useGetMedicalNotes,
   useUpdateAppointmentStatus,
+  useUpdateAppointmentPayment,
   useAddMedicalNotes,
 } from "../hooks/use-doctor-portal";
 import { useToast } from "@/hooks/use-toast";
@@ -128,6 +129,7 @@ export function DoctorAppointmentDetails({
   } = useDoctorAppointment(appointmentId);
   const { data: medicalNotes } = useGetMedicalNotes(appointmentId);
   const updateStatusMutation = useUpdateAppointmentStatus();
+  const updatePaymentMutation = useUpdateAppointmentPayment();
   const updateNotesMutation = useAddMedicalNotes();
 
   const statusConfig = getStatusConfig(t);
@@ -286,10 +288,63 @@ export function DoctorAppointmentDetails({
                 <Badge className={paymentStatus.color}>
                   {paymentStatus.label}
                 </Badge>
+                {appointment.requiresPrepayment &&
+                  appointment.paymentStatus === PaymentStatus.PENDING && (
+                    <Badge variant="warning" className="text-xs">
+                      {t("prepayment.awaitingPayment")}
+                    </Badge>
+                  )}
               </div>
               <p className="text-sm text-muted-foreground">
                 {t("appointments.bookingNumber")}: {appointment.bookingNumber}
               </p>
+              {/* Prepayment Actions */}
+              {appointment.requiresPrepayment &&
+                appointment.paymentStatus === PaymentStatus.PENDING && (
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() =>
+                        updatePaymentMutation.mutate({
+                          appointmentId,
+                          paymentStatus: PaymentStatus.PAID,
+                        })
+                      }
+                      disabled={updatePaymentMutation.isPending}
+                    >
+                      {updatePaymentMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin ms-2" />
+                      ) : (
+                        <CheckCircle className="h-4 w-4 ms-2" />
+                      )}
+                      {t("prepayment.confirmPayment")}
+                    </Button>
+                  </div>
+                )}
+              {appointment.requiresPrepayment &&
+                appointment.paymentStatus === PaymentStatus.PAID && (
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() =>
+                        updatePaymentMutation.mutate({
+                          appointmentId,
+                          paymentStatus: PaymentStatus.REFUNDED,
+                        })
+                      }
+                      disabled={updatePaymentMutation.isPending}
+                    >
+                      {updatePaymentMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin ms-2" />
+                      ) : (
+                        <CreditCard className="h-4 w-4 ms-2" />
+                      )}
+                      {t("prepayment.markRefunded")}
+                    </Button>
+                  </div>
+                )}
             </div>
             <div className="flex flex-wrap gap-2">
               {actions.map((action) => {

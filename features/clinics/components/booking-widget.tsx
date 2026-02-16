@@ -20,7 +20,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { useClinicServices } from "../hooks/use-clinics";
+import { useClinicServices, useClinicPrepaymentInfo } from "../hooks/use-clinics";
+import { PrepaymentInstructions } from "./prepayment-instructions";
 import { usePatientFamily } from "@/features/patients/hooks/use-patient";
 import { useUser, useIsAuthenticated } from "@/lib/auth/store";
 import { apiPost } from "@/lib/api";
@@ -34,8 +35,10 @@ import {
   isToday,
   isBefore,
 } from "@/lib/utils/date";
+import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import type { DoctorPaymentAccount } from "@/types";
 
 interface BookingWidgetProps {
   clinicId: string;
@@ -65,6 +68,15 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] =
     useState<string>("");
 
+  // Prepayment dialog state
+  const [showPrepaymentDialog, setShowPrepaymentDialog] = useState(false);
+  const [bookingResult, setBookingResult] = useState<{
+    bookingNumber: string;
+    price: number;
+    paymentAccounts: DoctorPaymentAccount[];
+    whatsappNumber?: string;
+  } | null>(null);
+
   // Queries
   const {
     data: services,
@@ -76,6 +88,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     isLoading: familyLoading,
     isError: familyError,
   } = usePatientFamily();
+  const { data: prepaymentInfo } = useClinicPrepaymentInfo(clinicId);
 
   // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({
@@ -107,16 +120,42 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         payload.patientProfileId = selectedFamilyMemberId;
       }
 
-      return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, payload);
+      return apiPost<{
+        bookingNumber?: string;
+        price?: number;
+        clinic?: {
+          doctorProfile?: {
+            paymentAccounts?: DoctorPaymentAccount[];
+            prepaymentWhatsapp?: string;
+          };
+        };
+        requiresPrepayment?: boolean;
+      }>(PATIENT_ENDPOINTS.APPOINTMENTS, payload);
     },
-    onSuccess: () => {
-      toast({
-        title: t("booking.bookingSuccessTitle"),
-        description: t("booking.bookingSuccessDesc"),
-        variant: "success",
-      });
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
-      router.push("/patient/appointments");
+
+      // Check if prepayment is required
+      if (
+        data?.requiresPrepayment &&
+        prepaymentInfo?.requirePrepayment &&
+        prepaymentInfo.paymentAccounts.length > 0
+      ) {
+        setBookingResult({
+          bookingNumber: data.bookingNumber || "",
+          price: data.price || selectedService?.price as number || 0,
+          paymentAccounts: prepaymentInfo.paymentAccounts,
+          whatsappNumber: prepaymentInfo.prepaymentWhatsapp,
+        });
+        setShowPrepaymentDialog(true);
+      } else {
+        toast({
+          title: t("booking.bookingSuccessTitle"),
+          description: t("booking.bookingSuccessDesc"),
+          variant: "success",
+        });
+        router.push("/patient/appointments");
+      }
     },
     onError: (error: AxiosError<ApiError>) => {
       toast({
@@ -448,7 +487,30 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             </Button>
           </div>
         )}
+        {/* Prepayment Notice */}
+        {prepaymentInfo?.requirePrepayment && (
+          <div className="bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg p-3">
+            <Badge variant="warning" className="mb-1">
+              {t("prepayment.badge")}
+            </Badge>
+            <p className="text-sm text-warning-700 dark:text-warning-300">
+              {t("prepayment.importantNote")}
+            </p>
+          </div>
+        )}
       </CardContent>
+
+      {/* Prepayment Instructions Dialog */}
+      {bookingResult && (
+        <PrepaymentInstructions
+          open={showPrepaymentDialog}
+          onOpenChange={setShowPrepaymentDialog}
+          bookingNumber={bookingResult.bookingNumber}
+          price={bookingResult.price}
+          paymentAccounts={bookingResult.paymentAccounts}
+          whatsappNumber={bookingResult.whatsappNumber}
+        />
+      )}
     </Card>
   );
 }

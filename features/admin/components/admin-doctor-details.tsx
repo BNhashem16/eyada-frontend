@@ -23,12 +23,25 @@ import {
   MessageCircle,
   Eye,
   EyeOff,
+  CreditCard,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   AlertDialog,
@@ -45,10 +58,16 @@ import {
   useApproveDoctor,
   useRejectDoctor,
   useSuspendDoctor,
+  useUpdateDoctorPrepayment,
+  useAdminDoctorPaymentAccounts,
+  useAddDoctorPaymentAccount,
+  useRemoveDoctorPaymentAccount,
 } from "../hooks";
+import { usePaymentMethods } from "@/hooks/use-payment-methods";
 import { getLocalizedText, getInitials, formatDate } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { DoctorStatus } from "@/types/enums";
+import type { PaymentMethodModel } from "@/types";
 
 const getStatusConfig = (
   t: (key: string) => string,
@@ -574,6 +593,9 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
         </CardContent>
       </Card>
 
+      {/* Prepayment Settings */}
+      <PrepaymentSettingsCard doctorId={doctorId} doctor={doctor} />
+
       {/* Confirmation Dialog */}
       <AlertDialog open={!!action} onOpenChange={() => setAction(null)}>
         <AlertDialogContent>
@@ -611,6 +633,253 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+function PrepaymentSettingsCard({
+  doctorId,
+  doctor,
+}: {
+  doctorId: string;
+  doctor: import("@/types").DoctorProfile;
+}) {
+  const { t, locale } = useTranslation();
+  const updatePrepayment = useUpdateDoctorPrepayment();
+  const { data: accounts, isLoading: accountsLoading } =
+    useAdminDoctorPaymentAccounts(doctorId);
+  const addAccount = useAddDoctorPaymentAccount();
+  const removeAccount = useRemoveDoctorPaymentAccount();
+  const { data: paymentMethods } = usePaymentMethods();
+
+  const [whatsapp, setWhatsapp] = useState(doctor.prepaymentWhatsapp || "");
+  const [newAccountMethodId, setNewAccountMethodId] = useState("");
+  const [newAccountNumber, setNewAccountNumber] = useState("");
+  const [newAccountName, setNewAccountName] = useState("");
+
+  const handleTogglePrepayment = () => {
+    updatePrepayment.mutate({
+      doctorId,
+      requirePrepayment: !doctor.requirePrepayment,
+      prepaymentWhatsapp: whatsapp || undefined,
+    });
+  };
+
+  const handleSaveWhatsapp = () => {
+    updatePrepayment.mutate({
+      doctorId,
+      requirePrepayment: doctor.requirePrepayment,
+      prepaymentWhatsapp: whatsapp || undefined,
+    });
+  };
+
+  const handleAddAccount = () => {
+    if (!newAccountMethodId || !newAccountNumber) return;
+    addAccount.mutate(
+      {
+        doctorId,
+        paymentMethodId: newAccountMethodId,
+        accountNumber: newAccountNumber,
+        accountName: newAccountName || undefined,
+      },
+      {
+        onSuccess: () => {
+          setNewAccountMethodId("");
+          setNewAccountNumber("");
+          setNewAccountName("");
+        },
+      },
+    );
+  };
+
+  const handleRemoveAccount = (accountId: string) => {
+    removeAccount.mutate({ doctorId, accountId });
+  };
+
+  // Filter out methods that already have accounts
+  const usedMethodIds = new Set(accounts?.map((a) => a.paymentMethodId) || []);
+  const availableMethods =
+    paymentMethods?.filter((m) => !usedMethodIds.has(m.id) && m.isActive) || [];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <CreditCard className="h-5 w-5 text-primary-600" />
+          {t("prepayment.title")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Toggle + WhatsApp */}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium text-foreground">
+                {t("prepayment.enable")}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {doctor.requirePrepayment
+                  ? t("prepayment.enabled")
+                  : t("prepayment.disabled")}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {updatePrepayment.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Switch
+                  checked={doctor.requirePrepayment}
+                  onCheckedChange={handleTogglePrepayment}
+                />
+              )}
+              <Badge
+                variant={doctor.requirePrepayment ? "success" : "secondary"}
+              >
+                {doctor.requirePrepayment
+                  ? t("prepayment.required")
+                  : t("prepayment.notRequired")}
+              </Badge>
+            </div>
+          </div>
+
+          <div className="flex gap-2 items-end">
+            <div className="flex-1">
+              <Label>{t("prepayment.whatsappNumber")}</Label>
+              <Input
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                placeholder="01xxxxxxxxx"
+                dir="ltr"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {t("prepayment.whatsappHint")}
+              </p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSaveWhatsapp}
+              disabled={updatePrepayment.isPending}
+            >
+              {updatePrepayment.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                t("common.save")
+              )}
+            </Button>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Payment Accounts */}
+        <div>
+          <h4 className="font-medium text-foreground mb-3">
+            {t("prepayment.paymentAccounts")}
+          </h4>
+
+          {accountsLoading ? (
+            <div className="space-y-2">
+              {[...Array(2)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
+          ) : accounts && accounts.length > 0 ? (
+            <div className="space-y-2 mb-4">
+              {accounts.map((account) => (
+                <div
+                  key={account.id}
+                  className="flex items-center justify-between p-3 rounded-lg border"
+                >
+                  <div>
+                    <p className="font-medium text-foreground">
+                      {account.paymentMethod
+                        ? getLocalizedText(account.paymentMethod.name, locale)
+                        : account.paymentMethodId}
+                    </p>
+                    <p className="text-sm text-muted-foreground" dir="ltr">
+                      {account.accountNumber}
+                      {account.accountName && ` - ${account.accountName}`}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-error-600"
+                    onClick={() => handleRemoveAccount(account.id)}
+                    disabled={removeAccount.isPending}
+                  >
+                    {removeAccount.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground mb-4">
+              {t("prepayment.noAccounts")}
+            </p>
+          )}
+
+          {/* Add Account Form */}
+          {availableMethods.length > 0 && (
+            <div className="p-4 rounded-lg border border-dashed space-y-3">
+              <p className="text-sm font-medium text-foreground">
+                {t("prepayment.addAccount")}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Select
+                  value={newAccountMethodId}
+                  onValueChange={setNewAccountMethodId}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t("prepayment.selectMethod")}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableMethods.map((method) => (
+                      <SelectItem key={method.id} value={method.id}>
+                        {getLocalizedText(method.name, locale)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  value={newAccountNumber}
+                  onChange={(e) => setNewAccountNumber(e.target.value)}
+                  placeholder={t("prepayment.accountNumber")}
+                  dir="ltr"
+                />
+                <Input
+                  value={newAccountName}
+                  onChange={(e) => setNewAccountName(e.target.value)}
+                  placeholder={t("prepayment.accountName")}
+                />
+              </div>
+              <Button
+                size="sm"
+                onClick={handleAddAccount}
+                disabled={
+                  !newAccountMethodId ||
+                  !newAccountNumber ||
+                  addAccount.isPending
+                }
+              >
+                {addAccount.isPending ? (
+                  <Loader2 className="h-4 w-4 me-2 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4 me-2" />
+                )}
+                {t("common.add")}
+              </Button>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

@@ -2,10 +2,10 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { apiGet, apiPatch } from "@/lib/api";
+import { apiGet, apiPatch, apiPost, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import type { ApiError } from "@/types";
-import { DoctorProfile, PaginatedResponse } from "@/types";
+import { DoctorProfile, DoctorPaymentAccount, PaginatedResponse } from "@/types";
 import { DoctorStatus } from "@/types/enums";
 import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
@@ -179,6 +179,117 @@ export function useSuspendDoctor() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
+    },
+  });
+}
+
+// ==================== Prepayment Settings ====================
+
+export function useUpdateDoctorPrepayment() {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: async ({
+      doctorId,
+      ...data
+    }: {
+      doctorId: string;
+      requirePrepayment: boolean;
+      prepaymentWhatsapp?: string;
+    }) => {
+      return apiPatch<DoctorProfile>(
+        ADMIN_ENDPOINTS.DOCTOR_PREPAYMENT(doctorId),
+        data,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctors"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
+    },
+  });
+}
+
+export function useAdminDoctorPaymentAccounts(doctorId: string) {
+  return useQuery({
+    queryKey: ["admin-doctor-payment-accounts", doctorId],
+    queryFn: async () => {
+      return apiGet<DoctorPaymentAccount[]>(
+        ADMIN_ENDPOINTS.DOCTOR_PAYMENT_ACCOUNTS(doctorId),
+      );
+    },
+    enabled: !!doctorId,
+    staleTime: 1000 * 60,
+  });
+}
+
+export function useAddDoctorPaymentAccount() {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: async ({
+      doctorId,
+      ...data
+    }: {
+      doctorId: string;
+      paymentMethodId: string;
+      accountNumber: string;
+      accountName?: string;
+    }) => {
+      return apiPost<DoctorPaymentAccount>(
+        ADMIN_ENDPOINTS.DOCTOR_PAYMENT_ACCOUNTS(doctorId),
+        data,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["admin-doctor-payment-accounts"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
+    },
+  });
+}
+
+export function useRemoveDoctorPaymentAccount() {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: async ({
+      doctorId,
+      accountId,
+    }: {
+      doctorId: string;
+      accountId: string;
+    }) => {
+      return apiDelete(
+        ADMIN_ENDPOINTS.DOCTOR_PAYMENT_ACCOUNT(doctorId, accountId),
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["admin-doctor-payment-accounts"],
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-doctor"] });
     },
     onError: (error: AxiosError<ApiError>) => {

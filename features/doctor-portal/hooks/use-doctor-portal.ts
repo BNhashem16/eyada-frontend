@@ -6,6 +6,7 @@ import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { DOCTOR_ENDPOINTS, SECRETARY_ENDPOINTS } from "@/lib/api/endpoints";
 import {
   DoctorProfile,
+  DoctorPaymentAccount,
   Clinic,
   ClinicSchedule,
   ClinicServiceType,
@@ -687,6 +688,71 @@ export function useCreateDoctorAppointment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doctor-appointments"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
+    },
+  });
+}
+
+// ==================== Payment Accounts ====================
+
+export function useDoctorPaymentAccounts() {
+  return useQuery({
+    queryKey: ["doctor-payment-accounts"],
+    queryFn: async () => {
+      return apiGet<DoctorPaymentAccount[]>(DOCTOR_ENDPOINTS.PAYMENT_ACCOUNTS);
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useUpsertPaymentAccount() {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      paymentMethodId: string;
+      accountNumber: string;
+      accountName?: string;
+    }) => {
+      return apiPost<DoctorPaymentAccount>(
+        DOCTOR_ENDPOINTS.PAYMENT_ACCOUNTS,
+        data,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["doctor-payment-accounts"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["doctor-profile"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
+    },
+  });
+}
+
+export function useDeletePaymentAccount() {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (accountId: string) => {
+      return apiDelete(DOCTOR_ENDPOINTS.PAYMENT_ACCOUNT(accountId));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["doctor-payment-accounts"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["doctor-profile"] });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(

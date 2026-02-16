@@ -42,6 +42,13 @@ export const PUBLIC_ENDPOINTS = {
   SPECIALTIES: "/specialties",
   SPECIALTY: (id: string) => `/specialties/${id}`,
 
+  // Payment Methods
+  PAYMENT_METHODS: "/payment-methods",
+  PAYMENT_METHOD: (id: string) => `/payment-methods/${id}`,
+
+  // Clinic Prepayment Info
+  CLINIC_PREPAYMENT_INFO: (id: string) => `/clinics/${id}/prepayment-info`,
+
   // Contact Links
   CONTACT_LINKS: "/contact-links",
 
@@ -102,6 +109,10 @@ export const DOCTOR_ENDPOINTS = {
     `/doctors/clinics/${clinicId}/services/${serviceId}`,
   CLINIC_SERVICE_TOGGLE_ACTIVE: (clinicId: string, serviceId: string) =>
     `/doctors/clinics/${clinicId}/services/${serviceId}/toggle-active`,
+
+  // Payment Accounts
+  PAYMENT_ACCOUNTS: "/doctors/payment-accounts",
+  PAYMENT_ACCOUNT: (id: string) => `/doctors/payment-accounts/${id}`,
 
   // Appointments
   APPOINTMENTS: "/doctors/appointments",
@@ -176,6 +187,18 @@ export const ADMIN_ENDPOINTS = {
   APPROVE_DOCTOR: (id: string) => `/admin/doctors/${id}/approve`,
   REJECT_DOCTOR: (id: string) => `/admin/doctors/${id}/reject`,
   SUSPEND_DOCTOR: (id: string) => `/admin/doctors/${id}/suspend`,
+
+  // Payment Methods management
+  PAYMENT_METHODS: "/admin/payment-methods",
+  PAYMENT_METHODS_STATISTICS: "/admin/payment-methods/statistics",
+  PAYMENT_METHOD: (id: string) => `/admin/payment-methods/${id}`,
+
+  // Doctor Prepayment management
+  DOCTOR_PREPAYMENT: (id: string) => `/admin/doctors/${id}/prepayment`,
+  DOCTOR_PAYMENT_ACCOUNTS: (id: string) =>
+    `/admin/doctors/${id}/payment-accounts`,
+  DOCTOR_PAYMENT_ACCOUNT: (doctorId: string, accountId: string) =>
+    `/admin/doctors/${doctorId}/payment-accounts/${accountId}`,
 
   // Patients management
   PATIENTS: "/admin/patients",
