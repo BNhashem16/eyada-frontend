@@ -200,17 +200,24 @@ export function PrepaymentInstructions({
                         {isSelected && (
                           <Check className="h-5 w-5 text-primary-600" />
                         )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent hover:text-accent-foreground"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleCopyAccount(account.accountNumber);
                           }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleCopyAccount(account.accountNumber);
+                            }
+                          }}
                         >
                           <Copy className="h-4 w-4" />
-                        </Button>
+                        </span>
                       </div>
                     </button>
                   );
