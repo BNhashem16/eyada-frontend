@@ -7,6 +7,7 @@ async function fetchDoctorIds(): Promise<string[]> {
   try {
     const res = await fetch(`${API_BASE}/doctors?limit=500&page=1`, {
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) return [];
     const json = await res.json();
@@ -21,6 +22,7 @@ async function fetchClinicIds(): Promise<string[]> {
   try {
     const res = await fetch(`${API_BASE}/clinics?limit=500&page=1`, {
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) return [];
     const json = await res.json();
