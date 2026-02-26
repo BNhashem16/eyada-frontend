@@ -174,7 +174,9 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
       {
         "@type": "ListItem",
         position: 3,
-        name: name ? `${drPrefix} ${name}` : getTranslation("seo.breadcrumbs.doctor"),
+        name: name
+          ? `${drPrefix} ${name}`
+          : getTranslation("seo.breadcrumbs.doctor"),
         item: `${BASE_URL}/doctors/${id}`,
       },
     ],

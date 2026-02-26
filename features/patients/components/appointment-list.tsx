@@ -35,9 +35,24 @@ const FILTER_TABS: {
   icon: React.ElementType;
   iconColor?: string;
 }[] = [
-  { key: "upcoming", labelKey: "appointments.upcoming", icon: Clock, iconColor: "text-primary-500" },
-  { key: "past", labelKey: "appointments.past", icon: CheckCircle, iconColor: "text-muted-foreground" },
-  { key: "cancelled", labelKey: "appointments.cancelled", icon: XCircle, iconColor: "text-error-500" },
+  {
+    key: "upcoming",
+    labelKey: "appointments.upcoming",
+    icon: Clock,
+    iconColor: "text-primary-500",
+  },
+  {
+    key: "past",
+    labelKey: "appointments.past",
+    icon: CheckCircle,
+    iconColor: "text-muted-foreground",
+  },
+  {
+    key: "cancelled",
+    labelKey: "appointments.cancelled",
+    icon: XCircle,
+    iconColor: "text-error-500",
+  },
   { key: "all", labelKey: "common.all", icon: Calendar },
 ];
 
@@ -130,7 +145,12 @@ export function AppointmentList() {
                 : "bg-background text-muted-foreground border-border hover:bg-muted/60 hover:text-foreground",
             )}
           >
-            <Icon className={cn("h-4 w-4", activeTab === key ? "text-white" : iconColor)} />
+            <Icon
+              className={cn(
+                "h-4 w-4",
+                activeTab === key ? "text-white" : iconColor,
+              )}
+            />
             {t(labelKey)}
           </button>
         ))}

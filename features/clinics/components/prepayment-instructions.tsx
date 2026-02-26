@@ -53,7 +53,8 @@ export function PrepaymentInstructions({
   const { t, locale } = useTranslation();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string>("");
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] =
+    useState<string>("");
 
   const handleCopyBookingNumber = async () => {
     try {
@@ -86,7 +87,9 @@ export function PrepaymentInstructions({
     }
   };
 
-  const selectedAccount = paymentAccounts.find((a) => a.id === selectedPaymentMethodId);
+  const selectedAccount = paymentAccounts.find(
+    (a) => a.id === selectedPaymentMethodId,
+  );
   const selectedPaymentMethodName = selectedAccount?.paymentMethod
     ? getLocalizedText(selectedAccount.paymentMethod.name, locale)
     : "";
@@ -119,9 +122,7 @@ export function PrepaymentInstructions({
             <CreditCard className="h-5 w-5 text-primary-600" />
             {t("prepayment.instructionsTitle")}
           </DialogTitle>
-          <DialogDescription>
-            {t("prepayment.importantNote")}
-          </DialogDescription>
+          <DialogDescription>{t("prepayment.importantNote")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -131,7 +132,10 @@ export function PrepaymentInstructions({
               {t("prepayment.bookingNumber")}
             </p>
             <div className="flex items-center justify-center gap-2">
-              <span className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 font-mono break-all" dir="ltr">
+              <span
+                className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 font-mono break-all"
+                dir="ltr"
+              >
                 {bookingNumber}
               </span>
               <Button
@@ -184,10 +188,16 @@ export function PrepaymentInstructions({
                       <div className="min-w-0 flex-1">
                         <p className="font-medium text-foreground text-sm truncate">
                           {account.paymentMethod
-                            ? getLocalizedText(account.paymentMethod.name, locale)
+                            ? getLocalizedText(
+                                account.paymentMethod.name,
+                                locale,
+                              )
                             : ""}
                         </p>
-                        <p className="text-xs sm:text-sm text-muted-foreground font-mono break-all" dir="ltr">
+                        <p
+                          className="text-xs sm:text-sm text-muted-foreground font-mono break-all"
+                          dir="ltr"
+                        >
                           {account.accountNumber}
                         </p>
                         {account.accountName && (

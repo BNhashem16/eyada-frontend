@@ -71,9 +71,15 @@ export function BookAppointmentDialog({
   const [patientPhone, setPatientPhone] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string>("");
-  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">("");
-  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">("");
-  const [appointmentStatus, setAppointmentStatus] = useState<"PENDING" | "CONFIRMED" | "">("");
+  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">(
+    "",
+  );
+  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">(
+    "",
+  );
+  const [appointmentStatus, setAppointmentStatus] = useState<
+    "PENDING" | "CONFIRMED" | ""
+  >("");
 
   // Data fetching
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
@@ -187,8 +193,8 @@ export function BookAppointmentDialog({
             </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="patientName">
-                  {t("appointments.patientName")} *
+                <Label htmlFor="patientName" required>
+                  {t("appointments.patientName")}
                 </Label>
                 <Input
                   id="patientName"
@@ -199,8 +205,8 @@ export function BookAppointmentDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="patientDateOfBirth">
-                  {t("secretary.patientDateOfBirth")} *
+                <Label htmlFor="patientDateOfBirth" required>
+                  {t("secretary.patientDateOfBirth")}
                 </Label>
                 <DateOfBirthInput
                   value={patientDateOfBirth}
@@ -434,7 +440,9 @@ export function BookAppointmentDialog({
                 <Button
                   type="button"
                   size="sm"
-                  variant={appointmentStatus === "PENDING" ? "default" : "outline"}
+                  variant={
+                    appointmentStatus === "PENDING" ? "default" : "outline"
+                  }
                   className="flex-1"
                   onClick={() => setAppointmentStatus("PENDING")}
                 >
@@ -444,7 +452,9 @@ export function BookAppointmentDialog({
                 <Button
                   type="button"
                   size="sm"
-                  variant={appointmentStatus === "CONFIRMED" ? "default" : "outline"}
+                  variant={
+                    appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                  }
                   className="flex-1"
                   onClick={() => setAppointmentStatus("CONFIRMED")}
                 >

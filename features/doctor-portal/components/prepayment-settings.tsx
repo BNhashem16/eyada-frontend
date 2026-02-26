@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CreditCard,
-  Loader2,
-  Plus,
-  Trash2,
-  MessageCircle,
-} from "lucide-react";
+import { CreditCard, Loader2, Plus, Trash2, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -137,9 +131,7 @@ export function PrepaymentSettings() {
       {/* Toggle Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">
-            {t("prepayment.enable")}
-          </CardTitle>
+          <CardTitle className="text-lg">{t("prepayment.enable")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
@@ -270,9 +262,7 @@ export function PrepaymentSettings() {
                 <div className="grid gap-3 sm:grid-cols-3">
                   <Select value={newMethodId} onValueChange={setNewMethodId}>
                     <SelectTrigger>
-                      <SelectValue
-                        placeholder={t("prepayment.selectMethod")}
-                      />
+                      <SelectValue placeholder={t("prepayment.selectMethod")} />
                     </SelectTrigger>
                     <SelectContent>
                       {availableMethods.map((method) => (
@@ -298,9 +288,7 @@ export function PrepaymentSettings() {
                   size="sm"
                   onClick={handleAddAccount}
                   disabled={
-                    !newMethodId ||
-                    !newAccountNumber ||
-                    upsertAccount.isPending
+                    !newMethodId || !newAccountNumber || upsertAccount.isPending
                   }
                 >
                   {upsertAccount.isPending ? (

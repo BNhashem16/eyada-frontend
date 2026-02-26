@@ -14,8 +14,7 @@ export function SpecialtiesStatsCards() {
       label: t("admin.specialtiesPage.stats.total"),
       value: data?.totalSpecialties ?? 0,
       icon: Grid3X3,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("admin.specialtiesPage.stats.active"),

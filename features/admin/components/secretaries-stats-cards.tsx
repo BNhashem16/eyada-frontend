@@ -14,8 +14,7 @@ export function SecretariesStatsCards() {
       label: t("admin.secretariesPage.stats.total"),
       value: data?.totalSecretaries ?? 0,
       icon: Users,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("admin.secretariesPage.stats.activeAssignments"),

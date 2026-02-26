@@ -14,8 +14,7 @@ export function PaymentMethodsStatsCards() {
       label: t("prepayment.stats.total"),
       value: data?.totalPaymentMethods ?? 0,
       icon: CreditCard,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("prepayment.stats.active"),

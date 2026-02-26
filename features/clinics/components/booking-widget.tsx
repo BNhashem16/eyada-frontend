@@ -20,7 +20,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { useClinicServices, useClinicPrepaymentInfo, useClinic } from "../hooks/use-clinics";
+import {
+  useClinicServices,
+  useClinicPrepaymentInfo,
+  useClinic,
+} from "../hooks/use-clinics";
 import { PrepaymentInstructions } from "./prepayment-instructions";
 import { usePatientFamily } from "@/features/patients/hooks/use-patient";
 import { useUser, useIsAuthenticated } from "@/lib/auth/store";
@@ -165,7 +169,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
 
         setBookingResult({
           bookingNumber: data.bookingNumber || "",
-          price: data.price || selectedService?.price as number || 0,
+          price: data.price || (selectedService?.price as number) || 0,
           paymentAccounts: prepaymentInfo.paymentAccounts,
           whatsappNumber: prepaymentInfo.prepaymentWhatsapp,
           patientName,

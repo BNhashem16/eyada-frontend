@@ -418,108 +418,110 @@ export function AdminRatingsList() {
           ) : (
             <>
               <div className="overflow-x-auto -mx-6 px-6">
-              <Table className="min-w-[800px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("admin.ratings.patient")}</TableHead>
-                    <TableHead>{t("admin.ratings.doctor")}</TableHead>
-                    <TableHead>{t("admin.ratings.rating")}</TableHead>
-                    <TableHead>{t("admin.ratings.review")}</TableHead>
-                    <TableHead>{t("admin.ratings.date")}</TableHead>
-                    <TableHead>{t("admin.ratings.visibility")}</TableHead>
-                    <TableHead>{t("table.actions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ratings.map((rating) => (
-                    <TableRow key={rating.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {rating.patientProfile?.user.fullName}
-                          </p>
-                          <a
-                            href={`tel:${rating.patientProfile?.user.phoneNumber}`}
-                            className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
-                            dir="ltr"
-                          >
-                            {rating.patientProfile?.user.phoneNumber}
-                          </a>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {rating.doctorProfile?.user.fullName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {rating.doctorProfile?.specialty &&
-                              getLocalizedText(
-                                rating.doctorProfile.specialty.name,
-                                locale,
-                              )}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {renderStars(Math.round(rating.overallRating))}
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        {rating.review ? (
-                          <p className="truncate text-sm">{rating.review}</p>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">
-                            -
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(rating.createdAt)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={rating.isVisible}
-                            onCheckedChange={() =>
-                              handleToggleVisibility(rating)
-                            }
-                            disabled={updateRating.isPending}
-                          />
-                          <Badge
-                            variant={rating.isVisible ? "success" : "secondary"}
-                          >
-                            {rating.isVisible
-                              ? t("admin.ratings.visibleLabel")
-                              : t("admin.ratings.hiddenLabel")}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewDetails(rating)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-error-600"
-                            onClick={() => handleOpenDelete(rating)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+                <Table className="min-w-[800px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t("admin.ratings.patient")}</TableHead>
+                      <TableHead>{t("admin.ratings.doctor")}</TableHead>
+                      <TableHead>{t("admin.ratings.rating")}</TableHead>
+                      <TableHead>{t("admin.ratings.review")}</TableHead>
+                      <TableHead>{t("admin.ratings.date")}</TableHead>
+                      <TableHead>{t("admin.ratings.visibility")}</TableHead>
+                      <TableHead>{t("table.actions")}</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {ratings.map((rating) => (
+                      <TableRow key={rating.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {rating.patientProfile?.user.fullName}
+                            </p>
+                            <a
+                              href={`tel:${rating.patientProfile?.user.phoneNumber}`}
+                              className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                              dir="ltr"
+                            >
+                              {rating.patientProfile?.user.phoneNumber}
+                            </a>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {rating.doctorProfile?.user.fullName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {rating.doctorProfile?.specialty &&
+                                getLocalizedText(
+                                  rating.doctorProfile.specialty.name,
+                                  locale,
+                                )}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {renderStars(Math.round(rating.overallRating))}
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          {rating.review ? (
+                            <p className="truncate text-sm">{rating.review}</p>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">
+                              -
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 text-sm">
+                            <Calendar className="h-3 w-3" />
+                            {formatDate(rating.createdAt)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={rating.isVisible}
+                              onCheckedChange={() =>
+                                handleToggleVisibility(rating)
+                              }
+                              disabled={updateRating.isPending}
+                            />
+                            <Badge
+                              variant={
+                                rating.isVisible ? "success" : "secondary"
+                              }
+                            >
+                              {rating.isVisible
+                                ? t("admin.ratings.visibleLabel")
+                                : t("admin.ratings.hiddenLabel")}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewDetails(rating)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-error-600"
+                              onClick={() => handleOpenDelete(rating)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
 
               <PaginationControls

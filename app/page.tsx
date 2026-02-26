@@ -46,8 +46,16 @@ const medicalBusinessJsonLd = {
   },
   serviceType: getTranslation("seo.serviceType"),
   availableLanguage: [
-    { "@type": "Language", name: getTranslation("seo.langArabic"), alternateName: "ar" },
-    { "@type": "Language", name: getTranslation("seo.langEnglish"), alternateName: "en" },
+    {
+      "@type": "Language",
+      name: getTranslation("seo.langArabic"),
+      alternateName: "ar",
+    },
+    {
+      "@type": "Language",
+      name: getTranslation("seo.langEnglish"),
+      alternateName: "en",
+    },
   ],
   sameAs: [BASE_URL],
 };

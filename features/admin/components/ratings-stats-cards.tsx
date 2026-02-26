@@ -14,8 +14,7 @@ export function RatingsStatsCards() {
       label: t("admin.ratingsPage.stats.total"),
       value: data?.totalRatings ?? 0,
       icon: Star,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("admin.ratingsPage.stats.averageRating"),

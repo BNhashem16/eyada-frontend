@@ -110,9 +110,15 @@ export function DoctorNewAppointmentContent() {
   const [patientPhone, setPatientPhone] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string>("");
-  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">("");
-  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">("");
-  const [appointmentStatus, setAppointmentStatus] = useState<"PENDING" | "CONFIRMED" | "">("");
+  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">(
+    "",
+  );
+  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">(
+    "",
+  );
+  const [appointmentStatus, setAppointmentStatus] = useState<
+    "PENDING" | "CONFIRMED" | ""
+  >("");
 
   // Week days
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
@@ -289,7 +295,7 @@ export function DoctorNewAppointmentContent() {
             <CardContent className="space-y-4">
               {/* Patient Name */}
               <div className="space-y-2">
-                <Label>{t("doctor.walkIn.patientName")} *</Label>
+                <Label required>{t("doctor.walkIn.patientName")}</Label>
                 <Input
                   value={patientName}
                   onChange={(e) => setPatientName(e.target.value)}
@@ -301,7 +307,7 @@ export function DoctorNewAppointmentContent() {
               {/* Date of Birth & Phone */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>{t("doctor.walkIn.patientDob")} *</Label>
+                  <Label required>{t("doctor.walkIn.patientDob")}</Label>
                   <DateOfBirthInput
                     value={patientDateOfBirth}
                     onChange={(val) => setPatientDateOfBirth(val)}
@@ -344,7 +350,7 @@ export function DoctorNewAppointmentContent() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>{t("doctor.walkIn.selectClinic")} *</Label>
+                  <Label required>{t("doctor.walkIn.selectClinic")}</Label>
                   <SearchableSelect
                     options={
                       clinics
@@ -365,7 +371,7 @@ export function DoctorNewAppointmentContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t("doctor.walkIn.selectService")} *</Label>
+                  <Label required>{t("doctor.walkIn.selectService")}</Label>
                   <SearchableSelect
                     options={
                       services
@@ -473,7 +479,7 @@ export function DoctorNewAppointmentContent() {
               <div className="space-y-4">
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between">
-                  <Label>{t("appointments.date")} *</Label>
+                  <Label required>{t("appointments.date")}</Label>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
@@ -584,7 +590,9 @@ export function DoctorNewAppointmentContent() {
                 <div className="flex gap-2">
                   <Button
                     type="button"
-                    variant={paymentStatus === "PENDING" ? "default" : "outline"}
+                    variant={
+                      paymentStatus === "PENDING" ? "default" : "outline"
+                    }
                     className="flex-1"
                     onClick={() => setPaymentStatus("PENDING")}
                   >
@@ -609,7 +617,9 @@ export function DoctorNewAppointmentContent() {
                 <div className="flex gap-2">
                   <Button
                     type="button"
-                    variant={appointmentStatus === "PENDING" ? "default" : "outline"}
+                    variant={
+                      appointmentStatus === "PENDING" ? "default" : "outline"
+                    }
                     className="flex-1"
                     onClick={() => setAppointmentStatus("PENDING")}
                   >
@@ -618,7 +628,9 @@ export function DoctorNewAppointmentContent() {
                   </Button>
                   <Button
                     type="button"
-                    variant={appointmentStatus === "CONFIRMED" ? "default" : "outline"}
+                    variant={
+                      appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                    }
                     className="flex-1"
                     onClick={() => setAppointmentStatus("CONFIRMED")}
                   >
@@ -764,7 +776,9 @@ export function DoctorNewAppointmentContent() {
                   <span className="text-sm text-muted-foreground">
                     {t("appointments.paymentStatusLabel")}
                   </span>
-                  <Badge variant={paymentStatus === "PAID" ? "default" : "outline"}>
+                  <Badge
+                    variant={paymentStatus === "PAID" ? "default" : "outline"}
+                  >
                     {paymentStatus === "PAID"
                       ? t("appointments.paymentPaid")
                       : t("appointments.paymentPending")}
@@ -778,7 +792,11 @@ export function DoctorNewAppointmentContent() {
                   <span className="text-sm text-muted-foreground">
                     {t("appointments.appointmentStatusLabel")}
                   </span>
-                  <Badge variant={appointmentStatus === "CONFIRMED" ? "default" : "outline"}>
+                  <Badge
+                    variant={
+                      appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                    }
+                  >
                     {appointmentStatus === "CONFIRMED"
                       ? t("appointments.statusConfirmed")
                       : t("appointments.statusPending")}

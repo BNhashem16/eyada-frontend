@@ -8,6 +8,10 @@ import {
   Users,
   Stethoscope,
   ChevronLeft,
+  ShoppingCart,
+  Package,
+  Pill,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProtectedRoute } from "@/lib/auth/guards";
@@ -33,15 +37,43 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
     },
     { href: "/patient/profile", label: t("nav.profile"), icon: User },
     { href: "/patient/family", label: t("family.title"), icon: Users },
+    {
+      href: "/patient/pharmacy",
+      label: t("pharmacyOwner.pharmacyBrowse"),
+      icon: Pill,
+    },
+    {
+      href: "/patient/cart",
+      label: t("pharmacyOwner.cart"),
+      icon: ShoppingCart,
+    },
+    {
+      href: "/patient/orders",
+      label: t("pharmacyOwner.myOrders"),
+      icon: Package,
+    },
+    { href: "/patient/addresses", label: t("addresses.title"), icon: MapPin },
   ];
 
   const headerRightContent = (
-    <Button asChild variant="outline" size="sm" className="hidden sm:flex">
-      <Link href="/doctors">
-        <Stethoscope className="h-4 w-4 ms-2" />
-        {t("doctors.bookAppointment")}
-      </Link>
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button
+        asChild
+        size="sm"
+        className="hidden sm:flex bg-emerald-600 hover:bg-emerald-700 text-white"
+      >
+        <Link href="/patient/pharmacy">
+          <Pill className="h-4 w-4 ms-2" />
+          {t("pharmacyOwner.pharmacyBrowse")}
+        </Link>
+      </Button>
+      <Button asChild variant="outline" size="sm" className="hidden sm:flex">
+        <Link href="/doctors">
+          <Stethoscope className="h-4 w-4 ms-2" />
+          {t("doctors.bookAppointment")}
+        </Link>
+      </Button>
+    </div>
   );
 
   const mobileExtraContent = (

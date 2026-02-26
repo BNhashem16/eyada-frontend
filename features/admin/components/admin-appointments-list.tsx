@@ -363,7 +363,9 @@ export function AdminAppointmentsList() {
                 <Search className="h-4 w-4" />
               </Button>
               <Button
-                onClick={() => window.location.href = "/admin/appointments/new"}
+                onClick={() =>
+                  (window.location.href = "/admin/appointments/new")
+                }
               >
                 <Plus className="h-4 w-4 me-2" />
                 {t("admin.appointmentsPage.bookAppointment")}
@@ -527,150 +529,151 @@ export function AdminAppointmentsList() {
           ) : (
             <>
               <div className="overflow-x-auto -mx-6 px-6">
-              <Table className="min-w-[900px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      {t("admin.appointments.bookingNumber")}
-                    </TableHead>
-                    <TableHead>{t("admin.appointments.patient")}</TableHead>
-                    <TableHead>{t("admin.appointments.doctor")}</TableHead>
-                    <TableHead>{t("admin.appointments.date")}</TableHead>
-                    <TableHead>{t("admin.appointments.service")}</TableHead>
-                    <TableHead>{t("admin.appointments.price")}</TableHead>
-                    <TableHead>{t("admin.appointments.status")}</TableHead>
-                    <TableHead>{t("payment.status")}</TableHead>
-                    <TableHead>{t("table.actions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {appointments.map((appointment) => (
-                    <TableRow key={appointment.id}>
-                      <TableCell className="font-mono text-sm">
-                        {appointment.bookingNumber}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {appointment.patientName}
-                          </p>
-                          <a
-                            href={`tel:${appointment.bookedForPatient?.user.phoneNumber}`}
-                            className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
-                            dir="ltr"
-                          >
-                            {appointment.bookedForPatient?.user.phoneNumber}
-                          </a>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {appointment.clinic?.doctorProfile?.user.fullName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {appointment.clinic?.doctorProfile?.specialty &&
-                              getLocalizedText(
-                                appointment.clinic.doctorProfile.specialty.name,
-                                locale,
-                              )}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(appointment.appointmentDate)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {getLocalizedText(appointment.serviceName, locale)}
-                      </TableCell>
-                      <TableCell className="font-semibold">
-                        {formatCurrency(appointment.price)}
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          value={appointment.status}
-                          onValueChange={(value) =>
-                            handleUpdateStatus(
-                              appointment,
-                              value as AppointmentStatus,
-                            )
-                          }
-                          disabled={
-                            appointment.status === "COMPLETED" ||
-                            appointment.status === "CANCELLED"
-                          }
-                        >
-                          <SelectTrigger className="w-32 h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {statusOptions.map((s) => (
-                              <SelectItem key={s} value={s}>
-                                {t(`status.${s.toLowerCase()}`)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
+                <Table className="min-w-[900px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        {t("admin.appointments.bookingNumber")}
+                      </TableHead>
+                      <TableHead>{t("admin.appointments.patient")}</TableHead>
+                      <TableHead>{t("admin.appointments.doctor")}</TableHead>
+                      <TableHead>{t("admin.appointments.date")}</TableHead>
+                      <TableHead>{t("admin.appointments.service")}</TableHead>
+                      <TableHead>{t("admin.appointments.price")}</TableHead>
+                      <TableHead>{t("admin.appointments.status")}</TableHead>
+                      <TableHead>{t("payment.status")}</TableHead>
+                      <TableHead>{t("table.actions")}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {appointments.map((appointment) => (
+                      <TableRow key={appointment.id}>
+                        <TableCell className="font-mono text-sm">
+                          {appointment.bookingNumber}
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {appointment.patientName}
+                            </p>
+                            <a
+                              href={`tel:${appointment.bookedForPatient?.user.phoneNumber}`}
+                              className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                              dir="ltr"
+                            >
+                              {appointment.bookedForPatient?.user.phoneNumber}
+                            </a>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {appointment.clinic?.doctorProfile?.user.fullName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {appointment.clinic?.doctorProfile?.specialty &&
+                                getLocalizedText(
+                                  appointment.clinic.doctorProfile.specialty
+                                    .name,
+                                  locale,
+                                )}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 text-sm">
+                            <Calendar className="h-3 w-3" />
+                            {formatDate(appointment.appointmentDate)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getLocalizedText(appointment.serviceName, locale)}
+                        </TableCell>
+                        <TableCell className="font-semibold">
+                          {formatCurrency(appointment.price)}
+                        </TableCell>
+                        <TableCell>
                           <Select
-                            value={appointment.paymentStatus}
+                            value={appointment.status}
                             onValueChange={(value) =>
-                              handleUpdatePaymentStatus(
+                              handleUpdateStatus(
                                 appointment,
-                                value as PaymentStatus,
+                                value as AppointmentStatus,
                               )
                             }
+                            disabled={
+                              appointment.status === "COMPLETED" ||
+                              appointment.status === "CANCELLED"
+                            }
                           >
-                            <SelectTrigger className="w-28 h-8">
+                            <SelectTrigger className="w-32 h-8">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {paymentStatusOptions.map((s) => (
+                              {statusOptions.map((s) => (
                                 <SelectItem key={s} value={s}>
-                                  {t(`payment.${s.toLowerCase()}`)}
+                                  {t(`status.${s.toLowerCase()}`)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                          {appointment.requiresPrepayment && (
-                            <Badge variant="warning" className="text-[10px]">
-                              {t("prepayment.badge")}
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewDetails(appointment)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          {!["COMPLETED", "CANCELLED", "NO_SHOW"].includes(
-                            appointment.status,
-                          ) && (
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <Select
+                              value={appointment.paymentStatus}
+                              onValueChange={(value) =>
+                                handleUpdatePaymentStatus(
+                                  appointment,
+                                  value as PaymentStatus,
+                                )
+                              }
+                            >
+                              <SelectTrigger className="w-28 h-8">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {paymentStatusOptions.map((s) => (
+                                  <SelectItem key={s} value={s}>
+                                    {t(`payment.${s.toLowerCase()}`)}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {appointment.requiresPrepayment && (
+                              <Badge variant="warning" className="text-[10px]">
+                                {t("prepayment.badge")}
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-error-600"
-                              onClick={() => handleOpenCancel(appointment)}
+                              onClick={() => handleViewDetails(appointment)}
                             >
-                              <XCircle className="h-4 w-4" />
+                              <Eye className="h-4 w-4" />
                             </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                            {!["COMPLETED", "CANCELLED", "NO_SHOW"].includes(
+                              appointment.status,
+                            ) && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-error-600"
+                                onClick={() => handleOpenCancel(appointment)}
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
 
               <PaginationControls

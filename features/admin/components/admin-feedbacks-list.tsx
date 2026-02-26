@@ -371,100 +371,100 @@ export function AdminFeedbacksList() {
           ) : (
             <>
               <div className="overflow-x-auto -mx-6 px-6">
-              <Table className="min-w-[800px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("admin.feedbacks.type")}</TableHead>
-                    <TableHead>{t("admin.feedbacks.name")}</TableHead>
-                    <TableHead>{t("admin.feedbacks.content")}</TableHead>
-                    <TableHead>{t("admin.feedbacks.contactInfo")}</TableHead>
-                    <TableHead>{t("admin.feedbacks.date")}</TableHead>
-                    <TableHead>{t("admin.feedbacks.status")}</TableHead>
-                    <TableHead>{t("table.actions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {feedbacks.map((feedback) => (
-                    <TableRow key={feedback.id}>
-                      <TableCell>
-                        <Badge className={TYPE_COLORS[feedback.type]}>
-                          {feedback.type === "COMPLAINT" ? (
-                            <AlertCircle className="h-3 w-3 me-1" />
-                          ) : (
-                            <Lightbulb className="h-3 w-3 me-1" />
-                          )}
-                          {getTypeLabel(feedback.type)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">{feedback.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        <p className="truncate text-sm">{feedback.content}</p>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1 text-sm">
-                          {feedback.email && (
-                            <a
-                              href={`mailto:${feedback.email}`}
-                              className="flex items-center gap-1 text-muted-foreground hover:text-primary-600"
-                            >
-                              <Mail className="h-3 w-3" />
-                              <span className="truncate max-w-[150px]">
-                                {feedback.email}
-                              </span>
-                            </a>
-                          )}
-                          {feedback.phone && (
-                            <a
-                              href={`tel:${feedback.phone}`}
-                              className="flex items-center gap-1 text-muted-foreground hover:text-primary-600"
-                              dir="ltr"
-                            >
-                              <Phone className="h-3 w-3" />
-                              {feedback.phone}
-                            </a>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(feedback.createdAt)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={STATUS_COLORS[feedback.status]}>
-                          {getStatusLabel(feedback.status)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewDetails(feedback)}
-                            title={t("admin.feedbacks.details")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleOpenStatusDialog(feedback)}
-                            title={t("admin.feedbacks.changeStatus")}
-                          >
-                            <ClipboardCheck className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+                <Table className="min-w-[800px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t("admin.feedbacks.type")}</TableHead>
+                      <TableHead>{t("admin.feedbacks.name")}</TableHead>
+                      <TableHead>{t("admin.feedbacks.content")}</TableHead>
+                      <TableHead>{t("admin.feedbacks.contactInfo")}</TableHead>
+                      <TableHead>{t("admin.feedbacks.date")}</TableHead>
+                      <TableHead>{t("admin.feedbacks.status")}</TableHead>
+                      <TableHead>{t("table.actions")}</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {feedbacks.map((feedback) => (
+                      <TableRow key={feedback.id}>
+                        <TableCell>
+                          <Badge className={TYPE_COLORS[feedback.type]}>
+                            {feedback.type === "COMPLAINT" ? (
+                              <AlertCircle className="h-3 w-3 me-1" />
+                            ) : (
+                              <Lightbulb className="h-3 w-3 me-1" />
+                            )}
+                            {getTypeLabel(feedback.type)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium">{feedback.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <p className="truncate text-sm">{feedback.content}</p>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1 text-sm">
+                            {feedback.email && (
+                              <a
+                                href={`mailto:${feedback.email}`}
+                                className="flex items-center gap-1 text-muted-foreground hover:text-primary-600"
+                              >
+                                <Mail className="h-3 w-3" />
+                                <span className="truncate max-w-[150px]">
+                                  {feedback.email}
+                                </span>
+                              </a>
+                            )}
+                            {feedback.phone && (
+                              <a
+                                href={`tel:${feedback.phone}`}
+                                className="flex items-center gap-1 text-muted-foreground hover:text-primary-600"
+                                dir="ltr"
+                              >
+                                <Phone className="h-3 w-3" />
+                                {feedback.phone}
+                              </a>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 text-sm">
+                            <Calendar className="h-3 w-3" />
+                            {formatDate(feedback.createdAt)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={STATUS_COLORS[feedback.status]}>
+                            {getStatusLabel(feedback.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewDetails(feedback)}
+                              title={t("admin.feedbacks.details")}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleOpenStatusDialog(feedback)}
+                              title={t("admin.feedbacks.changeStatus")}
+                            >
+                              <ClipboardCheck className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
 
               <PaginationControls

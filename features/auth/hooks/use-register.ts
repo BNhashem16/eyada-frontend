@@ -14,7 +14,7 @@ interface RegisterData {
   password: string;
   fullName: string;
   phoneNumber: string;
-  role?: "PATIENT" | "DOCTOR";
+  role?: "PATIENT" | "DOCTOR" | "PHARMACY_OWNER";
 }
 
 export function useRegister() {
@@ -41,6 +41,13 @@ export function useRegister() {
             );
             // Redirect to profile page to complete registration
             router.push("/doctor/profile");
+            break;
+          case "PHARMACY_OWNER":
+            toastSuccess(
+              t("auth.registerSuccessTitle"),
+              t("auth.registerSuccessPharmacyOwnerDesc"),
+            );
+            router.push("/pharmacy-owner/dashboard");
             break;
           case "PATIENT":
           default:

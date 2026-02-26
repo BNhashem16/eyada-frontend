@@ -392,9 +392,8 @@ export function DoctorProfileForm() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="specialtyId">
-                {t("doctor.profileForm.specialty")}{" "}
-                <span className="text-error-500">*</span>
+              <Label htmlFor="specialtyId" required>
+                {t("doctor.profileForm.specialty")}
               </Label>
               <SearchableSelect
                 options={specialties.map((specialty) => ({

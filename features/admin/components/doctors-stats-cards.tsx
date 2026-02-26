@@ -21,8 +21,7 @@ export function DoctorsStatsCards() {
       label: t("admin.doctors.stats.total"),
       value: data?.totalDoctors ?? 0,
       icon: Users,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("admin.doctors.stats.approved"),

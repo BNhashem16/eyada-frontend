@@ -5,7 +5,11 @@ import { AxiosError } from "axios";
 import { apiGet, apiPatch, apiPost, apiDelete } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import type { ApiError } from "@/types";
-import { DoctorProfile, DoctorPaymentAccount, PaginatedResponse } from "@/types";
+import {
+  DoctorProfile,
+  DoctorPaymentAccount,
+  PaginatedResponse,
+} from "@/types";
 import { DoctorStatus } from "@/types/enums";
 import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";

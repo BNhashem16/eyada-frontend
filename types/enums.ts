@@ -4,6 +4,8 @@ export enum Role {
   DOCTOR = "DOCTOR",
   SECRETARY = "SECRETARY",
   PATIENT = "PATIENT",
+  PHARMACY_OWNER = "PHARMACY_OWNER",
+  DRIVER = "DRIVER",
 }
 
 // Gender options
@@ -108,6 +110,104 @@ export enum ContactLinkPlatform {
   SNAPCHAT = "SNAPCHAT",
   TELEGRAM = "TELEGRAM",
   OTHER = "OTHER",
+}
+
+// Pharmacy status
+export enum PharmacyStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  SUSPENDED = "SUSPENDED",
+}
+
+export enum DriverStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  SUSPENDED = "SUSPENDED",
+}
+
+export enum VehicleType {
+  MOTORCYCLE = "MOTORCYCLE",
+  CAR = "CAR",
+  VAN = "VAN",
+  BICYCLE = "BICYCLE",
+  TRUCK = "TRUCK",
+  PICKUP = "PICKUP",
+  SCOOTER = "SCOOTER",
+}
+
+// Pharmacy order status
+export enum OrderStatus {
+  PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  PREPARING = "PREPARING",
+  READY_FOR_PICKUP = "READY_FOR_PICKUP",
+  OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY",
+  DELIVERED = "DELIVERED",
+  CANCELLED = "CANCELLED",
+  RETURNED = "RETURNED",
+  REFUNDED = "REFUNDED",
+}
+
+// Pharmacy order payment status
+export enum PharmacyOrderPaymentStatus {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+}
+
+// Delivery type
+export enum DeliveryType {
+  SELF_DELIVERY = "SELF_DELIVERY",
+  PLATFORM_DRIVER = "PLATFORM_DRIVER",
+  THIRD_PARTY = "THIRD_PARTY",
+}
+
+// Pharmacy commission type
+export enum PharmacyCommissionType {
+  PERCENTAGE = "PERCENTAGE",
+  TIERED = "TIERED",
+  PROMOTIONAL = "PROMOTIONAL",
+}
+
+// Coupon type
+export enum CouponType {
+  PERCENTAGE = "PERCENTAGE",
+  FIXED = "FIXED",
+  FREE_DELIVERY = "FREE_DELIVERY",
+}
+
+// Campaign calculation type
+export enum CampaignCalculationType {
+  PERCENTAGE = "PERCENTAGE",
+  FIXED = "FIXED",
+}
+
+// Campaign status
+export enum CampaignStatus {
+  DRAFT = "DRAFT",
+  ACTIVE = "ACTIVE",
+  PAUSED = "PAUSED",
+  ENDED = "ENDED",
+}
+
+// Discount type
+export enum DiscountType {
+  PLATFORM_SUBSIDY = "PLATFORM_SUBSIDY",
+  PHARMACY_FUNDED = "PHARMACY_FUNDED",
+  COUPON = "COUPON",
+  FREE_DELIVERY = "FREE_DELIVERY",
+  FIRST_ORDER = "FIRST_ORDER",
+}
+
+// Settlement status
+export enum SettlementStatus {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
 }
 
 // Blood types

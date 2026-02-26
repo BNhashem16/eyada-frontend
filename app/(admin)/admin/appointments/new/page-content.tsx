@@ -46,7 +46,10 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
-import { useAdminClinics, useCreateAdminAppointment } from "@/features/admin/hooks";
+import {
+  useAdminClinics,
+  useCreateAdminAppointment,
+} from "@/features/admin/hooks";
 import { useClinicServices } from "@/features/clinics/hooks/use-clinics";
 import {
   formatDate,
@@ -119,9 +122,15 @@ export function AdminNewAppointmentContent() {
   const [patientPhone, setPatientPhone] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string>("");
-  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">("");
-  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">("");
-  const [appointmentStatus, setAppointmentStatus] = useState<"PENDING" | "CONFIRMED" | "">("");
+  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">(
+    "",
+  );
+  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">(
+    "",
+  );
+  const [appointmentStatus, setAppointmentStatus] = useState<
+    "PENDING" | "CONFIRMED" | ""
+  >("");
 
   // Week days
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
@@ -151,7 +160,10 @@ export function AdminNewAppointmentContent() {
   } | null>(null);
 
   // Data fetching
-  const { data: clinicsResponse, isLoading: clinicsLoading } = useAdminClinics({ limit: 100, isActive: true });
+  const { data: clinicsResponse, isLoading: clinicsLoading } = useAdminClinics({
+    limit: 100,
+    isActive: true,
+  });
   const clinics = clinicsResponse?.data || [];
   const { data: services, isLoading: servicesLoading } =
     useClinicServices(selectedClinic);
@@ -264,8 +276,8 @@ export function AdminNewAppointmentContent() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="patientName">
-                  {t("doctor.walkIn.patientName")} *
+                <Label htmlFor="patientName" required>
+                  {t("doctor.walkIn.patientName")}
                 </Label>
                 <Input
                   id="patientName"
@@ -280,7 +292,7 @@ export function AdminNewAppointmentContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>{t("doctor.walkIn.patientDob")} *</Label>
+                  <Label required>{t("doctor.walkIn.patientDob")}</Label>
                   <DateOfBirthInput
                     value={patientDateOfBirth}
                     onChange={setPatientDateOfBirth}
@@ -315,7 +327,7 @@ export function AdminNewAppointmentContent() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>{t("secretary.selectClinic")} *</Label>
+                <Label required>{t("secretary.selectClinic")}</Label>
                 {clinicsLoading ? (
                   <div className="h-10 bg-muted animate-pulse rounded-md" />
                 ) : clinics.length === 0 ? (
@@ -340,7 +352,7 @@ export function AdminNewAppointmentContent() {
 
               {selectedClinic && (
                 <div className="space-y-2">
-                  <Label>{t("secretary.selectService")} *</Label>
+                  <Label required>{t("secretary.selectService")}</Label>
                   {servicesLoading ? (
                     <div className="h-10 bg-muted animate-pulse rounded-md" />
                   ) : (
@@ -387,11 +399,7 @@ export function AdminNewAppointmentContent() {
                     {formatDate(weekStart, "d MMM")} -{" "}
                     {formatDate(addDays(weekStart, 6), "d MMM yyyy")}
                   </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={goToNextWeek}
-                  >
+                  <Button variant="outline" size="icon" onClick={goToNextWeek}>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -400,7 +408,8 @@ export function AdminNewAppointmentContent() {
                 <div className="grid grid-cols-7 gap-1 sm:gap-2">
                   {weekDays.map((date, index) => {
                     const isPast = isBefore(date, new Date()) && !isToday(date);
-                    const isSelected = selectedDate && isSameDay(date, selectedDate);
+                    const isSelected =
+                      selectedDate && isSameDay(date, selectedDate);
 
                     return (
                       <button
@@ -478,7 +487,9 @@ export function AdminNewAppointmentContent() {
                 <div className="flex gap-2">
                   <Button
                     type="button"
-                    variant={paymentStatus === "PENDING" ? "default" : "outline"}
+                    variant={
+                      paymentStatus === "PENDING" ? "default" : "outline"
+                    }
                     className="flex-1"
                     onClick={() => setPaymentStatus("PENDING")}
                   >
@@ -503,7 +514,9 @@ export function AdminNewAppointmentContent() {
                 <div className="flex gap-2">
                   <Button
                     type="button"
-                    variant={appointmentStatus === "PENDING" ? "default" : "outline"}
+                    variant={
+                      appointmentStatus === "PENDING" ? "default" : "outline"
+                    }
                     className="flex-1"
                     onClick={() => setAppointmentStatus("PENDING")}
                   >
@@ -512,7 +525,9 @@ export function AdminNewAppointmentContent() {
                   </Button>
                   <Button
                     type="button"
-                    variant={appointmentStatus === "CONFIRMED" ? "default" : "outline"}
+                    variant={
+                      appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                    }
                     className="flex-1"
                     onClick={() => setAppointmentStatus("CONFIRMED")}
                   >
@@ -658,7 +673,9 @@ export function AdminNewAppointmentContent() {
                   <span className="text-sm text-muted-foreground">
                     {t("appointments.paymentStatusLabel")}
                   </span>
-                  <Badge variant={paymentStatus === "PAID" ? "default" : "outline"}>
+                  <Badge
+                    variant={paymentStatus === "PAID" ? "default" : "outline"}
+                  >
                     {paymentStatus === "PAID"
                       ? t("appointments.paymentPaid")
                       : t("appointments.paymentPending")}
@@ -672,7 +689,11 @@ export function AdminNewAppointmentContent() {
                   <span className="text-sm text-muted-foreground">
                     {t("appointments.appointmentStatusLabel")}
                   </span>
-                  <Badge variant={appointmentStatus === "CONFIRMED" ? "default" : "outline"}>
+                  <Badge
+                    variant={
+                      appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                    }
+                  >
                     {appointmentStatus === "CONFIRMED"
                       ? t("appointments.statusConfirmed")
                       : t("appointments.statusPending")}
@@ -739,7 +760,9 @@ export function AdminNewAppointmentContent() {
                   <p className="text-xs text-muted-foreground mb-1">
                     {t("appointments.bookingNumber")}
                   </p>
-                  <p className="font-bold text-lg">{successData.bookingNumber}</p>
+                  <p className="font-bold text-lg">
+                    {successData.bookingNumber}
+                  </p>
                 </div>
                 <div className="text-center p-3 bg-muted rounded-lg">
                   <p className="text-xs text-muted-foreground mb-1">

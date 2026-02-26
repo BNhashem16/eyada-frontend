@@ -38,16 +38,24 @@ const COUNTRY_CODES = [
   { code: "90", flag: "🇹🇷", name: { ar: "تركيا", en: "Turkey" } },
 ] as const;
 
-function parsePhoneValue(value: string): { countryCode: string; localNumber: string } {
+function parsePhoneValue(value: string): {
+  countryCode: string;
+  localNumber: string;
+} {
   if (!value) return { countryCode: "20", localNumber: "" };
 
   const digits = value.replace(/[^0-9]/g, "");
 
   // Try to match against known country codes (longest first)
-  const sortedCodes = [...COUNTRY_CODES].sort((a, b) => b.code.length - a.code.length);
+  const sortedCodes = [...COUNTRY_CODES].sort(
+    (a, b) => b.code.length - a.code.length,
+  );
   for (const country of sortedCodes) {
     if (digits.startsWith(country.code)) {
-      return { countryCode: country.code, localNumber: digits.slice(country.code.length) };
+      return {
+        countryCode: country.code,
+        localNumber: digits.slice(country.code.length),
+      };
     }
   }
 
@@ -83,13 +91,19 @@ export function PhoneInputWithCode({
 
   return (
     <div className={cn("flex gap-2", className)} dir="ltr">
-      <Select value={countryCode} onValueChange={handleCodeChange} disabled={disabled}>
+      <Select
+        value={countryCode}
+        onValueChange={handleCodeChange}
+        disabled={disabled}
+      >
         <SelectTrigger className="w-[140px] shrink-0">
           <SelectValue>
             {selectedCountry && (
               <span className="flex items-center gap-1.5">
                 <span>{selectedCountry.flag}</span>
-                <span className="text-muted-foreground">+{selectedCountry.code}</span>
+                <span className="text-muted-foreground">
+                  +{selectedCountry.code}
+                </span>
               </span>
             )}
           </SelectValue>
@@ -99,7 +113,9 @@ export function PhoneInputWithCode({
             <SelectItem key={country.code} value={country.code}>
               <span className="flex items-center gap-2">
                 <span>{country.flag}</span>
-                <span>{country.name[locale as "ar" | "en"] || country.name.en}</span>
+                <span>
+                  {country.name[locale as "ar" | "en"] || country.name.en}
+                </span>
                 <span className="text-muted-foreground">+{country.code}</span>
               </span>
             </SelectItem>

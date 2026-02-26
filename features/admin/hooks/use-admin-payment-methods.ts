@@ -78,10 +78,7 @@ export function useCreatePaymentMethod() {
 
   return useMutation({
     mutationFn: async (data: CreatePaymentMethodData) => {
-      return apiPost<PaymentMethodModel>(
-        ADMIN_ENDPOINTS.PAYMENT_METHODS,
-        data,
-      );
+      return apiPost<PaymentMethodModel>(ADMIN_ENDPOINTS.PAYMENT_METHODS, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

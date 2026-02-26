@@ -110,13 +110,14 @@ export function CommissionsManagement() {
 
   const DOCTOR_PAGE_SIZE = 20;
 
-  const { data: doctorsResponse, isFetching: doctorsLoading } =
-    useAdminDoctors({
+  const { data: doctorsResponse, isFetching: doctorsLoading } = useAdminDoctors(
+    {
       limit: DOCTOR_PAGE_SIZE,
       page: doctorPage,
       status: DoctorStatus.APPROVED,
       search: doctorSearch || undefined,
-    });
+    },
+  );
 
   // Accumulate doctor options across pages for infinite scroll
   useEffect(() => {
@@ -342,106 +343,108 @@ export function CommissionsManagement() {
             </div>
           ) : (
             <div className="overflow-x-auto -mx-6 px-6">
-            <Table className="min-w-[800px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("admin.commissions.doctor")}</TableHead>
-                  <TableHead>{t("admin.commissions.specialty")}</TableHead>
-                  <TableHead>{t("admin.commissions.type")}</TableHead>
-                  <TableHead>{t("admin.commissions.value")}</TableHead>
-                  <TableHead>{t("admin.commissions.maxUnpaidBalance")}</TableHead>
-                  <TableHead>{t("table.status")}</TableHead>
-                  <TableHead>{t("table.actions")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {commissions.map((commission) => (
-                  <TableRow
-                    key={commission.id}
-                    className={
-                      !commission.isActive ? "opacity-60 bg-muted/30" : ""
-                    }
-                  >
-                    <TableCell className="font-medium">
-                      {commission.doctorProfile?.user.fullName || "-"}
-                    </TableCell>
-                    <TableCell>
-                      {commission.doctorProfile?.specialty
-                        ? getLocalizedText(
-                            commission.doctorProfile.specialty.name,
-                            locale,
-                          )
-                        : "-"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="gap-1">
-                        {commission.commissionType === "FIXED" ? (
-                          <DollarSign className="h-3 w-3" />
-                        ) : (
-                          <Percent className="h-3 w-3" />
-                        )}
-                        {commission.commissionType === "FIXED"
-                          ? t("admin.commissions.fixed")
-                          : t("admin.commissions.percentage")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-semibold">
-                      {formatCommissionValue(commission)}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {commission.maxUnpaidBalance != null
-                        ? `${commission.maxUnpaidBalance} ${t("common.currency")}`
-                        : t("admin.commissions.noLimit")}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {togglingId === commission.id &&
-                        updateCommission.isPending ? (
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                        ) : (
-                          <Switch
-                            checked={commission.isActive}
-                            onCheckedChange={() =>
-                              handleToggleActive(commission)
-                            }
-                            disabled={updateCommission.isPending}
-                          />
-                        )}
-                        <Badge
-                          variant={
-                            commission.isActive ? "success" : "secondary"
-                          }
-                          className="text-xs"
-                        >
-                          {commission.isActive
-                            ? t("common.active")
-                            : t("common.inactive")}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleOpenEdit(commission)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-error-600"
-                          onClick={() => setDeleteId(commission.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+              <Table className="min-w-[800px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("admin.commissions.doctor")}</TableHead>
+                    <TableHead>{t("admin.commissions.specialty")}</TableHead>
+                    <TableHead>{t("admin.commissions.type")}</TableHead>
+                    <TableHead>{t("admin.commissions.value")}</TableHead>
+                    <TableHead>
+                      {t("admin.commissions.maxUnpaidBalance")}
+                    </TableHead>
+                    <TableHead>{t("table.status")}</TableHead>
+                    <TableHead>{t("table.actions")}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {commissions.map((commission) => (
+                    <TableRow
+                      key={commission.id}
+                      className={
+                        !commission.isActive ? "opacity-60 bg-muted/30" : ""
+                      }
+                    >
+                      <TableCell className="font-medium">
+                        {commission.doctorProfile?.user.fullName || "-"}
+                      </TableCell>
+                      <TableCell>
+                        {commission.doctorProfile?.specialty
+                          ? getLocalizedText(
+                              commission.doctorProfile.specialty.name,
+                              locale,
+                            )
+                          : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="gap-1">
+                          {commission.commissionType === "FIXED" ? (
+                            <DollarSign className="h-3 w-3" />
+                          ) : (
+                            <Percent className="h-3 w-3" />
+                          )}
+                          {commission.commissionType === "FIXED"
+                            ? t("admin.commissions.fixed")
+                            : t("admin.commissions.percentage")}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        {formatCommissionValue(commission)}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {commission.maxUnpaidBalance != null
+                          ? `${commission.maxUnpaidBalance} ${t("common.currency")}`
+                          : t("admin.commissions.noLimit")}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {togglingId === commission.id &&
+                          updateCommission.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          ) : (
+                            <Switch
+                              checked={commission.isActive}
+                              onCheckedChange={() =>
+                                handleToggleActive(commission)
+                              }
+                              disabled={updateCommission.isPending}
+                            />
+                          )}
+                          <Badge
+                            variant={
+                              commission.isActive ? "success" : "secondary"
+                            }
+                            className="text-xs"
+                          >
+                            {commission.isActive
+                              ? t("common.active")
+                              : t("common.inactive")}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleOpenEdit(commission)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-error-600"
+                            onClick={() => setDeleteId(commission.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           )}
 
@@ -475,7 +478,7 @@ export function CommissionsManagement() {
           <div className="space-y-4">
             {!editingCommission && (
               <div>
-                <Label>{t("admin.commissions.selectDoctor")} *</Label>
+                <Label required>{t("admin.commissions.selectDoctor")}</Label>
                 <SearchableSelect
                   options={doctorSelectOptions}
                   value={formData.doctorProfileId}
@@ -486,12 +489,8 @@ export function CommissionsManagement() {
                     );
                     if (opt) setSelectedDoctorOpt(opt);
                   }}
-                  placeholder={t(
-                    "admin.commissions.selectDoctorPlaceholder",
-                  )}
-                  searchPlaceholder={t(
-                    "admin.commissions.searchDoctor",
-                  )}
+                  placeholder={t("admin.commissions.selectDoctorPlaceholder")}
+                  searchPlaceholder={t("admin.commissions.searchDoctor")}
                   onSearchChange={handleDoctorSearch}
                   hasMore={hasMoreDoctors}
                   onLoadMore={handleDoctorLoadMore}
@@ -502,7 +501,7 @@ export function CommissionsManagement() {
             )}
 
             <div>
-              <Label>{t("admin.commissions.type")} *</Label>
+              <Label required>{t("admin.commissions.type")}</Label>
               <Select
                 value={formData.commissionType}
                 onValueChange={(value: CommissionType) =>
@@ -563,7 +562,10 @@ export function CommissionsManagement() {
             </div>
 
             <div>
-              <Label>{t("admin.commissions.maxUnpaidBalance")} ({t("common.currency")})</Label>
+              <Label>
+                {t("admin.commissions.maxUnpaidBalance")} (
+                {t("common.currency")})
+              </Label>
               <Input
                 type="number"
                 inputMode="decimal"

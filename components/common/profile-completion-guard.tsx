@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { usePatientProfile } from "@/features/patients/hooks/use-patient";
 import { useDoctorProfile } from "@/features/doctor-portal/hooks/use-doctor-portal";
-import { Role, DoctorStatus, PatientStatus } from "@/types";
+import { usePharmacyOwnerProfile } from "@/features/pharmacy-owner/hooks/use-pharmacy-owner-profile";
+import { Role, DoctorStatus, PatientStatus, PharmacyStatus } from "@/types";
 
 interface ProfileCompletionGuardProps {
   children: React.ReactNode;
@@ -20,10 +21,14 @@ export function ProfileCompletionGuard({
 
   const isPatient = role === Role.PATIENT;
   const isDoctor = role === Role.DOCTOR;
+  const isPharmacyOwner = role === Role.PHARMACY_OWNER;
 
   // Only fetch the profile for the relevant role
   const patientProfile = usePatientProfile({ enabled: isPatient });
   const doctorProfile = useDoctorProfile({ enabled: isDoctor });
+  const pharmacyOwnerProfile = usePharmacyOwnerProfile({
+    enabled: isPharmacyOwner,
+  });
 
   useEffect(() => {
     // Skip if already on profile page
@@ -62,16 +67,31 @@ export function ProfileCompletionGuard({
         }
       }
     }
+
+    if (isPharmacyOwner) {
+      // Skip if still loading
+      if (pharmacyOwnerProfile.isLoading) return;
+
+      // Only redirect if profile doesn't exist at all.
+      // Don't block on PENDING — owner needs to create a pharmacy first,
+      // then admin approves the pharmacy (which updates profile status).
+      if (!pharmacyOwnerProfile.data) {
+        router.push("/pharmacy-owner/profile");
+      }
+    }
   }, [
     role,
     pathname,
     router,
     isPatient,
     isDoctor,
+    isPharmacyOwner,
     patientProfile.isLoading,
     patientProfile.data,
     doctorProfile.isLoading,
     doctorProfile.data,
+    pharmacyOwnerProfile.isLoading,
+    pharmacyOwnerProfile.data,
   ]);
 
   return <>{children}</>;

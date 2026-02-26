@@ -197,7 +197,10 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 max-w-[calc(100vw-2rem)]">
+            <DropdownMenuContent
+              align="end"
+              className="w-48 max-w-[calc(100vw-2rem)]"
+            >
               <DropdownMenuItem asChild>
                 <Link href={`/secretary/appointments/${appointment.id}`}>
                   <Eye className="h-4 w-4 me-2" />

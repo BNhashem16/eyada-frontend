@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Plus,
-  Edit2,
-  Trash2,
-  Frown,
-  Loader2,
-  Search,
-} from "lucide-react";
+import { Plus, Edit2, Trash2, Frown, Loader2, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -100,8 +93,9 @@ export function PaymentMethodsManagement() {
 
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingMethod, setEditingMethod] =
-    useState<PaymentMethodModel | null>(null);
+  const [editingMethod, setEditingMethod] = useState<PaymentMethodModel | null>(
+    null,
+  );
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [formData, setFormData] =
     useState<PaymentMethodFormData>(initialFormData);
@@ -244,9 +238,7 @@ export function PaymentMethodsManagement() {
             </div>
             <Select
               value={
-                isActiveFilter === undefined
-                  ? "all"
-                  : isActiveFilter.toString()
+                isActiveFilter === undefined ? "all" : isActiveFilter.toString()
               }
               onValueChange={(value) => {
                 setIsActiveFilter(
@@ -301,7 +293,10 @@ export function PaymentMethodsManagement() {
                         </TableCell>
                         <TableCell>{method.name.en}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-mono text-xs">
+                          <Badge
+                            variant="outline"
+                            className="font-mono text-xs"
+                          >
                             {method.code}
                           </Badge>
                         </TableCell>
@@ -380,15 +375,15 @@ export function PaymentMethodsManagement() {
                 ? t("paymentMethods.editMethod")
                 : t("paymentMethods.addNew")}
             </DialogTitle>
-            <DialogDescription>
-              {t("prepayment.formDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("prepayment.formDesc")}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label htmlFor="nameAr">{t("paymentMethods.nameAr")} *</Label>
+                <Label htmlFor="nameAr" required>
+                  {t("paymentMethods.nameAr")}
+                </Label>
                 <Input
                   id="nameAr"
                   value={formData.nameAr}
@@ -398,7 +393,9 @@ export function PaymentMethodsManagement() {
                 />
               </div>
               <div>
-                <Label htmlFor="nameEn">{t("paymentMethods.nameEn")} *</Label>
+                <Label htmlFor="nameEn" required>
+                  {t("paymentMethods.nameEn")}
+                </Label>
                 <Input
                   id="nameEn"
                   value={formData.nameEn}
@@ -412,7 +409,9 @@ export function PaymentMethodsManagement() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label htmlFor="code">{t("paymentMethods.code")} *</Label>
+                <Label htmlFor="code" required>
+                  {t("paymentMethods.code")}
+                </Label>
                 <Input
                   id="code"
                   value={formData.code}
@@ -444,9 +443,7 @@ export function PaymentMethodsManagement() {
             </div>
 
             <div>
-              <Label htmlFor="sortOrder">
-                {t("paymentMethods.sortOrder")}
-              </Label>
+              <Label htmlFor="sortOrder">{t("paymentMethods.sortOrder")}</Label>
               <Input
                 id="sortOrder"
                 type="number"

@@ -845,9 +845,7 @@ function PrepaymentSettingsCard({
                   onValueChange={setNewAccountMethodId}
                 >
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder={t("prepayment.selectMethod")}
-                    />
+                    <SelectValue placeholder={t("prepayment.selectMethod")} />
                   </SelectTrigger>
                   <SelectContent>
                     {availableMethods.map((method) => (

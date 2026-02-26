@@ -65,9 +65,7 @@ export function StatusBreakdown({ title, data }: StatusBreakdownProps) {
                   </span>
                 </span>
               </div>
-              <div
-                className={`h-2 rounded-full ${colors.bg} overflow-hidden`}
-              >
+              <div className={`h-2 rounded-full ${colors.bg} overflow-hidden`}>
                 <div
                   className={`h-full rounded-full ${colors.bar} transition-all duration-500`}
                   style={{ width: `${pct}%` }}

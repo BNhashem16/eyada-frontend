@@ -22,8 +22,7 @@ export function AppointmentsStatsCards() {
       label: t("admin.appointmentsPage.stats.total"),
       value: data?.totalAppointments ?? 0,
       icon: Calendar,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("admin.appointmentsPage.stats.completed"),
@@ -56,8 +55,7 @@ export function AppointmentsStatsCards() {
       label: t("admin.appointmentsPage.stats.paidRevenue"),
       value: (data?.paidRevenue ?? 0).toLocaleString(),
       icon: CreditCard,
-      color:
-        "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
+      color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
     },
     {
       label: t("admin.appointmentsPage.stats.unpaidRevenue"),

@@ -57,7 +57,9 @@ const createSecretarySchemaFn = (locale: Locale = "ar") => {
   });
 };
 
-type CreateSecretaryFormData = z.infer<ReturnType<typeof createSecretarySchemaFn>>;
+type CreateSecretaryFormData = z.infer<
+  ReturnType<typeof createSecretarySchemaFn>
+>;
 
 export function NewSecretaryContent() {
   const { t, locale } = useTranslation();
@@ -134,7 +136,9 @@ export function NewSecretaryContent() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="fullName">{t("auth.fullName")} *</Label>
+              <Label htmlFor="fullName" required>
+                {t("auth.fullName")}
+              </Label>
               <Input
                 id="fullName"
                 placeholder={t("auth.fullNamePlaceholder")}
@@ -150,7 +154,9 @@ export function NewSecretaryContent() {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">{t("auth.email")} *</Label>
+              <Label htmlFor="email" required>
+                {t("auth.email")}
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -168,7 +174,9 @@ export function NewSecretaryContent() {
 
             {/* Phone Number */}
             <div className="space-y-2">
-              <Label htmlFor="phoneNumber">{t("auth.phoneNumber")} *</Label>
+              <Label htmlFor="phoneNumber" required>
+                {t("auth.phoneNumber")}
+              </Label>
               <Input
                 id="phoneNumber"
                 type="tel"
@@ -187,7 +195,9 @@ export function NewSecretaryContent() {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">{t("auth.password")} *</Label>
+              <Label htmlFor="password" required>
+                {t("auth.password")}
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -221,7 +231,7 @@ export function NewSecretaryContent() {
 
             {/* Clinic Selection */}
             <div className="space-y-2">
-              <Label>{t("secretary.management.selectClinic")} *</Label>
+              <Label required>{t("secretary.management.selectClinic")}</Label>
               <Select
                 value={selectedClinicId}
                 onValueChange={(value) => setValue("clinicId", value)}

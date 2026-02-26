@@ -27,7 +27,7 @@ export const createRegisterSchema = (locale: Locale = "ar") => {
       .min(8, t("validation.passwordMinLength"))
       .max(50, t("validation.passwordMaxLength")),
     confirmPassword: z.string().min(1, t("validation.confirmPasswordRequired")),
-    role: z.enum(["PATIENT", "DOCTOR"]),
+    role: z.enum(["PATIENT", "DOCTOR", "PHARMACY_OWNER"]),
     agreeTerms: z.boolean().refine((val) => val === true, {
       message: t("validation.termsRequired"),
     }),

@@ -41,7 +41,9 @@ const createUpdateSecretarySchema = (locale: Locale = "ar") => {
   });
 };
 
-type UpdateSecretaryFormData = z.infer<ReturnType<typeof createUpdateSecretarySchema>>;
+type UpdateSecretaryFormData = z.infer<
+  ReturnType<typeof createUpdateSecretarySchema>
+>;
 
 interface EditSecretaryContentProps {
   secretaryId: string;
@@ -176,7 +178,9 @@ export function EditSecretaryContent({
 
             {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="fullName">{t("auth.fullName")} *</Label>
+              <Label htmlFor="fullName" required>
+                {t("auth.fullName")}
+              </Label>
               <Input
                 id="fullName"
                 placeholder={t("auth.fullNamePlaceholder")}
@@ -192,7 +196,9 @@ export function EditSecretaryContent({
 
             {/* Phone Number */}
             <div className="space-y-2">
-              <Label htmlFor="phoneNumber">{t("auth.phoneNumber")} *</Label>
+              <Label htmlFor="phoneNumber" required>
+                {t("auth.phoneNumber")}
+              </Label>
               <Input
                 id="phoneNumber"
                 type="tel"

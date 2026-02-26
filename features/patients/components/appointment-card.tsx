@@ -116,14 +116,10 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                   >
                     <Avatar className="h-10 w-10">
                       <AvatarImage
-                        src={
-                          doctorProfile.user?.profilePicture || undefined
-                        }
+                        src={doctorProfile.user?.profilePicture || undefined}
                       />
                       <AvatarFallback>
-                        {getInitials(
-                          doctorProfile.user?.fullName || "",
-                        )}
+                        {getInitials(doctorProfile.user?.fullName || "")}
                       </AvatarFallback>
                     </Avatar>
                     <div>

@@ -429,127 +429,129 @@ export function AdminClinicsList() {
           ) : (
             <>
               <div className="overflow-x-auto -mx-6 px-6">
-              <Table className="min-w-[800px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("admin.clinics.name")}</TableHead>
-                    <TableHead>{t("admin.clinics.doctor")}</TableHead>
-                    <TableHead>{t("admin.clinics.specialty")}</TableHead>
-                    <TableHead>{t("admin.clinics.location")}</TableHead>
-                    <TableHead>{t("admin.clinics.phone")}</TableHead>
-                    <TableHead>{t("admin.clinics.status")}</TableHead>
-                    <TableHead>{t("table.actions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {clinics.map((clinic) => (
-                    <TableRow key={clinic.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {getLocalizedText(clinic.name, locale)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {getLocalizedText(clinic.address, locale)}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {clinic.doctorProfile?.user.fullName}
-                          </p>
+                <Table className="min-w-[800px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t("admin.clinics.name")}</TableHead>
+                      <TableHead>{t("admin.clinics.doctor")}</TableHead>
+                      <TableHead>{t("admin.clinics.specialty")}</TableHead>
+                      <TableHead>{t("admin.clinics.location")}</TableHead>
+                      <TableHead>{t("admin.clinics.phone")}</TableHead>
+                      <TableHead>{t("admin.clinics.status")}</TableHead>
+                      <TableHead>{t("table.actions")}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {clinics.map((clinic) => (
+                      <TableRow key={clinic.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {getLocalizedText(clinic.name, locale)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {getLocalizedText(clinic.address, locale)}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {clinic.doctorProfile?.user.fullName}
+                            </p>
+                            <a
+                              href={`tel:${clinic.doctorProfile?.user.phoneNumber}`}
+                              className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                              dir="ltr"
+                            >
+                              {clinic.doctorProfile?.user.phoneNumber}
+                            </a>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {clinic.doctorProfile?.specialty &&
+                            getLocalizedText(
+                              clinic.doctorProfile.specialty.name,
+                              locale,
+                            )}
+                        </TableCell>
+                        <TableCell>
+                          {clinic.city && (
+                            <div className="flex items-center gap-1 text-sm">
+                              <MapPin className="h-3 w-3" />
+                              {getLocalizedText(clinic.city.name, locale)}
+                              {clinic.city.state && (
+                                <span className="text-muted-foreground">
+                                  ,{" "}
+                                  {getLocalizedText(
+                                    clinic.city.state.name,
+                                    locale,
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
                           <a
-                            href={`tel:${clinic.doctorProfile?.user.phoneNumber}`}
-                            className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                            href={`tel:${clinic.phone}`}
+                            className="flex items-center gap-1 text-sm hover:text-primary-600"
                             dir="ltr"
                           >
-                            {clinic.doctorProfile?.user.phoneNumber}
+                            <Phone className="h-3 w-3" />
+                            {clinic.phone}
                           </a>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {clinic.doctorProfile?.specialty &&
-                          getLocalizedText(
-                            clinic.doctorProfile.specialty.name,
-                            locale,
-                          )}
-                      </TableCell>
-                      <TableCell>
-                        {clinic.city && (
-                          <div className="flex items-center gap-1 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            {getLocalizedText(clinic.city.name, locale)}
-                            {clinic.city.state && (
-                              <span className="text-muted-foreground">
-                                ,{" "}
-                                {getLocalizedText(
-                                  clinic.city.state.name,
-                                  locale,
-                                )}
-                              </span>
-                            )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={clinic.isActive}
+                              onCheckedChange={() => handleToggleActive(clinic)}
+                              disabled={updateClinic.isPending}
+                            />
+                            <Badge
+                              variant={
+                                clinic.isActive ? "success" : "secondary"
+                              }
+                            >
+                              {clinic.isActive
+                                ? t("common.active")
+                                : t("common.inactive")}
+                            </Badge>
                           </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <a
-                          href={`tel:${clinic.phone}`}
-                          className="flex items-center gap-1 text-sm hover:text-primary-600"
-                          dir="ltr"
-                        >
-                          <Phone className="h-3 w-3" />
-                          {clinic.phone}
-                        </a>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={clinic.isActive}
-                            onCheckedChange={() => handleToggleActive(clinic)}
-                            disabled={updateClinic.isPending}
-                          />
-                          <Badge
-                            variant={clinic.isActive ? "success" : "secondary"}
-                          >
-                            {clinic.isActive
-                              ? t("common.active")
-                              : t("common.inactive")}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewDetails(clinic)}
-                            title={t("admin.clinics.details")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleManageSchedule(clinic)}
-                            title={t("nav.schedules")}
-                          >
-                            <Clock className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-error-600"
-                            onClick={() => handleOpenDelete(clinic)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewDetails(clinic)}
+                              title={t("admin.clinics.details")}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleManageSchedule(clinic)}
+                              title={t("nav.schedules")}
+                            >
+                              <Clock className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-error-600"
+                              onClick={() => handleOpenDelete(clinic)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
 
               <PaginationControls

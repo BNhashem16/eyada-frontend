@@ -22,8 +22,7 @@ export function FeedbacksStatsCards() {
       label: t("admin.feedbacksPage.stats.total"),
       value: data?.totalFeedbacks ?? 0,
       icon: MessageSquare,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("admin.feedbacksPage.stats.new"),
@@ -36,8 +35,7 @@ export function FeedbacksStatsCards() {
       label: t("admin.feedbacksPage.stats.inReview"),
       value: data?.inReviewFeedbacks ?? 0,
       icon: Search,
-      color:
-        "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
+      color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
     },
     {
       label: t("admin.feedbacksPage.stats.resolved"),

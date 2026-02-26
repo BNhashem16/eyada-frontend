@@ -732,7 +732,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
         <CardContent className="space-y-6">
           {/* Phone Numbers */}
           <div className="space-y-3">
-            <Label>
+            <Label required>
               <span className="flex items-center gap-1">
                 <Phone className="h-4 w-4" />
                 {t("clinics.phoneNumbers")}

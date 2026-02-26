@@ -26,8 +26,7 @@ export function OverviewCards({ data }: OverviewCardsProps) {
       label: t("admin.stats.totalUsers"),
       value: data.overview.totalUsers,
       icon: Users,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
       label: t("admin.stats.totalDoctors"),
@@ -54,15 +53,13 @@ export function OverviewCards({ data }: OverviewCardsProps) {
       label: t("admin.stats.totalAppointments"),
       value: data.overview.totalAppointments,
       icon: Calendar,
-      color:
-        "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
+      color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
     },
     {
       label: t("admin.stats.todayAppointments"),
       value: data.appointments.todayTotal,
       icon: CalendarCheck,
-      color:
-        "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
+      color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
     },
     {
       label: t("admin.stats.thisMonthRevenue"),
@@ -85,17 +82,16 @@ export function OverviewCards({ data }: OverviewCardsProps) {
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (
-          <Card
-            key={stat.label}
-            className="hover:shadow-md transition-shadow"
-          >
+          <Card key={stat.label} className="hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div
                 className={`h-10 w-10 rounded-lg ${stat.color} flex items-center justify-center mb-3`}
               >
                 <Icon className="h-5 w-5" />
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-foreground">{stat.value}</p>
+              <p className="text-xl sm:text-2xl font-bold text-foreground">
+                {stat.value}
+              </p>
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </CardContent>
           </Card>

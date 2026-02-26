@@ -124,7 +124,8 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
   const [showRatingDialog, setShowRatingDialog] = useState(false);
 
   const [copiedBooking, setCopiedBooking] = useState(false);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string>("");
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] =
+    useState<string>("");
 
   const {
     data: appointment,
@@ -315,27 +316,18 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
             >
               <Avatar className="h-16 w-16">
                 <AvatarImage
-                  src={
-                    doctorProfile.user?.profilePicture ||
-                    undefined
-                  }
+                  src={doctorProfile.user?.profilePicture || undefined}
                 />
                 <AvatarFallback className="text-xl">
-                  {getInitials(
-                    doctorProfile.user?.fullName || "",
-                  )}
+                  {getInitials(doctorProfile.user?.fullName || "")}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">
-                  {t("doctors.doctorPrefix")}{" "}
-                  {doctorProfile.user?.fullName}
+                  {t("doctors.doctorPrefix")} {doctorProfile.user?.fullName}
                 </p>
                 <p className="text-muted-foreground">
-                  {getLocalizedText(
-                    doctorProfile.specialty?.name,
-                    locale,
-                  )}
+                  {getLocalizedText(doctorProfile.specialty?.name, locale)}
                 </p>
               </div>
             </Link>
@@ -575,46 +567,59 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
             </div>
 
             {/* WhatsApp Button */}
-            {prepaymentInfo.prepaymentWhatsapp && (() => {
-              const selectedAccount = prepaymentInfo.paymentAccounts.find(
-                (a) => a.id === selectedPaymentMethodId,
-              );
-              const selectedMethodName = selectedAccount?.paymentMethod
-                ? getLocalizedText(selectedAccount.paymentMethod.name, locale)
-                : "";
-              const whatsappMessage = t("prepayment.whatsappMessage")
-                .replace("{bookingNumber}", appointment.bookingNumber || "")
-                .replace("{patientName}", appointment.patientName || "")
-                .replace("{appointmentDate}", formatDate(appointment.appointmentDate, "EEEE, d MMMM yyyy"))
-                .replace("{clinicName}", getLocalizedText(appointment.clinic?.name, locale) || "")
-                .replace("{doctorName}", doctorProfile?.user?.fullName || "")
-                .replace("{serviceName}", getLocalizedText(appointment.serviceName, locale) || "")
-                .replace("{amount}", appointment.price.toString())
-                .replace("{paymentMethod}", selectedMethodName);
-              const whatsappLink = selectedPaymentMethodId
-                ? `https://wa.me/${prepaymentInfo.prepaymentWhatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(whatsappMessage)}`
-                : null;
-              return (
-                <a
-                  href={whatsappLink || "#"}
-                  target={whatsappLink ? "_blank" : undefined}
-                  rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (!whatsappLink) e.preventDefault();
-                  }}
-                  className={`flex items-center justify-center gap-2 w-full p-3 rounded-lg font-medium transition-colors ${
-                    whatsappLink
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                  }`}
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  {whatsappLink
-                    ? t("prepayment.sendViaWhatsapp")
-                    : t("prepayment.selectPaymentMethod")}
-                </a>
-              );
-            })()}
+            {prepaymentInfo.prepaymentWhatsapp &&
+              (() => {
+                const selectedAccount = prepaymentInfo.paymentAccounts.find(
+                  (a) => a.id === selectedPaymentMethodId,
+                );
+                const selectedMethodName = selectedAccount?.paymentMethod
+                  ? getLocalizedText(selectedAccount.paymentMethod.name, locale)
+                  : "";
+                const whatsappMessage = t("prepayment.whatsappMessage")
+                  .replace("{bookingNumber}", appointment.bookingNumber || "")
+                  .replace("{patientName}", appointment.patientName || "")
+                  .replace(
+                    "{appointmentDate}",
+                    formatDate(
+                      appointment.appointmentDate,
+                      "EEEE, d MMMM yyyy",
+                    ),
+                  )
+                  .replace(
+                    "{clinicName}",
+                    getLocalizedText(appointment.clinic?.name, locale) || "",
+                  )
+                  .replace("{doctorName}", doctorProfile?.user?.fullName || "")
+                  .replace(
+                    "{serviceName}",
+                    getLocalizedText(appointment.serviceName, locale) || "",
+                  )
+                  .replace("{amount}", appointment.price.toString())
+                  .replace("{paymentMethod}", selectedMethodName);
+                const whatsappLink = selectedPaymentMethodId
+                  ? `https://wa.me/${prepaymentInfo.prepaymentWhatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(whatsappMessage)}`
+                  : null;
+                return (
+                  <a
+                    href={whatsappLink || "#"}
+                    target={whatsappLink ? "_blank" : undefined}
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      if (!whatsappLink) e.preventDefault();
+                    }}
+                    className={`flex items-center justify-center gap-2 w-full p-3 rounded-lg font-medium transition-colors ${
+                      whatsappLink
+                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    {whatsappLink
+                      ? t("prepayment.sendViaWhatsapp")
+                      : t("prepayment.selectPaymentMethod")}
+                  </a>
+                );
+              })()}
           </CardContent>
         </Card>
       )}
