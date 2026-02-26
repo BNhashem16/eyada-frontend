@@ -332,7 +332,7 @@ export function AdminDoctorsList() {
                   handleFilterChange("cityId", undefined);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.doctors.filterByState")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -356,7 +356,7 @@ export function AdminDoctorsList() {
                   )
                 }
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.doctors.filterByCity")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -384,7 +384,7 @@ export function AdminDoctorsList() {
                   )
                 }
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t("admin.doctors.activeStatus")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -465,14 +465,21 @@ export function AdminDoctorsList() {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-2">
+                        <a
+                          href={`mailto:${doctor.user?.email}`}
+                          className="flex items-center gap-2 hover:text-primary-600"
+                        >
                           <Mail className="h-4 w-4" />
                           {doctor.user?.email}
-                        </span>
-                        <span className="flex items-center gap-2">
+                        </a>
+                        <a
+                          href={`tel:${doctor.user?.phoneNumber}`}
+                          className="flex items-center gap-2 hover:text-primary-600"
+                          dir="ltr"
+                        >
                           <Phone className="h-4 w-4" />
                           {doctor.user?.phoneNumber}
-                        </span>
+                        </a>
                         {doctor.licenseNumber && (
                           <span className="flex items-center gap-2">
                             <Award className="h-4 w-4" />

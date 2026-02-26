@@ -340,9 +340,12 @@ export function DoctorProfileForm() {
                   {getLocalizedText(profile?.specialty?.name, locale)}
                 </p>
               )}
-              <p className="text-sm text-muted-foreground">
+              <a
+                href={`mailto:${profile?.user?.email || user?.email}`}
+                className="text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+              >
                 {profile?.user?.email || user?.email}
-              </p>
+              </a>
 
               {/* Stats - only show for existing profiles */}
               {!isNewProfile && (
@@ -389,9 +392,8 @@ export function DoctorProfileForm() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="specialtyId">
-                {t("doctor.profileForm.specialty")}{" "}
-                <span className="text-error-500">*</span>
+              <Label htmlFor="specialtyId" required>
+                {t("doctor.profileForm.specialty")}
               </Label>
               <SearchableSelect
                 options={specialties.map((specialty) => ({

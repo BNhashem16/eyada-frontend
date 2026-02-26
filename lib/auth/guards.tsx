@@ -135,6 +135,10 @@ function getRoleDashboard(role: Role): string {
       return "/doctor/dashboard";
     case Role.SECRETARY:
       return "/secretary/dashboard";
+    case Role.PHARMACY_OWNER:
+      return "/pharmacy-owner/dashboard";
+    case Role.DRIVER:
+      return "/driver/dashboard";
     case Role.PATIENT:
     default:
       return "/patient/dashboard";

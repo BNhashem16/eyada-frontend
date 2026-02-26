@@ -17,7 +17,7 @@ interface RegisterData {
   password: string;
   fullName: string;
   phoneNumber: string;
-  role?: "PATIENT" | "DOCTOR";
+  role?: "PATIENT" | "DOCTOR" | "PHARMACY_OWNER";
 }
 
 // Auth state

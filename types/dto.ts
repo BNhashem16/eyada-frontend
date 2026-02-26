@@ -185,6 +185,9 @@ export interface CreateSecretaryAppointmentDto {
   patientName: string; // 2-100 chars, required
   patientDateOfBirth: string; // YYYY-MM-DD format, required
   patientPhone?: string; // optional
+  bookingSource: "PHONE" | "CLINIC"; // required - how booking was received
+  paymentStatus: "PENDING" | "PAID"; // required - payment status at booking time
+  status: "PENDING" | "CONFIRMED"; // required - initial appointment status
   notes?: string; // maxLength: 500
   symptoms?: string; // maxLength: 500
 }
@@ -275,6 +278,39 @@ export interface UpdateSpecialtyDto {
   icon?: string;
   sortOrder?: number;
   isActive?: boolean;
+}
+
+// ============================================
+// PAYMENT METHOD DTOs (Admin)
+// ============================================
+
+export interface CreatePaymentMethodDto {
+  name: MultilingualDto; // required
+  code: string; // required, unique, auto-uppercased
+  icon?: string;
+  sortOrder?: number;
+  isActive?: boolean; // default: true
+}
+
+export interface UpdatePaymentMethodDto extends Partial<CreatePaymentMethodDto> {}
+
+// ============================================
+// DOCTOR PAYMENT ACCOUNT DTOs
+// ============================================
+
+export interface CreateDoctorPaymentAccountDto {
+  paymentMethodId: string; // UUID, required
+  accountNumber: string; // required
+  accountName?: string;
+}
+
+// ============================================
+// DOCTOR PREPAYMENT SETTINGS DTOs
+// ============================================
+
+export interface UpdatePrepaymentDto {
+  requirePrepayment: boolean; // required
+  prepaymentWhatsapp?: string; // Egyptian phone format
 }
 
 // ============================================

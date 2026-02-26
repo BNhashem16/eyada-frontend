@@ -247,7 +247,7 @@ export function AdminSecretariesList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue
                     placeholder={t("admin.secretaries.filterByClinic")}
                   />
@@ -271,7 +271,7 @@ export function AdminSecretariesList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue placeholder={t("admin.secretaries.status")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -323,107 +323,116 @@ export function AdminSecretariesList() {
             </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("admin.secretaries.name")}</TableHead>
-                    <TableHead>{t("admin.secretaries.email")}</TableHead>
-                    <TableHead>{t("admin.secretaries.phone")}</TableHead>
-                    <TableHead>{t("admin.secretaries.clinics")}</TableHead>
-                    <TableHead>{t("admin.secretaries.status")}</TableHead>
-                    <TableHead>{t("table.actions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {secretaries.map((secretary) => (
-                    <TableRow key={secretary.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                            <User className="h-4 w-4 text-primary-600" />
-                          </div>
-                          <p className="font-medium">{secretary.fullName}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Mail className="h-3 w-3" />
-                          {secretary.email}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Phone className="h-3 w-3" />
-                          {secretary.phoneNumber}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {secretary.assignments?.length ? (
-                          <div className="flex flex-wrap gap-1">
-                            {secretary.assignments
-                              .slice(0, 2)
-                              .map((assignment) => (
-                                <Badge
-                                  key={assignment.id}
-                                  variant="outline"
-                                  className="text-xs"
-                                >
-                                  {getLocalizedText(
-                                    assignment.clinic.name,
-                                    locale,
-                                  )}
-                                </Badge>
-                              ))}
-                            {secretary.assignments.length > 2 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{secretary.assignments.length - 2}
-                              </Badge>
-                            )}
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">
-                            -
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {togglingId === secretary.id &&
-                          updateSecretary.isPending ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                          ) : (
-                            <Switch
-                              checked={secretary.isActive}
-                              onCheckedChange={() =>
-                                handleToggleActive(secretary)
-                              }
-                              disabled={updateSecretary.isPending}
-                            />
-                          )}
-                          <Badge
-                            variant={
-                              secretary.isActive ? "success" : "secondary"
-                            }
-                          >
-                            {secretary.isActive
-                              ? t("common.active")
-                              : t("common.inactive")}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleViewDetails(secretary)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
+              <div className="overflow-x-auto -mx-6 px-6">
+                <Table className="min-w-[700px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t("admin.secretaries.name")}</TableHead>
+                      <TableHead>{t("admin.secretaries.email")}</TableHead>
+                      <TableHead>{t("admin.secretaries.phone")}</TableHead>
+                      <TableHead>{t("admin.secretaries.clinics")}</TableHead>
+                      <TableHead>{t("admin.secretaries.status")}</TableHead>
+                      <TableHead>{t("table.actions")}</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {secretaries.map((secretary) => (
+                      <TableRow key={secretary.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                              <User className="h-4 w-4 text-primary-600" />
+                            </div>
+                            <p className="font-medium">{secretary.fullName}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <a
+                            href={`mailto:${secretary.email}`}
+                            className="flex items-center gap-1 text-sm hover:text-primary-600"
+                          >
+                            <Mail className="h-3 w-3" />
+                            {secretary.email}
+                          </a>
+                        </TableCell>
+                        <TableCell>
+                          <a
+                            href={`tel:${secretary.phoneNumber}`}
+                            className="flex items-center gap-1 text-sm hover:text-primary-600"
+                            dir="ltr"
+                          >
+                            <Phone className="h-3 w-3" />
+                            {secretary.phoneNumber}
+                          </a>
+                        </TableCell>
+                        <TableCell>
+                          {secretary.assignments?.length ? (
+                            <div className="flex flex-wrap gap-1">
+                              {secretary.assignments
+                                .slice(0, 2)
+                                .map((assignment) => (
+                                  <Badge
+                                    key={assignment.id}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
+                                    {getLocalizedText(
+                                      assignment.clinic.name,
+                                      locale,
+                                    )}
+                                  </Badge>
+                                ))}
+                              {secretary.assignments.length > 2 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  +{secretary.assignments.length - 2}
+                                </Badge>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">
+                              -
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {togglingId === secretary.id &&
+                            updateSecretary.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                            ) : (
+                              <Switch
+                                checked={secretary.isActive}
+                                onCheckedChange={() =>
+                                  handleToggleActive(secretary)
+                                }
+                                disabled={updateSecretary.isPending}
+                              />
+                            )}
+                            <Badge
+                              variant={
+                                secretary.isActive ? "success" : "secondary"
+                              }
+                            >
+                              {secretary.isActive
+                                ? t("common.active")
+                                : t("common.inactive")}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleViewDetails(secretary)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
               <PaginationControls
                 meta={meta}
@@ -450,7 +459,7 @@ export function AdminSecretariesList() {
 
           {selectedSecretary && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("admin.secretaries.name")}
@@ -461,13 +470,24 @@ export function AdminSecretariesList() {
                   <p className="text-sm text-muted-foreground">
                     {t("admin.secretaries.email")}
                   </p>
-                  <p className="font-medium">{selectedSecretary.email}</p>
+                  <a
+                    href={`mailto:${selectedSecretary.email}`}
+                    className="font-medium hover:text-primary-600 hover:underline"
+                  >
+                    {selectedSecretary.email}
+                  </a>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("admin.secretaries.phone")}
                   </p>
-                  <p className="font-medium">{selectedSecretary.phoneNumber}</p>
+                  <a
+                    href={`tel:${selectedSecretary.phoneNumber}`}
+                    className="font-medium hover:text-primary-600 hover:underline"
+                    dir="ltr"
+                  >
+                    {selectedSecretary.phoneNumber}
+                  </a>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">

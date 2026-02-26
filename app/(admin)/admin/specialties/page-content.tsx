@@ -1,7 +1,7 @@
 "use client";
 
 import { Grid3X3 } from "lucide-react";
-import { SpecialtiesManagement } from "@/features/admin";
+import { SpecialtiesManagement, SpecialtiesStatsCards } from "@/features/admin";
 import { useTranslation } from "@/lib/i18n";
 
 export function AdminSpecialtiesContent() {
@@ -25,6 +25,9 @@ export function AdminSpecialtiesContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <SpecialtiesStatsCards />
 
       {/* Specialties Management */}
       <SpecialtiesManagement />

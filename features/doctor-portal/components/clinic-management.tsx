@@ -162,7 +162,19 @@ export function ClinicManagement() {
                       {phoneNumbers.length > 0 && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                           <Phone className="h-4 w-4 text-muted-foreground/70 flex-shrink-0" />
-                          <span dir="ltr">{phoneNumbers.join(" / ")}</span>
+                          <span dir="ltr">
+                            {phoneNumbers.map((phone, i) => (
+                              <span key={i}>
+                                {i > 0 && " / "}
+                                <a
+                                  href={`tel:${phone}`}
+                                  className="hover:text-primary-600 hover:underline"
+                                >
+                                  {phone}
+                                </a>
+                              </span>
+                            ))}
+                          </span>
                         </div>
                       )}
 
@@ -170,7 +182,21 @@ export function ClinicManagement() {
                       {whatsappNumbers.length > 0 && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                           <MessageCircle className="h-4 w-4 text-muted-foreground/70 flex-shrink-0" />
-                          <span dir="ltr">{whatsappNumbers.join(" / ")}</span>
+                          <span dir="ltr">
+                            {whatsappNumbers.map((num, i) => (
+                              <span key={i}>
+                                {i > 0 && " / "}
+                                <a
+                                  href={`https://wa.me/${num.replace(/[^0-9]/g, "")}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-green-600 hover:underline"
+                                >
+                                  {num}
+                                </a>
+                              </span>
+                            ))}
+                          </span>
                         </div>
                       )}
 

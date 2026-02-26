@@ -1,7 +1,7 @@
 "use client";
 
 import { Percent } from "lucide-react";
-import { CommissionsManagement } from "@/features/admin";
+import { CommissionsManagement, CommissionsStatsCards } from "@/features/admin";
 import { useTranslation } from "@/lib/i18n";
 
 export function AdminCommissionsContent() {
@@ -25,6 +25,9 @@ export function AdminCommissionsContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <CommissionsStatsCards />
 
       {/* Commissions Management */}
       <CommissionsManagement />

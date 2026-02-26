@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Appointment } from "@/types";
-import { AppointmentStatus } from "@/types/enums";
+import { AppointmentStatus, PaymentStatus } from "@/types/enums";
 import { formatDate, formatTime, isPast } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { getLocalizedText } from "@/lib/utils/multilingual";
@@ -94,7 +94,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
             }`}
           >
             <span
-              className={`text-3xl font-bold ${isUpcoming ? "text-primary-600 dark:text-primary-400" : "text-foreground"}`}
+              className={`text-2xl sm:text-3xl font-bold ${isUpcoming ? "text-primary-600 dark:text-primary-400" : "text-foreground"}`}
             >
               {formatDate(appointmentDateStr, "d")}
             </span>
@@ -116,14 +116,10 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                   >
                     <Avatar className="h-10 w-10">
                       <AvatarImage
-                        src={
-                          doctorProfile.user?.profilePicture || undefined
-                        }
+                        src={doctorProfile.user?.profilePicture || undefined}
                       />
                       <AvatarFallback>
-                        {getInitials(
-                          doctorProfile.user?.fullName || "",
-                        )}
+                        {getInitials(doctorProfile.user?.fullName || "")}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -190,6 +186,12 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                 <Badge variant={statusVariants[appointment.status]}>
                   {statusLabels[appointment.status]}
                 </Badge>
+                {appointment.requiresPrepayment &&
+                  appointment.paymentStatus === PaymentStatus.PENDING && (
+                    <Badge variant="warning" className="text-xs">
+                      {t("prepayment.awaitingPayment")}
+                    </Badge>
+                  )}
 
                 {/* Actions Menu */}
                 {canCancel && (
@@ -208,7 +210,7 @@ export const AppointmentCard = React.memo(function AppointmentCard({
                           className="fixed inset-0 z-40"
                           onClick={() => setShowMenu(false)}
                         />
-                        <div className="absolute end-0 mt-1 w-40 rounded-lg bg-card border border-border shadow-lg z-50 py-1">
+                        <div className="absolute end-0 mt-1 w-40 max-w-[calc(100vw-2rem)] rounded-lg bg-card border border-border shadow-lg z-50 py-1">
                           <button
                             onClick={() => {
                               setShowMenu(false);

@@ -1,7 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { AdminRatingsList } from "@/features/admin";
+import { AdminRatingsList, RatingsStatsCards } from "@/features/admin";
 import { useTranslation } from "@/lib/i18n";
 
 export function AdminRatingsContent() {
@@ -25,6 +25,9 @@ export function AdminRatingsContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <RatingsStatsCards />
 
       {/* Ratings Management */}
       <AdminRatingsList />

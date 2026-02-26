@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Building } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
+import { ClinicsStatsCards } from "@/features/admin";
 
 const AdminClinicsList = dynamic(
   () =>
@@ -41,6 +42,9 @@ export function AdminClinicsContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <ClinicsStatsCards />
 
       {/* Clinics Management */}
       <AdminClinicsList />

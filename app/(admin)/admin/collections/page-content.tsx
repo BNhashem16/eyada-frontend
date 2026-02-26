@@ -1,7 +1,7 @@
 "use client";
 
 import { Wallet } from "lucide-react";
-import { DoctorBalances } from "@/features/admin";
+import { DoctorBalances, CollectionsStatsCards } from "@/features/admin";
 import { useTranslation } from "@/lib/i18n";
 
 export function AdminCollectionsContent() {
@@ -25,6 +25,9 @@ export function AdminCollectionsContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <CollectionsStatsCards />
 
       {/* Doctor Balances */}
       <DoctorBalances />

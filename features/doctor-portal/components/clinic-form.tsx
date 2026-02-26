@@ -732,7 +732,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
         <CardContent className="space-y-6">
           {/* Phone Numbers */}
           <div className="space-y-3">
-            <Label>
+            <Label required>
               <span className="flex items-center gap-1">
                 <Phone className="h-4 w-4" />
                 {t("clinics.phoneNumbers")}
@@ -793,9 +793,7 @@ export function ClinicForm({ clinicId }: ClinicFormProps) {
             </Label>
             {whatsappFields.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                {locale === "ar"
-                  ? "لم يتم إضافة أرقام واتساب بعد"
-                  : "No WhatsApp numbers added yet"}
+                {t("clinics.noWhatsappYet")}
               </p>
             )}
             {whatsappFields.map((field, index) => (

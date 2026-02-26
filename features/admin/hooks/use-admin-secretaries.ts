@@ -126,6 +126,27 @@ function transformSecretariesResponse(
   return Array.from(secretariesMap.values());
 }
 
+// ==================== Statistics ====================
+
+export interface SecretaryStatistics {
+  totalSecretaries: number;
+  activeAssignments: number;
+  inactiveAssignments: number;
+  totalAssignments: number;
+}
+
+export function useAdminSecretaryStatistics() {
+  return useQuery({
+    queryKey: ["admin-secretaries-statistics"],
+    queryFn: async () => {
+      return apiGet<SecretaryStatistics>(
+        ADMIN_ENDPOINTS.SECRETARIES_STATISTICS,
+      );
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
 // ==================== Hooks ====================
 
 export function useAdminSecretaries(filters: AdminSecretaryFilters = {}) {

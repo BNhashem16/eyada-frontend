@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { CalendarDays } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
+import { AppointmentsStatsCards } from "@/features/admin";
 
 const AdminAppointmentsList = dynamic(
   () =>
@@ -41,6 +42,9 @@ export function AdminAppointmentsContent() {
           </div>
         </div>
       </div>
+
+      {/* Statistics Cards */}
+      <AppointmentsStatsCards />
 
       {/* Appointments Management */}
       <AdminAppointmentsList />

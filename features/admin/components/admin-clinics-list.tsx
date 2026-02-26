@@ -298,7 +298,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-full sm:w-36">
                   <SelectValue placeholder={t("admin.clinics.status")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -346,7 +346,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue
                     placeholder={t("admin.clinics.filterBySpecialty")}
                   />
@@ -371,7 +371,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.clinics.filterByState")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -393,7 +393,7 @@ export function AdminClinicsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder={t("admin.clinics.filterByCity")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -428,119 +428,131 @@ export function AdminClinicsList() {
             </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("admin.clinics.name")}</TableHead>
-                    <TableHead>{t("admin.clinics.doctor")}</TableHead>
-                    <TableHead>{t("admin.clinics.specialty")}</TableHead>
-                    <TableHead>{t("admin.clinics.location")}</TableHead>
-                    <TableHead>{t("admin.clinics.phone")}</TableHead>
-                    <TableHead>{t("admin.clinics.status")}</TableHead>
-                    <TableHead>{t("table.actions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {clinics.map((clinic) => (
-                    <TableRow key={clinic.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {getLocalizedText(clinic.name, locale)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {getLocalizedText(clinic.address, locale)}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">
-                            {clinic.doctorProfile?.user.fullName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {clinic.doctorProfile?.user.phoneNumber}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {clinic.doctorProfile?.specialty &&
-                          getLocalizedText(
-                            clinic.doctorProfile.specialty.name,
-                            locale,
-                          )}
-                      </TableCell>
-                      <TableCell>
-                        {clinic.city && (
-                          <div className="flex items-center gap-1 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            {getLocalizedText(clinic.city.name, locale)}
-                            {clinic.city.state && (
-                              <span className="text-muted-foreground">
-                                ,{" "}
-                                {getLocalizedText(
-                                  clinic.city.state.name,
-                                  locale,
-                                )}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Phone className="h-3 w-3" />
-                          {clinic.phone}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={clinic.isActive}
-                            onCheckedChange={() => handleToggleActive(clinic)}
-                            disabled={updateClinic.isPending}
-                          />
-                          <Badge
-                            variant={clinic.isActive ? "success" : "secondary"}
-                          >
-                            {clinic.isActive
-                              ? t("common.active")
-                              : t("common.inactive")}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewDetails(clinic)}
-                            title={t("admin.clinics.details")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleManageSchedule(clinic)}
-                            title={t("nav.schedules")}
-                          >
-                            <Clock className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-error-600"
-                            onClick={() => handleOpenDelete(clinic)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+              <div className="overflow-x-auto -mx-6 px-6">
+                <Table className="min-w-[800px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t("admin.clinics.name")}</TableHead>
+                      <TableHead>{t("admin.clinics.doctor")}</TableHead>
+                      <TableHead>{t("admin.clinics.specialty")}</TableHead>
+                      <TableHead>{t("admin.clinics.location")}</TableHead>
+                      <TableHead>{t("admin.clinics.phone")}</TableHead>
+                      <TableHead>{t("admin.clinics.status")}</TableHead>
+                      <TableHead>{t("table.actions")}</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {clinics.map((clinic) => (
+                      <TableRow key={clinic.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {getLocalizedText(clinic.name, locale)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {getLocalizedText(clinic.address, locale)}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">
+                              {clinic.doctorProfile?.user.fullName}
+                            </p>
+                            <a
+                              href={`tel:${clinic.doctorProfile?.user.phoneNumber}`}
+                              className="block text-xs text-muted-foreground hover:text-primary-600 hover:underline"
+                              dir="ltr"
+                            >
+                              {clinic.doctorProfile?.user.phoneNumber}
+                            </a>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {clinic.doctorProfile?.specialty &&
+                            getLocalizedText(
+                              clinic.doctorProfile.specialty.name,
+                              locale,
+                            )}
+                        </TableCell>
+                        <TableCell>
+                          {clinic.city && (
+                            <div className="flex items-center gap-1 text-sm">
+                              <MapPin className="h-3 w-3" />
+                              {getLocalizedText(clinic.city.name, locale)}
+                              {clinic.city.state && (
+                                <span className="text-muted-foreground">
+                                  ,{" "}
+                                  {getLocalizedText(
+                                    clinic.city.state.name,
+                                    locale,
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <a
+                            href={`tel:${clinic.phone}`}
+                            className="flex items-center gap-1 text-sm hover:text-primary-600"
+                            dir="ltr"
+                          >
+                            <Phone className="h-3 w-3" />
+                            {clinic.phone}
+                          </a>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={clinic.isActive}
+                              onCheckedChange={() => handleToggleActive(clinic)}
+                              disabled={updateClinic.isPending}
+                            />
+                            <Badge
+                              variant={
+                                clinic.isActive ? "success" : "secondary"
+                              }
+                            >
+                              {clinic.isActive
+                                ? t("common.active")
+                                : t("common.inactive")}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleViewDetails(clinic)}
+                              title={t("admin.clinics.details")}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleManageSchedule(clinic)}
+                              title={t("nav.schedules")}
+                            >
+                              <Clock className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-error-600"
+                              onClick={() => handleOpenDelete(clinic)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
               <PaginationControls
                 meta={meta}
@@ -569,7 +581,7 @@ export function AdminClinicsList() {
 
           {selectedClinic && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h4 className="font-semibold flex items-center gap-2">
                     <Building className="h-4 w-4" />
@@ -581,10 +593,14 @@ export function AdminClinicsList() {
                   <p className="text-sm text-muted-foreground">
                     {getLocalizedText(selectedClinic.address, locale)}
                   </p>
-                  <div className="flex items-center gap-1 text-sm">
+                  <a
+                    href={`tel:${selectedClinic.phone}`}
+                    className="flex items-center gap-1 text-sm hover:text-primary-600"
+                    dir="ltr"
+                  >
                     <Phone className="h-3 w-3" />
                     {selectedClinic.phone}
-                  </div>
+                  </a>
                 </div>
 
                 <div className="space-y-2">
@@ -595,16 +611,23 @@ export function AdminClinicsList() {
                   <p className="font-medium">
                     {selectedClinic.doctorProfile?.user.fullName}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <a
+                    href={`tel:${selectedClinic.doctorProfile?.user.phoneNumber}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                    dir="ltr"
+                  >
                     {selectedClinic.doctorProfile?.user.phoneNumber}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
+                  </a>
+                  <a
+                    href={`mailto:${selectedClinic.doctorProfile?.user.email}`}
+                    className="block text-sm text-muted-foreground hover:text-primary-600 hover:underline"
+                  >
                     {selectedClinic.doctorProfile?.user.email}
-                  </p>
+                  </a>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("admin.clinics.specialty")}
@@ -661,9 +684,9 @@ export function AdminClinicsList() {
               </div>
 
               {selectedClinic._count && (
-                <div className="grid grid-cols-4 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t">
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.appointments}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -671,7 +694,7 @@ export function AdminClinicsList() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.services}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -679,7 +702,7 @@ export function AdminClinicsList() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.schedules}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -687,7 +710,7 @@ export function AdminClinicsList() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold">
+                    <p className="text-xl sm:text-2xl font-bold">
                       {selectedClinic._count.secretaryAssignments}
                     </p>
                     <p className="text-xs text-muted-foreground">

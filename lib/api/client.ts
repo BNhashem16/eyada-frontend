@@ -246,8 +246,35 @@ export async function apiPatch<T>(url: string, data?: unknown): Promise<T> {
   return unwrapResponse<T>(response.data);
 }
 
+export async function apiPut<T>(url: string, data?: unknown): Promise<T> {
+  const response = await apiClient.put<T>(url, data);
+  return unwrapResponse<T>(response.data);
+}
+
 export async function apiDelete<T>(url: string): Promise<T> {
   const response = await apiClient.delete<T>(url);
+  return unwrapResponse<T>(response.data);
+}
+
+export async function apiUpload<T>(
+  url: string,
+  file: File,
+  fieldName = "file",
+  onProgress?: (percent: number) => void,
+): Promise<T> {
+  const formData = new FormData();
+  formData.append(fieldName, file);
+
+  const response = await apiClient.post<T>(url, formData, {
+    headers: { "Content-Type": undefined },
+    onUploadProgress: onProgress
+      ? (event) => {
+          if (event.total) {
+            onProgress(Math.round((event.loaded * 100) / event.total));
+          }
+        }
+      : undefined,
+  });
   return unwrapResponse<T>(response.data);
 }
 

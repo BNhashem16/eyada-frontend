@@ -1,0 +1,318 @@
+"use client";
+
+import { useState, useMemo, useCallback } from "react";
+import Link from "next/link";
+import {
+  Store,
+  Phone,
+  Plus,
+  Search,
+  Clock,
+  UserCheck,
+  XCircle,
+  Ban,
+  AlertTriangle,
+  Eye,
+  Pencil,
+  Trash2,
+  Loader2,
+  MapPin,
+  Package,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  useMyPharmacies,
+  useDeletePharmacy,
+  PharmacyOwnerFilters,
+} from "../hooks";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { useTranslation } from "@/lib/i18n";
+import { PharmacyStatus } from "@/types/enums";
+
+const getStatusConfig = (
+  t: (key: string) => string,
+): Record<
+  PharmacyStatus,
+  {
+    label: string;
+    variant: "warning" | "success" | "error" | "secondary";
+    icon: typeof Clock;
+  }
+> => ({
+  [PharmacyStatus.PENDING]: {
+    label: t("admin.pharmacies.underReview"),
+    variant: "warning",
+    icon: Clock,
+  },
+  [PharmacyStatus.APPROVED]: {
+    label: t("admin.pharmacies.approved"),
+    variant: "success",
+    icon: UserCheck,
+  },
+  [PharmacyStatus.REJECTED]: {
+    label: t("admin.pharmacies.rejected"),
+    variant: "error",
+    icon: XCircle,
+  },
+  [PharmacyStatus.SUSPENDED]: {
+    label: t("admin.pharmacies.suspended"),
+    variant: "error",
+    icon: Ban,
+  },
+});
+
+export function PharmacyList() {
+  const { t, locale } = useTranslation();
+  const statusConfig = useMemo(() => getStatusConfig(t), [t]);
+
+  const [filters, setFilters] = useState<PharmacyOwnerFilters>({
+    page: 1,
+    limit: 10,
+  });
+  const [searchInput, setSearchInput] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const { data, isLoading, isError, error } = useMyPharmacies(filters);
+  const deletePharmacy = useDeletePharmacy();
+
+  const handleSearch = useCallback(() => {
+    setFilters((prev) => ({ ...prev, search: searchInput, page: 1 }));
+  }, [searchInput]);
+
+  const handleDelete = () => {
+    if (!deleteId) return;
+    deletePharmacy.mutate(deleteId, {
+      onSuccess: () => setDeleteId(null),
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i}>
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <Skeleton className="h-16 w-16 rounded-xl" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                <Skeleton className="h-9 w-24" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
+        <CardContent className="py-10 text-center">
+          <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
+          <p className="text-error-600 dark:text-error-400">
+            {t("admin.loadError")}
+          </p>
+          <p className="text-sm text-error-500 mt-2">
+            {error instanceof Error ? error.message : t("common.unknownError")}
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const pharmacies = data?.data || [];
+  const meta = data?.meta;
+
+  return (
+    <>
+      {/* Search + Add */}
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 flex gap-2">
+              <Input
+                placeholder={t("admin.pharmacies.searchPlaceholder")}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                inputMode="search"
+                className="flex-1"
+              />
+              <Button onClick={handleSearch} variant="outline">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+            <Button asChild>
+              <Link href="/pharmacy-owner/pharmacies/create">
+                <Plus className="h-4 w-4 me-2" />
+                {t("pharmacyOwner.addPharmacy")}
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* List */}
+      {pharmacies.length === 0 ? (
+        <Card>
+          <CardContent className="py-16 text-center">
+            <Store className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {t("pharmacyOwner.noPharmacies")}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {t("pharmacyOwner.pendingApproval")}
+            </p>
+            <Button asChild>
+              <Link href="/pharmacy-owner/pharmacies/create">
+                <Plus className="h-4 w-4 me-2" />
+                {t("pharmacyOwner.addPharmacy")}
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {pharmacies.map((pharmacy) => {
+            const statusInfo =
+              statusConfig[
+                (pharmacy.ownerProfile?.status as PharmacyStatus) ||
+                  PharmacyStatus.PENDING
+              ];
+            const StatusIcon = statusInfo.icon;
+
+            return (
+              <Card
+                key={pharmacy.id}
+                className="hover:shadow-md transition-shadow"
+              >
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:items-start gap-4">
+                    {/* Icon */}
+                    <div className="h-16 w-16 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center shrink-0">
+                      <Store className="h-8 w-8 text-primary-600 dark:text-primary-400" />
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <h3 className="text-lg font-semibold text-foreground">
+                          {getLocalizedText(pharmacy.name, locale)}
+                        </h3>
+                        <Badge variant={statusInfo.variant}>
+                          <StatusIcon className="h-3 w-3 me-1" />
+                          {statusInfo.label}
+                        </Badge>
+                        {!pharmacy.isActive && (
+                          <Badge variant="secondary">
+                            {t("common.inactive")}
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                        {pharmacy.city && (
+                          <span className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4" />
+                            {getLocalizedText(pharmacy.city.name, locale)}
+                          </span>
+                        )}
+                        {pharmacy.phoneNumbers?.[0] && (
+                          <span className="flex items-center gap-2" dir="ltr">
+                            <Phone className="h-4 w-4" />
+                            {pharmacy.phoneNumbers[0]}
+                          </span>
+                        )}
+                        {pharmacy._count?.products !== undefined && (
+                          <span className="flex items-center gap-1">
+                            <Package className="h-4 w-4" />
+                            {pharmacy._count.products}{" "}
+                            {t("admin.pharmacies.productCount")}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2 flex-wrap md:flex-nowrap mt-4 md:mt-0">
+                      <Button asChild size="sm" variant="outline">
+                        <Link
+                          href={`/pharmacy-owner/pharmacies/${pharmacy.id}/edit`}
+                        >
+                          <Pencil className="h-4 w-4 me-1" />
+                          {t("common.edit")}
+                        </Link>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setDeleteId(pharmacy.id)}
+                        className="text-error-600 border-error-300 hover:bg-error-50"
+                      >
+                        <Trash2 className="h-4 w-4 me-1" />
+                        {t("common.delete")}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      <PaginationControls
+        meta={meta}
+        page={filters.page || 1}
+        onPageChange={(p) => setFilters((prev) => ({ ...prev, page: p }))}
+        limit={filters.limit || 10}
+        onLimitChange={(l) =>
+          setFilters((prev) => ({ ...prev, limit: l, page: 1 }))
+        }
+      />
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("common.deleteWarning")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-error-600 hover:bg-error-700"
+              disabled={deletePharmacy.isPending}
+            >
+              {deletePharmacy.isPending && (
+                <Loader2 className="h-4 w-4 me-2 animate-spin" />
+              )}
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}

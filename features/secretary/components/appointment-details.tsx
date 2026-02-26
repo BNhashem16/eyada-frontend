@@ -263,6 +263,12 @@ export function SecretaryAppointmentDetails({
                 <Badge className={paymentStatus.color}>
                   {paymentStatus.label}
                 </Badge>
+                {appointment.requiresPrepayment &&
+                  appointment.paymentStatus === PaymentStatus.PENDING && (
+                    <Badge variant="warning" className="text-xs">
+                      {t("prepayment.awaitingPayment")}
+                    </Badge>
+                  )}
               </div>
               <p className="text-sm text-muted-foreground break-all">
                 {t("appointments.bookingNumber")}: {appointment.bookingNumber}
@@ -369,9 +375,12 @@ export function SecretaryAppointmentDetails({
             {appointment.bookedForPatient?.user?.email && (
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
-                <span className="truncate">
+                <a
+                  href={`mailto:${appointment.bookedForPatient.user.email}`}
+                  className="truncate hover:text-primary-600 hover:underline"
+                >
                   {appointment.bookedForPatient.user.email}
-                </span>
+                </a>
               </div>
             )}
           </div>
@@ -467,7 +476,7 @@ export function SecretaryAppointmentDetails({
                   <p className="text-sm text-muted-foreground mb-3">
                     {t("appointments.markPayment")}
                   </p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <Button
                       variant="outline"
                       size="sm"

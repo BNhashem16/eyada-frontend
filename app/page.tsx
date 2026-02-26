@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "عيادة - Eyada",
+  name: getTranslation("seo.siteName"),
   url: BASE_URL,
   description: getTranslation("meta.home.description"),
   inLanguage: ["ar", "en"],
@@ -36,18 +36,26 @@ const websiteJsonLd = {
 const medicalBusinessJsonLd = {
   "@context": "https://schema.org",
   "@type": "MedicalBusiness",
-  name: "عيادة - Eyada",
+  name: getTranslation("seo.siteName"),
   url: BASE_URL,
   description: getTranslation("meta.defaultDescription"),
   logo: `${BASE_URL}/opengraph-image`,
   areaServed: {
     "@type": "Country",
-    name: "Egypt",
+    name: getTranslation("seo.country"),
   },
-  serviceType: "Medical Appointment Booking",
+  serviceType: getTranslation("seo.serviceType"),
   availableLanguage: [
-    { "@type": "Language", name: "Arabic", alternateName: "ar" },
-    { "@type": "Language", name: "English", alternateName: "en" },
+    {
+      "@type": "Language",
+      name: getTranslation("seo.langArabic"),
+      alternateName: "ar",
+    },
+    {
+      "@type": "Language",
+      name: getTranslation("seo.langEnglish"),
+      alternateName: "en",
+    },
   ],
   sameAs: [BASE_URL],
 };
@@ -58,42 +66,42 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "كيف أحجز موعد مع دكتور على عيادة؟",
+      name: getTranslation("seo.faq.q1"),
       acceptedAnswer: {
         "@type": "Answer",
-        text: "يمكنك حجز موعد بسهولة من خلال البحث عن الطبيب أو التخصص المطلوب، ثم اختيار العيادة والموعد المناسب والضغط على زر الحجز. يمكنك الحجز أونلاين 24/7.",
+        text: getTranslation("seo.faq.a1"),
       },
     },
     {
       "@type": "Question",
-      name: "هل الحجز على عيادة مجاني؟",
+      name: getTranslation("seo.faq.q2"),
       acceptedAnswer: {
         "@type": "Answer",
-        text: "نعم، خدمة الحجز على منصة عيادة مجانية تماماً. تدفع فقط رسوم الكشف للطبيب عند زيارة العيادة.",
+        text: getTranslation("seo.faq.a2"),
       },
     },
     {
       "@type": "Question",
-      name: "كيف أتتبع موعدي على عيادة؟",
+      name: getTranslation("seo.faq.q3"),
       acceptedAnswer: {
         "@type": "Answer",
-        text: "يمكنك تتبع موعدك من خلال صفحة تتبع المواعيد باستخدام رقم الحجز الخاص بك. ستعرف ترتيبك في قائمة الانتظار وحالة الموعد.",
+        text: getTranslation("seo.faq.a3"),
       },
     },
     {
       "@type": "Question",
-      name: "ما هي التخصصات الطبية المتاحة على عيادة؟",
+      name: getTranslation("seo.faq.q4"),
       acceptedAnswer: {
         "@type": "Answer",
-        text: "تتوفر على عيادة جميع التخصصات الطبية مثل الباطنة، الأطفال، العيون، العظام، الأسنان، الجلدية، القلب، النساء والتوليد، المخ والأعصاب، الأنف والأذن، وغيرها الكثير.",
+        text: getTranslation("seo.faq.a4"),
       },
     },
     {
       "@type": "Question",
-      name: "هل يمكنني إلغاء أو تعديل موعدي؟",
+      name: getTranslation("seo.faq.q5"),
       acceptedAnswer: {
         "@type": "Answer",
-        text: "نعم، يمكنك إلغاء أو تعديل موعدك من خلال حسابك على المنصة. سياسة الإلغاء تختلف حسب شروط كل عيادة.",
+        text: getTranslation("seo.faq.a5"),
       },
     },
   ],
@@ -106,7 +114,7 @@ const breadcrumbJsonLd = {
     {
       "@type": "ListItem",
       position: 1,
-      name: "الرئيسية",
+      name: getTranslation("seo.breadcrumbs.home"),
       item: BASE_URL,
     },
   ],

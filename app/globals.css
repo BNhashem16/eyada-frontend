@@ -233,6 +233,7 @@ body {
   font-feature-settings: "ss01", "ss02", "cv01", "cv03";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* RTL Support - Cairo Font for Arabic */

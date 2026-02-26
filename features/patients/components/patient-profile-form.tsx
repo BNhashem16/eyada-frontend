@@ -254,6 +254,7 @@ function PatientProfileFormContent({
             <Input
               id="name"
               {...register("name")}
+              placeholder={t("patient.fullNamePlaceholder")}
               icon={<UserIcon className="h-5 w-5" />}
               iconPosition="start"
               error={!!errors.name}

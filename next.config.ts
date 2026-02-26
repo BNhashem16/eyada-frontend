@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**",
       },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
     ],
     formats: ["image/avif", "image/webp"],
   },

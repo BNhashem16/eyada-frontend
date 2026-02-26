@@ -112,6 +112,15 @@ export function SecretaryNewAppointmentContent() {
   const [patientPhone, setPatientPhone] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string>("");
+  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">(
+    "",
+  );
+  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">(
+    "",
+  );
+  const [appointmentStatus, setAppointmentStatus] = useState<
+    "PENDING" | "CONFIRMED" | ""
+  >("");
 
   // Week days
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
@@ -177,7 +186,10 @@ export function SecretaryNewAppointmentContent() {
     selectedService &&
     selectedDate &&
     patientName.trim().length >= 2 &&
-    patientDateOfBirth;
+    patientDateOfBirth &&
+    bookingSource &&
+    paymentStatus &&
+    appointmentStatus;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -190,6 +202,9 @@ export function SecretaryNewAppointmentContent() {
         patientName: patientName.trim(),
         patientDateOfBirth,
         patientPhone: patientPhone.trim() || undefined,
+        bookingSource: bookingSource as "PHONE" | "CLINIC",
+        paymentStatus: paymentStatus as "PENDING" | "PAID",
+        status: appointmentStatus as "PENDING" | "CONFIRMED",
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
       });
@@ -302,7 +317,7 @@ export function SecretaryNewAppointmentContent() {
             <CardContent className="space-y-4">
               {/* Patient Name with inline search */}
               <div className="space-y-2">
-                <Label>{t("patient.fullName")} *</Label>
+                <Label required>{t("patient.fullName")}</Label>
                 <div className="relative">
                   <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -418,7 +433,7 @@ export function SecretaryNewAppointmentContent() {
               {/* Date of Birth & Phone */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>{t("patient.dateOfBirth")} *</Label>
+                  <Label required>{t("patient.dateOfBirth")}</Label>
                   <DateOfBirthInput
                     value={patientDateOfBirth}
                     onChange={(val) => setPatientDateOfBirth(val)}
@@ -461,7 +476,7 @@ export function SecretaryNewAppointmentContent() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>{t("secretary.selectClinic")} *</Label>
+                  <Label required>{t("secretary.selectClinic")}</Label>
                   <SearchableSelect
                     options={
                       clinics?.map((clinic) => ({
@@ -480,7 +495,7 @@ export function SecretaryNewAppointmentContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t("secretary.selectService")} *</Label>
+                  <Label required>{t("secretary.selectService")}</Label>
                   <SearchableSelect
                     options={
                       services
@@ -588,7 +603,7 @@ export function SecretaryNewAppointmentContent() {
               <div className="space-y-4">
                 {/* Week Navigation */}
                 <div className="flex items-center justify-between">
-                  <Label>{t("appointments.date")} *</Label>
+                  <Label required>{t("appointments.date")}</Label>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
@@ -656,6 +671,97 @@ export function SecretaryNewAppointmentContent() {
                     {formatDate(selectedDate, "EEEE, d MMMM yyyy")}
                   </p>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Booking Details */}
+          <Card>
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="text-base sm:text-lg">
+                {t("appointments.bookingDetails")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Booking Source */}
+              <div className="space-y-2">
+                <Label>{t("appointments.bookingSource")}</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={bookingSource === "PHONE" ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => setBookingSource("PHONE")}
+                  >
+                    <Phone className="h-4 w-4 me-2" />
+                    {t("appointments.bookingSourcePhone")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={bookingSource === "CLINIC" ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => setBookingSource("CLINIC")}
+                  >
+                    <Building2 className="h-4 w-4 me-2" />
+                    {t("appointments.bookingSourceClinic")}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Payment Status */}
+              <div className="space-y-2">
+                <Label>{t("appointments.paymentStatusLabel")}</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={
+                      paymentStatus === "PENDING" ? "default" : "outline"
+                    }
+                    className="flex-1"
+                    onClick={() => setPaymentStatus("PENDING")}
+                  >
+                    <Clock className="h-4 w-4 me-2" />
+                    {t("appointments.paymentPending")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={paymentStatus === "PAID" ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => setPaymentStatus("PAID")}
+                  >
+                    <CheckCircle2 className="h-4 w-4 me-2" />
+                    {t("appointments.paymentPaid")}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Appointment Status */}
+              <div className="space-y-2">
+                <Label>{t("appointments.appointmentStatusLabel")}</Label>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant={
+                      appointmentStatus === "PENDING" ? "default" : "outline"
+                    }
+                    className="flex-1"
+                    onClick={() => setAppointmentStatus("PENDING")}
+                  >
+                    <Clock className="h-4 w-4 me-2" />
+                    {t("appointments.statusPending")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={
+                      appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                    }
+                    className="flex-1"
+                    onClick={() => setAppointmentStatus("CONFIRMED")}
+                  >
+                    <CheckCircle2 className="h-4 w-4 me-2" />
+                    {t("appointments.statusConfirmed")}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -773,6 +879,56 @@ export function SecretaryNewAppointmentContent() {
                     : "-"}
                 </span>
               </div>
+
+              <Separator />
+
+              {/* Booking Source */}
+              {bookingSource && (
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm text-muted-foreground">
+                    {t("appointments.bookingSource")}
+                  </span>
+                  <Badge variant="outline">
+                    {bookingSource === "PHONE"
+                      ? t("appointments.bookingSourcePhone")
+                      : t("appointments.bookingSourceClinic")}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Payment Status */}
+              {paymentStatus && (
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm text-muted-foreground">
+                    {t("appointments.paymentStatusLabel")}
+                  </span>
+                  <Badge
+                    variant={paymentStatus === "PAID" ? "default" : "outline"}
+                  >
+                    {paymentStatus === "PAID"
+                      ? t("appointments.paymentPaid")
+                      : t("appointments.paymentPending")}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Appointment Status */}
+              {appointmentStatus && (
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm text-muted-foreground">
+                    {t("appointments.appointmentStatusLabel")}
+                  </span>
+                  <Badge
+                    variant={
+                      appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                    }
+                  >
+                    {appointmentStatus === "CONFIRMED"
+                      ? t("appointments.statusConfirmed")
+                      : t("appointments.statusPending")}
+                  </Badge>
+                </div>
+              )}
 
               <Separator />
 

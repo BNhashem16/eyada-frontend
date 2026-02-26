@@ -122,7 +122,7 @@ export function RatingsList({ doctorId }: RatingsListProps) {
           value={ratingFilter?.toString() || "all"}
           onValueChange={handleFilterChange}
         >
-          <SelectTrigger className="w-[160px] h-9">
+          <SelectTrigger className="w-full sm:w-[160px] h-9">
             <Filter className="h-4 w-4 me-2 text-muted-foreground" />
             <SelectValue placeholder={t("rating.filterByStars")} />
           </SelectTrigger>

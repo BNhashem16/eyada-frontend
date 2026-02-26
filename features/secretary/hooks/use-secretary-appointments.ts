@@ -108,6 +108,9 @@ export interface CreateSecretaryAppointmentData {
   patientName: string; // 2-100 chars, required
   patientDateOfBirth: string; // YYYY-MM-DD format, required
   patientPhone?: string; // optional
+  bookingSource: "PHONE" | "CLINIC"; // required
+  paymentStatus: "PENDING" | "PAID"; // required
+  status: "PENDING" | "CONFIRMED"; // required
   notes?: string; // max 500 chars
   symptoms?: string; // max 500 chars
 }

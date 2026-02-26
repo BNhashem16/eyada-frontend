@@ -12,6 +12,7 @@ import {
   User,
   Phone,
   Stethoscope,
+  Pill,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -30,7 +31,12 @@ export function RegisterForm() {
   const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
   const roleParam = searchParams.get("role");
-  const defaultRole = roleParam === "doctor" ? "DOCTOR" : "PATIENT";
+  const defaultRole =
+    roleParam === "doctor"
+      ? "DOCTOR"
+      : roleParam === "pharmacy-owner"
+        ? "PHARMACY_OWNER"
+        : "PATIENT";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -50,7 +56,7 @@ export function RegisterForm() {
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-      role: defaultRole as "PATIENT" | "DOCTOR",
+      role: defaultRole as "PATIENT" | "DOCTOR" | "PHARMACY_OWNER",
       agreeTerms: false,
     },
   });
@@ -67,7 +73,7 @@ export function RegisterForm() {
       {/* Role Selection */}
       <div className="space-y-2">
         <Label>{t("auth.accountType")}</Label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
               selectedRole === "PATIENT"
@@ -99,6 +105,22 @@ export function RegisterForm() {
             />
             <Stethoscope className="h-5 w-5" />
             <span className="font-medium">{t("auth.doctor")}</span>
+          </label>
+          <label
+            className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
+              selectedRole === "PHARMACY_OWNER"
+                ? "border-primary-500 bg-primary-100 dark:bg-primary-800/40 text-primary-700 dark:text-primary-300 shadow-sm"
+                : "border-border bg-muted/30 dark:bg-muted/10 text-muted-foreground hover:border-primary-300 dark:hover:border-primary-700"
+            }`}
+          >
+            <input
+              type="radio"
+              value="PHARMACY_OWNER"
+              {...registerField("role")}
+              className="sr-only"
+            />
+            <Pill className="h-5 w-5" />
+            <span className="font-medium">{t("auth.pharmacyOwner")}</span>
           </label>
         </div>
       </div>

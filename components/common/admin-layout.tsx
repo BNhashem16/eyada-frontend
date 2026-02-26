@@ -128,7 +128,7 @@ export function AdminLayout({
               className="absolute inset-0 bg-black/50"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="absolute inset-y-0 start-0 w-72 bg-gray-800 dark:bg-gray-900 text-white">
+            <aside className="absolute inset-y-0 start-0 w-[85vw] max-w-72 bg-gray-800 dark:bg-gray-900 text-white">
               <div className="flex items-center justify-between p-4 border-b border-gray-700">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-10 w-10 border-2 border-primary-500">
@@ -189,7 +189,7 @@ export function AdminLayout({
         )}
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 overflow-x-auto p-4 lg:p-6">
+        <main className="flex-1 min-w-0 overflow-x-hidden p-4 lg:p-6">
           {children}
         </main>
       </div>

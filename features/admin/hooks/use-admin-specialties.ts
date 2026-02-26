@@ -10,6 +10,26 @@ import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
 
+// ==================== Statistics ====================
+
+export interface SpecialtyStatistics {
+  totalSpecialties: number;
+  activeSpecialties: number;
+  inactiveSpecialties: number;
+}
+
+export function useAdminSpecialtyStatistics() {
+  return useQuery({
+    queryKey: ["admin-specialties-statistics"],
+    queryFn: async () => {
+      return apiGet<SpecialtyStatistics>(
+        ADMIN_ENDPOINTS.SPECIALTIES_STATISTICS,
+      );
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
 // Per Swagger: GET /admin/specialties with optional filters and pagination
 export interface UseAdminSpecialtiesOptions {
   page?: number;

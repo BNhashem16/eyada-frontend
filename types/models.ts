@@ -104,11 +104,14 @@ export interface DoctorProfile extends Timestamps {
   averageRating: number;
   totalRatings: number;
   totalAppointments: number;
+  requirePrepayment: boolean;
+  prepaymentWhatsapp?: string;
   approvedAt?: string;
   approvedBy?: string;
   user: User;
   specialty: Specialty;
   clinics?: Clinic[];
+  paymentAccounts?: DoctorPaymentAccount[];
 }
 
 // Patient Profile model
@@ -240,9 +243,11 @@ export interface Appointment extends Timestamps {
   doctorNotes?: string;
   cancellationReason?: string;
   cancelledById?: string;
+  requiresPrepayment: boolean;
   cancelledAt?: string;
   bookedBy: string;
   bookedById: string;
+  bookingSource?: string;
   completedAt?: string;
   clinic?: Clinic;
   doctorProfile?: DoctorProfile;
@@ -342,6 +347,34 @@ export interface SecretaryWithClinics extends User {
     isActive: boolean;
     assignedAt: string;
   }[];
+}
+
+// Payment Method model (admin-managed)
+export interface PaymentMethodModel extends Timestamps {
+  id: string;
+  name: Multilingual;
+  code: string;
+  icon?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+// Doctor Payment Account model
+export interface DoctorPaymentAccount extends Timestamps {
+  id: string;
+  doctorProfileId: string;
+  paymentMethodId: string;
+  accountNumber: string;
+  accountName?: string;
+  isActive: boolean;
+  paymentMethod?: PaymentMethodModel;
+}
+
+// Prepayment info for a clinic (public endpoint)
+export interface ClinicPrepaymentInfo {
+  requirePrepayment: boolean;
+  prepaymentWhatsapp?: string;
+  paymentAccounts: DoctorPaymentAccount[];
 }
 
 // Contact Link model

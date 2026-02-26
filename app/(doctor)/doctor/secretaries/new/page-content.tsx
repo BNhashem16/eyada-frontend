@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, UserPlus, Eye, EyeOff } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslation, getTranslation, type Locale } from "@/lib/i18n";
 import {
   useCreateSecretary,
   CreateSecretaryData,
@@ -32,15 +32,34 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 
-const createSecretarySchema = z.object({
-  fullName: z.string().min(2).max(100),
-  email: z.string().email(),
-  phoneNumber: z.string().regex(/^01[0125][0-9]{8}$/),
-  password: z.string().min(8).max(50),
-  clinicId: z.string().uuid(),
-});
+const createSecretarySchemaFn = (locale: Locale = "ar") => {
+  const t = (key: string) => getTranslation(key, locale);
+  return z.object({
+    fullName: z
+      .string()
+      .min(1, t("validation.fullNameRequired"))
+      .min(2, t("validation.fullNameMinLength"))
+      .max(100, t("validation.fullNameMaxLength")),
+    email: z
+      .string()
+      .min(1, t("validation.emailRequired"))
+      .email(t("validation.emailInvalid")),
+    phoneNumber: z
+      .string()
+      .min(1, t("validation.phoneRequired"))
+      .regex(/^01[0125][0-9]{8}$/, t("validation.phoneInvalid")),
+    password: z
+      .string()
+      .min(1, t("validation.passwordRequired"))
+      .min(8, t("validation.passwordMinLength"))
+      .max(50, t("validation.passwordMaxLength")),
+    clinicId: z.string().uuid(),
+  });
+};
 
-type CreateSecretaryFormData = z.infer<typeof createSecretarySchema>;
+type CreateSecretaryFormData = z.infer<
+  ReturnType<typeof createSecretarySchemaFn>
+>;
 
 export function NewSecretaryContent() {
   const { t, locale } = useTranslation();
@@ -59,7 +78,7 @@ export function NewSecretaryContent() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateSecretaryFormData>({
-    resolver: zodResolver(createSecretarySchema),
+    resolver: zodResolver(createSecretarySchemaFn(locale)),
   });
 
   const selectedClinicId = watch("clinicId");
@@ -117,7 +136,9 @@ export function NewSecretaryContent() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="fullName">{t("auth.fullName")} *</Label>
+              <Label htmlFor="fullName" required>
+                {t("auth.fullName")}
+              </Label>
               <Input
                 id="fullName"
                 placeholder={t("auth.fullNamePlaceholder")}
@@ -133,7 +154,9 @@ export function NewSecretaryContent() {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">{t("auth.email")} *</Label>
+              <Label htmlFor="email" required>
+                {t("auth.email")}
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -151,7 +174,9 @@ export function NewSecretaryContent() {
 
             {/* Phone Number */}
             <div className="space-y-2">
-              <Label htmlFor="phoneNumber">{t("auth.phoneNumber")} *</Label>
+              <Label htmlFor="phoneNumber" required>
+                {t("auth.phoneNumber")}
+              </Label>
               <Input
                 id="phoneNumber"
                 type="tel"
@@ -170,7 +195,9 @@ export function NewSecretaryContent() {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">{t("auth.password")} *</Label>
+              <Label htmlFor="password" required>
+                {t("auth.password")}
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -204,7 +231,7 @@ export function NewSecretaryContent() {
 
             {/* Clinic Selection */}
             <div className="space-y-2">
-              <Label>{t("secretary.management.selectClinic")} *</Label>
+              <Label required>{t("secretary.management.selectClinic")}</Label>
               <Select
                 value={selectedClinicId}
                 onValueChange={(value) => setValue("clinicId", value)}

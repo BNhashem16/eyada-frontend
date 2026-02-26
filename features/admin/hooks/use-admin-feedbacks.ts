@@ -35,6 +35,28 @@ export interface AdminFeedbackFilters {
   status?: FeedbackStatus;
 }
 
+// ==================== Statistics ====================
+
+export interface FeedbackStatistics {
+  totalFeedbacks: number;
+  newFeedbacks: number;
+  inReviewFeedbacks: number;
+  resolvedFeedbacks: number;
+  rejectedFeedbacks: number;
+  complaints: number;
+  suggestions: number;
+}
+
+export function useAdminFeedbackStatistics() {
+  return useQuery({
+    queryKey: ["admin-feedbacks-statistics"],
+    queryFn: async () => {
+      return apiGet<FeedbackStatistics>(ADMIN_ENDPOINTS.FEEDBACKS_STATISTICS);
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
 // ==================== Hooks ====================
 
 export function useAdminFeedbacks(filters: AdminFeedbackFilters = {}) {

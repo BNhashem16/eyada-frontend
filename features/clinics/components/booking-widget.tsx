@@ -20,7 +20,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { useClinicServices } from "../hooks/use-clinics";
+import {
+  useClinicServices,
+  useClinicPrepaymentInfo,
+  useClinic,
+} from "../hooks/use-clinics";
+import { PrepaymentInstructions } from "./prepayment-instructions";
 import { usePatientFamily } from "@/features/patients/hooks/use-patient";
 import { useUser, useIsAuthenticated } from "@/lib/auth/store";
 import { apiPost } from "@/lib/api";
@@ -34,8 +39,10 @@ import {
   isToday,
   isBefore,
 } from "@/lib/utils/date";
+import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import type { DoctorPaymentAccount } from "@/types";
 
 interface BookingWidgetProps {
   clinicId: string;
@@ -65,6 +72,20 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] =
     useState<string>("");
 
+  // Prepayment dialog state
+  const [showPrepaymentDialog, setShowPrepaymentDialog] = useState(false);
+  const [bookingResult, setBookingResult] = useState<{
+    bookingNumber: string;
+    price: number;
+    paymentAccounts: DoctorPaymentAccount[];
+    whatsappNumber?: string;
+    patientName: string;
+    appointmentDate: string;
+    serviceName: string;
+    doctorName: string;
+    clinicName: string;
+  } | null>(null);
+
   // Queries
   const {
     data: services,
@@ -76,6 +97,8 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
     isLoading: familyLoading,
     isError: familyError,
   } = usePatientFamily();
+  const { data: prepaymentInfo } = useClinicPrepaymentInfo(clinicId);
+  const { data: clinic } = useClinic(clinicId);
 
   // Booking mutation - per Swagger CreateAppointmentDto
   const bookingMutation = useMutation({
@@ -107,16 +130,68 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         payload.patientProfileId = selectedFamilyMemberId;
       }
 
-      return apiPost(PATIENT_ENDPOINTS.APPOINTMENTS, payload);
+      return apiPost<{
+        bookingNumber?: string;
+        price?: number;
+        clinic?: {
+          doctorProfile?: {
+            paymentAccounts?: DoctorPaymentAccount[];
+            prepaymentWhatsapp?: string;
+          };
+        };
+        requiresPrepayment?: boolean;
+      }>(PATIENT_ENDPOINTS.APPOINTMENTS, payload);
     },
-    onSuccess: () => {
-      toast({
-        title: t("booking.bookingSuccessTitle"),
-        description: t("booking.bookingSuccessDesc"),
-        variant: "success",
-      });
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["patient-appointments"] });
-      router.push("/patient/appointments");
+
+      // Check if prepayment is required
+      if (
+        data?.requiresPrepayment &&
+        prepaymentInfo?.requirePrepayment &&
+        prepaymentInfo.paymentAccounts.length > 0
+      ) {
+        // Compute patient name
+        const patientName =
+          bookingFor === "self"
+            ? user?.fullName || user?.name || ""
+            : (() => {
+                const member = familyMembers?.find(
+                  (m) => m.id === selectedFamilyMemberId,
+                );
+                return (
+                  member?.fullName ||
+                  member?.user?.fullName ||
+                  member?.user?.name ||
+                  ""
+                );
+              })();
+
+        setBookingResult({
+          bookingNumber: data.bookingNumber || "",
+          price: data.price || (selectedService?.price as number) || 0,
+          paymentAccounts: prepaymentInfo.paymentAccounts,
+          whatsappNumber: prepaymentInfo.prepaymentWhatsapp,
+          patientName,
+          appointmentDate: selectedDate
+            ? formatDate(selectedDate, "EEEE, d MMMM yyyy")
+            : "",
+          serviceName:
+            getLocalizedText(selectedService?.name, locale) ||
+            selectedService?.serviceType ||
+            "",
+          doctorName: clinic?.doctorProfile?.user?.fullName || "",
+          clinicName: getLocalizedText(clinic?.name, locale) || "",
+        });
+        setShowPrepaymentDialog(true);
+      } else {
+        toast({
+          title: t("booking.bookingSuccessTitle"),
+          description: t("booking.bookingSuccessDesc"),
+          variant: "success",
+        });
+        router.push("/patient/appointments");
+      }
     },
     onError: (error: AxiosError<ApiError>) => {
       toast({
@@ -334,7 +409,7 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {weekDays.map((date) => {
               const isPast = isBefore(date, new Date()) && !isToday(date);
               const isSelected = selectedDate && isSameDay(date, selectedDate);
@@ -346,16 +421,16 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                   onClick={() => !isPast && handleDateSelect(date)}
                   disabled={isPast}
                   className={`
-                    flex flex-col items-center justify-center p-2 rounded-lg text-center transition-all
+                    flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-lg text-center transition-all
                     ${isPast ? "opacity-40 cursor-not-allowed" : "hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer"}
                     ${isSelected ? "bg-primary-500 text-white hover:bg-primary-600" : ""}
                     ${today && !isSelected ? "border-2 border-primary-500" : ""}
                   `}
                 >
-                  <span className="text-xs font-medium">
+                  <span className="text-[10px] sm:text-xs font-medium">
                     {formatDate(date, "EEE")}
                   </span>
-                  <span className="text-lg font-bold">
+                  <span className="text-base sm:text-lg font-bold">
                     {formatDate(date, "d")}
                   </span>
                 </button>
@@ -448,7 +523,35 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
             </Button>
           </div>
         )}
+        {/* Prepayment Notice */}
+        {prepaymentInfo?.requirePrepayment && (
+          <div className="bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg p-3">
+            <Badge variant="warning" className="mb-1">
+              {t("prepayment.badge")}
+            </Badge>
+            <p className="text-sm text-warning-700 dark:text-warning-300">
+              {t("prepayment.importantNote")}
+            </p>
+          </div>
+        )}
       </CardContent>
+
+      {/* Prepayment Instructions Dialog */}
+      {bookingResult && (
+        <PrepaymentInstructions
+          open={showPrepaymentDialog}
+          onOpenChange={setShowPrepaymentDialog}
+          bookingNumber={bookingResult.bookingNumber}
+          price={bookingResult.price}
+          paymentAccounts={bookingResult.paymentAccounts}
+          whatsappNumber={bookingResult.whatsappNumber}
+          patientName={bookingResult.patientName}
+          appointmentDate={bookingResult.appointmentDate}
+          serviceName={bookingResult.serviceName}
+          doctorName={bookingResult.doctorName}
+          clinicName={bookingResult.clinicName}
+        />
+      )}
     </Card>
   );
 }

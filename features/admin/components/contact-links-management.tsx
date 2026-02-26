@@ -259,7 +259,7 @@ export function ContactLinksManagement() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-44">
+              <SelectTrigger className="w-full sm:w-44">
                 <SelectValue placeholder={t("admin.contactLinks.platform")} />
               </SelectTrigger>
               <SelectContent>
@@ -282,7 +282,7 @@ export function ContactLinksManagement() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder={t("table.status")} />
               </SelectTrigger>
               <SelectContent>
@@ -301,81 +301,83 @@ export function ContactLinksManagement() {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("admin.contactLinks.platform")}</TableHead>
-                  <TableHead>{t("admin.contactLinks.labelAr")}</TableHead>
-                  <TableHead>{t("admin.contactLinks.labelEn")}</TableHead>
-                  <TableHead>{t("admin.contactLinks.value")}</TableHead>
-                  <TableHead>{t("admin.contactLinks.sortOrder")}</TableHead>
-                  <TableHead>{t("table.status")}</TableHead>
-                  <TableHead>{t("table.actions")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {links.map((link) => (
-                  <TableRow
-                    key={link.id}
-                    className={!link.isActive ? "opacity-60 bg-muted/30" : ""}
-                  >
-                    <TableCell>
-                      <Badge variant="outline">
-                        {t(`admin.contactLinks.platforms.${link.platform}`)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {link.label.ar}
-                    </TableCell>
-                    <TableCell>{link.label.en}</TableCell>
-                    <TableCell className="max-w-[200px] truncate" dir="ltr">
-                      {link.value}
-                    </TableCell>
-                    <TableCell>{link.sortOrder}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {togglingId === link.id && updateLink.isPending ? (
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                        ) : (
-                          <Switch
-                            checked={link.isActive}
-                            onCheckedChange={() => handleToggleActive(link)}
-                            disabled={updateLink.isPending}
-                          />
-                        )}
-                        <Badge
-                          variant={link.isActive ? "success" : "secondary"}
-                          className="text-xs"
-                        >
-                          {link.isActive
-                            ? t("common.active")
-                            : t("common.inactive")}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleOpenEdit(link)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-error-600"
-                          onClick={() => setDeleteId(link.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[800px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("admin.contactLinks.platform")}</TableHead>
+                    <TableHead>{t("admin.contactLinks.labelAr")}</TableHead>
+                    <TableHead>{t("admin.contactLinks.labelEn")}</TableHead>
+                    <TableHead>{t("admin.contactLinks.value")}</TableHead>
+                    <TableHead>{t("admin.contactLinks.sortOrder")}</TableHead>
+                    <TableHead>{t("table.status")}</TableHead>
+                    <TableHead>{t("table.actions")}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {links.map((link) => (
+                    <TableRow
+                      key={link.id}
+                      className={!link.isActive ? "opacity-60 bg-muted/30" : ""}
+                    >
+                      <TableCell>
+                        <Badge variant="outline">
+                          {t(`admin.contactLinks.platforms.${link.platform}`)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {link.label.ar}
+                      </TableCell>
+                      <TableCell>{link.label.en}</TableCell>
+                      <TableCell className="max-w-[200px] truncate" dir="ltr">
+                        {link.value}
+                      </TableCell>
+                      <TableCell>{link.sortOrder}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {togglingId === link.id && updateLink.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          ) : (
+                            <Switch
+                              checked={link.isActive}
+                              onCheckedChange={() => handleToggleActive(link)}
+                              disabled={updateLink.isPending}
+                            />
+                          )}
+                          <Badge
+                            variant={link.isActive ? "success" : "secondary"}
+                            className="text-xs"
+                          >
+                            {link.isActive
+                              ? t("common.active")
+                              : t("common.inactive")}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleOpenEdit(link)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-error-600"
+                            onClick={() => setDeleteId(link.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
 
           <PaginationControls
@@ -408,7 +410,7 @@ export function ContactLinksManagement() {
           <div className="space-y-4">
             {/* Platform */}
             <div>
-              <Label>{t("admin.contactLinks.platform")} *</Label>
+              <Label required>{t("admin.contactLinks.platform")}</Label>
               <Select
                 value={formData.platform}
                 onValueChange={(value) =>
@@ -434,8 +436,8 @@ export function ContactLinksManagement() {
             {/* Labels */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label htmlFor="labelAr">
-                  {t("admin.contactLinks.labelAr")} *
+                <Label htmlFor="labelAr" required>
+                  {t("admin.contactLinks.labelAr")}
                 </Label>
                 <Input
                   id="labelAr"
@@ -443,11 +445,12 @@ export function ContactLinksManagement() {
                   onChange={(e) =>
                     setFormData((f) => ({ ...f, labelAr: e.target.value }))
                   }
+                  placeholder={t("admin.contactLinks.labelArPlaceholder")}
                 />
               </div>
               <div>
-                <Label htmlFor="labelEn">
-                  {t("admin.contactLinks.labelEn")} *
+                <Label htmlFor="labelEn" required>
+                  {t("admin.contactLinks.labelEn")}
                 </Label>
                 <Input
                   id="labelEn"
@@ -455,6 +458,7 @@ export function ContactLinksManagement() {
                   onChange={(e) =>
                     setFormData((f) => ({ ...f, labelEn: e.target.value }))
                   }
+                  placeholder={t("admin.contactLinks.labelEnPlaceholder")}
                   dir="ltr"
                 />
               </div>
@@ -462,13 +466,16 @@ export function ContactLinksManagement() {
 
             {/* Value */}
             <div>
-              <Label htmlFor="value">{t("admin.contactLinks.value")} *</Label>
+              <Label htmlFor="value" required>
+                {t("admin.contactLinks.value")}
+              </Label>
               <Input
                 id="value"
                 value={formData.value}
                 onChange={(e) =>
                   setFormData((f) => ({ ...f, value: e.target.value }))
                 }
+                placeholder={t("admin.contactLinks.valuePlaceholder")}
                 dir="ltr"
               />
             </div>
@@ -483,6 +490,7 @@ export function ContactLinksManagement() {
                   onChange={(e) =>
                     setFormData((f) => ({ ...f, icon: e.target.value }))
                   }
+                  placeholder={t("admin.contactLinks.iconPlaceholder")}
                   dir="ltr"
                 />
               </div>
@@ -500,6 +508,7 @@ export function ContactLinksManagement() {
                       sortOrder: parseInt(e.target.value) || 0,
                     }))
                   }
+                  placeholder={t("admin.contactLinks.sortOrderPlaceholder")}
                   dir="ltr"
                 />
               </div>

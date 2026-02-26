@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { apiGet, apiPatch } from "@/lib/api";
+import { apiGet, apiPatch, apiPost } from "@/lib/api";
 import { ADMIN_ENDPOINTS } from "@/lib/api/endpoints";
 import type { ApiError } from "@/types";
 import { PaginatedResponse } from "@/types";
@@ -29,11 +29,13 @@ export interface AdminAppointment {
   appointmentDate: string;
   status: AppointmentStatus;
   paymentStatus: PaymentStatus;
+  requiresPrepayment: boolean;
   price: number;
   queueNumber: number | null;
   patientName: string;
   patientAge: number | null;
   serviceName: { ar: string; en: string };
+  bookingSource: string | null;
   cancellationReason: string | null;
   createdAt: string;
   completedAt: string | null;
@@ -230,6 +232,45 @@ export function useUpdateAdminAppointment() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-appointments"] });
       queryClient.invalidateQueries({ queryKey: ["admin-appointment"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-appointments-statistics"],
+      });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toastError(
+        t("toast.error"),
+        extractApiError(error, t("errors.somethingWentWrong")),
+      );
+    },
+  });
+}
+
+// ==================== Create Appointment (Admin) ====================
+
+export interface CreateAdminAppointmentData {
+  clinicId: string;
+  serviceTypeId: string;
+  appointmentDate: string;
+  patientName: string;
+  patientDateOfBirth: string;
+  patientPhone?: string;
+  bookingSource: "PHONE" | "CLINIC";
+  paymentStatus: "PENDING" | "PAID";
+  status: "PENDING" | "CONFIRMED";
+  notes?: string;
+  symptoms?: string;
+}
+
+export function useCreateAdminAppointment() {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: async (data: CreateAdminAppointmentData) => {
+      return apiPost<AdminAppointment>(ADMIN_ENDPOINTS.APPOINTMENTS, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-appointments"] });
       queryClient.invalidateQueries({
         queryKey: ["admin-appointments-statistics"],
       });

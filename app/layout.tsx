@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "عيادة",
+    "apple-mobile-web-app-title": getTranslation("app.name"),
   },
 };
 
@@ -82,6 +82,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: "cover",
   interactiveWidget: "resizes-content",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },

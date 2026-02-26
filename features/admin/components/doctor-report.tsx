@@ -345,7 +345,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                   )
                 }
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t("admin.collections.allTime")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -409,58 +409,62 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                   </p>
                 </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>
-                        {t("admin.collections.bookingNumber")}
-                      </TableHead>
-                      <TableHead>{t("admin.collections.patient")}</TableHead>
-                      <TableHead>{t("admin.collections.service")}</TableHead>
-                      <TableHead>{t("admin.collections.clinic")}</TableHead>
-                      <TableHead>{t("admin.collections.price")}</TableHead>
-                      <TableHead>{t("admin.collections.commission")}</TableHead>
-                      <TableHead>{t("admin.collections.date")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {report.appointments.map((appointment) => (
-                      <TableRow key={appointment.id}>
-                        <TableCell className="font-mono text-sm">
-                          {appointment.bookingNumber}
-                        </TableCell>
-                        <TableCell>{appointment.patientName}</TableCell>
-                        <TableCell>
-                          {getLocalizedText(appointment.serviceName, locale)}
-                        </TableCell>
-                        <TableCell>
-                          {getLocalizedText(appointment.clinicName, locale)}
-                        </TableCell>
-                        <TableCell>
-                          {formatCurrency(appointment.price)}
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            <Badge variant="success" className="font-bold">
-                              {formatCurrency(appointment.commissionAmount)}
-                            </Badge>
-                            <p className="text-xs text-muted-foreground">
-                              {appointment.commissionType === "FIXED"
-                                ? `${t("admin.commissions.fixed")}: ${appointment.commissionValue}`
-                                : `${appointment.commissionValue}%`}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1 text-sm">
-                            <Calendar className="h-3 w-3" />
-                            {formatDate(appointment.appointmentDate)}
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <Table className="min-w-[800px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>
+                          {t("admin.collections.bookingNumber")}
+                        </TableHead>
+                        <TableHead>{t("admin.collections.patient")}</TableHead>
+                        <TableHead>{t("admin.collections.service")}</TableHead>
+                        <TableHead>{t("admin.collections.clinic")}</TableHead>
+                        <TableHead>{t("admin.collections.price")}</TableHead>
+                        <TableHead>
+                          {t("admin.collections.commission")}
+                        </TableHead>
+                        <TableHead>{t("admin.collections.date")}</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {report.appointments.map((appointment) => (
+                        <TableRow key={appointment.id}>
+                          <TableCell className="font-mono text-sm">
+                            {appointment.bookingNumber}
+                          </TableCell>
+                          <TableCell>{appointment.patientName}</TableCell>
+                          <TableCell>
+                            {getLocalizedText(appointment.serviceName, locale)}
+                          </TableCell>
+                          <TableCell>
+                            {getLocalizedText(appointment.clinicName, locale)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(appointment.price)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              <Badge variant="success" className="font-bold">
+                                {formatCurrency(appointment.commissionAmount)}
+                              </Badge>
+                              <p className="text-xs text-muted-foreground">
+                                {appointment.commissionType === "FIXED"
+                                  ? `${t("admin.commissions.fixed")}: ${appointment.commissionValue}`
+                                  : `${appointment.commissionValue}%`}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1 text-sm">
+                              <Calendar className="h-3 w-3" />
+                              {formatDate(appointment.appointmentDate)}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -477,56 +481,58 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
                   </p>
                 </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("admin.collections.amount")}</TableHead>
-                      <TableHead>
-                        {t("admin.collections.paymentMethod")}
-                      </TableHead>
-                      <TableHead>
-                        {t("admin.collections.referenceNumber")}
-                      </TableHead>
-                      <TableHead>{t("admin.collections.notes")}</TableHead>
-                      <TableHead>
-                        {t("admin.collections.paymentDate")}
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {report.payments.map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>
-                          <Badge
-                            variant="success"
-                            className="font-bold text-base"
-                          >
-                            {formatCurrency(payment.amount)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {payment.paymentMethod
-                            ? t(
-                                `admin.collections.${payment.paymentMethod.toLowerCase()}`,
-                              )
-                            : "-"}
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">
-                          {payment.referenceNumber || "-"}
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {payment.notes || "-"}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1 text-sm">
-                            <Calendar className="h-3 w-3" />
-                            {formatDateTime(payment.paymentDate)}
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <Table className="min-w-[600px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t("admin.collections.amount")}</TableHead>
+                        <TableHead>
+                          {t("admin.collections.paymentMethod")}
+                        </TableHead>
+                        <TableHead>
+                          {t("admin.collections.referenceNumber")}
+                        </TableHead>
+                        <TableHead>{t("admin.collections.notes")}</TableHead>
+                        <TableHead>
+                          {t("admin.collections.paymentDate")}
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {report.payments.map((payment) => (
+                        <TableRow key={payment.id}>
+                          <TableCell>
+                            <Badge
+                              variant="success"
+                              className="font-bold text-base"
+                            >
+                              {formatCurrency(payment.amount)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {payment.paymentMethod
+                              ? t(
+                                  `admin.collections.${payment.paymentMethod.toLowerCase()}`,
+                                )
+                              : "-"}
+                          </TableCell>
+                          <TableCell className="font-mono text-sm">
+                            {payment.referenceNumber || "-"}
+                          </TableCell>
+                          <TableCell className="max-w-xs truncate">
+                            {payment.notes || "-"}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1 text-sm">
+                              <Calendar className="h-3 w-3" />
+                              {formatDateTime(payment.paymentDate)}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -558,7 +564,7 @@ export function DoctorReport({ doctorProfileId }: DoctorReportProps) {
             </div>
 
             <div>
-              <Label>{t("admin.collections.amount")} *</Label>
+              <Label required>{t("admin.collections.amount")}</Label>
               <Input
                 type="number"
                 inputMode="decimal"

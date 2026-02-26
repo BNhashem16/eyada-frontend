@@ -72,14 +72,15 @@ export async function generateMetadata({
   const cityName = clinic.city?.name?.ar || "";
   const stateName = clinic.city?.state?.name?.ar || "";
   const location = [cityName, stateName].filter(Boolean).join("، ");
+  const drPrefix = getTranslation("seo.doctorPrefix");
 
   const titleAr = doctorName
-    ? `عيادة د. ${doctorName} - ${specialtyAr}${location ? ` في ${location}` : ""}`
+    ? `${getTranslation("seo.clinicKeyword")} ${drPrefix} ${doctorName} - ${specialtyAr}${location ? ` في ${location}` : ""}`
     : `${clinicName}${location ? ` - ${location}` : ""}`;
 
   const descriptionAr = clinic.description?.ar
-    ? `${clinic.description.ar.substring(0, 150)}... احجز موعدك الآن.`
-    : `احجز موعدك في ${clinicName}${doctorName ? ` - د. ${doctorName}` : ""}${specialtyAr ? ` - ${specialtyAr}` : ""}${location ? ` في ${location}` : ""}. حجز أونلاين سهل وسريع.`;
+    ? `${clinic.description.ar.substring(0, 150)}... ${getTranslation("seo.bookAppointment")}.`
+    : `${getTranslation("seo.bookAppointment")} ${clinicName}${doctorName ? ` - ${drPrefix} ${doctorName}` : ""}${specialtyAr ? ` - ${specialtyAr}` : ""}${location ? ` في ${location}` : ""}.`;
 
   const url = `${BASE_URL}/clinics/${id}`;
 
@@ -88,11 +89,11 @@ export async function generateMetadata({
     description: descriptionAr,
     keywords: [
       clinicName,
-      doctorName ? `د. ${doctorName}` : "",
+      doctorName ? `${drPrefix} ${doctorName}` : "",
       specialtyAr,
       cityName,
-      "عيادة",
-      "حجز موعد",
+      getTranslation("seo.clinicKeyword"),
+      getTranslation("seo.bookAppointment"),
     ].filter(Boolean),
     openGraph: {
       title: titleAr,
@@ -114,14 +115,14 @@ export async function generateMetadata({
   };
 }
 
-const DAYS_AR = [
-  "الأحد",
-  "الاثنين",
-  "الثلاثاء",
-  "الأربعاء",
-  "الخميس",
-  "الجمعة",
-  "السبت",
+const DAYS = [
+  getTranslation("days.sunday"),
+  getTranslation("days.monday"),
+  getTranslation("days.tuesday"),
+  getTranslation("days.wednesday"),
+  getTranslation("days.thursday"),
+  getTranslation("days.friday"),
+  getTranslation("days.saturday"),
 ];
 
 export default async function ClinicPage({ params }: ClinicPageProps) {
@@ -169,7 +170,7 @@ export default async function ClinicPage({ params }: ClinicPageProps) {
     }),
     isPartOf: {
       "@type": "WebSite",
-      name: "عيادة - Eyada",
+      name: getTranslation("seo.siteName"),
       url: BASE_URL,
     },
   };
@@ -180,7 +181,7 @@ export default async function ClinicPage({ params }: ClinicPageProps) {
       .filter((s) => s.isActive && s.shifts?.length)
       .map((schedule) => ({
         "@type": "OpeningHoursSpecification",
-        dayOfWeek: DAYS_AR[schedule.dayOfWeek] || schedule.dayOfWeek,
+        dayOfWeek: DAYS[schedule.dayOfWeek] || schedule.dayOfWeek,
         opens: schedule.shifts[0]?.startTime,
         closes: schedule.shifts[schedule.shifts.length - 1]?.endTime,
       }));
@@ -205,19 +206,19 @@ export default async function ClinicPage({ params }: ClinicPageProps) {
       {
         "@type": "ListItem",
         position: 1,
-        name: "الرئيسية",
+        name: getTranslation("seo.breadcrumbs.home"),
         item: BASE_URL,
       },
       {
         "@type": "ListItem",
         position: 2,
-        name: "العيادات",
+        name: getTranslation("seo.breadcrumbs.clinics"),
         item: `${BASE_URL}/clinics`,
       },
       {
         "@type": "ListItem",
         position: 3,
-        name: clinicName || "العيادة",
+        name: clinicName || getTranslation("seo.breadcrumbs.clinic"),
         item: `${BASE_URL}/clinics/${id}`,
       },
     ],

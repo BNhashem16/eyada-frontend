@@ -11,6 +11,8 @@ import {
   Plus,
   Building2,
   Stethoscope,
+  Phone,
+  CheckCircle2,
 } from "lucide-react";
 import {
   Dialog,
@@ -69,6 +71,15 @@ export function BookAppointmentDialog({
   const [patientPhone, setPatientPhone] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [symptoms, setSymptoms] = useState<string>("");
+  const [bookingSource, setBookingSource] = useState<"PHONE" | "CLINIC" | "">(
+    "",
+  );
+  const [paymentStatus, setPaymentStatus] = useState<"PENDING" | "PAID" | "">(
+    "",
+  );
+  const [appointmentStatus, setAppointmentStatus] = useState<
+    "PENDING" | "CONFIRMED" | ""
+  >("");
 
   // Data fetching
   const { data: clinics, isLoading: clinicsLoading } = useSecretaryClinics();
@@ -104,6 +115,9 @@ export function BookAppointmentDialog({
       setPatientPhone("");
       setNotes("");
       setSymptoms("");
+      setBookingSource("");
+      setPaymentStatus("");
+      setAppointmentStatus("");
     }
   }, [open]);
 
@@ -116,7 +130,10 @@ export function BookAppointmentDialog({
     selectedDate &&
     selectedTime &&
     patientName.trim() &&
-    patientDateOfBirth;
+    patientDateOfBirth &&
+    bookingSource &&
+    paymentStatus &&
+    appointmentStatus;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -129,6 +146,9 @@ export function BookAppointmentDialog({
         patientName: patientName.trim(),
         patientDateOfBirth,
         patientPhone: patientPhone.trim() || undefined,
+        bookingSource: bookingSource as "PHONE" | "CLINIC",
+        paymentStatus: paymentStatus as "PENDING" | "PAID",
+        status: appointmentStatus as "PENDING" | "CONFIRMED",
         notes: notes.trim() || undefined,
         symptoms: symptoms.trim() || undefined,
       });
@@ -173,8 +193,8 @@ export function BookAppointmentDialog({
             </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="patientName">
-                  {t("appointments.patientName")} *
+                <Label htmlFor="patientName" required>
+                  {t("appointments.patientName")}
                 </Label>
                 <Input
                   id="patientName"
@@ -185,8 +205,8 @@ export function BookAppointmentDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="patientDateOfBirth">
-                  {t("secretary.patientDateOfBirth")} *
+                <Label htmlFor="patientDateOfBirth" required>
+                  {t("secretary.patientDateOfBirth")}
                 </Label>
                 <DateOfBirthInput
                   value={patientDateOfBirth}
@@ -350,6 +370,97 @@ export function BookAppointmentDialog({
                   loading={slotsLoading}
                   showSearch={availableSlots.length > 6}
                 />
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Booking Details */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-foreground">
+              {t("appointments.bookingDetails")}
+            </h3>
+
+            <div className="space-y-2">
+              <Label>{t("appointments.bookingSource")}</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={bookingSource === "PHONE" ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setBookingSource("PHONE")}
+                >
+                  <Phone className="h-3 w-3 me-1" />
+                  {t("appointments.bookingSourcePhone")}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={bookingSource === "CLINIC" ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setBookingSource("CLINIC")}
+                >
+                  <Building2 className="h-3 w-3 me-1" />
+                  {t("appointments.bookingSourceClinic")}
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t("appointments.paymentStatusLabel")}</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={paymentStatus === "PENDING" ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setPaymentStatus("PENDING")}
+                >
+                  <Clock className="h-3 w-3 me-1" />
+                  {t("appointments.paymentPending")}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={paymentStatus === "PAID" ? "default" : "outline"}
+                  className="flex-1"
+                  onClick={() => setPaymentStatus("PAID")}
+                >
+                  <CheckCircle2 className="h-3 w-3 me-1" />
+                  {t("appointments.paymentPaid")}
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t("appointments.appointmentStatusLabel")}</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={
+                    appointmentStatus === "PENDING" ? "default" : "outline"
+                  }
+                  className="flex-1"
+                  onClick={() => setAppointmentStatus("PENDING")}
+                >
+                  <Clock className="h-3 w-3 me-1" />
+                  {t("appointments.statusPending")}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={
+                    appointmentStatus === "CONFIRMED" ? "default" : "outline"
+                  }
+                  className="flex-1"
+                  onClick={() => setAppointmentStatus("CONFIRMED")}
+                >
+                  <CheckCircle2 className="h-3 w-3 me-1" />
+                  {t("appointments.statusConfirmed")}
+                </Button>
               </div>
             </div>
           </div>

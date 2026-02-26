@@ -16,6 +16,14 @@ import {
   MessageSquareHeart,
   Link2,
   Bot,
+  CreditCard,
+  Store,
+  Tag,
+  Ticket,
+  Megaphone,
+  ArrowUpRight,
+  BarChart3,
+  Truck,
 } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
@@ -57,6 +65,51 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       href: "/admin/feedbacks",
       label: t("nav.feedbacks"),
       icon: MessageSquareHeart,
+    },
+    {
+      href: "/admin/payment-methods",
+      label: t("nav.paymentMethods"),
+      icon: CreditCard,
+    },
+    {
+      href: "/admin/pharmacy-owners",
+      label: t("nav.pharmacyOwners"),
+      icon: Users,
+    },
+    {
+      href: "/admin/pharmacies",
+      label: t("nav.pharmacies"),
+      icon: Store,
+    },
+    {
+      href: "/admin/pharmacy-categories",
+      label: t("nav.categories"),
+      icon: Tag,
+    },
+    {
+      href: "/admin/pharmacy-coupons",
+      label: t("nav.coupons"),
+      icon: Ticket,
+    },
+    {
+      href: "/admin/pharmacy-campaigns",
+      label: t("nav.campaigns"),
+      icon: Megaphone,
+    },
+    {
+      href: "/admin/pharmacy-settlements",
+      label: t("nav.settlements"),
+      icon: ArrowUpRight,
+    },
+    {
+      href: "/admin/pharmacy-drivers",
+      label: t("nav.drivers"),
+      icon: Truck,
+    },
+    {
+      href: "/admin/pharmacy-dashboard",
+      label: t("nav.pharmacyDashboard"),
+      icon: BarChart3,
     },
     {
       href: "/admin/contact-links",

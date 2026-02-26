@@ -266,7 +266,7 @@ export function AdminPatientsList() {
               }
               placeholder={t("appointments.status")}
               showSearch={false}
-              className="w-40"
+              className="w-full sm:w-40"
             />
 
             {/* Active Status Filter */}
@@ -283,7 +283,7 @@ export function AdminPatientsList() {
                 )
               }
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder={t("admin.patients.activeStatus")} />
               </SelectTrigger>
               <SelectContent>
@@ -358,14 +358,21 @@ export function AdminPatientsList() {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-2">
+                        <a
+                          href={`mailto:${patient.user?.email}`}
+                          className="flex items-center gap-2 hover:text-primary-600"
+                        >
                           <Mail className="h-4 w-4" />
                           {patient.user?.email}
-                        </span>
-                        <span className="flex items-center gap-2">
+                        </a>
+                        <a
+                          href={`tel:${patient.user?.phoneNumber}`}
+                          className="flex items-center gap-2 hover:text-primary-600"
+                          dir="ltr"
+                        >
                           <Phone className="h-4 w-4" />
                           {patient.user?.phoneNumber}
-                        </span>
+                        </a>
                         {patient.dateOfBirth && (
                           <span className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />

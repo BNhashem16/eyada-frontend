@@ -257,7 +257,7 @@ export function SpecialtiesManagement() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder={t("table.status")} />
               </SelectTrigger>
               <SelectContent>
@@ -276,80 +276,82 @@ export function SpecialtiesManagement() {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("table.nameAr")}</TableHead>
-                  <TableHead>{t("table.nameEn")}</TableHead>
-                  <TableHead>{t("table.icon")}</TableHead>
-                  <TableHead>{t("table.status")}</TableHead>
-                  <TableHead>{t("table.actions")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {specialties
-                  .sort((a, b) => a.sortOrder - b.sortOrder)
-                  .map((specialty) => (
-                    <TableRow
-                      key={specialty.id}
-                      className={
-                        !specialty.isActive ? "opacity-60 bg-muted/30" : ""
-                      }
-                    >
-                      <TableCell className="font-medium">
-                        {specialty.name.ar}
-                      </TableCell>
-                      <TableCell>{specialty.name.en}</TableCell>
-                      <TableCell>{specialty.icon || "-"}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {togglingId === specialty.id &&
-                          updateSpecialty.isPending ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                          ) : (
-                            <Switch
-                              checked={specialty.isActive}
-                              onCheckedChange={() =>
-                                handleToggleActive(specialty)
+            <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[600px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("table.nameAr")}</TableHead>
+                    <TableHead>{t("table.nameEn")}</TableHead>
+                    <TableHead>{t("table.icon")}</TableHead>
+                    <TableHead>{t("table.status")}</TableHead>
+                    <TableHead>{t("table.actions")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {specialties
+                    .sort((a, b) => a.sortOrder - b.sortOrder)
+                    .map((specialty) => (
+                      <TableRow
+                        key={specialty.id}
+                        className={
+                          !specialty.isActive ? "opacity-60 bg-muted/30" : ""
+                        }
+                      >
+                        <TableCell className="font-medium">
+                          {specialty.name.ar}
+                        </TableCell>
+                        <TableCell>{specialty.name.en}</TableCell>
+                        <TableCell>{specialty.icon || "-"}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {togglingId === specialty.id &&
+                            updateSpecialty.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                            ) : (
+                              <Switch
+                                checked={specialty.isActive}
+                                onCheckedChange={() =>
+                                  handleToggleActive(specialty)
+                                }
+                                disabled={updateSpecialty.isPending}
+                              />
+                            )}
+                            <Badge
+                              variant={
+                                specialty.isActive ? "success" : "secondary"
                               }
-                              disabled={updateSpecialty.isPending}
-                            />
-                          )}
-                          <Badge
-                            variant={
-                              specialty.isActive ? "success" : "secondary"
-                            }
-                            className="text-xs"
-                          >
-                            {specialty.isActive
-                              ? t("common.active")
-                              : t("common.inactive")}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleOpenEdit(specialty)}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-error-600"
-                            onClick={() => setDeleteId(specialty.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+                              className="text-xs"
+                            >
+                              {specialty.isActive
+                                ? t("common.active")
+                                : t("common.inactive")}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleOpenEdit(specialty)}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-error-600"
+                              onClick={() => setDeleteId(specialty.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
 
           <PaginationControls
@@ -382,7 +384,9 @@ export function SpecialtiesManagement() {
           <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Label htmlFor="nameAr">{t("admin.nameAr")} *</Label>
+                <Label htmlFor="nameAr" required>
+                  {t("admin.nameAr")}
+                </Label>
                 <Input
                   id="nameAr"
                   value={formData.nameAr}
@@ -393,7 +397,9 @@ export function SpecialtiesManagement() {
                 />
               </div>
               <div>
-                <Label htmlFor="nameEn">{t("admin.nameEn")} *</Label>
+                <Label htmlFor="nameEn" required>
+                  {t("admin.nameEn")}
+                </Label>
                 <Input
                   id="nameEn"
                   value={formData.nameEn}

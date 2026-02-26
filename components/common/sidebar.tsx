@@ -109,7 +109,7 @@ export function MobileSidebar({
   return (
     <div className="lg:hidden fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <aside className="absolute inset-y-0 start-0 w-72 bg-card">
+      <aside className="absolute inset-y-0 start-0 w-[85vw] max-w-72 bg-card">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center gap-2">
             <Avatar className="h-10 w-10">

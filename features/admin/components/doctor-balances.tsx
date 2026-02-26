@@ -303,7 +303,7 @@ export function DoctorBalances() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t("admin.collections.period")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -331,7 +331,7 @@ export function DoctorBalances() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue
                     placeholder={t("admin.collections.balanceFilter")}
                   />
@@ -405,78 +405,80 @@ export function DoctorBalances() {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("admin.collections.doctor")}</TableHead>
-                  <TableHead>{t("admin.collections.specialty")}</TableHead>
-                  <TableHead>{t("admin.collections.appointments")}</TableHead>
-                  <TableHead>
-                    {t("admin.collections.totalCommission")}
-                  </TableHead>
-                  <TableHead>{t("admin.collections.totalPaid")}</TableHead>
-                  <TableHead>{t("admin.collections.balance")}</TableHead>
-                  <TableHead>{t("table.actions")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {balances.map((doctor) => (
-                  <TableRow key={doctor.doctorProfileId}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{doctor.doctorName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {doctor.doctorPhone}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {getLocalizedText(doctor.specialtyName, locale)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {doctor.appointmentsCount}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-medium text-green-600 dark:text-green-400">
-                      {formatCurrency(doctor.totalCommission)}
-                    </TableCell>
-                    <TableCell className="text-purple-600 dark:text-purple-400">
-                      {formatCurrency(doctor.totalPaid)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={doctor.balance > 0 ? "warning" : "success"}
-                        className="font-bold"
-                      >
-                        {formatCurrency(doctor.balance)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="icon" asChild>
-                          <Link
-                            href={`/admin/collections/${doctor.doctorProfileId}`}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        {doctor.balance > 0 && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-green-600 dark:text-green-400"
-                            onClick={() => handleOpenPayment(doctor)}
-                          >
-                            <CreditCard className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[800px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("admin.collections.doctor")}</TableHead>
+                    <TableHead>{t("admin.collections.specialty")}</TableHead>
+                    <TableHead>{t("admin.collections.appointments")}</TableHead>
+                    <TableHead>
+                      {t("admin.collections.totalCommission")}
+                    </TableHead>
+                    <TableHead>{t("admin.collections.totalPaid")}</TableHead>
+                    <TableHead>{t("admin.collections.balance")}</TableHead>
+                    <TableHead>{t("table.actions")}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {balances.map((doctor) => (
+                    <TableRow key={doctor.doctorProfileId}>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{doctor.doctorName}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {doctor.doctorPhone}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {getLocalizedText(doctor.specialtyName, locale)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {doctor.appointmentsCount}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium text-green-600 dark:text-green-400">
+                        {formatCurrency(doctor.totalCommission)}
+                      </TableCell>
+                      <TableCell className="text-purple-600 dark:text-purple-400">
+                        {formatCurrency(doctor.totalPaid)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={doctor.balance > 0 ? "warning" : "success"}
+                          className="font-bold"
+                        >
+                          {formatCurrency(doctor.balance)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="icon" asChild>
+                            <Link
+                              href={`/admin/collections/${doctor.doctorProfileId}`}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          {doctor.balance > 0 && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-green-600 dark:text-green-400"
+                              onClick={() => handleOpenPayment(doctor)}
+                            >
+                              <CreditCard className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
 
           <PaginationControls
@@ -517,7 +519,7 @@ export function DoctorBalances() {
             </div>
 
             <div>
-              <Label>{t("admin.collections.amount")} *</Label>
+              <Label required>{t("admin.collections.amount")}</Label>
               <Input
                 type="number"
                 inputMode="decimal"
