@@ -28,6 +28,7 @@ import {
   type ProductBrowseFilters,
 } from "../hooks";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import type { SupportedLocale } from "@/lib/utils/date";
 import { getImageUrl } from "@/lib/utils/storage";
 import { useTranslation } from "@/lib/i18n";
 import type { Pharmacy } from "@/types/pharmacy";
@@ -280,7 +281,7 @@ function CategoryPills({
   categories: PharmacyCategory[];
   selectedCategory: string;
   onSelect: (id: string) => void;
-  locale: string;
+  locale: SupportedLocale;
   t: (key: string) => string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -323,7 +324,7 @@ function ProductCard({
   isAdding,
 }: {
   product: PharmacyProduct;
-  locale: string;
+  locale: SupportedLocale;
   t: (key: string) => string;
   onAddToCart: (productId: string) => void;
   isAdding: boolean;
@@ -346,7 +347,7 @@ function ProductCard({
           />
           {product.requiresPrescription && (
             <Badge
-              variant="destructive"
+              variant="error"
               className="absolute top-2 start-2 gap-1"
             >
               <FileText className="h-3 w-3" />
@@ -366,7 +367,7 @@ function ProductCard({
           <Package className="h-12 w-12 text-muted-foreground/30" />
           {product.requiresPrescription && (
             <Badge
-              variant="destructive"
+              variant="error"
               className="absolute top-2 start-2 gap-1"
             >
               <FileText className="h-3 w-3" />
@@ -449,7 +450,7 @@ function PharmacyCard({
   onViewProducts,
 }: {
   pharmacy: Pharmacy;
-  locale: string;
+  locale: SupportedLocale;
   t: (key: string) => string;
   onViewProducts: (pharmacyId: string) => void;
 }) {
