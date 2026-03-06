@@ -443,6 +443,36 @@ export const ADMIN_PHARMACY_ENDPOINTS = {
   PHARMACY_DASHBOARD: "/admin/pharmacy-dashboard",
 } as const;
 
+// Prescription Request endpoints (Patient)
+export const PATIENT_PRESCRIPTION_ENDPOINTS = {
+  REQUESTS: "/patients/prescription-requests",
+  REQUEST: (id: string) => `/patients/prescription-requests/${id}`,
+  CANCEL_REQUEST: (id: string) =>
+    `/patients/prescription-requests/${id}/cancel`,
+  ORDERS: "/patients/prescription-orders",
+  ORDER: (id: string) => `/patients/prescription-orders/${id}`,
+} as const;
+
+// Prescription Order endpoints (Pharmacy Owner)
+export const PHARMACY_OWNER_PRESCRIPTION_ENDPOINTS = {
+  ORDERS: (pharmacyId: string) =>
+    `/pharmacy-owner/pharmacies/${pharmacyId}/prescription-orders`,
+  ORDER_STATUS: (pharmacyId: string, orderId: string) =>
+    `/pharmacy-owner/pharmacies/${pharmacyId}/prescription-orders/${orderId}/status`,
+} as const;
+
+// Prescription Management endpoints (Admin)
+export const ADMIN_PRESCRIPTION_ENDPOINTS = {
+  REQUESTS: "/admin/prescription-requests",
+  REQUEST: (id: string) => `/admin/prescription-requests/${id}`,
+  ASSIGN_REQUEST: (id: string) => `/admin/prescription-requests/${id}/assign`,
+  ORDERS: "/admin/prescription-orders",
+  ORDER_STATUS: (id: string) => `/admin/prescription-orders/${id}/status`,
+  COMMISSION: "/admin/platform-commission",
+  COMMISSION_HISTORY: "/admin/platform-commission/history",
+  COMMISSION_UPDATE: (id: string) => `/admin/platform-commission/${id}`,
+} as const;
+
 // Driver endpoints (requires DRIVER role)
 export const DRIVER_ENDPOINTS = {
   PROFILE: "/driver/profile",

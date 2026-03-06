@@ -13,3 +13,4 @@ export * from "./wallet";
 export * from "./campaign";
 export * from "./address";
 export * from "./driver";
+export * from "./prescription";

@@ -9,6 +9,7 @@ import {
   Megaphone,
   Truck,
   User,
+  ClipboardList,
 } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
@@ -58,6 +59,11 @@ function PharmacyOwnerLayoutContent({
       href: "/pharmacy-owner/drivers",
       label: t("nav.drivers"),
       icon: Truck,
+    },
+    {
+      href: "/pharmacy-owner/prescription-orders",
+      label: t("nav.prescriptionOrders"),
+      icon: ClipboardList,
     },
     {
       href: "/pharmacy-owner/profile",

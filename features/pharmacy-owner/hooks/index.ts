@@ -7,3 +7,4 @@ export * from "./use-pharmacy-campaigns";
 export * from "./use-pharmacy-dashboard";
 export * from "./use-image-upload";
 export * from "./use-pharmacy-drivers";
+export * from "./use-prescription-pharmacy";

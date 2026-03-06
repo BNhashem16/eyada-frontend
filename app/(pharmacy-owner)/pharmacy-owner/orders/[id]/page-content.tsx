@@ -536,7 +536,12 @@ export function PharmacyOrderDetailContent({ orderId }: Props) {
                   )}
                   {/* Localized address text */}
                   {(addr.ar || addr.en) && (
-                    <p>{getLocalizedText({ ar: addr.ar ?? "", en: addr.en ?? "" }, locale)}</p>
+                    <p>
+                      {getLocalizedText(
+                        { ar: addr.ar ?? "", en: addr.en ?? "" },
+                        locale,
+                      )}
+                    </p>
                   )}
                   {/* City */}
                   {addr.city && (

@@ -346,10 +346,7 @@ function ProductCard({
             className="w-full h-full object-cover"
           />
           {product.requiresPrescription && (
-            <Badge
-              variant="error"
-              className="absolute top-2 start-2 gap-1"
-            >
+            <Badge variant="error" className="absolute top-2 start-2 gap-1">
               <FileText className="h-3 w-3" />
               {t("pharmacyOwner.prescriptionBadge")}
             </Badge>
@@ -366,10 +363,7 @@ function ProductCard({
         <div className="aspect-square bg-muted flex items-center justify-center relative">
           <Package className="h-12 w-12 text-muted-foreground/30" />
           {product.requiresPrescription && (
-            <Badge
-              variant="error"
-              className="absolute top-2 start-2 gap-1"
-            >
+            <Badge variant="error" className="absolute top-2 start-2 gap-1">
               <FileText className="h-3 w-3" />
               {t("pharmacyOwner.prescriptionBadge")}
             </Badge>

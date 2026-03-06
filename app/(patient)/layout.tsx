@@ -12,6 +12,8 @@ import {
   Package,
   Pill,
   MapPin,
+  FileText,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProtectedRoute } from "@/lib/auth/guards";
@@ -53,6 +55,16 @@ function PatientLayoutContent({ children }: { children: React.ReactNode }) {
       icon: Package,
     },
     { href: "/patient/addresses", label: t("addresses.title"), icon: MapPin },
+    {
+      href: "/patient/prescriptions",
+      label: t("nav.prescriptions"),
+      icon: FileText,
+    },
+    {
+      href: "/patient/prescription-orders",
+      label: t("nav.prescriptionOrders"),
+      icon: ClipboardList,
+    },
   ];
 
   const headerRightContent = (

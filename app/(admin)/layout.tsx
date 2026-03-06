@@ -24,6 +24,9 @@ import {
   ArrowUpRight,
   BarChart3,
   Truck,
+  FileText,
+  ClipboardList,
+  BadgePercent,
 } from "lucide-react";
 import { ProtectedRoute } from "@/lib/auth/guards";
 import { Role } from "@/types";
@@ -110,6 +113,21 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       href: "/admin/pharmacy-dashboard",
       label: t("nav.pharmacyDashboard"),
       icon: BarChart3,
+    },
+    {
+      href: "/admin/prescription-requests",
+      label: t("nav.prescriptionRequests"),
+      icon: FileText,
+    },
+    {
+      href: "/admin/prescription-orders",
+      label: t("nav.prescriptionOrders"),
+      icon: ClipboardList,
+    },
+    {
+      href: "/admin/platform-commission",
+      label: t("nav.platformCommission"),
+      icon: BadgePercent,
     },
     {
       href: "/admin/contact-links",
