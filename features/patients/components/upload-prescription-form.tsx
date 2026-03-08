@@ -80,12 +80,18 @@ export function UploadPrescriptionForm() {
     setViewerOpen(true);
   };
 
+  const hasImages = images.length > 0;
+  const hasText = prescriptionText.trim().length > 0;
+  const canSubmit = (hasImages || hasText) && !!addressId;
+
   const handleSubmit = async () => {
-    if (images.length === 0 || !addressId) return;
+    if (!canSubmit) return;
 
     await createRequest.mutateAsync(
       {
-        prescriptionImages: images.map((img) => img.fileKey),
+        prescriptionImages: hasImages
+          ? images.map((img) => img.fileKey)
+          : undefined,
         prescriptionText: prescriptionText || undefined,
         notes: notes || undefined,
         deliveryAddressId: addressId,
@@ -172,6 +178,15 @@ export function UploadPrescriptionForm() {
         </CardContent>
       </Card>
 
+      {/* OR Divider */}
+      <div className="flex items-center gap-4">
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-sm font-medium text-muted-foreground">
+          {t("prescription.orDivider")}
+        </span>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+
       {/* Text Description */}
       <Card>
         <CardHeader>
@@ -229,10 +244,17 @@ export function UploadPrescriptionForm() {
         </CardContent>
       </Card>
 
+      {/* Validation hint */}
+      {!hasImages && !hasText && (
+        <p className="text-sm text-amber-600 dark:text-amber-400 text-center">
+          {t("prescription.atLeastOneRequired")}
+        </p>
+      )}
+
       {/* Submit */}
       <Button
         onClick={handleSubmit}
-        disabled={images.length === 0 || !addressId || createRequest.isPending}
+        disabled={!canSubmit || createRequest.isPending}
         className="w-full"
         size="lg"
       >

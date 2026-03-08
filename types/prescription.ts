@@ -106,7 +106,7 @@ export interface PlatformCommissionConfig {
 
 // DTOs
 export interface CreatePrescriptionRequestDto {
-  prescriptionImages: string[];
+  prescriptionImages?: string[];
   prescriptionText?: string;
   notes?: string;
   deliveryAddressId: string;
