@@ -98,7 +98,7 @@ export function PrescriptionRequestsList() {
             }))
           }
         >
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

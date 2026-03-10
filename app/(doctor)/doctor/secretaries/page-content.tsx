@@ -148,7 +148,7 @@ export function DoctorSecretariesContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
             {t("secretary.management.title")}
           </h1>
           <p className="text-muted-foreground">

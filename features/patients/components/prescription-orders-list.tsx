@@ -18,7 +18,6 @@ import {
 } from "../hooks/use-prescription-requests";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
-import { getLocalizedText } from "@/lib/utils/multilingual";
 import { OrderStatus } from "@/types/enums";
 
 const STATUS_CONFIG: Record<
@@ -77,7 +76,7 @@ export function PrescriptionOrdersList() {
             }))
           }
         >
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -148,7 +147,7 @@ export function PrescriptionOrdersList() {
                         variant="outline"
                         className="text-xs"
                       >
-                        {getLocalizedText(item.medicationName, locale)}
+                        {item.medicationName}
                       </Badge>
                     ))}
                     {order.items.length > 3 && (

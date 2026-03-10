@@ -56,7 +56,9 @@ function LoginPrompt() {
         <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
           <LogIn className="h-8 w-8 text-primary" />
         </div>
-        <h1 className="text-2xl font-bold mb-3">{t("ai.loginRequired")}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-3">
+          {t("ai.loginRequired")}
+        </h1>
         <p className="text-muted-foreground mb-6">
           {t("ai.loginRequiredDescription")}
         </p>
@@ -129,7 +131,9 @@ function AiChatFullPage() {
           <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
             <ShieldOff className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h1 className="text-2xl font-bold mb-3">{t("ai.chatTitle")}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold mb-3">
+            {t("ai.chatTitle")}
+          </h1>
           <p className="text-muted-foreground">{t("ai.featureDisabled")}</p>
         </div>
       </div>
@@ -152,7 +156,7 @@ function AiChatFullPage() {
             <Bot className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{t("ai.title")}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">{t("ai.title")}</h1>
             <p className="text-sm text-muted-foreground">{t("ai.subtitle")}</p>
           </div>
           <Badge variant="outline" className="ms-auto text-xs">

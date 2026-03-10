@@ -96,7 +96,7 @@ export function PhoneInputWithCode({
         onValueChange={handleCodeChange}
         disabled={disabled}
       >
-        <SelectTrigger className="w-[140px] shrink-0">
+        <SelectTrigger className="w-[120px] sm:w-[140px] shrink-0">
           <SelectValue>
             {selectedCountry && (
               <span className="flex items-center gap-1.5">

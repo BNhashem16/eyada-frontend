@@ -15,7 +15,7 @@ export function AdminAiSettingsContent() {
             <Bot className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {t("ai.settingsTitle")}
             </h1>
             <p className="text-muted-foreground">{t("ai.settingsSubtitle")}</p>

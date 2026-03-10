@@ -38,7 +38,7 @@ export function PharmacyPageContent() {
             <Pill className="h-6 w-6 text-green-600 dark:text-green-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {t("pharmacyOwner.pharmacyBrowse")}
             </h1>
             <p className="text-muted-foreground text-sm">

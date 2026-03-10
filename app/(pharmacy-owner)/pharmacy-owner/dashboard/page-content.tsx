@@ -37,7 +37,7 @@ export function PharmacyDashboardContent() {
             <BarChart3 className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {t("pharmacyOwner.dashboardTitle")}
             </h1>
             <p className="text-muted-foreground">

@@ -16,7 +16,7 @@ export default function NotFound() {
             404
           </span>
         </div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
           {t("errors.pageNotFound")}
         </h1>
         <p className="text-muted-foreground mb-6">

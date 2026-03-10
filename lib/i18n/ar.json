@@ -84,7 +84,11 @@
       "TRUCK": "شاحنة",
       "PICKUP": "بيك أب",
       "SCOOTER": "سكوتر"
-    }
+    },
+    "share": "مشاركة",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط",
+    "download": "تحميل"
   },
   "app": {
     "name": "عيادة",
@@ -165,7 +169,14 @@
     "prescriptions": "الوصفات الطبية",
     "prescriptionRequests": "طلبات الوصفات",
     "prescriptionOrders": "طلبات صرف الوصفات",
-    "platformCommission": "عمولة المنصة"
+    "platformCommission": "عمولة المنصة",
+    "share": "مشاركة",
+    "shareImage": "مشاركة الصورة",
+    "shareVia": "مشاركة عبر",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط",
+    "download": "تحميل",
+    "downloadStarted": "بدأ التحميل"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -1424,8 +1435,11 @@
     "addMedication": "إضافة دواء",
     "addPharmacy": "إضافة صيدلية أخرى",
     "deliveryFee": "رسوم التوصيل",
-    "medicationNameAr": "اسم الدواء (عربي)",
-    "medicationNameEn": "اسم الدواء (إنجليزي)",
+    "medicationName": "اسم الدواء",
+    "searchPharmacy": "ابحث عن صيدلية...",
+    "pharmacyAddress": "العنوان",
+    "loadMore": "تحميل المزيد",
+    "noPharmaciesFound": "لا توجد صيدليات",
     "commissionConfig": "عمولة المنصة",
     "commissionPercentage": "نسبة العمولة (%)",
     "minCommission": "الحد الأدنى للعمولة",
@@ -1437,7 +1451,28 @@
     "effective": "ساري",
     "allRequests": "جميع الطلبات",
     "allOrders": "جميع الطلبات المؤكدة",
-    "adminNote": "ملاحظة (اختياري)"
+    "adminNote": "ملاحظة (اختياري)",
+    "type": "النوع",
+    "typeImage": "صور",
+    "typeText": "نص",
+    "typeMixed": "صور ونص",
+    "notes": "ملاحظات",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "deliveryAddress": "عنوان التوصيل",
+    "assignedAt": "تم التعيين في",
+    "subtotal": "المجموع الفرعي",
+    "commission": "العمولة",
+    "paymentStatus": "الدفع",
+    "pharmacy": "الصيدلية",
+    "orderNumber": "طلب #",
+    "showDetails": "عرض التفاصيل",
+    "hideDetails": "إخفاء التفاصيل",
+    "noAddress": "لا يوجد عنوان",
+    "paymentPending": "معلق",
+    "paymentPaid": "مدفوع",
+    "paymentFailed": "فشل",
+    "paymentRefunded": "مسترد"
   },
   "driver": {
     "dashboardTitle": "لوحة تحكم السائق",

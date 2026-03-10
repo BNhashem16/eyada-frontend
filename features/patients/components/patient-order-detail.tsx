@@ -157,7 +157,7 @@ export function PatientOrderDetail({ orderId }: Props) {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
+                <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:justify-between">
                   {TRACKING_STEPS.map((step, index) => {
                     const stepConfig = STATUS_CONFIG[step];
                     const StepIcon = stepConfig.icon;
@@ -167,10 +167,10 @@ export function PatientOrderDetail({ orderId }: Props) {
                     return (
                       <div
                         key={step}
-                        className="flex flex-col items-center flex-1"
+                        className="flex flex-col items-center sm:flex-1"
                       >
                         <div
-                          className={`h-10 w-10 rounded-full flex items-center justify-center mb-2 ${
+                          className={`h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center mb-1 sm:mb-2 ${
                             isCompleted
                               ? isCurrent
                                 ? "bg-primary-600 text-white"
@@ -178,10 +178,10 @@ export function PatientOrderDetail({ orderId }: Props) {
                               : "bg-muted text-muted-foreground"
                           }`}
                         >
-                          <StepIcon className="h-5 w-5" />
+                          <StepIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         <span
-                          className={`text-xs text-center ${
+                          className={`text-[10px] sm:text-xs text-center leading-tight ${
                             isCompleted
                               ? "font-medium text-foreground"
                               : "text-muted-foreground"
@@ -213,8 +213,8 @@ export function PatientOrderDetail({ orderId }: Props) {
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-2 px-6 py-3 bg-muted/50 text-xs font-medium text-muted-foreground border-b">
+              {/* Table Header - hidden on mobile */}
+              <div className="hidden md:grid grid-cols-12 gap-2 px-6 py-3 bg-muted/50 text-xs font-medium text-muted-foreground border-b">
                 <div className="col-span-5">{t("pharmacyOwner.product")}</div>
                 <div className="col-span-2 text-center">
                   {t("pharmacyOwner.unitPrice")}
@@ -232,10 +232,10 @@ export function PatientOrderDetail({ orderId }: Props) {
                 {order.items.map((item) => (
                   <div
                     key={item.id}
-                    className="grid grid-cols-12 gap-2 px-6 py-4 items-center"
+                    className="flex flex-col gap-2 px-6 py-4 md:grid md:grid-cols-12 md:gap-2 md:items-center"
                   >
                     {/* Product */}
-                    <div className="col-span-5 flex items-center gap-3">
+                    <div className="md:col-span-5 flex items-center gap-3">
                       <div className="h-10 w-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
                         <Package className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
@@ -244,24 +244,27 @@ export function PatientOrderDetail({ orderId }: Props) {
                       </p>
                     </div>
 
-                    {/* Unit Price */}
-                    <div className="col-span-2 text-center text-sm text-muted-foreground">
-                      {Number(item.unitPrice).toFixed(2)} {t("common.egp")}
-                    </div>
+                    {/* Mobile: price, qty, total in a row */}
+                    <div className="flex items-center justify-between md:contents">
+                      {/* Unit Price */}
+                      <div className="md:col-span-2 md:text-center text-sm text-muted-foreground">
+                        {Number(item.unitPrice).toFixed(2)} {t("common.egp")}
+                      </div>
 
-                    {/* Quantity */}
-                    <div className="col-span-2 text-center">
-                      <Badge
-                        variant="outline"
-                        className="text-sm font-semibold px-3 py-1"
-                      >
-                        x{item.quantity}
-                      </Badge>
-                    </div>
+                      {/* Quantity */}
+                      <div className="md:col-span-2 md:text-center">
+                        <Badge
+                          variant="outline"
+                          className="text-sm font-semibold px-3 py-1"
+                        >
+                          x{item.quantity}
+                        </Badge>
+                      </div>
 
-                    {/* Total */}
-                    <div className="col-span-3 text-end font-bold text-sm">
-                      {Number(item.totalPrice).toFixed(2)} {t("common.egp")}
+                      {/* Total */}
+                      <div className="md:col-span-3 md:text-end font-bold text-sm">
+                        {Number(item.totalPrice).toFixed(2)} {t("common.egp")}
+                      </div>
                     </div>
                   </div>
                 ))}

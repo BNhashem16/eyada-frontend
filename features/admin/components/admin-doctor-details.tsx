@@ -488,7 +488,7 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
               <div className="space-y-1">
                 <div className="flex items-center justify-center gap-1">
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                  <span className="text-2xl font-bold text-foreground">
+                  <span className="text-xl sm:text-2xl font-bold text-foreground">
                     {doctor.averageRating?.toFixed(1) || "0.0"}
                   </span>
                 </div>
@@ -497,7 +497,7 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
                 </p>
               </div>
               <div className="space-y-1">
-                <span className="text-2xl font-bold text-foreground">
+                <span className="text-xl sm:text-2xl font-bold text-foreground">
                   {doctor.totalRatings || 0}
                 </span>
                 <p className="text-xs text-muted-foreground">
@@ -505,7 +505,7 @@ export function AdminDoctorDetails({ doctorId }: AdminDoctorDetailsProps) {
                 </p>
               </div>
               <div className="space-y-1">
-                <span className="text-2xl font-bold text-foreground">
+                <span className="text-xl sm:text-2xl font-bold text-foreground">
                   {doctor.totalAppointments || 0}
                 </span>
                 <p className="text-xs text-muted-foreground">

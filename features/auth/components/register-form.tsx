@@ -73,7 +73,7 @@ export function RegisterForm() {
       {/* Role Selection */}
       <div className="space-y-2">
         <Label>{t("auth.accountType")}</Label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <label
             className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 p-3 transition-colors ${
               selectedRole === "PATIENT"

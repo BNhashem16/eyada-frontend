@@ -24,7 +24,6 @@ import {
   useCancelPrescriptionRequest,
 } from "../hooks/use-prescription-requests";
 import { useTranslation } from "@/lib/i18n";
-import { getLocalizedText } from "@/lib/utils/multilingual";
 import { getImageUrl } from "@/lib/utils/storage";
 
 interface Props {
@@ -184,9 +183,7 @@ export function PrescriptionRequestDetail({ requestId }: Props) {
                         key={item.id}
                         className="flex items-center justify-between text-sm"
                       >
-                        <span>
-                          {getLocalizedText(item.medicationName, locale)}
-                        </span>
+                        <span>{item.medicationName}</span>
                         <span className="text-muted-foreground">
                           {item.quantity} x {Number(item.unitPrice).toFixed(2)}
                         </span>

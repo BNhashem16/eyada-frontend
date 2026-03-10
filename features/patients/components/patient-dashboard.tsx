@@ -54,7 +54,7 @@ export function PatientDashboard() {
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-l from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">
+        <h1 className="text-xl sm:text-2xl font-bold mb-2">
           {t("patient.greeting")}
           {locale === "ar" ? "،" : ","} {user?.name?.split(" ")[0]}
         </h1>
@@ -83,7 +83,7 @@ export function PatientDashboard() {
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.upcomingAppointments")}
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {isLoading ? "-" : upcomingAppointments.length}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export function PatientDashboard() {
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.completed")}
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {isLoading
                     ? "-"
                     : appointments.filter(

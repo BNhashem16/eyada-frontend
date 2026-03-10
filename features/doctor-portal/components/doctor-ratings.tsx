@@ -109,7 +109,7 @@ export function DoctorRatings() {
                 <Star className="h-6 w-6 text-warning-600 dark:text-warning-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {statistics.averageRating.toFixed(1)}
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -128,7 +128,7 @@ export function DoctorRatings() {
                 <MessageSquare className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {statistics.totalRatings}
                 </p>
                 <p className="text-sm text-muted-foreground">

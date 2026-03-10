@@ -25,7 +25,7 @@ export function PrescriptionDetailPageContent() {
         <div className="h-12 w-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
           <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground">
           {t("prescription.requestDetails")}
         </h1>
       </div>

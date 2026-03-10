@@ -28,6 +28,19 @@ const ORDER_STATUSES = [
   "CANCELLED",
 ] as const;
 
+const statusTranslationMap: Record<string, string> = {
+  CONFIRMED: "prescription.statusConfirmed",
+  PREPARING: "prescription.statusPreparing",
+  READY_FOR_PICKUP: "prescription.statusReadyForPickup",
+  OUT_FOR_DELIVERY: "prescription.statusOutForDelivery",
+  DELIVERED: "prescription.statusDelivered",
+  CANCELLED: "prescription.statusCancelled",
+  PENDING: "prescription.paymentPending",
+  PAID: "prescription.paymentPaid",
+  FAILED: "prescription.paymentFailed",
+  REFUNDED: "prescription.paymentRefunded",
+};
+
 export function AdminPrescriptionOrdersPageContent() {
   const { t } = useTranslation();
   const [filters, setFilters] = useState({
@@ -43,7 +56,7 @@ export function AdminPrescriptionOrdersPageContent() {
         <div className="h-12 w-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
           <ClipboardList className="h-6 w-6 text-blue-600 dark:text-blue-400" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground">
           {t("nav.prescriptionOrders")}
         </h1>
       </div>
@@ -59,14 +72,14 @@ export function AdminPrescriptionOrdersPageContent() {
             }))
           }
         >
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">{t("common.all")}</SelectItem>
             {ORDER_STATUSES.map((status) => (
               <SelectItem key={status} value={status}>
-                {status}
+                {t(statusTranslationMap[status] || status)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -102,7 +115,19 @@ export function AdminPrescriptionOrdersPageContent() {
                         </p>
                       )}
                     </div>
-                    <Badge>{order.status}</Badge>
+                    <Badge
+                      variant={
+                        order.status === "DELIVERED"
+                          ? "success"
+                          : order.status === "CANCELLED"
+                            ? "error"
+                            : order.status === "PENDING"
+                              ? "warning"
+                              : "secondary"
+                      }
+                    >
+                      {t(statusTranslationMap[order.status] || order.status)}
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>

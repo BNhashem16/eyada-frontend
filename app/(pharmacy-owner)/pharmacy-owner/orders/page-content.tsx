@@ -34,7 +34,7 @@ export function PharmacyOrdersContent() {
             <ShoppingCart className="h-6 w-6 text-orange-600 dark:text-orange-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {t("pharmacyOwner.myOrders")}
             </h1>
             <p className="text-muted-foreground">

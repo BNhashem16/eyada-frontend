@@ -35,7 +35,7 @@ export function DriverDashboardContent() {
             <LayoutDashboard className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {t("driver.dashboardTitle")}
             </h1>
             <p className="text-muted-foreground">{t("driver.dashboardDesc")}</p>

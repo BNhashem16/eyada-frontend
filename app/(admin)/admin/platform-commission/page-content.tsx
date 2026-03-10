@@ -50,7 +50,7 @@ export function PlatformCommissionPageContent() {
         <div className="h-12 w-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
           <Settings className="h-6 w-6 text-purple-600 dark:text-purple-400" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground">
           {t("prescription.commissionConfig")}
         </h1>
       </div>
@@ -67,7 +67,7 @@ export function PlatformCommissionPageContent() {
             <>
               {activeConfig && (
                 <div className="p-4 rounded-lg bg-muted mb-4">
-                  <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                     <div>
                       <p className="text-2xl font-bold">
                         {Number(activeConfig.commissionPercentage)}%

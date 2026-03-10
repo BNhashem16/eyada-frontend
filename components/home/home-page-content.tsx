@@ -212,7 +212,7 @@ export function HomePageContent() {
           <div className="max-w-2xl mx-auto text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Navigation className="h-8 w-8 text-secondary-600 dark:text-secondary-400" />
-              <h2 className="text-2xl font-bold text-foreground">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground">
                 {t("home.trackAppointment")}
               </h2>
             </div>

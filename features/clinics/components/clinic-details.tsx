@@ -100,7 +100,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h1 className="text-2xl font-bold text-foreground">
+                    <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                       {getLocalizedText(clinic.name, locale)}
                     </h1>
                     {clinic.isActive && (

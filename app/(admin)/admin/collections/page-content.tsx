@@ -16,7 +16,7 @@ export function AdminCollectionsContent() {
             <Wallet className="h-6 w-6 text-warning-600 dark:text-warning-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {t("admin.collectionsPage.title")}
             </h1>
             <p className="text-muted-foreground">

@@ -152,9 +152,7 @@ export function PharmacyPrescriptionOrders() {
                           key={item.id}
                           className="flex justify-between text-sm"
                         >
-                          <span>
-                            {getLocalizedText(item.medicationName, locale)}
-                          </span>
+                          <span>{item.medicationName}</span>
                           <span className="text-muted-foreground">
                             {item.quantity} x{" "}
                             {Number(item.unitPrice).toFixed(2)}

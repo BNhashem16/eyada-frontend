@@ -83,7 +83,7 @@ export function DoctorProfileComponent({ doctorId }: DoctorProfileProps) {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl font-bold text-foreground">
+                  <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                     {t("doctors.doctorPrefix")}{" "}
                     {doctor.user?.fullName || doctor.user?.name}
                   </h1>

@@ -1,5 +1,3 @@
-import type { Multilingual } from "./models";
-
 // Enums
 export enum PrescriptionRequestStatus {
   PENDING_REVIEW = "PENDING_REVIEW",
@@ -21,7 +19,7 @@ export enum PrescriptionType {
 export interface PrescriptionOrderItem {
   id: string;
   orderId: string;
-  medicationName: Multilingual;
+  medicationName: string;
   quantity: number;
   unitPrice: number;
   notes: string | null;
@@ -78,8 +76,8 @@ export interface PrescriptionOrder {
   items: PrescriptionOrderItem[];
   pharmacy?: {
     id: string;
-    name: Multilingual;
-    address?: Multilingual;
+    name: string;
+    address?: string;
     phoneNumbers?: string[];
   };
   request?: {
@@ -113,8 +111,7 @@ export interface CreatePrescriptionRequestDto {
 }
 
 export interface AssignmentItemDto {
-  medicationNameAr: string;
-  medicationNameEn: string;
+  medicationName: string;
   quantity: number;
   unitPrice: number;
   notes?: string;

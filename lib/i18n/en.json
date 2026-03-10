@@ -84,7 +84,11 @@
       "TRUCK": "Truck",
       "PICKUP": "Pickup",
       "SCOOTER": "Scooter"
-    }
+    },
+    "share": "Share",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied",
+    "download": "Download"
   },
   "app": {
     "name": "Eyada",
@@ -165,7 +169,14 @@
     "prescriptions": "Prescriptions",
     "prescriptionRequests": "Prescription Requests",
     "prescriptionOrders": "Prescription Orders",
-    "platformCommission": "Platform Commission"
+    "platformCommission": "Platform Commission",
+    "share": "Share",
+    "shareImage": "Share Image",
+    "shareVia": "Share via",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied",
+    "download": "Download",
+    "downloadStarted": "Download started"
   },
   "auth": {
     "login": "Login",
@@ -1424,8 +1435,11 @@
     "addMedication": "Add Medication",
     "addPharmacy": "Add Another Pharmacy",
     "deliveryFee": "Delivery Fee",
-    "medicationNameAr": "Medication Name (Arabic)",
-    "medicationNameEn": "Medication Name (English)",
+    "medicationName": "Medication Name",
+    "searchPharmacy": "Search pharmacy...",
+    "pharmacyAddress": "Address",
+    "loadMore": "Load More",
+    "noPharmaciesFound": "No pharmacies found",
     "commissionConfig": "Platform Commission",
     "commissionPercentage": "Commission Percentage (%)",
     "minCommission": "Minimum Commission",
@@ -1437,7 +1451,28 @@
     "effective": "Effective",
     "allRequests": "All Requests",
     "allOrders": "All Orders",
-    "adminNote": "Note (optional)"
+    "adminNote": "Note (optional)",
+    "type": "Type",
+    "typeImage": "Images",
+    "typeText": "Text",
+    "typeMixed": "Images & Text",
+    "notes": "Notes",
+    "email": "Email",
+    "phone": "Phone",
+    "deliveryAddress": "Delivery Address",
+    "assignedAt": "Assigned At",
+    "subtotal": "Subtotal",
+    "commission": "Commission",
+    "paymentStatus": "Payment",
+    "pharmacy": "Pharmacy",
+    "orderNumber": "Order #",
+    "showDetails": "Show Details",
+    "hideDetails": "Hide Details",
+    "noAddress": "No address",
+    "paymentPending": "Pending",
+    "paymentPaid": "Paid",
+    "paymentFailed": "Failed",
+    "paymentRefunded": "Refunded"
   },
   "driver": {
     "dashboardTitle": "Driver Dashboard",

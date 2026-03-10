@@ -33,7 +33,7 @@ export function PharmacyCampaignsContent() {
             <Megaphone className="h-6 w-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {t("pharmacyOwner.campaignsTitle")}
             </h1>
             <p className="text-muted-foreground">

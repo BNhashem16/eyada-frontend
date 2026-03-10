@@ -175,7 +175,7 @@ export function DoctorDashboard() {
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.waitingForConfirmation")}
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {overviewLoading ? "-" : pendingCount}
                 </p>
               </div>
@@ -193,7 +193,7 @@ export function DoctorDashboard() {
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.inQueue")}
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {overviewLoading ? "-" : waitingCount}
                 </p>
               </div>
@@ -211,7 +211,7 @@ export function DoctorDashboard() {
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.completedToday")}
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {overviewLoading ? "-" : completedCount}
                 </p>
               </div>
@@ -229,7 +229,7 @@ export function DoctorDashboard() {
                 <p className="text-sm text-muted-foreground">
                   {t("appointments.todayTotal")}
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {overviewLoading ? "-" : totalAppointments}
                 </p>
               </div>

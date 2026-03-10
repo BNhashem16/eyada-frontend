@@ -26,7 +26,7 @@ export default function Error({
         <div className="mx-auto h-20 w-20 rounded-full bg-error-100 dark:bg-error-900/30 flex items-center justify-center mb-6">
           <AlertTriangle className="h-10 w-10 text-error-600 dark:text-error-400" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
           {t("errors.unexpectedError")}
         </h1>
         <p className="text-muted-foreground mb-6">
