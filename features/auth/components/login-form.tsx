@@ -35,7 +35,12 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6"
+      autoComplete="on"
+      method="post"
+    >
       {/* Email Field */}
       <div className="space-y-2">
         <Label htmlFor="email" required>
@@ -45,6 +50,10 @@ export function LoginForm() {
           id="email"
           type="email"
           inputMode="email"
+          autoComplete="username"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder={t("placeholder.email")}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
@@ -73,6 +82,7 @@ export function LoginForm() {
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
             placeholder={t("placeholder.password")}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"

@@ -1,0 +1,21 @@
+{
+  "_comment": "Template for .mcp.local.json — copy this file to .mcp.local.json and fill in your own secrets. The real .mcp.local.json is gitignored.",
+  "mcpServers": {
+    "trello": {
+      "command": "npx",
+      "args": ["-y", "@delorenj/mcp-server-trello"],
+      "env": {
+        "TRELLO_API_KEY": "<your-trello-api-key>",
+        "TRELLO_TOKEN": "<your-trello-token>",
+        "TRELLO_BOARD_ID": "<your-board-id>"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-github-pat>"
+      }
+    }
+  }
+}

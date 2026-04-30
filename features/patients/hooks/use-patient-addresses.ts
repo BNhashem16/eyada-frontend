@@ -14,13 +14,14 @@ import { toastError, toastSuccess } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
 
-export function usePatientAddresses() {
+export function usePatientAddresses(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["patient-addresses"],
     queryFn: async () => {
       return apiGet<PatientAddress[]>(PATIENT_ENDPOINTS.ADDRESSES);
     },
     staleTime: 1000 * 60,
+    enabled: options?.enabled ?? true,
   });
 }
 

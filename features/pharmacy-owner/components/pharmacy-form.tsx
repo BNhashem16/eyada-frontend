@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Store,
   MapPin,
@@ -15,7 +14,6 @@ import {
   Trash2,
   Truck,
   Building2,
-  AlertTriangle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
+import { CardSkeleton, PharmacyErrorState } from "@/components/pharmacy";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCreatePharmacy, useMyPharmacy, useUpdatePharmacy } from "../hooks";
 import {
@@ -41,46 +39,8 @@ import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import { DeliveryType } from "@/types/enums";
 import { buildPharmacyPayload } from "../utils/build-pharmacy-payload";
+import { createPharmacySchema, type PharmacyFormData } from "../schemas";
 import type { State, City } from "@/types";
-
-const phoneRegex = /^01[0125][0-9]{8}$/;
-
-const getPharmacySchema = (t: (key: string) => string) =>
-  z.object({
-    name: z.string().min(2, t("validation.required")).max(200),
-    description: z.string().max(2000).optional().or(z.literal("")),
-    address: z.string().min(2, t("validation.required")).max(500),
-    stateId: z.string().min(1, t("validation.required")),
-    cityId: z.string().min(1, t("validation.required")),
-    latitude: z.coerce.number().min(-90).max(90).optional().or(z.literal("")),
-    longitude: z.coerce
-      .number()
-      .min(-180)
-      .max(180)
-      .optional()
-      .or(z.literal("")),
-    phoneNumbers: z
-      .array(
-        z.object({
-          value: z
-            .string()
-            .regex(phoneRegex, t("validation.phoneInvalid"))
-            .or(z.literal("")),
-        }),
-      )
-      .min(1),
-    deliveryType: z.nativeEnum(DeliveryType),
-    deliveryFee: z.coerce.number().min(0).optional().or(z.literal("")),
-    minOrderAmount: z.coerce.number().min(0).optional().or(z.literal("")),
-    freeDeliveryThreshold: z.coerce
-      .number()
-      .min(0)
-      .optional()
-      .or(z.literal("")),
-    isActive: z.boolean(),
-  });
-
-type PharmacyFormData = z.infer<ReturnType<typeof getPharmacySchema>>;
 
 interface PharmacyFormProps {
   mode: "create" | "edit";
@@ -115,7 +75,7 @@ export function PharmacyForm({ mode, pharmacyId }: PharmacyFormProps) {
   const [citiesPage, setCitiesPage] = useState(1);
   const [allCities, setAllCities] = useState<City[]>([]);
 
-  const pharmacySchema = getPharmacySchema(t);
+  const pharmacySchema = useMemo(() => createPharmacySchema(t), [t]);
 
   const {
     register,
@@ -302,39 +262,15 @@ export function PharmacyForm({ mode, pharmacyId }: PharmacyFormProps) {
   if (mode === "edit" && pharmacyLoading) {
     return (
       <div className="space-y-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-          </CardContent>
-        </Card>
+        <CardSkeleton />
+        <CardSkeleton />
       </div>
     );
   }
 
   // Error state (edit mode only)
   if (mode === "edit" && (isError || (!pharmacyLoading && !pharmacy))) {
-    return (
-      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
-        <CardContent className="py-10 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
-          <p className="text-error-600 dark:text-error-400">
-            {t("admin.loadError")}
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <PharmacyErrorState />;
   }
 
   return (
@@ -549,31 +485,32 @@ export function PharmacyForm({ mode, pharmacyId }: PharmacyFormProps) {
                     </p>
                   )}
                 </div>
-                {phoneFields.length > 1 && (
+                {phoneFields.length > 1 ? (
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
+                    aria-label={t("common.delete")}
                     onClick={() => removePhone(index)}
-                    className="text-error-600 hover:text-error-700 hover:bg-error-50 dark:text-error-400 dark:hover:bg-error-900/20"
+                    className="size-11 text-error-600 hover:bg-error-50 hover:text-error-700 dark:text-error-400 dark:hover:bg-error-900/20 sm:size-9"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" aria-hidden="true" />
                   </Button>
-                )}
+                ) : null}
               </div>
             ))}
-            {phoneFields.length < 5 && (
+            {phoneFields.length < 5 ? (
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => appendPhone({ value: "" })}
-                className="gap-1"
+                className="min-h-[44px] gap-1 sm:min-h-9"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="size-4" aria-hidden="true" />
                 {t("pharmacyOwner.addPhoneNumber")}
               </Button>
-            )}
+            ) : null}
           </div>
         </CardContent>
       </Card>
@@ -686,18 +623,26 @@ export function PharmacyForm({ mode, pharmacyId }: PharmacyFormProps) {
       </Card>
 
       {/* Actions */}
-      <div className="flex justify-end gap-3">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button
           type="button"
           variant="outline"
           onClick={() => router.push("/pharmacy-owner/pharmacies")}
+          className="min-h-[44px] sm:min-h-9"
         >
           {t("common.cancel")}
         </Button>
-        <Button type="submit" disabled={mutation.isPending}>
+        <Button
+          type="submit"
+          disabled={mutation.isPending}
+          className="min-h-[44px] sm:min-h-9"
+        >
           {mutation.isPending ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin ms-2" />
+              <Loader2
+                className="ms-2 size-4 animate-spin"
+                aria-hidden="true"
+              />
               {t("common.saving")}
             </>
           ) : mode === "create" ? (

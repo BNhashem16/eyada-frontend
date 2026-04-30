@@ -1,8 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
 import { PHARMACY_OWNER_ENDPOINTS } from "@/lib/api/endpoints";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { pharmacyKeys } from "@/lib/query-keys";
 
 export interface PharmacyOwnerDashboardData {
   totalProducts: number;
@@ -31,14 +32,12 @@ export interface PharmacyOwnerDashboardData {
 }
 
 export function usePharmacyOwnerDashboard(pharmacyId: string) {
-  return useQuery({
-    queryKey: ["pharmacy-owner-dashboard", pharmacyId],
-    queryFn: async () => {
-      return apiGet<PharmacyOwnerDashboardData>(
+  return usePharmacyQuery<PharmacyOwnerDashboardData>({
+    queryKey: pharmacyKeys.dashboard(pharmacyId),
+    queryFn: async () =>
+      apiGet<PharmacyOwnerDashboardData>(
         PHARMACY_OWNER_ENDPOINTS.DASHBOARD(pharmacyId),
-      );
-    },
+      ),
     enabled: !!pharmacyId,
-    staleTime: 1000 * 60,
   });
 }

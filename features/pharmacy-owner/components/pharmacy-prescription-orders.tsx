@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Package, CheckCircle2, Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -14,6 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Currency,
+  ListSkeleton,
+  OrderStatusBadge,
+  PharmacyEmptyState,
+  RefreshButton,
+} from "@/components/pharmacy";
+import {
   useMyPharmacies,
   usePharmacyPrescriptionOrders,
   useUpdatePrescriptionOrderStatus,
@@ -21,20 +27,24 @@ import {
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import { prescriptionKeys } from "@/lib/query-keys";
 
 export function PharmacyPrescriptionOrders() {
   const { t, locale } = useTranslation();
-  const [selectedPharmacy, setSelectedPharmacy] = useState<string>("");
+  const queryClient = useQueryClient();
+  const [selectedPharmacy, setSelectedPharmacy] = useState("");
   const [page, setPage] = useState(1);
 
   const { data: pharmaciesData, isLoading: pharmaciesLoading } =
     useMyPharmacies({ limit: 100 });
-  const pharmacies = pharmaciesData?.data || [];
+  const pharmacies = pharmaciesData?.data ?? [];
 
-  // Auto-select first pharmacy
-  if (pharmacies.length > 0 && !selectedPharmacy) {
-    setSelectedPharmacy(pharmacies[0].id);
-  }
+  // Default first pharmacy in an effect (no setState during render).
+  useEffect(() => {
+    if (!selectedPharmacy && pharmacies.length > 0) {
+      setSelectedPharmacy(pharmacies[0].id);
+    }
+  }, [pharmacies, selectedPharmacy]);
 
   const pharmacyId = selectedPharmacy;
   const { data, isLoading } = usePharmacyPrescriptionOrders(pharmacyId, {
@@ -42,32 +52,31 @@ export function PharmacyPrescriptionOrders() {
   });
   const updateStatus = useUpdatePrescriptionOrderStatus();
 
+  const handleRefresh = useMemo(
+    () => async () => {
+      if (!pharmacyId) return;
+      await queryClient.invalidateQueries({
+        queryKey: prescriptionKeys.pharmacyOrders(pharmacyId),
+      });
+    },
+    [queryClient, pharmacyId],
+  );
+
   if (pharmaciesLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
+    return <ListSkeleton rows={4} />;
   }
 
   if (pharmacies.length === 0) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-16">
-          <Package className="h-12 w-12 text-muted-foreground mb-4" />
-          <p className="text-lg font-medium text-muted-foreground">
-            {t("pharmacyOwner.noPharmacies")}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {t("pharmacyOwner.pendingApproval")}
-          </p>
-        </CardContent>
-      </Card>
+      <PharmacyEmptyState
+        icon={Package}
+        title={t("pharmacyOwner.noPharmacies")}
+        description={t("pharmacyOwner.pendingApproval")}
+      />
     );
   }
 
-  const orders = data?.data || [];
+  const orders = data?.data ?? [];
   const meta = data?.meta;
 
   const getNextAction = (status: string) => {
@@ -86,85 +95,88 @@ export function PharmacyPrescriptionOrders() {
 
   return (
     <div className="space-y-4">
-      {/* Pharmacy Selector */}
-      <Card>
-        <CardContent className="p-4">
-          <Select
-            value={selectedPharmacy}
-            onValueChange={(v) => {
-              setSelectedPharmacy(v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-full md:w-64">
-              <SelectValue placeholder={t("pharmacyOwner.selectPharmacy")} />
-            </SelectTrigger>
-            <SelectContent>
-              {pharmacies.map((p: any) => (
-                <SelectItem key={p.id} value={p.id}>
-                  {getLocalizedText(p.name, locale)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Sticky toolbar (mobile) */}
+      <Card className="sticky top-0 z-10 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:static sm:bg-card sm:backdrop-blur-none">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Select
+              value={selectedPharmacy}
+              onValueChange={(v) => {
+                setSelectedPharmacy(v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                className="min-h-[44px] w-full sm:min-h-9 md:w-64"
+                aria-label={t("pharmacyOwner.selectPharmacy")}
+              >
+                <SelectValue placeholder={t("pharmacyOwner.selectPharmacy")} />
+              </SelectTrigger>
+              <SelectContent>
+                {pharmacies.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {getLocalizedText(p.name, locale)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <RefreshButton onRefresh={handleRefresh} />
+          </div>
         </CardContent>
       </Card>
 
       {isLoading ? (
-        <Skeleton className="h-64 w-full" />
+        <ListSkeleton rows={4} />
       ) : orders.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <Package className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">
-              {t("prescription.noOrders")}
-            </p>
-          </CardContent>
-        </Card>
+        <PharmacyEmptyState icon={Package} title={t("prescription.noOrders")} />
       ) : (
         <>
-          {orders.map((order: any) => {
+          {orders.map((order) => {
             const action = getNextAction(order.status);
 
             return (
               <Card key={order.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="font-medium">{order.orderNumber}</p>
+                <CardContent className="space-y-3 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">
+                        {order.orderNumber}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">
-                        {Number(order.totalAmount).toFixed(2)}
+                        <Currency amount={order.totalAmount} />
                       </span>
-                      <Badge>{order.status}</Badge>
+                      <OrderStatusBadge status={order.status} />
                     </div>
                   </div>
 
-                  {/* Items */}
-                  {order.items && (
-                    <div className="space-y-1 mb-3">
-                      {order.items.map((item: any) => (
-                        <div
+                  {order.items ? (
+                    <ul className="space-y-1 text-sm" role="list">
+                      {order.items.map((item) => (
+                        <li
                           key={item.id}
-                          className="flex justify-between text-sm"
+                          className="flex items-center justify-between gap-2"
                         >
-                          <span>{item.medicationName}</span>
-                          <span className="text-muted-foreground">
-                            {item.quantity} x{" "}
-                            {Number(item.unitPrice).toFixed(2)}
+                          <span className="truncate">
+                            {item.medicationName}
                           </span>
-                        </div>
+                          <span className="shrink-0 text-muted-foreground">
+                            {item.quantity} ×{" "}
+                            <Currency amount={item.unitPrice} />
+                          </span>
+                        </li>
                       ))}
-                    </div>
-                  )}
+                    </ul>
+                  ) : null}
 
-                  {action && (
+                  {action ? (
                     <Button
                       size="sm"
+                      className="min-h-[44px] sm:min-h-9"
                       onClick={() =>
                         updateStatus.mutate({
                           pharmacyId,
@@ -175,19 +187,25 @@ export function PharmacyPrescriptionOrders() {
                       disabled={updateStatus.isPending}
                     >
                       {updateStatus.isPending ? (
-                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                        <Loader2
+                          className="me-1 size-3 animate-spin"
+                          aria-hidden="true"
+                        />
                       ) : (
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        <CheckCircle2
+                          className="me-1 size-3"
+                          aria-hidden="true"
+                        />
                       )}
                       {action.label}
                     </Button>
-                  )}
+                  ) : null}
                 </CardContent>
               </Card>
             );
           })}
 
-          {meta && meta.totalPages > 1 && (
+          {meta && meta.totalPages > 1 ? (
             <PaginationControls
               meta={meta}
               page={page}
@@ -195,7 +213,7 @@ export function PharmacyPrescriptionOrders() {
               limit={10}
               onLimitChange={() => {}}
             />
-          )}
+          ) : null}
         </>
       )}
     </div>

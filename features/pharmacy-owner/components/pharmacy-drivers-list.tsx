@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Truck,
   Phone,
@@ -11,7 +11,6 @@ import {
   Search,
   Ban,
   Clock,
-  AlertTriangle,
   Car,
   CreditCard,
   FileText,
@@ -19,10 +18,10 @@ import {
   Plus,
   Store,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
@@ -34,15 +33,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  ConfirmDialog,
+  ListSkeleton,
+  PharmacyEmptyState,
+  PharmacyErrorState,
+  RefreshButton,
+} from "@/components/pharmacy";
 import {
   Dialog,
   DialogContent,
@@ -65,6 +61,7 @@ import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
 import { DriverStatus, VehicleType } from "@/types/enums";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import { pharmacyDriverKeys } from "@/lib/query-keys";
 
 const getStatusConfig = (
   t: (key: string) => string,
@@ -102,7 +99,8 @@ export function PharmacyDriversList() {
   const { t, locale } = useTranslation();
   const statusConfig = useMemo(() => getStatusConfig(t), [t]);
 
-  const [selectedPharmacy, setSelectedPharmacy] = useState<string>("");
+  const queryClient = useQueryClient();
+  const [selectedPharmacy, setSelectedPharmacy] = useState("");
   const [filters, setFilters] = useState<PharmacyDriverFilters>({
     page: 1,
     limit: 30,
@@ -112,16 +110,28 @@ export function PharmacyDriversList() {
   // Pharmacy selector
   const { data: pharmaciesData, isLoading: pharmaciesLoading } =
     useMyPharmacies({ limit: 100 });
-  const pharmacies = pharmaciesData?.data || [];
+  const pharmacies = pharmaciesData?.data ?? [];
 
-  // Auto-select first pharmacy
-  if (pharmacies.length > 0 && !selectedPharmacy) {
-    setSelectedPharmacy(pharmacies[0].id);
-  }
+  // Default first pharmacy in an effect (no setState during render).
+  useEffect(() => {
+    if (!selectedPharmacy && pharmacies.length > 0) {
+      setSelectedPharmacy(pharmacies[0].id);
+    }
+  }, [pharmacies, selectedPharmacy]);
 
-  const { data, isLoading, isError, error } = usePharmacyDrivers(
+  const { data, isLoading, isError } = usePharmacyDrivers(
     selectedPharmacy,
     filters,
+  );
+
+  const handleRefresh = useMemo(
+    () => async () => {
+      if (!selectedPharmacy) return;
+      await queryClient.invalidateQueries({
+        queryKey: pharmacyDriverKeys.lists(selectedPharmacy),
+      });
+    },
+    [queryClient, selectedPharmacy],
   );
 
   const createDriver = useCreatePharmacyDriver(selectedPharmacy);
@@ -163,30 +173,14 @@ export function PharmacyDriversList() {
     [],
   );
 
-  const handleAction = () => {
+  const confirmAction = async () => {
     if (!selectedDriver || !action) return;
-
-    const callbacks = {
-      onSuccess: () => {
-        setSelectedDriver(null);
-        setAction(null);
-      },
-    };
-
-    switch (action) {
-      case "approve":
-        approveDriver.mutate(selectedDriver, callbacks);
-        break;
-      case "reject":
-        rejectDriver.mutate(selectedDriver, callbacks);
-        break;
-      case "suspend":
-        suspendDriver.mutate(selectedDriver, callbacks);
-        break;
-      case "activate":
-        activateDriver.mutate(selectedDriver, callbacks);
-        break;
-    }
+    if (action === "approve") await approveDriver.mutateAsync(selectedDriver);
+    if (action === "reject") await rejectDriver.mutateAsync(selectedDriver);
+    if (action === "suspend") await suspendDriver.mutateAsync(selectedDriver);
+    if (action === "activate") await activateDriver.mutateAsync(selectedDriver);
+    setSelectedDriver(null);
+    setAction(null);
   };
 
   const handleCreate = () => {
@@ -216,12 +210,6 @@ export function PharmacyDriversList() {
       },
     );
   };
-
-  const isActionPending =
-    approveDriver.isPending ||
-    rejectDriver.isPending ||
-    suspendDriver.isPending ||
-    activateDriver.isPending;
 
   const statusFilterOptions = useMemo(
     () => [
@@ -255,68 +243,32 @@ export function PharmacyDriversList() {
   );
 
   if (pharmaciesLoading || isLoading) {
-    return (
-      <div className="space-y-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex gap-4">
-              <Skeleton className="h-10 flex-1" />
-              <Skeleton className="h-10 w-40" />
-            </div>
-          </CardContent>
-        </Card>
-        {[...Array(5)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Skeleton className="h-16 w-16 rounded-xl" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-40" />
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-4 w-48" />
-                </div>
-                <Skeleton className="h-9 w-24" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    return <ListSkeleton rows={5} />;
   }
 
   if (isError) {
-    return (
-      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
-        <CardContent className="py-10 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
-          <p className="text-error-600 dark:text-error-400">
-            {t("admin.loadError")}
-          </p>
-          <p className="text-sm text-error-500 mt-2">
-            {error instanceof Error ? error.message : t("common.unknownError")}
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <PharmacyErrorState onRetry={handleRefresh} />;
   }
 
   const drivers = data?.data || [];
   const meta = data?.meta;
 
   return (
-    <>
-      {/* Pharmacy Selector + Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4">
-            {/* Pharmacy selector */}
-            {pharmacies.length > 1 && (
+    <div className="space-y-4 sm:space-y-6">
+      {/* Sticky filter bar (mobile) */}
+      <Card className="sticky top-0 z-10 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:static sm:bg-card sm:backdrop-blur-none">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3">
+            {pharmacies.length > 1 ? (
               <Select
                 value={selectedPharmacy}
                 onValueChange={setSelectedPharmacy}
               >
-                <SelectTrigger>
-                  <Store className="h-4 w-4 me-2" />
+                <SelectTrigger
+                  className="min-h-[44px] sm:min-h-9"
+                  aria-label={t("pharmacyOwner.selectPharmacy")}
+                >
+                  <Store className="me-2 size-4" aria-hidden="true" />
                   <SelectValue
                     placeholder={t("pharmacyOwner.selectPharmacy")}
                   />
@@ -329,22 +281,28 @@ export function PharmacyDriversList() {
                   ))}
                 </SelectContent>
               </Select>
-            )}
+            ) : null}
 
-            {/* Search + Status Filter + Add Button */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 flex gap-2">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <div className="flex flex-1 gap-2">
                 <Input
                   placeholder={t("pharmacyOwner.drivers.searchPlaceholder")}
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   inputMode="search"
-                  className="flex-1"
+                  className="min-h-[44px] flex-1 sm:min-h-9"
+                  aria-label={t("pharmacyOwner.drivers.searchPlaceholder")}
                 />
-                <Button onClick={handleSearch} variant="outline">
-                  <Search className="h-4 w-4" />
+                <Button
+                  onClick={handleSearch}
+                  variant="outline"
+                  aria-label={t("common.search")}
+                  className="min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9"
+                >
+                  <Search className="size-4" aria-hidden="true" />
                 </Button>
+                <RefreshButton onRefresh={handleRefresh} />
               </div>
 
               <SearchableSelect
@@ -358,8 +316,11 @@ export function PharmacyDriversList() {
                 className="w-full sm:w-40"
               />
 
-              <Button onClick={() => setShowCreateDialog(true)}>
-                <Plus className="h-4 w-4 me-2" />
+              <Button
+                onClick={() => setShowCreateDialog(true)}
+                className="min-h-[44px] sm:min-h-9"
+              >
+                <Plus className="me-2 size-4" aria-hidden="true" />
                 {t("pharmacyOwner.drivers.addDriver")}
               </Button>
             </div>
@@ -384,17 +345,11 @@ export function PharmacyDriversList() {
 
       {/* Drivers List */}
       {drivers.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Truck className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t("pharmacyOwner.drivers.noDriversFound")}
-            </h3>
-            <p className="text-muted-foreground">
-              {t("pharmacyOwner.drivers.noDriversMatchFilters")}
-            </p>
-          </CardContent>
-        </Card>
+        <PharmacyEmptyState
+          icon={Truck}
+          title={t("pharmacyOwner.drivers.noDriversFound")}
+          description={t("pharmacyOwner.drivers.noDriversMatchFilters")}
+        />
       ) : (
         <div className="space-y-4">
           {drivers.map((driver) => {
@@ -558,59 +513,54 @@ export function PharmacyDriversList() {
         }
       />
 
-      {/* Confirmation Dialog */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!selectedDriver && !!action}
-        onOpenChange={() => {
-          setSelectedDriver(null);
-          setAction(null);
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedDriver(null);
+            setAction(null);
+          }
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {action === "approve" &&
-                t("pharmacyOwner.drivers.confirmApprove")}
-              {action === "reject" && t("pharmacyOwner.drivers.confirmReject")}
-              {action === "suspend" &&
-                t("pharmacyOwner.drivers.confirmSuspend")}
-              {action === "activate" &&
-                t("pharmacyOwner.drivers.confirmActivate")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {action === "approve" &&
-                t("pharmacyOwner.drivers.approveMessage")}
-              {action === "reject" && t("pharmacyOwner.drivers.rejectMessage")}
-              {action === "suspend" &&
-                t("pharmacyOwner.drivers.suspendMessage")}
-              {action === "activate" &&
-                t("pharmacyOwner.drivers.activateMessage")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleAction}
-              className={
-                action === "approve" || action === "activate"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : action === "suspend"
-                    ? "bg-warning-600 hover:bg-warning-700"
-                    : "bg-error-600 hover:bg-error-700"
-              }
-              disabled={isActionPending}
-            >
-              {isActionPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
-              {action === "approve" && t("admin.approve")}
-              {action === "reject" && t("admin.reject")}
-              {action === "suspend" && t("admin.suspend")}
-              {action === "activate" && t("pharmacyOwner.drivers.reactivate")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={
+          action === "approve"
+            ? t("pharmacyOwner.drivers.confirmApprove")
+            : action === "reject"
+              ? t("pharmacyOwner.drivers.confirmReject")
+              : action === "suspend"
+                ? t("pharmacyOwner.drivers.confirmSuspend")
+                : action === "activate"
+                  ? t("pharmacyOwner.drivers.confirmActivate")
+                  : ""
+        }
+        description={
+          action === "approve"
+            ? t("pharmacyOwner.drivers.approveMessage")
+            : action === "reject"
+              ? t("pharmacyOwner.drivers.rejectMessage")
+              : action === "suspend"
+                ? t("pharmacyOwner.drivers.suspendMessage")
+                : action === "activate"
+                  ? t("pharmacyOwner.drivers.activateMessage")
+                  : undefined
+        }
+        confirmLabel={
+          action === "approve"
+            ? t("admin.approve")
+            : action === "reject"
+              ? t("admin.reject")
+              : action === "suspend"
+                ? t("admin.suspend")
+                : action === "activate"
+                  ? t("pharmacyOwner.drivers.reactivate")
+                  : t("common.confirm")
+        }
+        tone={
+          action === "approve" || action === "activate"
+            ? "default"
+            : "destructive"
+        }
+        onConfirm={confirmAction}
+      />
 
       {/* Create Driver Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
@@ -761,6 +711,6 @@ export function PharmacyDriversList() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

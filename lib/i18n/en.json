@@ -88,7 +88,11 @@
     "share": "Share",
     "copyLink": "Copy Link",
     "linkCopied": "Link copied",
-    "download": "Download"
+    "download": "Download",
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "somethingWentWrong": "Something went wrong",
+    "unknownError": "Unknown error"
   },
   "app": {
     "name": "Eyada",
@@ -234,7 +238,23 @@
     "changePasswordSuccessTitle": "Password changed",
     "changePasswordSuccessDesc": "Your password has been updated successfully",
     "changePasswordErrorTitle": "Error",
-    "changePasswordFailedDefault": "Failed to change password. Check your current password."
+    "changePasswordFailedDefault": "Failed to change password. Check your current password.",
+    "loginRequiredTitle": "Login Required",
+    "loginRequiredDesc": "Please log in to continue",
+    "brand": {
+      "welcome": "Welcome to Eyada",
+      "tagline": "Your trusted healthcare platform for booking appointments, managing prescriptions, and receiving care wherever you are.",
+      "feature1Title": "Top Doctors",
+      "feature1Description": "Over 500 specialists across every medical field",
+      "feature2Title": "Instant Booking",
+      "feature2Description": "Reserve your appointment in seconds with real-time confirmation",
+      "feature3Title": "Prescriptions & Pharmacy",
+      "feature3Description": "Send your prescription and get your medicine delivered to your door",
+      "trustBadge": "Trusted by thousands of patients across Egypt",
+      "secureNote": "Secure and encrypted connection",
+      "loginAside": "Enter your details to continue to your Eyada account.",
+      "registerAside": "Create your account in under a minute and enjoy a complete medical experience."
+    }
   },
   "home": {
     "heroTitle": "Book Your Appointment with",
@@ -316,7 +336,23 @@
     "whatsappNumber": "WhatsApp",
     "backToSearch": "Back to Search",
     "loadError": "Error loading doctor data. Please try again.",
-    "doctorPrefix": "Dr."
+    "doctorPrefix": "Dr.",
+    "callNow": "Call now",
+    "messageOnWhatsapp": "Message on WhatsApp",
+    "shareProfile": "Share profile",
+    "linkCopied": "Link copied",
+    "verified": "Verified",
+    "topRated": "Top rated",
+    "clinicsCount": "{count} clinics",
+    "clinicsCountSingle": "1 clinic",
+    "noClinicsHint": "This doctor hasn't listed any clinics yet. Check back later or browse other doctors.",
+    "browseDoctors": "Browse doctors",
+    "scrollHint": "Scroll horizontally for more",
+    "nearYou": "Near you",
+    "matchesYourLocation": "Matches your address",
+    "distanceAway": "~{km} km away",
+    "basedOnYourAddress": "Sorted by your saved address",
+    "matchingClinicsCount": "{count} clinics near you"
   },
   "clinics": {
     "title": "Clinics",
@@ -2362,6 +2398,7 @@
     "priceLabel": "Price:",
     "confirmBooking": "Confirm Booking",
     "loginToBook": "Login to Book",
+    "loginRequiredMessage": "You need to log in before you can book an appointment. We'll send you to the login page and bring you right back here.",
     "bookingInProgress": "Booking...",
     "selectAllRequired": "Please select all required data",
     "bookingSuccessTitle": "Booking Successful",
@@ -2483,6 +2520,40 @@
     "notFound": "Appointment Not Found",
     "notFoundDesc": "We couldn't find an appointment with this booking number. Please check and try again.",
     "trackBooking": "Track Booking"
+  },
+  "pharmacy": {
+    "orderStatus": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "PREPARING": "Preparing",
+      "READY_FOR_PICKUP": "Ready for pickup",
+      "OUT_FOR_DELIVERY": "Out for delivery",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled",
+      "RETURNED": "Returned",
+      "REFUNDED": "Refunded"
+    },
+    "settlementStatus": {
+      "PENDING": "Pending",
+      "PROCESSING": "Processing",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed"
+    },
+    "prescriptionStatus": {
+      "PENDING": "Pending",
+      "ASSIGNED": "Assigned",
+      "IN_REVIEW": "In review",
+      "READY": "Ready",
+      "FULFILLED": "Fulfilled",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "EXPIRED": "Expired"
+    },
+    "stock": {
+      "outOfStock": "Out of stock",
+      "low": "Low stock ({count})",
+      "inStock": "In stock ({count})"
+    }
   },
   "pages": {
     "forgotPassword": {

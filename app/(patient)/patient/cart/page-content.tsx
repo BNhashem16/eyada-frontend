@@ -7,9 +7,11 @@ import { useTranslation } from "@/lib/i18n";
 
 const PatientCart = dynamic(
   () =>
-    import("@/features/patients/components/patient-cart").then((mod) => ({
-      default: mod.PatientCart,
-    })),
+    import("@/features/patient-pharmacy/components/patient-cart").then(
+      (mod) => ({
+        default: mod.PatientCart,
+      }),
+    ),
   {
     loading: () => (
       <div className="space-y-4">

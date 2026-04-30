@@ -7,7 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 
 const PatientPharmacyBrowser = dynamic(
   () =>
-    import("@/features/patients/components/patient-pharmacy-browser").then(
+    import("@/features/patient-pharmacy/components/patient-pharmacy-browser").then(
       (mod) => ({
         default: mod.PatientPharmacyBrowser,
       }),

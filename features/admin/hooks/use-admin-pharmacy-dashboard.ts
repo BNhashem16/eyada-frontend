@@ -1,8 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
 import { ADMIN_PHARMACY_ENDPOINTS } from "@/lib/api/endpoints";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { adminPharmacyKeys } from "@/lib/query-keys";
 
 export interface AdminPharmacyDashboardData {
   totalPharmacies: number;
@@ -21,13 +22,11 @@ export interface AdminPharmacyDashboardData {
 }
 
 export function useAdminPharmacyDashboard() {
-  return useQuery({
-    queryKey: ["admin-pharmacy-dashboard"],
-    queryFn: async () => {
-      return apiGet<AdminPharmacyDashboardData>(
+  return usePharmacyQuery<AdminPharmacyDashboardData>({
+    queryKey: adminPharmacyKeys.dashboard(),
+    queryFn: async () =>
+      apiGet<AdminPharmacyDashboardData>(
         ADMIN_PHARMACY_ENDPOINTS.PHARMACY_DASHBOARD,
-      );
-    },
-    staleTime: 1000 * 60,
+      ),
   });
 }

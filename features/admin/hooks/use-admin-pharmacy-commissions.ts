@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPut, apiDelete } from "@/lib/api";
 import { ADMIN_PHARMACY_ENDPOINTS } from "@/lib/api/endpoints";
@@ -13,17 +13,17 @@ import type {
 import { toastError, toastSuccess } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { adminPharmacyKeys } from "@/lib/query-keys";
 
 export function usePharmacyCommission(pharmacyId: string) {
-  return useQuery({
-    queryKey: ["admin-pharmacy-commission", pharmacyId],
-    queryFn: async () => {
-      return apiGet<PharmacyCommissionResponse>(
+  return usePharmacyQuery<PharmacyCommissionResponse>({
+    queryKey: adminPharmacyKeys.commissions({ pharmacyId }),
+    queryFn: async () =>
+      apiGet<PharmacyCommissionResponse>(
         ADMIN_PHARMACY_ENDPOINTS.PHARMACY_COMMISSION(pharmacyId),
-      );
-    },
+      ),
     enabled: !!pharmacyId,
-    staleTime: 1000 * 60,
   });
 }
 
@@ -43,7 +43,7 @@ export function useSetPharmacyCommission() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["admin-pharmacy-commission"],
+        queryKey: adminPharmacyKeys.commissions(),
       });
       toastSuccess(t("toast.success"), t("toast.updated"));
     },
@@ -68,7 +68,7 @@ export function useDeletePharmacyCommission() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["admin-pharmacy-commission"],
+        queryKey: adminPharmacyKeys.commissions(),
       });
       toastSuccess(t("toast.success"), t("toast.deleted"));
     },

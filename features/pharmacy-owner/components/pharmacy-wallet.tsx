@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Wallet,
   TrendingUp,
@@ -8,12 +8,11 @@ import {
   ArrowUpRight,
   Clock,
   Loader2,
-  RefreshCw,
+  RefreshCw as RefreshIcon,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,50 +25,67 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  useWalletSummary,
-  useWalletTransactions,
-  usePharmacySettlements,
-  useRequestSettlement,
-} from "../hooks";
-import { useMyPharmacies } from "../hooks";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Currency,
+  KpiSkeleton,
+  ListSkeleton,
+  PharmacyEmptyState,
+  PharmacyErrorState,
+  RefreshButton,
+  SettlementStatusBadge,
+} from "@/components/pharmacy";
+import {
+  useMyPharmacies,
+  usePharmacySettlements,
+  useRequestSettlement,
+  useWalletSummary,
+  useWalletTransactions,
+} from "../hooks";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import { useTranslation } from "@/lib/i18n";
-import type { WalletTransactionType } from "@/types/wallet";
+import { pharmacyWalletKeys } from "@/lib/query-keys";
+import { cn } from "@/lib/utils";
 
 const TX_TYPE_CONFIG: Record<
   string,
-  { key: string; icon: typeof ArrowUpRight; color: string }
+  { key: string; icon: typeof ArrowUpRight; tone: string }
 > = {
-  CREDIT: { key: "credit", icon: ArrowDownRight, color: "text-green-600" },
-  DEBIT: { key: "debit", icon: ArrowUpRight, color: "text-red-600" },
-  SETTLEMENT: { key: "settlement", icon: RefreshCw, color: "text-blue-600" },
-  REFUND: { key: "refund", icon: RefreshCw, color: "text-orange-600" },
+  CREDIT: {
+    key: "credit",
+    icon: ArrowDownRight,
+    tone: "text-success-700 dark:text-success-200",
+  },
+  DEBIT: {
+    key: "debit",
+    icon: ArrowUpRight,
+    tone: "text-error-600 dark:text-error-300",
+  },
+  SETTLEMENT: {
+    key: "settlement",
+    icon: RefreshIcon,
+    tone: "text-blue-600 dark:text-blue-300",
+  },
+  REFUND: {
+    key: "refund",
+    icon: RefreshIcon,
+    tone: "text-warning-700 dark:text-warning-200",
+  },
   COMMISSION: {
     key: "commission",
     icon: ArrowUpRight,
-    color: "text-purple-600",
+    tone: "text-purple-600 dark:text-purple-300",
   },
-};
-
-const SETTLEMENT_STATUS_CONFIG: Record<
-  string,
-  { key: string; variant: string }
-> = {
-  PENDING: { key: "settlementPending", variant: "warning" },
-  PROCESSING: { key: "settlementProcessing", variant: "info" },
-  COMPLETED: { key: "settlementCompleted", variant: "success" },
-  FAILED: { key: "settlementFailed", variant: "error" },
 };
 
 export function PharmacyWallet() {
   const { t, locale } = useTranslation();
+  const queryClient = useQueryClient();
   const { data: pharmacies, isLoading: loadingPharmacies } = useMyPharmacies();
 
   const [selectedPharmacy, setSelectedPharmacy] = useState("");
@@ -80,137 +96,119 @@ export function PharmacyWallet() {
   const pharmacyList = pharmacies?.data;
   const pharmacyId = selectedPharmacy || pharmacyList?.[0]?.id || "";
 
-  const { data: walletSummary, isLoading: loadingWallet } =
-    useWalletSummary(pharmacyId);
+  // Default first pharmacy in an effect (no setState during render).
+  useEffect(() => {
+    if (!selectedPharmacy && pharmacyList?.length) {
+      setSelectedPharmacy(pharmacyList[0].id);
+    }
+  }, [pharmacyList, selectedPharmacy]);
+
+  const {
+    data: walletSummary,
+    isLoading: loadingWallet,
+    isError: walletError,
+  } = useWalletSummary(pharmacyId);
   const { data: transactions, isLoading: loadingTx } =
     useWalletTransactions(pharmacyId);
   const { data: settlements, isLoading: loadingSettlements } =
     usePharmacySettlements(pharmacyId);
   const requestSettlement = useRequestSettlement(pharmacyId);
 
-  // Auto-select first pharmacy
-  if (!selectedPharmacy && pharmacyList?.length) {
-    setSelectedPharmacy(pharmacyList[0].id);
-  }
+  const handleRefresh = useMemo(
+    () => async () => {
+      if (!pharmacyId) return;
+      await queryClient.invalidateQueries({
+        queryKey: pharmacyWalletKeys.scoped(pharmacyId),
+      });
+    },
+    [queryClient, pharmacyId],
+  );
 
-  const handleRequestSettlement = () => {
-    requestSettlement.mutate(
-      {
-        amount: Number(settlementAmount),
-        notes: settlementNotes || undefined,
-      },
-      {
-        onSuccess: () => {
-          setSettlementOpen(false);
-          setSettlementAmount("");
-          setSettlementNotes("");
-        },
-      },
-    );
+  const handleRequestSettlement = async () => {
+    await requestSettlement.mutateAsync({
+      amount: Number(settlementAmount),
+      notes: settlementNotes || undefined,
+    });
+    setSettlementOpen(false);
+    setSettlementAmount("");
+    setSettlementNotes("");
   };
 
   const isLoading = loadingPharmacies || loadingWallet;
+  const balance = Number(walletSummary?.balance ?? 0);
+
+  if (walletError) {
+    return <PharmacyErrorState onRetry={handleRefresh} />;
+  }
 
   return (
-    <>
-      {/* Pharmacy Selector */}
-      {pharmacyList && pharmacyList.length > 1 && (
-        <Card>
-          <CardContent className="p-4">
-            <Select
-              value={selectedPharmacy}
-              onValueChange={setSelectedPharmacy}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Toolbar */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {pharmacyList && pharmacyList.length > 1 ? (
+          <Select value={selectedPharmacy} onValueChange={setSelectedPharmacy}>
+            <SelectTrigger
+              className="min-h-[44px] w-full sm:min-h-9 sm:w-64"
+              aria-label={t("pharmacyOwner.selectPharmacy")}
             >
-              <SelectTrigger className="w-full md:w-64">
-                <SelectValue placeholder={t("pharmacyOwner.selectPharmacy")} />
-              </SelectTrigger>
-              <SelectContent>
-                {pharmacyList.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {getLocalizedText(p.name, locale)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Wallet Summary Cards */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
+              <SelectValue placeholder={t("pharmacyOwner.selectPharmacy")} />
+            </SelectTrigger>
+            <SelectContent>
+              {pharmacyList.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {getLocalizedText(p.name, locale)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <span className="sr-only">{t("pharmacyOwner.selectPharmacy")}</span>
+        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <RefreshButton onRefresh={handleRefresh} />
+          {balance > 0 ? (
+            <Button
+              onClick={() => setSettlementOpen(true)}
+              className="min-h-[44px] sm:min-h-9"
+            >
+              <ArrowUpRight className="me-2 size-4" aria-hidden="true" />
+              {t("pharmacyOwner.requestSettlement")}
+            </Button>
+          ) : null}
         </div>
+      </div>
+
+      {/* KPI cards */}
+      {isLoading ? (
+        <KpiSkeleton count={4} />
       ) : walletSummary ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Wallet className="h-5 w-5 text-primary-600" />
-                <span className="text-sm text-muted-foreground">
-                  {t("pharmacyOwner.walletBalance")}
-                </span>
-              </div>
-              <p className="text-2xl font-bold">
-                {Number(walletSummary.balance).toFixed(2)} {t("common.egp")}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="h-5 w-5 text-green-600" />
-                <span className="text-sm text-muted-foreground">
-                  {t("pharmacyOwner.totalEarned")}
-                </span>
-              </div>
-              <p className="text-2xl font-bold text-green-600">
-                {Number(walletSummary.totalEarned).toFixed(2)} {t("common.egp")}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <ArrowUpRight className="h-5 w-5 text-blue-600" />
-                <span className="text-sm text-muted-foreground">
-                  {t("pharmacyOwner.totalSettled")}
-                </span>
-              </div>
-              <p className="text-2xl font-bold text-blue-600">
-                {Number(walletSummary.totalSettled).toFixed(2)}{" "}
-                {t("common.egp")}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="h-5 w-5 text-orange-600" />
-                <span className="text-sm text-muted-foreground">
-                  {t("pharmacyOwner.pendingSettlement")}
-                </span>
-              </div>
-              <p className="text-2xl font-bold text-orange-600">
-                {Number(walletSummary.pendingSettlementAmount).toFixed(2)}{" "}
-                {t("common.egp")}
-              </p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+          <WalletKpi
+            icon={Wallet}
+            tone="text-primary-600 dark:text-primary-300"
+            label={t("pharmacyOwner.walletBalance")}
+            amount={balance}
+          />
+          <WalletKpi
+            icon={TrendingUp}
+            tone="text-success-700 dark:text-success-200"
+            label={t("pharmacyOwner.totalEarned")}
+            amount={Number(walletSummary.totalEarned)}
+          />
+          <WalletKpi
+            icon={ArrowUpRight}
+            tone="text-blue-600 dark:text-blue-300"
+            label={t("pharmacyOwner.totalSettled")}
+            amount={Number(walletSummary.totalSettled)}
+          />
+          <WalletKpi
+            icon={Clock}
+            tone="text-warning-700 dark:text-warning-200"
+            label={t("pharmacyOwner.pendingSettlement")}
+            amount={Number(walletSummary.pendingSettlementAmount ?? 0)}
+          />
         </div>
       ) : null}
-
-      {/* Request Settlement Button */}
-      {walletSummary && Number(walletSummary.balance) > 0 && (
-        <div className="flex justify-end">
-          <Button onClick={() => setSettlementOpen(true)}>
-            <ArrowUpRight className="h-4 w-4 me-2" />
-            {t("pharmacyOwner.requestSettlement")}
-          </Button>
-        </div>
-      )}
 
       {/* Transaction History */}
       <Card>
@@ -221,36 +219,34 @@ export function PharmacyWallet() {
         </CardHeader>
         <CardContent>
           {loadingTx ? (
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
+            <ListSkeleton rows={3} />
           ) : !transactions?.data?.length ? (
-            <div className="py-8 text-center">
-              <Wallet className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">
-                {t("pharmacyOwner.noTransactions")}
-              </p>
-            </div>
+            <PharmacyEmptyState
+              icon={Wallet}
+              title={t("pharmacyOwner.noTransactions")}
+            />
           ) : (
-            <div className="space-y-2">
+            <ul className="divide-y divide-border" role="list">
               {transactions.data.map((tx) => {
-                const config = TX_TYPE_CONFIG[tx.type] || TX_TYPE_CONFIG.CREDIT;
+                const config = TX_TYPE_CONFIG[tx.type] ?? TX_TYPE_CONFIG.CREDIT;
                 const TxIcon = config.icon;
                 return (
-                  <div
+                  <li
                     key={tx.id}
-                    className="flex items-center justify-between py-3 border-b last:border-0"
+                    className="flex items-center justify-between gap-3 py-3"
                   >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`h-8 w-8 rounded-full bg-muted flex items-center justify-center ${config.color}`}
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        className={cn(
+                          "grid size-8 shrink-0 place-items-center rounded-full bg-muted",
+                          config.tone,
+                        )}
+                        aria-hidden="true"
                       >
-                        <TxIcon className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">
+                        <TxIcon className="size-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">
                           {t(`pharmacyOwner.${config.key}`)}
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -261,15 +257,20 @@ export function PharmacyWallet() {
                       </div>
                     </div>
                     <span
-                      className={`font-semibold ${tx.type === "CREDIT" ? "text-green-600" : "text-red-600"}`}
+                      className={cn(
+                        "shrink-0 font-semibold",
+                        tx.type === "CREDIT"
+                          ? "text-success-700 dark:text-success-200"
+                          : "text-error-600 dark:text-error-300",
+                      )}
                     >
                       {tx.type === "CREDIT" ? "+" : "-"}
-                      {Number(tx.amount).toFixed(2)} {t("common.egp")}
+                      <Currency amount={tx.amount} />
                     </span>
-                  </div>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           )}
         </CardContent>
       </Card>
@@ -283,84 +284,82 @@ export function PharmacyWallet() {
         </CardHeader>
         <CardContent>
           {loadingSettlements ? (
-            <div className="space-y-3">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
+            <ListSkeleton rows={2} />
           ) : !settlements?.data?.length ? (
-            <div className="py-8 text-center">
-              <RefreshCw className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">
-                {t("pharmacyOwner.noSettlements")}
-              </p>
-            </div>
+            <PharmacyEmptyState
+              icon={RefreshIcon}
+              title={t("pharmacyOwner.noSettlements")}
+            />
           ) : (
-            <div className="space-y-2">
-              {settlements.data.map((s) => {
-                const statusConfig =
-                  SETTLEMENT_STATUS_CONFIG[s.status] ||
-                  SETTLEMENT_STATUS_CONFIG.PENDING;
-                return (
-                  <div
-                    key={s.id}
-                    className="flex items-center justify-between py-3 border-b last:border-0"
-                  >
-                    <div>
-                      <p className="font-medium text-sm">
-                        {Number(s.amount).toFixed(2)} {t("common.egp")}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(s.createdAt).toLocaleString(
-                          locale === "ar" ? "ar-EG" : "en-US",
-                        )}
-                      </p>
-                    </div>
-                    <Badge variant={statusConfig.variant as any}>
-                      {t(`pharmacyOwner.${statusConfig.key}`)}
-                    </Badge>
+            <ul className="divide-y divide-border" role="list">
+              {settlements.data.map((s) => (
+                <li
+                  key={s.id}
+                  className="flex items-center justify-between gap-3 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold">
+                      <Currency amount={s.amount} />
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(s.createdAt).toLocaleString(
+                        locale === "ar" ? "ar-EG" : "en-US",
+                      )}
+                    </p>
                   </div>
-                );
-              })}
-            </div>
+                  <SettlementStatusBadge status={s.status} />
+                </li>
+              ))}
+            </ul>
           )}
         </CardContent>
       </Card>
 
-      {/* Settlement Request Dialog */}
+      {/* Request settlement dialog (responsive sheet on mobile) */}
       <Dialog open={settlementOpen} onOpenChange={setSettlementOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("pharmacyOwner.requestSettlement")}</DialogTitle>
             <DialogDescription>
-              {t("pharmacyOwner.walletBalance")}:{" "}
-              {Number(walletSummary?.balance || 0).toFixed(2)} {t("common.egp")}
+              {t("pharmacyOwner.walletBalance")}: <Currency amount={balance} />
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
-              <Label required>{t("pharmacyOwner.settlementAmount")}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="settlement-amount" required>
+                {t("pharmacyOwner.settlementAmount")}
+              </Label>
               <Input
+                id="settlement-amount"
                 type="number"
+                inputMode="decimal"
                 value={settlementAmount}
                 onChange={(e) => setSettlementAmount(e.target.value)}
                 min={1}
-                max={Number(walletSummary?.balance || 0)}
+                max={balance}
                 placeholder="0.00"
+                className="min-h-[44px] sm:min-h-9"
               />
             </div>
-            <div>
-              <Label>{t("pharmacyOwner.settlementNotes")}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="settlement-notes">
+                {t("pharmacyOwner.settlementNotes")}
+              </Label>
               <Textarea
+                id="settlement-notes"
                 value={settlementNotes}
                 onChange={(e) => setSettlementNotes(e.target.value)}
                 placeholder={t("pharmacyOwner.settlementNotesPlaceholder")}
-                rows={2}
+                rows={3}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSettlementOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setSettlementOpen(false)}
+              className="min-h-[44px] sm:min-h-9"
+            >
               {t("common.cancel")}
             </Button>
             <Button
@@ -368,17 +367,45 @@ export function PharmacyWallet() {
               disabled={
                 !settlementAmount ||
                 Number(settlementAmount) <= 0 ||
+                Number(settlementAmount) > balance ||
                 requestSettlement.isPending
               }
+              className="min-h-[44px] sm:min-h-9"
             >
-              {requestSettlement.isPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
+              {requestSettlement.isPending ? (
+                <Loader2 className="me-2 size-4 animate-spin" />
+              ) : null}
               {t("pharmacyOwner.requestSettlement")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
+  );
+}
+
+interface WalletKpiProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  tone: string;
+  label: string;
+  amount: number;
+}
+
+function WalletKpi({ icon: Icon, tone, label, amount }: WalletKpiProps) {
+  return (
+    <Card>
+      <CardContent className="space-y-1.5 p-4">
+        <div className="flex items-center gap-2">
+          <Icon className={cn("size-5", tone)} aria-hidden="true" />
+          <span className="text-sm text-muted-foreground">{label}</span>
+        </div>
+        <p className="text-xl font-bold sm:text-2xl">
+          <Currency
+            amount={amount}
+            className={cn("text-xl sm:text-2xl", tone)}
+          />
+        </p>
+      </CardContent>
+    </Card>
   );
 }

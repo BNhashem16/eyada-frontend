@@ -1,18 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
-  RefreshCw,
-  Loader2,
-  CheckCircle,
-  XCircle,
-  Clock,
-  ArrowUpRight,
-} from "lucide-react";
+import { RefreshCw, Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -31,16 +22,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PaginationControls } from "@/components/ui/pagination-controls";
+import {
+  Currency,
+  ListSkeleton,
+  PharmacyEmptyState,
+  SettlementStatusBadge,
+} from "@/components/pharmacy";
 import { useAdminSettlements, useProcessSettlement } from "../hooks";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import { SettlementStatus } from "@/types";
 
-const STATUS_CONFIG: Record<string, { variant: string; icon: typeof Clock }> = {
-  PENDING: { variant: "warning", icon: Clock },
-  PROCESSING: { variant: "info", icon: RefreshCw },
-  COMPLETED: { variant: "success", icon: CheckCircle },
-  FAILED: { variant: "error", icon: XCircle },
+const STATUS_ICONS: Record<string, typeof Clock> = {
+  PENDING: Clock,
+  PROCESSING: RefreshCw,
+  COMPLETED: CheckCircle,
+  FAILED: XCircle,
 };
 
 export function AdminSettlementsManagement() {
@@ -106,7 +103,10 @@ export function AdminSettlementsManagement() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-48">
+              <SelectTrigger
+                className="min-h-[44px] w-full sm:min-h-9 sm:w-48"
+                aria-label={t("admin.settlements.allStatuses")}
+              >
                 <SelectValue placeholder={t("admin.settlements.allStatuses")} />
               </SelectTrigger>
               <SelectContent>
@@ -140,85 +140,84 @@ export function AdminSettlementsManagement() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
-              ))}
-            </div>
+            <ListSkeleton rows={3} />
           ) : !settlements?.data?.length ? (
-            <div className="py-8 text-center">
-              <RefreshCw className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">
-                {t("admin.settlements.noSettlements")}
-              </p>
-            </div>
+            <PharmacyEmptyState
+              icon={RefreshCw}
+              title={t("admin.settlements.noSettlements")}
+            />
           ) : (
             <>
               <div className="space-y-3">
                 {settlements.data.map((s) => {
-                  const config =
-                    STATUS_CONFIG[s.status] || STATUS_CONFIG.PENDING;
-                  const StatusIcon = config.icon;
+                  const StatusIcon = STATUS_ICONS[s.status] ?? Clock;
+                  const pharmacyRel = (
+                    s as { wallet?: { pharmacy?: { name?: unknown } } }
+                  ).wallet?.pharmacy?.name as
+                    | { ar: string; en: string }
+                    | string
+                    | undefined;
                   return (
                     <div
                       key={s.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-3"
+                      className="flex flex-col justify-between gap-3 rounded-lg border p-4 sm:flex-row sm:items-center"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center shrink-0">
-                          <StatusIcon className="h-5 w-5" />
-                        </div>
+                        <span
+                          className="grid size-10 shrink-0 place-items-center rounded-full bg-muted"
+                          aria-hidden="true"
+                        >
+                          <StatusIcon className="size-5" />
+                        </span>
                         <div className="space-y-1">
                           <p className="font-semibold">
-                            {Number(s.amount).toFixed(2)} {t("common.egp")}
+                            <Currency amount={s.amount} />
                           </p>
-                          {(s as any).wallet?.pharmacy?.name && (
+                          {pharmacyRel ? (
                             <p className="text-sm text-muted-foreground">
                               {t("admin.settlements.pharmacy")}:{" "}
-                              {getLocalizedText(
-                                (s as any).wallet.pharmacy.name,
-                                locale,
-                              )}
+                              {getLocalizedText(pharmacyRel, locale)}
                             </p>
-                          )}
+                          ) : null}
                           <p className="text-xs text-muted-foreground">
                             {t("admin.settlements.requestDate")}:{" "}
                             {new Date(s.createdAt).toLocaleString(
                               locale === "ar" ? "ar-EG" : "en-US",
                             )}
                           </p>
-                          {s.notes && (
+                          {s.notes ? (
                             <p className="text-xs text-muted-foreground">
                               {t("admin.settlements.notes")}: {s.notes}
                             </p>
-                          )}
+                          ) : null}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 sm:flex-col sm:items-end">
-                        <Badge variant={config.variant as any}>
-                          {t(`admin.settlements.${s.status.toLowerCase()}`)}
-                        </Badge>
-                        {s.status === SettlementStatus.PENDING && (
-                          <div className="flex gap-1">
+                        <SettlementStatusBadge status={s.status} />
+                        {s.status === SettlementStatus.PENDING ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="min-h-[44px] sm:min-h-9"
+                            onClick={() =>
+                              openProcessDialog(
+                                s.id,
+                                SettlementStatus.PROCESSING,
+                              )
+                            }
+                          >
+                            <RefreshCw
+                              className="me-1 size-3"
+                              aria-hidden="true"
+                            />
+                            {t("admin.settlements.markProcessing")}
+                          </Button>
+                        ) : null}
+                        {s.status === SettlementStatus.PROCESSING ? (
+                          <div className="flex flex-wrap gap-2">
                             <Button
                               size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                openProcessDialog(
-                                  s.id,
-                                  SettlementStatus.PROCESSING,
-                                )
-                              }
-                            >
-                              <RefreshCw className="h-3 w-3 me-1" />
-                              {t("admin.settlements.markProcessing")}
-                            </Button>
-                          </div>
-                        )}
-                        {s.status === SettlementStatus.PROCESSING && (
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
+                              className="min-h-[44px] sm:min-h-9"
                               onClick={() =>
                                 openProcessDialog(
                                   s.id,
@@ -226,21 +225,28 @@ export function AdminSettlementsManagement() {
                                 )
                               }
                             >
-                              <CheckCircle className="h-3 w-3 me-1" />
+                              <CheckCircle
+                                className="me-1 size-3"
+                                aria-hidden="true"
+                              />
                               {t("admin.settlements.markCompleted")}
                             </Button>
                             <Button
                               size="sm"
                               variant="destructive"
+                              className="min-h-[44px] sm:min-h-9"
                               onClick={() =>
                                 openProcessDialog(s.id, SettlementStatus.FAILED)
                               }
                             >
-                              <XCircle className="h-3 w-3 me-1" />
+                              <XCircle
+                                className="me-1 size-3"
+                                aria-hidden="true"
+                              />
                               {t("admin.settlements.markFailed")}
                             </Button>
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   );
@@ -293,7 +299,12 @@ export function AdminSettlementsManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setProcessOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setProcessOpen(false)}
+              disabled={processSettlement.isPending}
+              className="min-h-[44px] sm:min-h-9"
+            >
               {t("common.cancel")}
             </Button>
             <Button
@@ -304,10 +315,14 @@ export function AdminSettlementsManagement() {
               }
               onClick={handleProcess}
               disabled={processSettlement.isPending}
+              className="min-h-[44px] sm:min-h-9"
             >
-              {processSettlement.isPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
+              {processSettlement.isPending ? (
+                <Loader2
+                  className="me-2 size-4 animate-spin"
+                  aria-hidden="true"
+                />
+              ) : null}
               {t("common.confirm")}
             </Button>
           </DialogFooter>

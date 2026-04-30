@@ -11,11 +11,20 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 2 * 60 * 1000, // 2 minutes
-            gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+            // Project policy ("موارد السيرفر"): every form of automatic
+            // refresh is disabled by default. Cache freshness is driven
+            // by mutation-driven invalidation and explicit user-triggered
+            // refresh (RefreshButton). Per-call sites can still opt in to
+            // a different staleTime, but cannot re-enable auto-refetch
+            // without an explicit override (caught by code review +
+            // pharmacy meta-test).
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            gcTime: 10 * 60 * 1000, // 10 minutes
             retry: 1,
             refetchOnWindowFocus: false,
-            refetchOnReconnect: "always",
+            refetchOnReconnect: false,
+            refetchOnMount: false,
+            refetchInterval: false,
           },
           mutations: {
             retry: 0,

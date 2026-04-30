@@ -7,7 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 
 const PrescriptionOrdersList = dynamic(
   () =>
-    import("@/features/patients/components/prescription-orders-list").then(
+    import("@/features/patient-pharmacy/components/prescription-orders-list").then(
       (mod) => ({ default: mod.PrescriptionOrdersList }),
     ),
   { loading: () => <Skeleton className="h-64 w-full" /> },

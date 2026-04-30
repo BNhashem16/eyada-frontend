@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPatch, apiPost } from "@/lib/api";
 import { PHARMACY_OWNER_ENDPOINTS } from "@/lib/api/endpoints";
@@ -10,6 +10,8 @@ import { DriverStatus } from "@/types/enums";
 import { toastError, toastSuccess } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { pharmacyDriverKeys, pharmacyOrderKeys } from "@/lib/query-keys";
 
 export interface PharmacyDriverFilters {
   page?: number;
@@ -24,8 +26,13 @@ export function usePharmacyDrivers(
 ) {
   const { page = 1, limit = 10, status, search } = filters;
 
-  return useQuery({
-    queryKey: ["pharmacy-drivers", pharmacyId, { page, limit, status, search }],
+  return usePharmacyQuery<PaginatedResponse<DriverProfile>>({
+    queryKey: pharmacyDriverKeys.list(pharmacyId, {
+      page,
+      limit,
+      status,
+      search,
+    }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -38,7 +45,6 @@ export function usePharmacyDrivers(
       );
     },
     enabled: !!pharmacyId,
-    staleTime: 1000 * 60,
   });
 }
 
@@ -60,7 +66,7 @@ export function useCreatePharmacyDriver(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-drivers", pharmacyId],
+        queryKey: pharmacyDriverKeys.lists(pharmacyId),
       });
       toastSuccess(
         t("toast.success"),
@@ -89,7 +95,7 @@ export function useApprovePharmacyDriver(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-drivers", pharmacyId],
+        queryKey: pharmacyDriverKeys.lists(pharmacyId),
       });
       toastSuccess(
         t("toast.success"),
@@ -118,7 +124,7 @@ export function useRejectPharmacyDriver(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-drivers", pharmacyId],
+        queryKey: pharmacyDriverKeys.lists(pharmacyId),
       });
       toastSuccess(
         t("toast.success"),
@@ -147,7 +153,7 @@ export function useSuspendPharmacyDriver(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-drivers", pharmacyId],
+        queryKey: pharmacyDriverKeys.lists(pharmacyId),
       });
       toastSuccess(
         t("toast.success"),
@@ -176,7 +182,7 @@ export function useActivatePharmacyDriver(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-drivers", pharmacyId],
+        queryKey: pharmacyDriverKeys.lists(pharmacyId),
       });
       toastSuccess(
         t("toast.success"),
@@ -193,15 +199,14 @@ export function useActivatePharmacyDriver(pharmacyId: string) {
 }
 
 export function useAvailableDrivers(pharmacyId: string, orderId: string) {
-  return useQuery({
-    queryKey: ["available-drivers", pharmacyId, orderId],
-    queryFn: async () => {
-      return apiGet<DriverProfile[]>(
+  return usePharmacyQuery<DriverProfile[]>({
+    queryKey: pharmacyDriverKeys.availableForOrder(pharmacyId, orderId),
+    queryFn: async () =>
+      apiGet<DriverProfile[]>(
         PHARMACY_OWNER_ENDPOINTS.AVAILABLE_DRIVERS(pharmacyId, orderId),
-      );
-    },
+      ),
     enabled: !!pharmacyId && !!orderId,
-    staleTime: 1000 * 30,
+    preset: "fast-changing",
   });
 }
 
@@ -223,8 +228,10 @@ export function useAssignDriver(pharmacyId: string) {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pharmacy-orders"] });
-      queryClient.invalidateQueries({ queryKey: ["pharmacy-order"] });
+      // Driver assignment changes order detail + list state.
+      queryClient.invalidateQueries({
+        queryKey: pharmacyOrderKeys.scoped(pharmacyId),
+      });
       toastSuccess(
         t("toast.success"),
         t("pharmacyOwner.drivers.driverAssigned"),
@@ -257,8 +264,10 @@ export function useReassignDriver(pharmacyId: string) {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pharmacy-orders"] });
-      queryClient.invalidateQueries({ queryKey: ["pharmacy-order"] });
+      // Driver assignment changes order detail + list state.
+      queryClient.invalidateQueries({
+        queryKey: pharmacyOrderKeys.scoped(pharmacyId),
+      });
       toastSuccess(
         t("toast.success"),
         t("pharmacyOwner.drivers.driverReassigned"),

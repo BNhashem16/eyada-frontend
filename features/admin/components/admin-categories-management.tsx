@@ -9,14 +9,12 @@ import {
   Loader2,
   ChevronRight,
   Package,
-  AlertTriangle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -32,15 +30,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  ConfirmDialog,
+  ListSkeleton,
+  PharmacyEmptyState,
+  PharmacyErrorState,
+} from "@/components/pharmacy";
 import {
   useAdminCategories,
   useCreateCategory,
@@ -139,40 +133,20 @@ export function AdminCategoriesManagement() {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleteId) return;
-    deleteCategory.mutate(deleteId, {
-      onSuccess: () => setDeleteId(null),
-    });
+    await deleteCategory.mutateAsync(deleteId);
+    setDeleteId(null);
   };
 
   const isPending = createCategory.isPending || updateCategory.isPending;
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-4">
-              <Skeleton className="h-6 w-40" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    return <ListSkeleton rows={4} />;
   }
 
   if (isError) {
-    return (
-      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
-        <CardContent className="py-10 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
-          <p className="text-error-600 dark:text-error-400">
-            {t("admin.loadError")}
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <PharmacyErrorState />;
   }
 
   const allCategories = categories || [];
@@ -245,15 +219,11 @@ export function AdminCategoriesManagement() {
         </CardHeader>
         <CardContent>
           {allCategories.length === 0 ? (
-            <div className="py-10 text-center">
-              <Grid3X3 className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">
-                {t("admin.categories.noCategories")}
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t("admin.categories.addFirst")}
-              </p>
-            </div>
+            <PharmacyEmptyState
+              icon={Grid3X3}
+              title={t("admin.categories.noCategories")}
+              description={t("admin.categories.addFirst")}
+            />
           ) : (
             <div className="divide-y">
               {rootCategories.map((cat) => renderCategory(cat))}
@@ -382,30 +352,15 @@ export function AdminCategoriesManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("admin.categories.deleteConfirm")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-error-600 hover:bg-error-700"
-              disabled={deleteCategory.isPending}
-            >
-              {deleteCategory.isPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title={t("common.confirmDelete")}
+        description={t("admin.categories.deleteConfirm")}
+        tone="destructive"
+        confirmLabel={t("common.delete")}
+        onConfirm={handleDelete}
+      />
     </>
   );
 }

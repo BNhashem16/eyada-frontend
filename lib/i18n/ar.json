@@ -88,7 +88,11 @@
     "share": "مشاركة",
     "copyLink": "نسخ الرابط",
     "linkCopied": "تم نسخ الرابط",
-    "download": "تحميل"
+    "download": "تحميل",
+    "refresh": "تحديث",
+    "retry": "إعادة المحاولة",
+    "somethingWentWrong": "حدث خطأ ما",
+    "unknownError": "خطأ غير معروف"
   },
   "app": {
     "name": "عيادة",
@@ -234,7 +238,23 @@
     "changePasswordSuccessTitle": "تم تغيير كلمة المرور",
     "changePasswordSuccessDesc": "تم تحديث كلمة المرور بنجاح",
     "changePasswordErrorTitle": "خطأ",
-    "changePasswordFailedDefault": "فشل في تغيير كلمة المرور. تأكد من كلمة المرور الحالية."
+    "changePasswordFailedDefault": "فشل في تغيير كلمة المرور. تأكد من كلمة المرور الحالية.",
+    "loginRequiredTitle": "يجب تسجيل الدخول",
+    "loginRequiredDesc": "يرجى تسجيل الدخول للمتابعة",
+    "brand": {
+      "welcome": "مرحباً بك في عيادة",
+      "tagline": "منصتك الطبية الموثوقة لحجز المواعيد، إدارة الوصفات، وتلقي الرعاية أينما كنت.",
+      "feature1Title": "أفضل الأطباء",
+      "feature1Description": "أكثر من 500 طبيب في جميع التخصصات بانتظارك",
+      "feature2Title": "حجز فوري",
+      "feature2Description": "احجز موعدك في ثوانٍ مع تأكيد لحظي",
+      "feature3Title": "وصفات وأدوية",
+      "feature3Description": "أرسل وصفتك واستلم أدويتك حتى باب البيت",
+      "trustBadge": "موثوق به من آلاف المرضى في مصر",
+      "secureNote": "اتصال آمن ومشفر",
+      "loginAside": "أدخل بياناتك للمتابعة إلى حسابك في عيادة.",
+      "registerAside": "أنشئ حسابك خلال دقيقة واستمتع بتجربة طبية متكاملة."
+    }
   },
   "home": {
     "heroTitle": "احجز موعدك مع",
@@ -316,7 +336,23 @@
     "whatsappNumber": "واتساب",
     "backToSearch": "العودة للبحث",
     "loadError": "حدث خطأ أثناء تحميل بيانات الطبيب. يرجى المحاولة مرة أخرى.",
-    "doctorPrefix": "د."
+    "doctorPrefix": "د.",
+    "callNow": "اتصل الآن",
+    "messageOnWhatsapp": "تواصل عبر واتساب",
+    "shareProfile": "مشاركة الملف",
+    "linkCopied": "تم نسخ الرابط",
+    "verified": "موثّق",
+    "topRated": "تقييم مرتفع",
+    "clinicsCount": "{count} عيادة",
+    "clinicsCountSingle": "عيادة واحدة",
+    "noClinicsHint": "هذا الطبيب لم يضف عيادات حالياً. يمكنك العودة لاحقاً أو تصفح أطباء آخرين.",
+    "browseDoctors": "تصفّح الأطباء",
+    "scrollHint": "اسحب للأفقي لعرض المزيد",
+    "nearYou": "قريب منك",
+    "matchesYourLocation": "يطابق عنوانك",
+    "distanceAway": "حوالي {km} كم",
+    "basedOnYourAddress": "تم الترتيب بناءً على عنوانك المحفوظ",
+    "matchingClinicsCount": "{count} عيادة قريبة منك"
   },
   "clinics": {
     "title": "العيادات",
@@ -2362,6 +2398,7 @@
     "priceLabel": "السعر:",
     "confirmBooking": "تأكيد الحجز",
     "loginToBook": "سجل دخول للحجز",
+    "loginRequiredMessage": "تحتاج إلى تسجيل الدخول قبل أن تتمكن من حجز موعد. سننقلك إلى صفحة تسجيل الدخول ثم نعيدك إلى هنا.",
     "bookingInProgress": "جاري الحجز...",
     "selectAllRequired": "يرجى اختيار جميع البيانات المطلوبة",
     "bookingSuccessTitle": "تم الحجز بنجاح",
@@ -2483,6 +2520,40 @@
     "notFound": "الموعد غير موجود",
     "notFoundDesc": "لم نتمكن من إيجاد موعد بهذا الرقم. يرجى التحقق والمحاولة مرة أخرى.",
     "trackBooking": "تتبع الحجز"
+  },
+  "pharmacy": {
+    "orderStatus": {
+      "PENDING": "قيد الانتظار",
+      "CONFIRMED": "مؤكد",
+      "PREPARING": "قيد التحضير",
+      "READY_FOR_PICKUP": "جاهز للاستلام",
+      "OUT_FOR_DELIVERY": "في الطريق للتوصيل",
+      "DELIVERED": "تم التوصيل",
+      "CANCELLED": "ملغي",
+      "RETURNED": "مرتجع",
+      "REFUNDED": "مسترد"
+    },
+    "settlementStatus": {
+      "PENDING": "قيد الانتظار",
+      "PROCESSING": "قيد المعالجة",
+      "COMPLETED": "مكتمل",
+      "FAILED": "فشل"
+    },
+    "prescriptionStatus": {
+      "PENDING": "قيد الانتظار",
+      "ASSIGNED": "تم الإسناد",
+      "IN_REVIEW": "قيد المراجعة",
+      "READY": "جاهز",
+      "FULFILLED": "تم الصرف",
+      "REJECTED": "مرفوض",
+      "CANCELLED": "ملغي",
+      "EXPIRED": "منتهي الصلاحية"
+    },
+    "stock": {
+      "outOfStock": "غير متوفر",
+      "low": "مخزون منخفض ({count})",
+      "inStock": "متوفر ({count})"
+    }
   },
   "pages": {
     "forgotPassword": {

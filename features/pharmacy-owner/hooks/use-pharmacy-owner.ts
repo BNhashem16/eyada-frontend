@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { PHARMACY_OWNER_ENDPOINTS } from "@/lib/api/endpoints";
@@ -13,6 +13,8 @@ import type {
 import { toastError, toastSuccess } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { pharmacyKeys } from "@/lib/query-keys";
 
 // ==================== Queries ====================
 
@@ -25,8 +27,8 @@ export interface PharmacyOwnerFilters {
 export function useMyPharmacies(filters: PharmacyOwnerFilters = {}) {
   const { page = 1, limit = 10, search } = filters;
 
-  return useQuery({
-    queryKey: ["my-pharmacies", { page, limit, search }],
+  return usePharmacyQuery<PaginatedResponse<Pharmacy>>({
+    queryKey: pharmacyKeys.list({ page, limit, search }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -37,18 +39,15 @@ export function useMyPharmacies(filters: PharmacyOwnerFilters = {}) {
         `${PHARMACY_OWNER_ENDPOINTS.PHARMACIES}?${params.toString()}`,
       );
     },
-    staleTime: 1000 * 60,
   });
 }
 
 export function useMyPharmacy(pharmacyId: string) {
-  return useQuery({
-    queryKey: ["my-pharmacy", pharmacyId],
-    queryFn: async () => {
-      return apiGet<Pharmacy>(PHARMACY_OWNER_ENDPOINTS.PHARMACY(pharmacyId));
-    },
+  return usePharmacyQuery<Pharmacy>({
+    queryKey: pharmacyKeys.detail(pharmacyId),
+    queryFn: async () =>
+      apiGet<Pharmacy>(PHARMACY_OWNER_ENDPOINTS.PHARMACY(pharmacyId)),
     enabled: !!pharmacyId,
-    staleTime: 1000 * 60,
   });
 }
 
@@ -63,7 +62,7 @@ export function useCreatePharmacy() {
       return apiPost<Pharmacy>(PHARMACY_OWNER_ENDPOINTS.PHARMACIES, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-pharmacies"] });
+      queryClient.invalidateQueries({ queryKey: pharmacyKeys.lists() });
       toastSuccess(t("toast.success"), t("pharmacyOwner.addPharmacy"));
     },
     onError: (error: AxiosError<ApiError>) => {
@@ -89,9 +88,11 @@ export function useUpdatePharmacy() {
         data,
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-pharmacies"] });
-      queryClient.invalidateQueries({ queryKey: ["my-pharmacy"] });
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: pharmacyKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: pharmacyKeys.detail(vars.pharmacyId),
+      });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(
@@ -111,7 +112,7 @@ export function useDeletePharmacy() {
       return apiDelete(PHARMACY_OWNER_ENDPOINTS.PHARMACY(pharmacyId));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-pharmacies"] });
+      queryClient.invalidateQueries({ queryKey: pharmacyKeys.lists() });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(

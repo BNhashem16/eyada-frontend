@@ -1,0 +1,129 @@
+- generic [active] [ref=e1]:
+    - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+        - img [ref=e8]
+    - alert [ref=e11]
+    - generic [ref=e13]:
+        - complementary [ref=e14]:
+            - generic [ref=e15]:
+                - link "Eyada" [ref=e16] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e18]
+                    - generic [ref=e22]: Eyada
+                - generic [ref=e23]:
+                    - generic [ref=e24]:
+                        - img [ref=e25]
+                        - text: Medical Appointment Booking System
+                    - heading "Welcome to Eyada" [level=2] [ref=e27]
+                    - paragraph [ref=e28]: Your trusted healthcare platform for booking appointments, managing prescriptions, and receiving care wherever you are.
+                    - paragraph [ref=e29]: Create your account in under a minute and enjoy a complete medical experience.
+            - list [ref=e31]:
+                - listitem [ref=e32]:
+                    - img [ref=e34]
+                    - generic [ref=e38]:
+                        - paragraph [ref=e39]: Top Doctors
+                        - paragraph [ref=e40]: Over 500 specialists across every medical field
+                - listitem [ref=e41]:
+                    - img [ref=e43]
+                    - generic [ref=e46]:
+                        - paragraph [ref=e47]: Instant Booking
+                        - paragraph [ref=e48]: Reserve your appointment in seconds with real-time confirmation
+                - listitem [ref=e49]:
+                    - img [ref=e51]
+                    - generic [ref=e54]:
+                        - paragraph [ref=e55]: Prescriptions & Pharmacy
+                        - paragraph [ref=e56]: Send your prescription and get your medicine delivered to your door
+            - generic [ref=e57]:
+                - img [ref=e58]
+                - generic [ref=e61]: Trusted by thousands of patients across Egypt
+        - generic [ref=e62]:
+            - banner [ref=e63]:
+                - generic [ref=e64]:
+                    - button "Change Language" [ref=e65]:
+                        - img
+                        - generic [ref=e66]: Change Language
+                    - button "Toggle Theme" [ref=e67]:
+                        - img
+                        - generic [ref=e68]: Toggle Theme
+            - main [ref=e69]:
+                - generic [ref=e70]:
+                    - generic [ref=e71]:
+                        - generic [ref=e72]:
+                            - img [ref=e74]
+                            - heading "Create New Account" [level=1] [ref=e77]
+                            - paragraph [ref=e78]: Join us and book your appointments easily
+                        - generic [ref=e79]:
+                            - generic [ref=e80]:
+                                - text: Account Type
+                                - generic [ref=e81]:
+                                    - generic [ref=e82] [cursor=pointer]:
+                                        - radio "Patient" [checked] [ref=e83]
+                                        - img [ref=e84]
+                                        - generic [ref=e87]: Patient
+                                    - generic [ref=e88] [cursor=pointer]:
+                                        - radio "Doctor" [ref=e89]
+                                        - img [ref=e90]
+                                        - generic [ref=e94]: Doctor
+                                    - generic [ref=e95] [cursor=pointer]:
+                                        - radio "Pharmacy Owner" [ref=e96]
+                                        - img [ref=e97]
+                                        - generic [ref=e100]: Pharmacy Owner
+                            - generic [ref=e101]:
+                                - generic [ref=e102]: Full Name*
+                                - generic [ref=e103]:
+                                    - img [ref=e105]
+                                    - textbox "Full Name*" [ref=e108]:
+                                        - /placeholder: John Doe
+                            - generic [ref=e109]:
+                                - generic [ref=e110]: Email*
+                                - generic [ref=e111]:
+                                    - img [ref=e113]
+                                    - textbox "Email*" [ref=e116]:
+                                        - /placeholder: example@email.com
+                            - generic [ref=e117]:
+                                - generic [ref=e118]: Phone Number*
+                                - generic [ref=e119]:
+                                    - img [ref=e121]
+                                    - textbox "Phone Number*" [ref=e123]:
+                                        - /placeholder: "01012345678"
+                            - generic [ref=e124]:
+                                - generic [ref=e125]: Password*
+                                - generic [ref=e126]:
+                                    - generic [ref=e127]:
+                                        - img [ref=e129]
+                                        - textbox "Password*" [ref=e132]:
+                                            - /placeholder: "********"
+                                    - button [ref=e133]:
+                                        - img [ref=e134]
+                            - generic [ref=e137]:
+                                - generic [ref=e138]: Confirm Password*
+                                - generic [ref=e139]:
+                                    - generic [ref=e140]:
+                                        - img [ref=e142]
+                                        - textbox "Confirm Password*" [ref=e145]:
+                                            - /placeholder: "********"
+                                    - button [ref=e146]:
+                                        - img [ref=e147]
+                            - generic [ref=e150]:
+                                - checkbox "I agree to the Terms and Conditions and Privacy Policy" [ref=e151]
+                                - checkbox
+                                - generic [ref=e152]:
+                                    - text: I agree to the
+                                    - link "Terms and Conditions" [ref=e153] [cursor=pointer]:
+                                        - /url: /terms
+                                    - text: and
+                                    - link "Privacy Policy" [ref=e154] [cursor=pointer]:
+                                        - /url: /privacy
+                            - button "Create Account" [ref=e155]
+                            - paragraph [ref=e156]:
+                                - text: Already have an account?
+                                - link "Login" [ref=e157] [cursor=pointer]:
+                                    - /url: /login
+                    - paragraph [ref=e158]:
+                        - img [ref=e159]
+                        - generic [ref=e162]: Secure and encrypted connection
+    - region "Notifications (F8)":
+        - list
+    - generic [ref=e163]:
+        - img [ref=e165]
+        - button "Open Tanstack query devtools" [ref=e213] [cursor=pointer]:
+            - img [ref=e214]

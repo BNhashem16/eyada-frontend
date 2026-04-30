@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPatch } from "@/lib/api";
 import { PHARMACY_OWNER_ENDPOINTS } from "@/lib/api/endpoints";
@@ -9,6 +9,8 @@ import type { PharmacyOrder, UpdateOrderStatusDto } from "@/types/order";
 import { toastError, toastSuccess } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { pharmacyOrderKeys } from "@/lib/query-keys";
 
 export interface PharmacyOrderFilters {
   page?: number;
@@ -23,8 +25,15 @@ export function usePharmacyOrders(
 ) {
   const { page = 1, limit = 10, status, search } = filters;
 
-  return useQuery({
-    queryKey: ["pharmacy-orders", pharmacyId, { page, limit, status, search }],
+  // 'fast-changing': owner watches the orders pipeline closely; 60s
+  // staleTime keeps the list snappy while still avoiding mount-refetch.
+  return usePharmacyQuery<PaginatedResponse<PharmacyOrder>>({
+    queryKey: pharmacyOrderKeys.list(pharmacyId, {
+      page,
+      limit,
+      status,
+      search,
+    }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -37,20 +46,21 @@ export function usePharmacyOrders(
       );
     },
     enabled: !!pharmacyId,
-    staleTime: 1000 * 30,
+    preset: "fast-changing",
   });
 }
 
 export function usePharmacyOrder(pharmacyId: string, orderId: string) {
-  return useQuery({
-    queryKey: ["pharmacy-order", pharmacyId, orderId],
-    queryFn: async () => {
-      return apiGet<PharmacyOrder>(
+  // 'fast-changing': order detail page reflects status mid-flight while
+  // owner moves the order through the pipeline.
+  return usePharmacyQuery<PharmacyOrder>({
+    queryKey: pharmacyOrderKeys.detail(pharmacyId, orderId),
+    queryFn: async () =>
+      apiGet<PharmacyOrder>(
         PHARMACY_OWNER_ENDPOINTS.ORDER(pharmacyId, orderId),
-      );
-    },
+      ),
     enabled: !!pharmacyId && !!orderId,
-    staleTime: 1000 * 30,
+    preset: "fast-changing",
   });
 }
 
@@ -68,11 +78,14 @@ export function useUpdateOrderStatus(pharmacyId: string) {
         data,
       );
     },
-    onSuccess: () => {
+    onSuccess: (_, vars) => {
+      // Targeted invalidation: this pharmacy's order list + the one detail.
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-orders", pharmacyId],
+        queryKey: pharmacyOrderKeys.lists(pharmacyId),
       });
-      queryClient.invalidateQueries({ queryKey: ["pharmacy-order"] });
+      queryClient.invalidateQueries({
+        queryKey: pharmacyOrderKeys.detail(pharmacyId, vars.orderId),
+      });
       toastSuccess(t("toast.success"), t("pharmacyOwner.orderStatusUpdated"));
     },
     onError: (error: AxiosError<ApiError>) => {

@@ -7,8 +7,10 @@ import {
   Clock,
   Phone,
   Calendar,
-  ChevronLeft,
+  ArrowLeft,
+  ArrowRight,
   Stethoscope,
+  Wallet,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,13 +23,23 @@ import { getLocalizedText } from "@/lib/utils/multilingual";
 interface ClinicCardProps {
   clinic: Clinic;
   showBookButton?: boolean;
+  /**
+   * True when this clinic matches the logged-in patient's saved address.
+   * Renders a "Near you" badge and a primary-tinted ring on the card.
+   */
+  isNearYou?: boolean;
+  /** Optional distance in km — only shown when geo-matched. */
+  distanceKm?: number;
 }
 
 export const ClinicCard = React.memo(function ClinicCard({
   clinic,
   showBookButton = false,
+  isNearYou = false,
+  distanceKm,
 }: ClinicCardProps) {
-  const { t, locale } = useTranslation();
+  const { t, locale, isRtl } = useTranslation();
+  const ChevronForward = isRtl ? ArrowLeft : ArrowRight;
 
   const { workingDays, consultationPrice } = useMemo(() => {
     const dayNames: Record<DayOfWeek, string> = {
@@ -48,7 +60,16 @@ export const ClinicCard = React.memo(function ClinicCard({
   }, [clinic.schedules, clinic.serviceTypes, t]);
 
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800">
+    <Card
+      className={`group relative overflow-hidden transition-all duration-300 hover:shadow-lg ${
+        isNearYou
+          ? "border-primary-400/70 ring-1 ring-primary-400/40 shadow-md dark:border-primary-500/60 dark:ring-primary-500/30"
+          : "hover:border-primary-200 dark:hover:border-primary-800"
+      }`}
+    >
+      {isNearYou && (
+        <div className="absolute top-0 start-0 end-0 h-1 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500" />
+      )}
       <CardContent className="p-5">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Clinic Icon */}
@@ -59,26 +80,44 @@ export const ClinicCard = React.memo(function ClinicCard({
           {/* Clinic Info */}
           <div className="flex-1">
             <div className="flex items-start justify-between gap-4">
-              <div>
-                <Link
-                  href={`/clinics/${clinic.id}`}
-                  className="text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                >
-                  {getLocalizedText(clinic.name, locale)}
-                </Link>
-                {clinic.isActive && (
-                  <Badge variant="success" className="ms-2 text-xs">
-                    {t("clinics.available")}
-                  </Badge>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link
+                    href={`/clinics/${clinic.id}`}
+                    className="text-lg font-bold text-foreground hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  >
+                    {getLocalizedText(clinic.name, locale)}
+                  </Link>
+                  {clinic.isActive && (
+                    <Badge variant="success" className="text-xs">
+                      {t("clinics.available")}
+                    </Badge>
+                  )}
+                  {isNearYou && (
+                    <Badge className="gap-1 text-[11px] sm:text-xs">
+                      <MapPin className="h-3 w-3" />
+                      {typeof distanceKm === "number"
+                        ? t("doctors.distanceAway", { km: distanceKm })
+                        : t("doctors.nearYou")}
+                    </Badge>
+                  )}
+                </div>
+                {isNearYou && (
+                  <p className="text-[11px] text-primary-700 dark:text-primary-300 mt-1">
+                    {t("doctors.matchesYourLocation")}
+                  </p>
                 )}
               </div>
               {consultationPrice && (
-                <div className="text-end">
-                  <span className="text-sm text-muted-foreground">
-                    {t("clinics.consultation")}
-                  </span>
-                  <div className="font-bold text-primary-600 dark:text-primary-400">
-                    {consultationPrice} {t("common.currency")}
+                <div className="flex items-center gap-2 rounded-lg border border-primary-200/60 bg-primary-50/60 px-2.5 py-1.5 dark:border-primary-800/40 dark:bg-primary-900/20 shrink-0">
+                  <Wallet className="h-4 w-4 text-primary-600 dark:text-primary-400 shrink-0" />
+                  <div className="text-end leading-tight">
+                    <span className="block text-[11px] text-muted-foreground">
+                      {t("clinics.consultation")}
+                    </span>
+                    <span className="font-bold text-primary-700 dark:text-primary-300 text-sm">
+                      {consultationPrice} {t("common.currency")}
+                    </span>
                   </div>
                 </div>
               )}
@@ -145,11 +184,11 @@ export const ClinicCard = React.memo(function ClinicCard({
             {/* Book Button */}
             {showBookButton && (
               <div className="mt-4 pt-4 border-t border-border">
-                <Button asChild size="sm" className="gap-1">
+                <Button asChild size="sm" className="gap-1 min-h-[44px]">
                   <Link href={`/clinics/${clinic.id}`}>
                     <Calendar className="h-4 w-4" />
                     {t("doctors.bookAppointment")}
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronForward className="h-4 w-4" />
                   </Link>
                 </Button>
               </div>

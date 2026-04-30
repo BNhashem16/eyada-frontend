@@ -1,7 +1,16 @@
+import { cache } from "react";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import {
+  QueryClient,
+  HydrationBoundary,
+  dehydrate,
+} from "@tanstack/react-query";
 import { DoctorProfileComponent } from "@/features/doctors";
 import { getTranslation } from "@/lib/i18n";
 import { JsonLd } from "@/components/seo/json-ld";
+import type { DoctorProfile } from "@/types";
+import { PUBLIC_ENDPOINTS } from "@/lib/api/endpoints";
 
 const BASE_URL = "https://clinics-eg.com";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -10,40 +19,18 @@ interface DoctorPageProps {
   params: Promise<{ id: string }>;
 }
 
-interface DoctorData {
-  id: string;
-  user: { fullName: string; phoneNumber?: string };
-  specialty: { name: { ar: string; en: string } };
-  bio?: { ar: string; en: string };
-  qualifications?: { ar: string; en: string };
-  averageRating: number;
-  totalRatings: number;
-  profileImage?: string;
-  yearsOfExperience?: number;
-  clinics?: {
-    id: string;
-    name: { ar: string; en: string };
-    address: { ar: string; en: string };
-    phoneNumbers: string[];
-    city?: {
-      name: { ar: string; en: string };
-      state?: { name: { ar: string; en: string } };
-    };
-  }[];
-}
-
-async function fetchDoctor(id: string): Promise<DoctorData | null> {
+const fetchDoctor = cache(async (id: string): Promise<DoctorProfile | null> => {
   try {
-    const res = await fetch(`${API_BASE}/doctors/${id}`, {
+    const res = await fetch(`${API_BASE}${PUBLIC_ENDPOINTS.DOCTOR(id)}`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
     const json = await res.json();
-    return json.data || json;
+    return (json?.data ?? json) as DoctorProfile;
   } catch {
     return null;
   }
-}
+});
 
 export async function generateMetadata({
   params,
@@ -58,7 +45,7 @@ export async function generateMetadata({
     };
   }
 
-  const name = doctor.user.fullName;
+  const name = doctor.user?.fullName ?? doctor.user?.name ?? "";
   const specialtyAr = doctor.specialty?.name?.ar || "";
   const specialtyEn = doctor.specialty?.name?.en || "";
   const bio = doctor.bio?.ar || "";
@@ -106,9 +93,23 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
   const { id } = await params;
   const doctor = await fetchDoctor(id);
 
-  const name = doctor?.user?.fullName || "";
-  const specialtyAr = doctor?.specialty?.name?.ar || "";
-  const specialtyEn = doctor?.specialty?.name?.en || "";
+  if (!doctor) {
+    notFound();
+  }
+
+  // Pre-fill the React Query cache so the client component renders the
+  // doctor (and its clinics tab) immediately with no skeleton flash.
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["doctor", id],
+    queryFn: () => Promise.resolve(doctor),
+  });
+
+  const dehydratedState = dehydrate(queryClient);
+
+  const name = doctor.user?.fullName ?? doctor.user?.name ?? "";
+  const specialtyAr = doctor.specialty?.name?.ar || "";
+  const specialtyEn = doctor.specialty?.name?.en || "";
 
   const drPrefix = getTranslation("seo.doctorPrefix");
   const physicianJsonLd: Record<string, unknown> = {
@@ -116,11 +117,11 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
     "@type": "Physician",
     name: name ? `${drPrefix} ${name}` : undefined,
     description:
-      doctor?.bio?.ar || getTranslation("meta.doctorProfile.description"),
+      doctor.bio?.ar || getTranslation("meta.doctorProfile.description"),
     url: `${BASE_URL}/doctors/${id}`,
     medicalSpecialty: specialtyEn || specialtyAr,
-    ...(doctor?.profileImage && { image: doctor.profileImage }),
-    ...(doctor?.averageRating && {
+    ...(doctor.profileImage && { image: doctor.profileImage }),
+    ...(doctor.averageRating && {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: doctor.averageRating,
@@ -129,7 +130,7 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
         worstRating: 1,
       },
     }),
-    ...(doctor?.yearsOfExperience && {
+    ...(doctor.yearsOfExperience && {
       yearsOfExperience: doctor.yearsOfExperience,
     }),
     isPartOf: {
@@ -139,14 +140,13 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
     },
   };
 
-  // Add clinic locations if available
-  if (doctor?.clinics?.length) {
+  if (doctor.clinics?.length) {
     physicianJsonLd.workLocation = doctor.clinics.map((clinic) => ({
       "@type": "MedicalClinic",
-      name: clinic.name.ar,
+      name: clinic.name?.ar,
       address: {
         "@type": "PostalAddress",
-        streetAddress: clinic.address.ar,
+        streetAddress: clinic.address?.ar,
         addressLocality: clinic.city?.name?.ar,
         addressRegion: clinic.city?.state?.name?.ar,
         addressCountry: "EG",
@@ -186,8 +186,10 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
     <>
       <JsonLd data={physicianJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      <div className="container mx-auto px-4 py-8">
-        <DoctorProfileComponent doctorId={id} />
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <HydrationBoundary state={dehydratedState}>
+          <DoctorProfileComponent doctorId={id} />
+        </HydrationBoundary>
       </div>
     </>
   );

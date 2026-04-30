@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Megaphone, Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,16 +17,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -35,6 +25,13 @@ import {
 } from "@/components/ui/select";
 import { DatePickerInput } from "@/components/ui/date-picker-input";
 import { PaginationControls } from "@/components/ui/pagination-controls";
+import {
+  ConfirmDialog,
+  Currency,
+  ListSkeleton,
+  PharmacyEmptyState,
+  RefreshButton,
+} from "@/components/pharmacy";
 import {
   useMyPharmacies,
   usePharmacyCampaigns,
@@ -46,6 +43,7 @@ import {
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import { CampaignCalculationType, CampaignStatus, DiscountType } from "@/types";
+import { pharmacyCampaignKeys } from "@/lib/query-keys";
 import type { PharmacyCampaign, CreateCampaignDto } from "@/types/campaign";
 
 const STATUS_VARIANTS: Record<string, string> = {
@@ -77,6 +75,7 @@ const CALCULATION_TYPE_KEYS: Record<string, string> = {
 
 export function PharmacyCampaignsList() {
   const { t, locale } = useTranslation();
+  const queryClient = useQueryClient();
   const { data: pharmacies, isLoading: loadingPharmacies } = useMyPharmacies();
 
   const [selectedPharmacy, setSelectedPharmacy] = useState("");
@@ -104,10 +103,22 @@ export function PharmacyCampaignsList() {
   const pharmacyList = pharmacies?.data;
   const pharmacyId = selectedPharmacy || pharmacyList?.[0]?.id || "";
 
-  // Auto-select first pharmacy
-  if (!selectedPharmacy && pharmacyList?.length) {
-    setSelectedPharmacy(pharmacyList[0].id);
-  }
+  // Default to first pharmacy in an effect (no setState during render).
+  useEffect(() => {
+    if (!selectedPharmacy && pharmacyList?.length) {
+      setSelectedPharmacy(pharmacyList[0].id);
+    }
+  }, [pharmacyList, selectedPharmacy]);
+
+  const handleRefresh = useMemo(
+    () => async () => {
+      if (!pharmacyId) return;
+      await queryClient.invalidateQueries({
+        queryKey: pharmacyCampaignKeys.lists(pharmacyId),
+      });
+    },
+    [queryClient, pharmacyId],
+  );
 
   const { data: campaigns, isLoading: loadingCampaigns } = usePharmacyCampaigns(
     pharmacyId,
@@ -179,12 +190,9 @@ export function PharmacyCampaignsList() {
     updateCampaignStatus.mutate({ campaignId, status: newStatus });
   };
 
-  const handleDelete = () => {
-    if (deleteId) {
-      deleteCampaign.mutate(deleteId, {
-        onSuccess: () => setDeleteId(null),
-      });
-    }
+  const confirmDelete = async () => {
+    if (deleteId) await deleteCampaign.mutateAsync(deleteId);
+    setDeleteId(null);
   };
 
   const isLoading = loadingPharmacies || loadingCampaigns;
@@ -192,16 +200,19 @@ export function PharmacyCampaignsList() {
 
   return (
     <div className="space-y-4">
-      {/* Pharmacy Selector + Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4 items-center">
-            {pharmacyList && pharmacyList.length > 1 && (
+      {/* Sticky filter bar (mobile) */}
+      <Card className="sticky top-0 z-10 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:static sm:bg-card sm:backdrop-blur-none">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+            {pharmacyList && pharmacyList.length > 1 ? (
               <Select
                 value={selectedPharmacy}
                 onValueChange={setSelectedPharmacy}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger
+                  className="min-h-[44px] w-full sm:min-h-9 sm:w-48"
+                  aria-label={t("pharmacyOwner.selectPharmacy")}
+                >
                   <SelectValue
                     placeholder={t("pharmacyOwner.selectPharmacy")}
                   />
@@ -214,7 +225,7 @@ export function PharmacyCampaignsList() {
                   ))}
                 </SelectContent>
               </Select>
-            )}
+            ) : null}
             <Select
               value={statusFilter}
               onValueChange={(v) => {
@@ -222,7 +233,10 @@ export function PharmacyCampaignsList() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger
+                className="min-h-[44px] w-full sm:min-h-9 sm:w-40"
+                aria-label={t("pharmacyOwner.allStatuses")}
+              >
                 <SelectValue placeholder={t("pharmacyOwner.allStatuses")} />
               </SelectTrigger>
               <SelectContent>
@@ -236,9 +250,14 @@ export function PharmacyCampaignsList() {
                 ))}
               </SelectContent>
             </Select>
-            <div className="ms-auto">
-              <Button onClick={openCreateForm} disabled={!pharmacyId}>
-                <Plus className="h-4 w-4 me-2" />
+            <RefreshButton onRefresh={handleRefresh} />
+            <div className="md:ms-auto">
+              <Button
+                onClick={openCreateForm}
+                disabled={!pharmacyId}
+                className="min-h-[44px] w-full sm:min-h-9 sm:w-auto"
+              >
+                <Plus className="me-2 size-4" aria-hidden="true" />
                 {t("pharmacyOwner.createCampaign")}
               </Button>
             </div>
@@ -255,18 +274,12 @@ export function PharmacyCampaignsList() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
-              ))}
-            </div>
+            <ListSkeleton rows={3} />
           ) : !campaigns?.data?.length ? (
-            <div className="py-8 text-center">
-              <Megaphone className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">
-                {t("pharmacyOwner.noCampaigns")}
-              </p>
-            </div>
+            <PharmacyEmptyState
+              icon={Megaphone}
+              title={t("pharmacyOwner.noCampaigns")}
+            />
           ) : (
             <>
               <div className="space-y-3">
@@ -275,16 +288,22 @@ export function PharmacyCampaignsList() {
                     key={c.id}
                     className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-3"
                   >
-                    <div className="space-y-1">
-                      <p className="font-semibold">{c.name}</p>
-                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        <span>
+                    <div className="min-w-0 space-y-1">
+                      <p className="truncate font-semibold">{c.name}</p>
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <span className="inline-flex items-center gap-1">
                           {t(
                             `pharmacyOwner.${DISCOUNT_TYPE_KEYS[c.discountType]}`,
                           )}
-                          : {Number(c.discountValue)}
+                          :{" "}
+                          {c.calculationType ===
+                          CampaignCalculationType.FIXED ? (
+                            <Currency amount={c.discountValue} />
+                          ) : (
+                            <span>{Number(c.discountValue)}%</span>
+                          )}
                         </span>
-                        <span>|</span>
+                        <span aria-hidden="true">|</span>
                         <span>
                           {new Date(c.startDate).toLocaleDateString(
                             locale === "ar" ? "ar-EG" : "en-US",
@@ -294,24 +313,27 @@ export function PharmacyCampaignsList() {
                             locale === "ar" ? "ar-EG" : "en-US",
                           )}
                         </span>
-                        {c.usageLimit && (
+                        {c.usageLimit ? (
                           <>
-                            <span>|</span>
-                            <span>
+                            <span aria-hidden="true">|</span>
+                            <span className="tabular-nums">
                               {c.usageCount}/{c.usageLimit}
                             </span>
                           </>
-                        )}
+                        ) : null}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <Select
                         value={c.status}
                         onValueChange={(v) =>
                           handleStatusChange(c.id, v as CampaignStatus)
                         }
                       >
-                        <SelectTrigger className="w-32 h-8">
+                        <SelectTrigger
+                          className="h-10 w-32 sm:h-8"
+                          aria-label={t("pharmacyOwner.allStatuses")}
+                        >
                           <Badge
                             variant={STATUS_VARIANTS[c.status] as any}
                             className="text-xs"
@@ -328,19 +350,22 @@ export function PharmacyCampaignsList() {
                         </SelectContent>
                       </Select>
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="ghost"
+                        aria-label={t("common.edit")}
+                        className="size-11 sm:size-9"
                         onClick={() => openEditForm(c)}
                       >
-                        <Pencil className="h-3 w-3" />
+                        <Pencil className="size-3.5" aria-hidden="true" />
                       </Button>
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="ghost"
-                        className="text-destructive"
+                        aria-label={t("common.delete")}
+                        className="size-11 text-destructive sm:size-9"
                         onClick={() => setDeleteId(c.id)}
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Trash2 className="size-3.5" aria-hidden="true" />
                       </Button>
                     </div>
                   </div>
@@ -585,29 +610,15 @@ export function PharmacyCampaignsList() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("common.delete")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("pharmacyOwner.deleteCampaignConfirm")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>
-              {deleteCampaign.isPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={t("common.delete")}
+        description={t("pharmacyOwner.deleteCampaignConfirm")}
+        tone="destructive"
+        confirmLabel={t("common.delete")}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

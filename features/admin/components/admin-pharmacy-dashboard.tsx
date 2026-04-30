@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   Store,
   Package,
@@ -8,28 +9,91 @@ import {
   Percent,
   Clock,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Currency,
+  KpiSkeleton,
+  ListSkeleton,
+  PharmacyEmptyState,
+  RefreshButton,
+} from "@/components/pharmacy";
 import { useAdminPharmacyDashboard } from "../hooks";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
+import { adminPharmacyKeys } from "@/lib/query-keys";
+import { cn } from "@/lib/utils";
+
+interface KpiCardProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  tone: string;
+  label: string;
+  value?: number | string;
+  currency?: number | string;
+  subtitle?: string;
+}
+
+const TONE = {
+  blue: "text-blue-600 dark:text-blue-300",
+  orange: "text-orange-600 dark:text-orange-300",
+  green: "text-success-700 dark:text-success-200",
+  purple: "text-purple-600 dark:text-purple-300",
+  yellow: "text-warning-700 dark:text-warning-200",
+} as const;
+
+function KpiCard({
+  icon: Icon,
+  tone,
+  label,
+  value,
+  currency,
+  subtitle,
+}: KpiCardProps) {
+  return (
+    <Card>
+      <CardContent className="space-y-1.5 p-4">
+        <div className="flex items-center gap-2">
+          <Icon className={cn("size-5", tone)} aria-hidden="true" />
+          <span className="text-sm text-muted-foreground">{label}</span>
+        </div>
+        <p className="text-xl font-bold sm:text-2xl">
+          {currency !== undefined ? (
+            <Currency
+              amount={currency}
+              className={cn("text-xl sm:text-2xl", tone)}
+            />
+          ) : (
+            value
+          )}
+        </p>
+        {subtitle ? (
+          <p className="text-xs text-muted-foreground">{subtitle}</p>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
 
 export function AdminPharmacyDashboard() {
   const { t, locale } = useTranslation();
+  const queryClient = useQueryClient();
   const { data: dashboard, isLoading } = useAdminPharmacyDashboard();
+
+  const handleRefresh = useMemo(
+    () => async () => {
+      await queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.dashboard(),
+      });
+    },
+    [queryClient],
+  );
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-        </div>
+        <KpiSkeleton count={4} />
+        <KpiSkeleton count={3} />
+        <ListSkeleton rows={4} />
       </div>
     );
   }
@@ -37,107 +101,75 @@ export function AdminPharmacyDashboard() {
   if (!dashboard) return null;
 
   return (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Store className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-muted-foreground">
-                {t("admin.pharmacyDashboard.totalPharmacies")}
-              </span>
-            </div>
-            <p className="text-2xl font-bold">{dashboard.totalPharmacies}</p>
-            <p className="text-xs text-muted-foreground">
-              {dashboard.activePharmacies}{" "}
-              {t("admin.pharmacyDashboard.activePharmacies")}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <ShoppingCart className="h-5 w-5 text-orange-600" />
-              <span className="text-sm text-muted-foreground">
-                {t("admin.pharmacyDashboard.totalOrders")}
-              </span>
-            </div>
-            <p className="text-2xl font-bold">{dashboard.totalOrders}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
-              <span className="text-sm text-muted-foreground">
-                {t("admin.pharmacyDashboard.totalRevenue")}
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-green-600">
-              {dashboard.totalRevenue.toFixed(2)} {t("common.egp")}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Percent className="h-5 w-5 text-purple-600" />
-              <span className="text-sm text-muted-foreground">
-                {t("admin.pharmacyDashboard.totalCommission")}
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-purple-600">
-              {dashboard.totalCommission.toFixed(2)} {t("common.egp")}
-            </p>
-          </CardContent>
-        </Card>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex justify-end">
+        <RefreshButton onRefresh={handleRefresh} />
       </div>
 
-      {/* Secondary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        <KpiCard
+          icon={Store}
+          tone={TONE.blue}
+          label={t("admin.pharmacyDashboard.totalPharmacies")}
+          value={dashboard.totalPharmacies}
+          subtitle={`${dashboard.activePharmacies} ${t(
+            "admin.pharmacyDashboard.activePharmacies",
+          )}`}
+        />
+        <KpiCard
+          icon={ShoppingCart}
+          tone={TONE.orange}
+          label={t("admin.pharmacyDashboard.totalOrders")}
+          value={dashboard.totalOrders}
+        />
+        <KpiCard
+          icon={TrendingUp}
+          tone={TONE.green}
+          label={t("admin.pharmacyDashboard.totalRevenue")}
+          currency={dashboard.totalRevenue}
+        />
+        <KpiCard
+          icon={Percent}
+          tone={TONE.purple}
+          label={t("admin.pharmacyDashboard.totalCommission")}
+          currency={dashboard.totalCommission}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <KpiCard
+          icon={Clock}
+          tone={TONE.yellow}
+          label={t("admin.pharmacyDashboard.pendingPharmacies")}
+          value={dashboard.pendingPharmacies}
+        />
+        <KpiCard
+          icon={Package}
+          tone={TONE.blue}
+          label={t("admin.pharmacyDashboard.totalProducts")}
+          value={dashboard.totalProducts}
+        />
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-5 w-5 text-yellow-600" />
-              <span className="text-sm text-muted-foreground">
-                {t("admin.pharmacyDashboard.pendingPharmacies")}
-              </span>
-            </div>
-            <p className="text-2xl font-bold">{dashboard.pendingPharmacies}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Package className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-muted-foreground">
-                {t("admin.pharmacyDashboard.totalProducts")}
-              </span>
-            </div>
-            <p className="text-2xl font-bold">{dashboard.totalProducts}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
+          <CardContent className="space-y-2 p-4">
             <span className="text-sm text-muted-foreground">
               {t("admin.pharmacyDashboard.totalOrders")} ({t("common.filter")})
             </span>
-            <div className="mt-2 space-y-1">
+            <ul className="space-y-1" role="list">
               {Object.entries(dashboard.ordersByStatus).map(
                 ([status, count]) => (
-                  <div key={status} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{status}</span>
-                    <span className="font-medium">{count}</span>
-                  </div>
+                  <li key={status} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {t(`pharmacy.orderStatus.${status}` as never)}
+                    </span>
+                    <span className="font-medium tabular-nums">{count}</span>
+                  </li>
                 ),
               )}
-            </div>
+            </ul>
           </CardContent>
         </Card>
       </div>
 
-      {/* Top Pharmacies */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">
@@ -146,25 +178,29 @@ export function AdminPharmacyDashboard() {
         </CardHeader>
         <CardContent>
           {!dashboard.topPharmacies.length ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              {t("admin.pharmacies.noPharmaciesFound")}
-            </p>
+            <PharmacyEmptyState
+              icon={Store}
+              title={t("admin.pharmacies.noPharmaciesFound")}
+            />
           ) : (
-            <div className="space-y-2">
+            <ul className="divide-y divide-border" role="list">
               {dashboard.topPharmacies.map((pharmacy, i) => (
-                <div
+                <li
                   key={pharmacy.id}
-                  className="flex items-center justify-between py-3 border-b last:border-0"
+                  className="flex flex-wrap items-center justify-between gap-3 py-3"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg font-bold text-muted-foreground">
-                      #{i + 1}
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span
+                      className="grid size-8 shrink-0 place-items-center rounded-full bg-muted text-xs font-bold text-muted-foreground"
+                      aria-hidden="true"
+                    >
+                      {i + 1}
                     </span>
-                    <p className="font-medium">
+                    <p className="truncate font-medium">
                       {getLocalizedText(pharmacy.name, locale)}
                     </p>
                   </div>
-                  <div className="flex gap-4 text-sm text-muted-foreground">
+                  <div className="flex shrink-0 gap-4 text-sm text-muted-foreground">
                     <span>
                       {pharmacy._count.orders}{" "}
                       {t("admin.pharmacyDashboard.orderCount")}
@@ -174,9 +210,9 @@ export function AdminPharmacyDashboard() {
                       {t("admin.pharmacyDashboard.productCount")}
                     </span>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </CardContent>
       </Card>

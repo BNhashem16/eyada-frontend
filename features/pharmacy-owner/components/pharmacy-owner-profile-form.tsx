@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { CardSkeleton } from "@/components/pharmacy";
 import {
   usePharmacyOwnerProfile,
   useUpdatePharmacyOwnerProfile,
@@ -68,8 +68,8 @@ export function PharmacyOwnerProfileForm() {
   const updateMutation = useUpdatePharmacyOwnerProfile();
   const user = useAuthStore((state) => state.user);
 
-  const statusLabels = getStatusLabels(t);
-  const profileSchema = getProfileSchema(t);
+  const statusLabels = useMemo(() => getStatusLabels(t), [t]);
+  const profileSchema = useMemo(() => getProfileSchema(t), [t]);
 
   const {
     register,
@@ -120,8 +120,9 @@ export function PharmacyOwnerProfileForm() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-48 w-full" />
-        <Skeleton className="h-64 w-full" />
+        <CardSkeleton />
+        <CardSkeleton />
+        <CardSkeleton />
       </div>
     );
   }
@@ -134,20 +135,25 @@ export function PharmacyOwnerProfileForm() {
       {/* Profile Header Card */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-              <Building2 className="h-8 w-8 text-primary-600 dark:text-primary-400" />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-xl font-bold text-foreground">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <span
+              className="grid size-14 shrink-0 place-items-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 sm:size-16"
+              aria-hidden="true"
+            >
+              <Building2 className="size-7 sm:size-8" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <h2 className="truncate text-lg font-bold text-foreground sm:text-xl">
                 {user?.fullName || user?.name || ""}
               </h2>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
-              {user?.phoneNumber && (
+              <p className="truncate text-sm text-muted-foreground">
+                {user?.email}
+              </p>
+              {user?.phoneNumber ? (
                 <p className="text-sm text-muted-foreground" dir="ltr">
                   {user.phoneNumber}
                 </p>
-              )}
+              ) : null}
             </div>
             <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
           </div>
@@ -272,11 +278,12 @@ export function PharmacyOwnerProfileForm() {
           type="submit"
           disabled={!isDirty || updateMutation.isPending}
           size="lg"
+          className="w-full min-h-[48px] sm:w-auto"
         >
           {updateMutation.isPending ? (
-            <Loader2 className="h-5 w-5 animate-spin me-2" />
+            <Loader2 className="me-2 size-5 animate-spin" aria-hidden="true" />
           ) : (
-            <Save className="h-5 w-5 me-2" />
+            <Save className="me-2 size-5" aria-hidden="true" />
           )}
           {t("common.save")}
         </Button>

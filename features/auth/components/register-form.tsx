@@ -69,7 +69,12 @@ export function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-5"
+      autoComplete="on"
+      method="post"
+    >
       {/* Role Selection */}
       <div className="space-y-2">
         <Label>{t("auth.accountType")}</Label>
@@ -133,6 +138,7 @@ export function RegisterForm() {
         <Input
           id="fullName"
           type="text"
+          autoComplete="name"
           placeholder={t("auth.fullNamePlaceholder")}
           icon={<User className="h-5 w-5" />}
           iconPosition="start"
@@ -153,6 +159,10 @@ export function RegisterForm() {
           id="email"
           type="email"
           inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder={t("placeholder.email")}
           icon={<Mail className="h-5 w-5" />}
           iconPosition="start"
@@ -173,6 +183,7 @@ export function RegisterForm() {
           id="phoneNumber"
           type="tel"
           inputMode="tel"
+          autoComplete="tel"
           dir="ltr"
           placeholder={t("placeholder.phone")}
           icon={<Phone className="h-5 w-5" />}
@@ -194,6 +205,7 @@ export function RegisterForm() {
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
+            autoComplete="new-password"
             placeholder={t("placeholder.password")}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"
@@ -227,6 +239,7 @@ export function RegisterForm() {
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
+            autoComplete="new-password"
             placeholder={t("placeholder.password")}
             icon={<Lock className="h-5 w-5" />}
             iconPosition="start"

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { getTranslation } from "@/lib/i18n";
-import { PatientOrderDetail } from "@/features/patients/components/patient-order-detail";
+import { PatientOrderDetail } from "@/features/patient-pharmacy/components/patient-order-detail";
 
 export const metadata: Metadata = {
   title: getTranslation("pharmacyOwner.orderDetails"),

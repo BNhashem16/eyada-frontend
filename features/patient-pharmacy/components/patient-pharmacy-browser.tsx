@@ -1,0 +1,610 @@
+"use client";
+
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import {
+  Search,
+  Star,
+  ShoppingCart,
+  Loader2,
+  Package,
+  MapPin,
+  Truck,
+  FileText,
+  Store,
+} from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import {
+  Currency,
+  PharmacyEmptyState,
+  RefreshButton,
+} from "@/components/pharmacy";
+import {
+  usePublicPharmacies,
+  usePublicProducts,
+  useCategories,
+  useAddToCart,
+  type PharmacyBrowseFilters,
+  type ProductBrowseFilters,
+} from "../hooks";
+import { getLocalizedText } from "@/lib/utils/multilingual";
+import type { SupportedLocale } from "@/lib/utils/date";
+import { getImageUrl } from "@/lib/utils/storage";
+import { useTranslation } from "@/lib/i18n";
+import { patientPharmacyBrowseKeys } from "@/lib/query-keys";
+import type { Pharmacy } from "@/types/pharmacy";
+import type { PharmacyProduct } from "@/types/product";
+import type { PharmacyCategory } from "@/types/category";
+
+// --- Debounce hook (inline since useDebounce doesn't exist in the project) ---
+
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// --- Main Component ---
+
+export function PatientPharmacyBrowser() {
+  const { t, locale } = useTranslation();
+  const [activeTab, setActiveTab] = useState<"pharmacies" | "products">(
+    "products",
+  );
+
+  // Pharmacy filters
+  const [pharmacySearch, setPharmacySearch] = useState("");
+  const [pharmacyPage, setPharmacyPage] = useState(1);
+  const [pharmacyLimit, setPharmacyLimit] = useState(12);
+
+  // Product filters
+  const [productSearch, setProductSearch] = useState("");
+  const [productPage, setProductPage] = useState(1);
+  const [productLimit, setProductLimit] = useState(12);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedPharmacy, setSelectedPharmacy] = useState<string>("");
+
+  // Debounce search values
+  const debouncedPharmacySearch = useDebounce(pharmacySearch, 400);
+  const debouncedProductSearch = useDebounce(productSearch, 400);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPharmacyPage(1);
+  }, [debouncedPharmacySearch]);
+
+  useEffect(() => {
+    setProductPage(1);
+  }, [debouncedProductSearch, selectedCategory, selectedPharmacy]);
+
+  // Build filter objects
+  const pharmacyFilters: PharmacyBrowseFilters = {
+    search: debouncedPharmacySearch || undefined,
+    page: pharmacyPage,
+    limit: pharmacyLimit,
+  };
+
+  const productFilters: ProductBrowseFilters = {
+    search: debouncedProductSearch || undefined,
+    categoryId: selectedCategory || undefined,
+    pharmacyId: selectedPharmacy || undefined,
+    page: productPage,
+    limit: productLimit,
+  };
+
+  // Queries
+  const pharmaciesQuery = usePublicPharmacies(pharmacyFilters);
+  const productsQuery = usePublicProducts(productFilters);
+  const categoriesQuery = useCategories();
+  const addToCart = useAddToCart();
+  const queryClient = useQueryClient();
+
+  const handleRefresh = useMemo(
+    () => async () => {
+      await queryClient.invalidateQueries({
+        queryKey: patientPharmacyBrowseKeys.all,
+      });
+    },
+    [queryClient],
+  );
+
+  // When a pharmacy is clicked from pharmacies tab, switch to products tab and filter by it
+  const handleViewPharmacyProducts = useCallback((pharmacyId: string) => {
+    setSelectedPharmacy(pharmacyId);
+    setActiveTab("products");
+    setProductPage(1);
+  }, []);
+
+  const handleAddToCart = useCallback(
+    (productId: string) => {
+      addToCart.mutate({ productId, quantity: 1 });
+    },
+    [addToCart],
+  );
+
+  const categories = categoriesQuery.data || [];
+
+  return (
+    <div className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setActiveTab(v as "pharmacies" | "products")}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <TabsList className="grid w-full max-w-xs grid-cols-2">
+            <TabsTrigger value="products" className="min-h-[44px] sm:min-h-9">
+              <Package className="me-2 size-4" aria-hidden="true" />
+              {t("pharmacyOwner.products")}
+            </TabsTrigger>
+            <TabsTrigger value="pharmacies" className="min-h-[44px] sm:min-h-9">
+              <Store className="me-2 size-4" aria-hidden="true" />
+              {t("pharmacyOwner.pharmacies")}
+            </TabsTrigger>
+          </TabsList>
+          <RefreshButton onRefresh={handleRefresh} />
+        </div>
+
+        {/* Products Tab */}
+        <TabsContent value="products" className="space-y-4 mt-4">
+          {/* Search */}
+          <div className="relative">
+            <Search
+              className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <Input
+              placeholder={t("pharmacyOwner.searchProducts")}
+              value={productSearch}
+              onChange={(e) => setProductSearch(e.target.value)}
+              className="min-h-[44px] ps-10 sm:min-h-9"
+              aria-label={t("pharmacyOwner.searchProducts")}
+            />
+          </div>
+
+          {/* Category pills */}
+          <CategoryPills
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelect={setSelectedCategory}
+            locale={locale}
+            t={t}
+          />
+
+          {/* Selected pharmacy indicator */}
+          {selectedPharmacy && (
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="gap-1">
+                <Store className="h-3 w-3" />
+                {t("pharmacyOwner.pharmacyInfo")}
+              </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedPharmacy("")}
+              >
+                {t("common.all")}
+              </Button>
+            </div>
+          )}
+
+          {/* Products grid */}
+          {productsQuery.isLoading ? (
+            <ProductsGridSkeleton />
+          ) : productsQuery.data?.data?.length === 0 ? (
+            <PharmacyEmptyState
+              icon={Package}
+              title={t("pharmacyOwner.noProductsFound")}
+              description={t("pharmacyOwner.noProductsMatchFilters")}
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {productsQuery.data?.data?.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    locale={locale}
+                    t={t}
+                    onAddToCart={handleAddToCart}
+                    isAdding={
+                      addToCart.isPending &&
+                      addToCart.variables?.productId === product.id
+                    }
+                  />
+                ))}
+              </div>
+              <PaginationControls
+                meta={productsQuery.data?.meta}
+                page={productPage}
+                onPageChange={setProductPage}
+                limit={productLimit}
+                onLimitChange={(l) => {
+                  setProductLimit(l);
+                  setProductPage(1);
+                }}
+                limitOptions={[12, 24, 36]}
+              />
+            </>
+          )}
+        </TabsContent>
+
+        {/* Pharmacies Tab */}
+        <TabsContent value="pharmacies" className="space-y-4 mt-4">
+          {/* Search */}
+          <div className="relative">
+            <Search
+              className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <Input
+              placeholder={t("pharmacyOwner.searchPharmacies")}
+              value={pharmacySearch}
+              onChange={(e) => setPharmacySearch(e.target.value)}
+              className="min-h-[44px] ps-10 sm:min-h-9"
+              aria-label={t("pharmacyOwner.searchPharmacies")}
+            />
+          </div>
+
+          {/* Pharmacies grid */}
+          {pharmaciesQuery.isLoading ? (
+            <PharmaciesGridSkeleton />
+          ) : pharmaciesQuery.data?.data?.length === 0 ? (
+            <PharmacyEmptyState
+              icon={Store}
+              title={t("pharmacyOwner.noPharmacies")}
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {pharmaciesQuery.data?.data?.map((pharmacy) => (
+                  <PharmacyCard
+                    key={pharmacy.id}
+                    pharmacy={pharmacy}
+                    locale={locale}
+                    t={t}
+                    onViewProducts={handleViewPharmacyProducts}
+                  />
+                ))}
+              </div>
+              <PaginationControls
+                meta={pharmaciesQuery.data?.meta}
+                page={pharmacyPage}
+                onPageChange={setPharmacyPage}
+                limit={pharmacyLimit}
+                onLimitChange={(l) => {
+                  setPharmacyLimit(l);
+                  setPharmacyPage(1);
+                }}
+                limitOptions={[12, 24, 36]}
+              />
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+// --- Sub-components ---
+
+function CategoryPills({
+  categories,
+  selectedCategory,
+  onSelect,
+  locale,
+  t,
+}: {
+  categories: PharmacyCategory[];
+  selectedCategory: string;
+  onSelect: (id: string) => void;
+  locale: SupportedLocale;
+  t: (key: string) => string;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  if (categories.length === 0) return null;
+
+  return (
+    <div
+      ref={scrollRef}
+      className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin"
+    >
+      <Button
+        variant={selectedCategory === "" ? "default" : "outline"}
+        size="sm"
+        className="whitespace-nowrap shrink-0"
+        onClick={() => onSelect("")}
+      >
+        {t("pharmacyOwner.allCategories")}
+      </Button>
+      {categories.map((cat) => (
+        <Button
+          key={cat.id}
+          variant={selectedCategory === cat.id ? "default" : "outline"}
+          size="sm"
+          className="whitespace-nowrap shrink-0"
+          onClick={() => onSelect(cat.id)}
+        >
+          {getLocalizedText(cat.name, locale)}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+function ProductCard({
+  product,
+  locale,
+  t,
+  onAddToCart,
+  isAdding,
+}: {
+  product: PharmacyProduct;
+  locale: SupportedLocale;
+  t: (key: string) => string;
+  onAddToCart: (productId: string) => void;
+  isAdding: boolean;
+}) {
+  const hasDiscount =
+    product.discountPrice &&
+    Number(product.discountPrice) < Number(product.price);
+  const isOutOfStock = product.stockQuantity <= 0;
+  const displayPrice = hasDiscount ? product.discountPrice : product.price;
+
+  return (
+    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      {/* Product image */}
+      {product.images?.[0] ? (
+        <div className="aspect-square bg-muted relative overflow-hidden">
+          <img
+            src={getImageUrl(product.images[0])}
+            alt={getLocalizedText(product.name, locale)}
+            className="w-full h-full object-cover"
+          />
+          {product.requiresPrescription && (
+            <Badge variant="error" className="absolute top-2 start-2 gap-1">
+              <FileText className="h-3 w-3" />
+              {t("pharmacyOwner.prescriptionBadge")}
+            </Badge>
+          )}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <Badge variant="secondary" className="text-sm">
+                {t("pharmacyOwner.outOfStock")}
+              </Badge>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="aspect-square bg-muted flex items-center justify-center relative">
+          <Package className="h-12 w-12 text-muted-foreground/30" />
+          {product.requiresPrescription && (
+            <Badge variant="error" className="absolute top-2 start-2 gap-1">
+              <FileText className="h-3 w-3" />
+              {t("pharmacyOwner.prescriptionBadge")}
+            </Badge>
+          )}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <Badge variant="secondary" className="text-sm">
+                {t("pharmacyOwner.outOfStock")}
+              </Badge>
+            </div>
+          )}
+        </div>
+      )}
+
+      <CardContent className="p-4 space-y-3">
+        {/* Name */}
+        <h3 className="font-semibold text-foreground line-clamp-2 min-h-[2.5rem]">
+          {getLocalizedText(product.name, locale)}
+        </h3>
+
+        {/* Pharmacy name */}
+        {product.pharmacy && (
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <Store className="h-3 w-3" />
+            {getLocalizedText(product.pharmacy.name, locale)}
+          </p>
+        )}
+
+        {/* Category */}
+        {product.category && (
+          <Badge variant="outline" className="text-xs">
+            {getLocalizedText(product.category.name, locale)}
+          </Badge>
+        )}
+
+        {/* Price */}
+        <div className="flex items-baseline gap-2">
+          <Currency
+            amount={displayPrice}
+            className="text-lg font-bold text-primary"
+          />
+          {hasDiscount ? (
+            <span className="text-sm text-muted-foreground line-through">
+              <Currency amount={product.price} />
+            </span>
+          ) : null}
+        </div>
+
+        {/* Stock status */}
+        {!isOutOfStock ? (
+          <p className="text-xs text-success-700 dark:text-success-200">
+            {t("pharmacyOwner.inStock")}
+          </p>
+        ) : null}
+
+        {/* Add to cart */}
+        <Button
+          className="w-full min-h-[44px] sm:min-h-9"
+          size="sm"
+          disabled={isOutOfStock || isAdding}
+          onClick={() => onAddToCart(product.id)}
+        >
+          {isAdding ? (
+            <Loader2 className="me-2 size-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <ShoppingCart className="me-2 size-4" aria-hidden="true" />
+          )}
+          {t("pharmacyOwner.addToCart")}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function PharmacyCard({
+  pharmacy,
+  locale,
+  t,
+  onViewProducts,
+}: {
+  pharmacy: Pharmacy;
+  locale: SupportedLocale;
+  t: (key: string) => string;
+  onViewProducts: (pharmacyId: string) => void;
+}) {
+  const deliveryFee = Number(pharmacy.deliveryFee);
+
+  return (
+    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      {/* Logo / header */}
+      <div className="h-32 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center relative">
+        {pharmacy.logo ? (
+          <img
+            src={getImageUrl(pharmacy.logo!)}
+            alt={getLocalizedText(pharmacy.name, locale)}
+            className="h-20 w-20 rounded-full object-cover border-2 border-background shadow"
+          />
+        ) : (
+          <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
+            <Store className="h-10 w-10 text-primary/40" />
+          </div>
+        )}
+      </div>
+
+      <CardContent className="p-4 space-y-3">
+        {/* Name */}
+        <h3 className="font-semibold text-foreground text-lg text-center">
+          {getLocalizedText(pharmacy.name, locale)}
+        </h3>
+
+        {/* Address */}
+        <p className="text-sm text-muted-foreground flex items-center gap-1 justify-center">
+          <MapPin className="h-3.5 w-3.5 shrink-0" />
+          <span className="line-clamp-1">
+            {getLocalizedText(pharmacy.address, locale)}
+          </span>
+        </p>
+
+        {/* City */}
+        {pharmacy.city && (
+          <p className="text-xs text-muted-foreground text-center">
+            {getLocalizedText(pharmacy.city.name, locale)}
+            {pharmacy.city.state &&
+              ` - ${getLocalizedText(pharmacy.city.state.name, locale)}`}
+          </p>
+        )}
+
+        {/* Rating */}
+        {pharmacy.totalRatings > 0 && (
+          <div className="flex items-center justify-center gap-1">
+            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            <span className="text-sm font-medium">
+              {Number(pharmacy.averageRating).toFixed(1)}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              ({pharmacy.totalRatings})
+            </span>
+          </div>
+        )}
+
+        {/* Delivery info */}
+        <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+          <Badge variant="outline" className="gap-1">
+            <Truck className="size-3" aria-hidden="true" />
+            {deliveryFee > 0 ? (
+              <Currency amount={deliveryFee} />
+            ) : (
+              t("pharmacyOwner.freeDeliveryBadge")
+            )}
+          </Badge>
+          {Number(pharmacy.minOrderAmount) > 0 ? (
+            <Badge variant="outline" className="gap-1">
+              {t("pharmacyOwner.minOrder")}:{" "}
+              <Currency amount={pharmacy.minOrderAmount} />
+            </Badge>
+          ) : null}
+        </div>
+
+        {/* Product count */}
+        {pharmacy._count?.products !== undefined ? (
+          <p className="text-center text-xs text-muted-foreground">
+            {pharmacy._count.products} {t("pharmacyOwner.products")}
+          </p>
+        ) : null}
+
+        {/* View products button */}
+        <Button
+          variant="outline"
+          className="w-full min-h-[44px] sm:min-h-9"
+          size="sm"
+          onClick={() => onViewProducts(pharmacy.id)}
+        >
+          <Package className="me-2 size-4" aria-hidden="true" />
+          {t("pharmacyOwner.viewProducts")}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+// --- Loading skeletons ---
+
+function ProductsGridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Card key={i} className="overflow-hidden">
+          <Skeleton className="aspect-square w-full" />
+          <CardContent className="p-4 space-y-3">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-3 w-1/2" />
+            <Skeleton className="h-6 w-1/3" />
+            <Skeleton className="h-9 w-full" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function PharmaciesGridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Card key={i} className="overflow-hidden">
+          <Skeleton className="h-32 w-full" />
+          <CardContent className="p-4 space-y-3">
+            <Skeleton className="h-6 w-2/3 mx-auto" />
+            <Skeleton className="h-4 w-3/4 mx-auto" />
+            <Skeleton className="h-4 w-1/2 mx-auto" />
+            <Skeleton className="h-9 w-full" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}

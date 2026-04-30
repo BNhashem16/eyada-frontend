@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# mcp config (contains API keys)
-.mcp.json
+# mcp config
+# .mcp.json is the SHARED config (committed, no secrets).
+# .mcp.local.json holds PERSONAL servers + secrets and must stay out of git.
+.mcp.local.json
+!.mcp.local.example.json
 /.claude

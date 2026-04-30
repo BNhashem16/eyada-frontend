@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Package,
@@ -8,15 +8,13 @@ import {
   Search,
   Pencil,
   Trash2,
-  Loader2,
-  AlertTriangle,
   Store,
   Tag,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -26,30 +24,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  ConfirmDialog,
+  Currency,
+  ListSkeleton,
+  PharmacyEmptyState,
+  PharmacyErrorState,
+  RefreshButton,
+  StockBadge,
+} from "@/components/pharmacy";
+import { PaginationControls } from "@/components/ui/pagination-controls";
 import {
   useMyPharmacies,
   useMyProducts,
   useDeleteProduct,
-  OwnerProductFilters,
+  type OwnerProductFilters,
 } from "../hooks";
-import { usePublicCategories } from "@/features/admin/hooks";
 import { getLocalizedText } from "@/lib/utils/multilingual";
-import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
+import { pharmacyProductKeys } from "@/lib/query-keys";
+import type { PharmacyProduct } from "@/types/product";
 
 export function PharmacyProductsList() {
   const { t, locale } = useTranslation();
+  const queryClient = useQueryClient();
 
-  const [selectedPharmacy, setSelectedPharmacy] = useState<string>("");
+  const [selectedPharmacy, setSelectedPharmacy] = useState("");
   const [filters, setFilters] = useState<OwnerProductFilters>({
     page: 1,
     limit: 10,
@@ -57,80 +56,74 @@ export function PharmacyProductsList() {
   const [searchInput, setSearchInput] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // Get pharmacies for selection
   const { data: pharmaciesData, isLoading: pharmaciesLoading } =
     useMyPharmacies({ limit: 100 });
-  const pharmacies = pharmaciesData?.data || [];
+  const pharmacies = pharmaciesData?.data ?? [];
 
-  // Get products for selected pharmacy
+  // Default first pharmacy in an effect (no setState during render).
+  useEffect(() => {
+    if (!selectedPharmacy && pharmacies.length > 0) {
+      setSelectedPharmacy(pharmacies[0].id);
+    }
+  }, [pharmacies, selectedPharmacy]);
+
   const {
     data: productsData,
     isLoading: productsLoading,
-    isError,
+    isError: productsError,
   } = useMyProducts(selectedPharmacy, filters);
-
-  // Get categories for display
-  const { data: categories } = usePublicCategories();
-
   const deleteProduct = useDeleteProduct(selectedPharmacy);
 
   const handleSearch = useCallback(() => {
     setFilters((prev) => ({ ...prev, search: searchInput, page: 1 }));
   }, [searchInput]);
 
-  const handleDelete = () => {
+  const handleRefresh = useMemo(
+    () => async () => {
+      if (!selectedPharmacy) return;
+      await queryClient.invalidateQueries({
+        queryKey: pharmacyProductKeys.lists(selectedPharmacy),
+      });
+    },
+    [queryClient, selectedPharmacy],
+  );
+
+  const confirmDelete = async () => {
     if (!deleteId) return;
-    deleteProduct.mutate(deleteId, {
-      onSuccess: () => setDeleteId(null),
-    });
+    await deleteProduct.mutateAsync(deleteId);
   };
 
-  // Auto-select first pharmacy
-  if (pharmacies.length > 0 && !selectedPharmacy) {
-    setSelectedPharmacy(pharmacies[0].id);
-  }
-
   if (pharmaciesLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
+    return <ListSkeleton rows={4} />;
   }
 
   if (pharmacies.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-16 text-center">
-          <Store className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">
-            {t("pharmacyOwner.noPharmacies")}
-          </h3>
-          <p className="text-muted-foreground mb-4">
-            {t("pharmacyOwner.pendingApproval")}
-          </p>
-          <Button asChild>
+      <PharmacyEmptyState
+        icon={Store}
+        title={t("pharmacyOwner.noPharmacies")}
+        description={t("pharmacyOwner.pendingApproval")}
+        action={
+          <Button asChild className="min-h-[44px] sm:min-h-9">
             <Link href="/pharmacy-owner/pharmacies/create">
-              <Plus className="h-4 w-4 me-2" />
+              <Plus className="me-2 size-4" aria-hidden="true" />
               {t("pharmacyOwner.addPharmacy")}
             </Link>
           </Button>
-        </CardContent>
-      </Card>
+        }
+      />
     );
   }
 
-  const products = productsData?.data || [];
+  const products = productsData?.data ?? [];
   const meta = productsData?.meta;
 
   return (
-    <>
-      {/* Pharmacy Selector + Search */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Pharmacy select */}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Sticky filter bar (mobile) */}
+      <Card className="sticky top-0 z-10 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:static sm:bg-card sm:backdrop-blur-none">
+        <CardContent className="space-y-3 p-3 sm:p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
             <Select
               value={selectedPharmacy}
               onValueChange={(v) => {
@@ -139,7 +132,10 @@ export function PharmacyProductsList() {
                 setSearchInput("");
               }}
             >
-              <SelectTrigger className="w-full md:w-64">
+              <SelectTrigger
+                className="min-h-[44px] w-full sm:min-h-9 md:w-64"
+                aria-label={t("pharmacyOwner.selectPharmacy")}
+              >
                 <SelectValue placeholder={t("pharmacyOwner.selectPharmacy")} />
               </SelectTrigger>
               <SelectContent>
@@ -151,169 +147,72 @@ export function PharmacyProductsList() {
               </SelectContent>
             </Select>
 
-            {/* Search */}
-            <div className="flex-1 flex gap-2">
+            <div className="flex flex-1 gap-2">
               <Input
                 placeholder={t("common.search")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 inputMode="search"
-                className="flex-1"
+                className="min-h-[44px] flex-1 sm:min-h-9"
+                aria-label={t("common.search")}
               />
-              <Button onClick={handleSearch} variant="outline">
-                <Search className="h-4 w-4" />
+              <Button
+                onClick={handleSearch}
+                variant="outline"
+                aria-label={t("common.search")}
+                className="min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9"
+              >
+                <Search className="size-4" aria-hidden="true" />
               </Button>
+              <RefreshButton onRefresh={handleRefresh} />
             </div>
 
-            {/* Add Product */}
-            {selectedPharmacy && (
-              <Button asChild>
+            {selectedPharmacy ? (
+              <Button asChild className="min-h-[44px] sm:min-h-9">
                 <Link
                   href={`/pharmacy-owner/products/create?pharmacyId=${selectedPharmacy}`}
                 >
-                  <Plus className="h-4 w-4 me-2" />
+                  <Plus className="me-2 size-4" aria-hidden="true" />
                   {t("pharmacyOwner.addProduct")}
                 </Link>
               </Button>
-            )}
+            ) : null}
           </div>
         </CardContent>
       </Card>
 
-      {/* Loading */}
-      {productsLoading && (
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <Card key={i}>
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <Skeleton className="h-16 w-16 rounded-xl" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-5 w-40" />
-                    <Skeleton className="h-4 w-32" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Error */}
-      {isError && (
-        <Card className="border-error-200 bg-error-50">
-          <CardContent className="py-10 text-center">
-            <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
-            <p className="text-error-600">{t("admin.loadError")}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Products List */}
-      {!productsLoading && !isError && selectedPharmacy && (
+      {/* Body */}
+      {productsLoading ? (
+        <ListSkeleton rows={5} />
+      ) : productsError ? (
+        <PharmacyErrorState onRetry={handleRefresh} />
+      ) : !selectedPharmacy ? null : products.length === 0 ? (
+        <PharmacyEmptyState
+          icon={Package}
+          title={t("pharmacyOwner.noProducts")}
+        />
+      ) : (
         <>
-          {/* Count */}
-          {meta && (
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-muted-foreground">
-                {t("admin.pharmacies.totalResults")}{" "}
-                <span className="font-semibold">{meta.total}</span>
-              </p>
-            </div>
-          )}
+          {meta ? (
+            <p className="text-sm text-muted-foreground">
+              {t("admin.pharmacies.totalResults")}{" "}
+              <span className="font-semibold text-foreground">
+                {meta.total}
+              </span>
+            </p>
+          ) : null}
 
-          {products.length === 0 ? (
-            <Card>
-              <CardContent className="py-16 text-center">
-                <Package className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {t("pharmacyOwner.noProducts")}
-                </h3>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {products.map((product) => (
-                <Card
-                  key={product.id}
-                  className="hover:shadow-md transition-shadow"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex flex-col md:flex-row md:items-start gap-4">
-                      {/* Icon */}
-                      <div className="h-16 w-16 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
-                        <Package className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                      </div>
-
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <h3 className="text-lg font-semibold text-foreground">
-                            {getLocalizedText(product.name, locale)}
-                          </h3>
-                          {!product.isActive && (
-                            <Badge variant="secondary">
-                              {t("common.inactive")}
-                            </Badge>
-                          )}
-                          {product.requiresPrescription && (
-                            <Badge variant="warning">
-                              {t("pharmacyOwner.requiresPrescription")}
-                            </Badge>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-                          <span className="font-semibold text-foreground">
-                            {product.discountPrice || product.price}{" "}
-                            {t("common.egp")}
-                            {product.discountPrice && (
-                              <span className="line-through text-muted-foreground ms-1">
-                                {product.price}
-                              </span>
-                            )}
-                          </span>
-                          <span>
-                            {t("pharmacyOwner.stockQuantity")}:{" "}
-                            {product.stockQuantity}
-                          </span>
-                          {product.category && (
-                            <span className="flex items-center gap-1">
-                              <Tag className="h-3 w-3" />
-                              {getLocalizedText(product.category.name, locale)}
-                            </span>
-                          )}
-                          {product.sku && <span>SKU: {product.sku}</span>}
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex gap-2 mt-4 md:mt-0">
-                        <Button asChild size="sm" variant="outline">
-                          <Link
-                            href={`/pharmacy-owner/products/${product.id}/edit?pharmacyId=${selectedPharmacy}`}
-                          >
-                            <Pencil className="h-4 w-4 me-1" />
-                            {t("common.edit")}
-                          </Link>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setDeleteId(product.id)}
-                          className="text-error-600 border-error-300 hover:bg-error-50"
-                        >
-                          <Trash2 className="h-4 w-4 me-1" />
-                          {t("common.delete")}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+          <div className="space-y-3 sm:space-y-4">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                pharmacyId={selectedPharmacy}
+                onDelete={() => setDeleteId(product.id)}
+              />
+            ))}
+          </div>
 
           <PaginationControls
             meta={meta}
@@ -327,30 +226,102 @@ export function PharmacyProductsList() {
         </>
       )}
 
-      {/* Delete Confirmation */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("common.deleteWarning")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-error-600 hover:bg-error-700"
-              disabled={deleteProduct.isPending}
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title={t("common.confirmDelete")}
+        description={t("common.deleteWarning")}
+        tone="destructive"
+        confirmLabel={t("common.delete")}
+        onConfirm={confirmDelete}
+      />
+    </div>
+  );
+}
+
+interface ProductCardProps {
+  product: PharmacyProduct;
+  pharmacyId: string;
+  onDelete: () => void;
+}
+
+function ProductCard({ product, pharmacyId, onDelete }: ProductCardProps) {
+  const { t, locale } = useTranslation();
+  const stock = product.stockQuantity ?? 0;
+  const lowThreshold = product.lowStockThreshold ?? 5;
+
+  return (
+    <Card className="transition-shadow hover:shadow-md">
+      <CardContent className="p-4 sm:p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+          <div
+            className="grid size-14 shrink-0 place-items-center rounded-xl bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 sm:size-16"
+            aria-hidden="true"
+          >
+            <Package className="size-7 sm:size-8" />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <h3 className="truncate text-base font-semibold text-foreground sm:text-lg">
+                {getLocalizedText(product.name, locale)}
+              </h3>
+              {!product.isActive ? (
+                <Badge variant="secondary">{t("common.inactive")}</Badge>
+              ) : null}
+              {product.requiresPrescription ? (
+                <Badge variant="warning">
+                  {t("pharmacyOwner.requiresPrescription")}
+                </Badge>
+              ) : null}
+              <StockBadge stock={stock} lowThreshold={lowThreshold} />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                <Currency amount={product.discountPrice || product.price} />
+                {product.discountPrice ? (
+                  <span className="ms-2 text-sm font-normal text-muted-foreground line-through">
+                    <Currency amount={product.price} />
+                  </span>
+                ) : null}
+              </span>
+              {product.category ? (
+                <span className="inline-flex items-center gap-1">
+                  <Tag className="size-3" aria-hidden="true" />
+                  {getLocalizedText(product.category.name, locale)}
+                </span>
+              ) : null}
+              {product.sku ? <span>SKU: {product.sku}</span> : null}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2 sm:flex-nowrap">
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="min-h-[44px] sm:min-h-9"
             >
-              {deleteProduct.isPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
+              <Link
+                href={`/pharmacy-owner/products/${product.id}/edit?pharmacyId=${pharmacyId}`}
+              >
+                <Pencil className="me-1 size-4" aria-hidden="true" />
+                {t("common.edit")}
+              </Link>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onDelete}
+              className="min-h-[44px] border-error-300 text-error-600 hover:bg-error-50 sm:min-h-9"
+            >
+              <Trash2 className="me-1 size-4" aria-hidden="true" />
               {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

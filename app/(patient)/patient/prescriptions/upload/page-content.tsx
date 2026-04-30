@@ -7,7 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 
 const UploadPrescriptionForm = dynamic(
   () =>
-    import("@/features/patients/components/upload-prescription-form").then(
+    import("@/features/patient-pharmacy/components/upload-prescription-form").then(
       (mod) => ({ default: mod.UploadPrescriptionForm }),
     ),
   { loading: () => <Skeleton className="h-96 w-full" /> },

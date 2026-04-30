@@ -7,9 +7,11 @@ import { useTranslation } from "@/lib/i18n";
 
 const PatientCheckout = dynamic(
   () =>
-    import("@/features/patients/components/patient-checkout").then((mod) => ({
-      default: mod.PatientCheckout,
-    })),
+    import("@/features/patient-pharmacy/components/patient-checkout").then(
+      (mod) => ({
+        default: mod.PatientCheckout,
+      }),
+    ),
   {
     loading: () => (
       <div className="space-y-4">

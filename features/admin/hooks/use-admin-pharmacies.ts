@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPatch } from "@/lib/api";
 import { ADMIN_PHARMACY_ENDPOINTS } from "@/lib/api/endpoints";
@@ -10,6 +10,8 @@ import { PharmacyStatus } from "@/types/enums";
 import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { adminPharmacyKeys } from "@/lib/query-keys";
 
 export interface AdminPharmacyFilters {
   page?: number;
@@ -22,8 +24,14 @@ export interface AdminPharmacyFilters {
 export function useAdminPharmacies(filters: AdminPharmacyFilters = {}) {
   const { page = 1, limit = 10, status, cityId, search } = filters;
 
-  return useQuery({
-    queryKey: ["admin-pharmacies", { page, limit, status, cityId, search }],
+  return usePharmacyQuery<PaginatedResponse<Pharmacy>>({
+    queryKey: adminPharmacyKeys.pharmacies({
+      page,
+      limit,
+      status,
+      cityId,
+      search,
+    }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -36,18 +44,15 @@ export function useAdminPharmacies(filters: AdminPharmacyFilters = {}) {
         `${ADMIN_PHARMACY_ENDPOINTS.PHARMACIES}?${params.toString()}`,
       );
     },
-    staleTime: 1000 * 60,
   });
 }
 
 export function useAdminPharmacy(pharmacyId: string) {
-  return useQuery({
-    queryKey: ["admin-pharmacy", pharmacyId],
-    queryFn: async () => {
-      return apiGet<Pharmacy>(ADMIN_PHARMACY_ENDPOINTS.PHARMACY(pharmacyId));
-    },
+  return usePharmacyQuery<Pharmacy>({
+    queryKey: adminPharmacyKeys.pharmacy(pharmacyId),
+    queryFn: async () =>
+      apiGet<Pharmacy>(ADMIN_PHARMACY_ENDPOINTS.PHARMACY(pharmacyId)),
     enabled: !!pharmacyId,
-    staleTime: 1000 * 60,
   });
 }
 
@@ -62,9 +67,14 @@ export function useApprovePharmacy() {
         {},
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacies"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacy"] });
+    onSuccess: (_, pharmacyId) => {
+      // Status change → invalidate the pharmacies list and the one detail.
+      queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.pharmacy(pharmacyId),
+      });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(
@@ -86,9 +96,14 @@ export function useRejectPharmacy() {
         {},
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacies"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacy"] });
+    onSuccess: (_, pharmacyId) => {
+      // Status change → invalidate the pharmacies list and the one detail.
+      queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.pharmacy(pharmacyId),
+      });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(
@@ -110,9 +125,14 @@ export function useSuspendPharmacy() {
         {},
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacies"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacy"] });
+    onSuccess: (_, pharmacyId) => {
+      // Status change → invalidate the pharmacies list and the one detail.
+      queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.pharmacy(pharmacyId),
+      });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(

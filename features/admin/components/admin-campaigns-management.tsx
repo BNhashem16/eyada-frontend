@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -22,17 +21,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
+import {
+  ConfirmDialog,
+  ListSkeleton,
+  PharmacyEmptyState,
+} from "@/components/pharmacy";
 import { DatePickerInput } from "@/components/ui/date-picker-input";
 import {
   useAdminCampaigns,
@@ -146,13 +140,6 @@ export function AdminCampaignsManagement() {
     updateCampaignStatus.mutate({ campaignId, status: newStatus });
   };
 
-  const handleDelete = () => {
-    if (!deleteId) return;
-    deleteCampaign.mutate(deleteId, {
-      onSuccess: () => setDeleteId(null),
-    });
-  };
-
   return (
     <>
       {/* Filters */}
@@ -210,18 +197,12 @@ export function AdminCampaignsManagement() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 w-full" />
-              ))}
-            </div>
+            <ListSkeleton rows={3} />
           ) : !data?.data?.length ? (
-            <div className="py-10 text-center">
-              <Megaphone className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">
-                {t("pharmacyOwner.noCampaigns")}
-              </p>
-            </div>
+            <PharmacyEmptyState
+              icon={Megaphone}
+              title={t("pharmacyOwner.noCampaigns")}
+            />
           ) : (
             <div className="space-y-3">
               {data.data.map((campaign) => (
@@ -531,30 +512,18 @@ export function AdminCampaignsManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("common.delete")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("pharmacyOwner.deleteCampaignConfirm")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-error-600 hover:bg-error-700"
-              disabled={deleteCampaign.isPending}
-            >
-              {deleteCampaign.isPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title={t("common.delete")}
+        description={t("pharmacyOwner.deleteCampaignConfirm")}
+        tone="destructive"
+        confirmLabel={t("common.delete")}
+        onConfirm={async () => {
+          if (deleteId) await deleteCampaign.mutateAsync(deleteId);
+          setDeleteId(null);
+        }}
+      />
     </>
   );
 }

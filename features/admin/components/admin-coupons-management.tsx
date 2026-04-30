@@ -15,7 +15,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -31,17 +30,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
+import {
+  ConfirmDialog,
+  Currency,
+  ListSkeleton,
+  PharmacyEmptyState,
+} from "@/components/pharmacy";
 import {
   useAdminCoupons,
   useCreateCoupon,
@@ -149,13 +144,6 @@ export function AdminCouponsManagement() {
     }
   };
 
-  const handleDelete = () => {
-    if (!deleteId) return;
-    deleteCoupon.mutate(deleteId, {
-      onSuccess: () => setDeleteId(null),
-    });
-  };
-
   const isCouponExpired = (endDate: string) => new Date(endDate) < new Date();
   const isMutating = createCoupon.isPending || updateCoupon.isPending;
 
@@ -222,18 +210,12 @@ export function AdminCouponsManagement() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 w-full" />
-              ))}
-            </div>
+            <ListSkeleton rows={3} />
           ) : !data?.data?.length ? (
-            <div className="py-10 text-center">
-              <Ticket className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">
-                {t("pharmacyOwner.noCoupons")}
-              </p>
-            </div>
+            <PharmacyEmptyState
+              icon={Ticket}
+              title={t("pharmacyOwner.noCoupons")}
+            />
           ) : (
             <div className="space-y-3">
               {data.data.map((coupon) => {
@@ -270,13 +252,15 @@ export function AdminCouponsManagement() {
                         </Badge>
                       </div>
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <span>
+                        <span className="inline-flex items-center gap-1">
                           {t("pharmacyOwner.couponValue")}:{" "}
-                          {coupon.couponType === "PERCENTAGE"
-                            ? `${Number(coupon.value)}%`
-                            : coupon.couponType === "FIXED"
-                              ? `${Number(coupon.value)} ${t("common.egp")}`
-                              : "-"}
+                          {coupon.couponType === "PERCENTAGE" ? (
+                            <span>{Number(coupon.value)}%</span>
+                          ) : coupon.couponType === "FIXED" ? (
+                            <Currency amount={coupon.value} />
+                          ) : (
+                            "-"
+                          )}
                         </span>
                         <span>
                           {t("pharmacyOwner.usageCount")}: {coupon.usageCount}
@@ -512,32 +496,18 @@ export function AdminCouponsManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("pharmacyOwner.deleteCoupon")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("pharmacyOwner.deleteCouponConfirm")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-error-600 hover:bg-error-700"
-              disabled={deleteCoupon.isPending}
-            >
-              {deleteCoupon.isPending && (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              )}
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title={t("pharmacyOwner.deleteCoupon")}
+        description={t("pharmacyOwner.deleteCouponConfirm")}
+        tone="destructive"
+        confirmLabel={t("common.delete")}
+        onConfirm={async () => {
+          if (deleteId) await deleteCoupon.mutateAsync(deleteId);
+          setDeleteId(null);
+        }}
+      />
     </>
   );
 }

@@ -7,37 +7,31 @@ import {
   Phone,
   CheckCircle,
   XCircle,
-  Loader2,
   Search,
   Ban,
   UserCheck,
   Clock,
-  AlertTriangle,
   Eye,
   Package,
   ShoppingCart,
   MapPin,
   User,
 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  ConfirmDialog,
+  ListSkeleton,
+  PharmacyEmptyState,
+  PharmacyErrorState,
+  RefreshButton,
+} from "@/components/pharmacy";
 import {
   useAdminPharmacies,
-  useAdminPharmacy,
   useApprovePharmacy,
   useRejectPharmacy,
   useSuspendPharmacy,
@@ -47,6 +41,7 @@ import { getLocalizedText } from "@/lib/utils/multilingual";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useTranslation } from "@/lib/i18n";
 import { PharmacyStatus } from "@/types/enums";
+import { adminPharmacyKeys } from "@/lib/query-keys";
 
 const getStatusConfig = (
   t: (key: string) => string,
@@ -82,24 +77,21 @@ const getStatusConfig = (
 
 export function AdminPharmaciesList() {
   const { t, locale } = useTranslation();
+  const queryClient = useQueryClient();
   const statusConfig = useMemo(() => getStatusConfig(t), [t]);
 
-  // Filters state
   const [filters, setFilters] = useState<AdminPharmacyFilters>({
     page: 1,
     limit: 30,
   });
   const [searchInput, setSearchInput] = useState("");
 
-  // Queries
-  const { data, isLoading, isError, error } = useAdminPharmacies(filters);
+  const { data, isLoading, isError } = useAdminPharmacies(filters);
 
-  // Mutations
   const approvePharmacy = useApprovePharmacy();
   const rejectPharmacy = useRejectPharmacy();
   const suspendPharmacy = useSuspendPharmacy();
 
-  // Dialog state
   const [selectedPharmacy, setSelectedPharmacy] = useState<string | null>(null);
   const [action, setAction] = useState<"approve" | "reject" | "suspend" | null>(
     null,
@@ -110,7 +102,10 @@ export function AdminPharmaciesList() {
   }, [searchInput]);
 
   const handleFilterChange = useCallback(
-    (key: keyof AdminPharmacyFilters, value: any) => {
+    (
+      key: keyof AdminPharmacyFilters,
+      value: AdminPharmacyFilters[typeof key] | "all",
+    ) => {
       setFilters((prev) => ({
         ...prev,
         [key]: value === "all" ? undefined : value,
@@ -120,33 +115,25 @@ export function AdminPharmaciesList() {
     [],
   );
 
-  const handleAction = () => {
+  const handleRefresh = useMemo(
+    () => async () => {
+      await queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.all,
+      });
+    },
+    [queryClient],
+  );
+
+  const confirmAction = async () => {
     if (!selectedPharmacy || !action) return;
-
-    const callbacks = {
-      onSuccess: () => {
-        setSelectedPharmacy(null);
-        setAction(null);
-      },
-    };
-
-    switch (action) {
-      case "approve":
-        approvePharmacy.mutate(selectedPharmacy, callbacks);
-        break;
-      case "reject":
-        rejectPharmacy.mutate(selectedPharmacy, callbacks);
-        break;
-      case "suspend":
-        suspendPharmacy.mutate(selectedPharmacy, callbacks);
-        break;
-    }
+    if (action === "approve")
+      await approvePharmacy.mutateAsync(selectedPharmacy);
+    if (action === "reject") await rejectPharmacy.mutateAsync(selectedPharmacy);
+    if (action === "suspend")
+      await suspendPharmacy.mutateAsync(selectedPharmacy);
+    setSelectedPharmacy(null);
+    setAction(null);
   };
-
-  const isPending =
-    approvePharmacy.isPending ||
-    rejectPharmacy.isPending ||
-    suspendPharmacy.isPending;
 
   const statusFilterOptions = useMemo(
     () => [
@@ -180,76 +167,43 @@ export function AdminPharmaciesList() {
   );
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex gap-4">
-              <Skeleton className="h-10 flex-1" />
-              <Skeleton className="h-10 w-40" />
-            </div>
-          </CardContent>
-        </Card>
-        {[...Array(5)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Skeleton className="h-16 w-16 rounded-xl" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-40" />
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-4 w-48" />
-                </div>
-                <Skeleton className="h-9 w-24" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    return <ListSkeleton rows={5} />;
   }
 
   if (isError) {
-    return (
-      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
-        <CardContent className="py-10 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
-          <p className="text-error-600 dark:text-error-400">
-            {t("admin.loadError")}
-          </p>
-          <p className="text-sm text-error-500 mt-2">
-            {error instanceof Error ? error.message : t("common.unknownError")}
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <PharmacyErrorState onRetry={handleRefresh} />;
   }
 
   const pharmacies = data?.data || [];
   const meta = data?.meta;
 
   return (
-    <>
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1 flex gap-2">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Sticky filter bar (mobile) */}
+      <Card className="sticky top-0 z-10 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:static sm:bg-card sm:backdrop-blur-none">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="flex flex-1 gap-2">
               <Input
                 placeholder={t("admin.pharmacies.searchPlaceholder")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 inputMode="search"
-                className="flex-1"
+                className="min-h-[44px] flex-1 sm:min-h-9"
+                aria-label={t("admin.pharmacies.searchPlaceholder")}
               />
-              <Button onClick={handleSearch} variant="outline">
-                <Search className="h-4 w-4" />
+              <Button
+                onClick={handleSearch}
+                variant="outline"
+                aria-label={t("common.search")}
+                className="min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9"
+              >
+                <Search className="size-4" aria-hidden="true" />
               </Button>
+              <RefreshButton onRefresh={handleRefresh} />
             </div>
 
-            {/* Status Filter */}
             <SearchableSelect
               options={statusFilterOptions}
               value={filters.status || ""}
@@ -281,17 +235,11 @@ export function AdminPharmaciesList() {
 
       {/* Pharmacies List */}
       {pharmacies.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Store className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t("admin.pharmacies.noPharmaciesFound")}
-            </h3>
-            <p className="text-muted-foreground">
-              {t("admin.pharmacies.noPharmaciesMatchFilters")}
-            </p>
-          </CardContent>
-        </Card>
+        <PharmacyEmptyState
+          icon={Store}
+          title={t("admin.pharmacies.noPharmaciesFound")}
+          description={t("admin.pharmacies.noPharmaciesMatchFilters")}
+        />
       ) : (
         <div className="space-y-4">
           {pharmacies.map((pharmacy) => {
@@ -375,15 +323,20 @@ export function AdminPharmaciesList() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-2 flex-wrap md:flex-nowrap mt-4 md:mt-0">
-                      <Button asChild size="sm" variant="outline">
+                    <div className="mt-4 flex flex-wrap gap-2 md:mt-0 md:flex-nowrap">
+                      <Button
+                        asChild
+                        size="sm"
+                        variant="outline"
+                        className="min-h-[44px] sm:min-h-9"
+                      >
                         <Link href={`/admin/pharmacies/${pharmacy.id}`}>
-                          <Eye className="h-4 w-4 me-1" />
+                          <Eye className="me-1 size-4" aria-hidden="true" />
                           {t("common.viewDetails")}
                         </Link>
                       </Button>
                       {pharmacy.ownerProfile?.status ===
-                        PharmacyStatus.PENDING && (
+                      PharmacyStatus.PENDING ? (
                         <>
                           <Button
                             size="sm"
@@ -391,9 +344,12 @@ export function AdminPharmaciesList() {
                               setSelectedPharmacy(pharmacy.id);
                               setAction("approve");
                             }}
-                            className="bg-green-600 hover:bg-green-700"
+                            className="min-h-[44px] bg-success-700 hover:bg-success-800 sm:min-h-9"
                           >
-                            <CheckCircle className="h-4 w-4 me-1" />
+                            <CheckCircle
+                              className="me-1 size-4"
+                              aria-hidden="true"
+                            />
                             {t("admin.approve")}
                           </Button>
                           <Button
@@ -403,15 +359,18 @@ export function AdminPharmaciesList() {
                               setSelectedPharmacy(pharmacy.id);
                               setAction("reject");
                             }}
-                            className="text-error-600 border-error-300 hover:bg-error-50"
+                            className="min-h-[44px] border-error-300 text-error-600 hover:bg-error-50 sm:min-h-9"
                           >
-                            <XCircle className="h-4 w-4 me-1" />
+                            <XCircle
+                              className="me-1 size-4"
+                              aria-hidden="true"
+                            />
                             {t("admin.reject")}
                           </Button>
                         </>
-                      )}
+                      ) : null}
                       {pharmacy.ownerProfile?.status ===
-                        PharmacyStatus.APPROVED && (
+                      PharmacyStatus.APPROVED ? (
                         <Button
                           size="sm"
                           variant="outline"
@@ -419,28 +378,31 @@ export function AdminPharmaciesList() {
                             setSelectedPharmacy(pharmacy.id);
                             setAction("suspend");
                           }}
-                          className="text-warning-600 border-warning-300 hover:bg-warning-50"
+                          className="min-h-[44px] border-warning-300 text-warning-700 hover:bg-warning-50 sm:min-h-9"
                         >
-                          <Ban className="h-4 w-4 me-1" />
+                          <Ban className="me-1 size-4" aria-hidden="true" />
                           {t("admin.suspend")}
                         </Button>
-                      )}
-                      {(pharmacy.ownerProfile?.status ===
+                      ) : null}
+                      {pharmacy.ownerProfile?.status ===
                         PharmacyStatus.REJECTED ||
-                        pharmacy.ownerProfile?.status ===
-                          PharmacyStatus.SUSPENDED) && (
+                      pharmacy.ownerProfile?.status ===
+                        PharmacyStatus.SUSPENDED ? (
                         <Button
                           size="sm"
                           onClick={() => {
                             setSelectedPharmacy(pharmacy.id);
                             setAction("approve");
                           }}
-                          className="bg-green-600 hover:bg-green-700"
+                          className="min-h-[44px] bg-success-700 hover:bg-success-800 sm:min-h-9"
                         >
-                          <CheckCircle className="h-4 w-4 me-1" />
+                          <CheckCircle
+                            className="me-1 size-4"
+                            aria-hidden="true"
+                          />
                           {t("admin.pharmacies.reactivate")}
                         </Button>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </CardContent>
@@ -460,48 +422,44 @@ export function AdminPharmaciesList() {
         }
       />
 
-      {/* Confirmation Dialog */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!selectedPharmacy && !!action}
-        onOpenChange={() => {
-          setSelectedPharmacy(null);
-          setAction(null);
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedPharmacy(null);
+            setAction(null);
+          }
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {action === "approve" && t("admin.pharmacies.confirmApprove")}
-              {action === "reject" && t("admin.pharmacies.confirmReject")}
-              {action === "suspend" && t("admin.pharmacies.confirmSuspend")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {action === "approve" && t("admin.pharmacies.approveMessage")}
-              {action === "reject" && t("admin.pharmacies.rejectMessage")}
-              {action === "suspend" && t("admin.pharmacies.suspendMessage")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleAction}
-              className={
-                action === "approve"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : action === "suspend"
-                    ? "bg-warning-600 hover:bg-warning-700"
-                    : "bg-error-600 hover:bg-error-700"
-              }
-              disabled={isPending}
-            >
-              {isPending && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
-              {action === "approve" && t("admin.approve")}
-              {action === "reject" && t("admin.reject")}
-              {action === "suspend" && t("admin.suspend")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        title={
+          action === "approve"
+            ? t("admin.pharmacies.confirmApprove")
+            : action === "reject"
+              ? t("admin.pharmacies.confirmReject")
+              : action === "suspend"
+                ? t("admin.pharmacies.confirmSuspend")
+                : ""
+        }
+        description={
+          action === "approve"
+            ? t("admin.pharmacies.approveMessage")
+            : action === "reject"
+              ? t("admin.pharmacies.rejectMessage")
+              : action === "suspend"
+                ? t("admin.pharmacies.suspendMessage")
+                : undefined
+        }
+        confirmLabel={
+          action === "approve"
+            ? t("admin.approve")
+            : action === "reject"
+              ? t("admin.reject")
+              : action === "suspend"
+                ? t("admin.suspend")
+                : t("common.confirm")
+        }
+        tone={action === "approve" ? "default" : "destructive"}
+        onConfirm={confirmAction}
+      />
+    </div>
   );
 }

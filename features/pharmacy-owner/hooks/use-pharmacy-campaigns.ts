@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { PHARMACY_OWNER_ENDPOINTS } from "@/lib/api/endpoints";
@@ -15,6 +15,8 @@ import type {
 import { toastError, toastSuccess } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { pharmacyCampaignKeys } from "@/lib/query-keys";
 
 export interface CampaignFilters {
   status?: CampaignStatus;
@@ -28,8 +30,8 @@ export function usePharmacyCampaigns(
 ) {
   const { status, page = 1, limit = 10 } = filters;
 
-  return useQuery({
-    queryKey: ["pharmacy-campaigns", pharmacyId, { status, page, limit }],
+  return usePharmacyQuery<PaginatedResponse<PharmacyCampaign>>({
+    queryKey: pharmacyCampaignKeys.list(pharmacyId, { status, page, limit }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -41,18 +43,16 @@ export function usePharmacyCampaigns(
       );
     },
     enabled: !!pharmacyId,
-    staleTime: 1000 * 30,
   });
 }
 
 export function usePharmacyCampaign(pharmacyId: string, campaignId: string) {
-  return useQuery({
-    queryKey: ["pharmacy-campaign", pharmacyId, campaignId],
-    queryFn: async () => {
-      return apiGet<PharmacyCampaign>(
+  return usePharmacyQuery<PharmacyCampaign>({
+    queryKey: pharmacyCampaignKeys.detail(pharmacyId, campaignId),
+    queryFn: async () =>
+      apiGet<PharmacyCampaign>(
         PHARMACY_OWNER_ENDPOINTS.CAMPAIGN(pharmacyId, campaignId),
-      );
-    },
+      ),
     enabled: !!pharmacyId && !!campaignId,
   });
 }
@@ -70,7 +70,7 @@ export function useCreateCampaign(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-campaigns", pharmacyId],
+        queryKey: pharmacyCampaignKeys.lists(pharmacyId),
       });
       toastSuccess(t("toast.success"), t("toast.created"));
     },
@@ -99,7 +99,7 @@ export function useUpdateCampaign(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-campaigns", pharmacyId],
+        queryKey: pharmacyCampaignKeys.lists(pharmacyId),
       });
       toastSuccess(t("toast.success"), t("toast.updated"));
     },
@@ -128,7 +128,7 @@ export function useUpdateCampaignStatus(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-campaigns", pharmacyId],
+        queryKey: pharmacyCampaignKeys.lists(pharmacyId),
       });
       toastSuccess(t("toast.success"), t("toast.updated"));
     },
@@ -153,7 +153,7 @@ export function useDeleteCampaign(pharmacyId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-campaigns", pharmacyId],
+        queryKey: pharmacyCampaignKeys.lists(pharmacyId),
       });
       toastSuccess(t("toast.success"), t("toast.deleted"));
     },

@@ -20,7 +20,15 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ConfirmDialog,
+  ListSkeleton,
+  PharmacyEmptyState,
+  PharmacyErrorState,
+  RefreshButton,
+} from "@/components/pharmacy";
+import { useQueryClient } from "@tanstack/react-query";
+import { adminPharmacyKeys } from "@/lib/query-keys";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
@@ -79,6 +87,7 @@ const getStatusConfig = (
 
 export function AdminPharmacyOwnersList() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const statusConfig = useMemo(() => getStatusConfig(t), [t]);
 
   // Filters state
@@ -89,7 +98,16 @@ export function AdminPharmacyOwnersList() {
   const [searchInput, setSearchInput] = useState("");
 
   // Queries
-  const { data, isLoading, isError, error } = useAdminPharmacyOwners(filters);
+  const { data, isLoading, isError } = useAdminPharmacyOwners(filters);
+
+  const handleRefresh = useMemo(
+    () => async () => {
+      await queryClient.invalidateQueries({
+        queryKey: adminPharmacyKeys.owners(),
+      });
+    },
+    [queryClient],
+  );
 
   // Mutations
   const approveOwner = useApprovePharmacyOwner();
@@ -117,27 +135,13 @@ export function AdminPharmacyOwnersList() {
     [],
   );
 
-  const handleAction = () => {
+  const confirmAction = async () => {
     if (!selectedOwner || !action) return;
-
-    const callbacks = {
-      onSuccess: () => {
-        setSelectedOwner(null);
-        setAction(null);
-      },
-    };
-
-    switch (action) {
-      case "approve":
-        approveOwner.mutate(selectedOwner, callbacks);
-        break;
-      case "reject":
-        rejectOwner.mutate(selectedOwner, callbacks);
-        break;
-      case "suspend":
-        suspendOwner.mutate(selectedOwner, callbacks);
-        break;
-    }
+    if (action === "approve") await approveOwner.mutateAsync(selectedOwner);
+    if (action === "reject") await rejectOwner.mutateAsync(selectedOwner);
+    if (action === "suspend") await suspendOwner.mutateAsync(selectedOwner);
+    setSelectedOwner(null);
+    setAction(null);
   };
 
   const isPending =
@@ -175,73 +179,41 @@ export function AdminPharmacyOwnersList() {
   );
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex gap-4">
-              <Skeleton className="h-10 flex-1" />
-              <Skeleton className="h-10 w-40" />
-            </div>
-          </CardContent>
-        </Card>
-        {[...Array(5)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Skeleton className="h-16 w-16 rounded-xl" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-40" />
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-4 w-48" />
-                </div>
-                <Skeleton className="h-9 w-24" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    return <ListSkeleton rows={5} />;
   }
 
   if (isError) {
-    return (
-      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
-        <CardContent className="py-10 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
-          <p className="text-error-600 dark:text-error-400">
-            {t("admin.loadError")}
-          </p>
-          <p className="text-sm text-error-500 mt-2">
-            {error instanceof Error ? error.message : t("common.unknownError")}
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <PharmacyErrorState onRetry={handleRefresh} />;
   }
 
   const owners = data?.data || [];
   const meta = data?.meta;
 
   return (
-    <>
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1 flex gap-2">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Sticky filter bar (mobile) */}
+      <Card className="sticky top-0 z-10 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:static sm:bg-card sm:backdrop-blur-none">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="flex flex-1 gap-2">
               <Input
                 placeholder={t("admin.pharmacyOwners.searchPlaceholder")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 inputMode="search"
-                className="flex-1"
+                className="min-h-[44px] flex-1 sm:min-h-9"
+                aria-label={t("admin.pharmacyOwners.searchPlaceholder")}
               />
-              <Button onClick={handleSearch} variant="outline">
-                <Search className="h-4 w-4" />
+              <Button
+                onClick={handleSearch}
+                variant="outline"
+                aria-label={t("common.search")}
+                className="min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9"
+              >
+                <Search className="size-4" aria-hidden="true" />
               </Button>
+              <RefreshButton onRefresh={handleRefresh} />
             </div>
 
             {/* Status Filter */}
@@ -276,17 +248,11 @@ export function AdminPharmacyOwnersList() {
 
       {/* Owners List */}
       {owners.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Briefcase className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t("admin.pharmacyOwners.noOwnersFound")}
-            </h3>
-            <p className="text-muted-foreground">
-              {t("admin.pharmacyOwners.noOwnersMatchFilters")}
-            </p>
-          </CardContent>
-        </Card>
+        <PharmacyEmptyState
+          icon={Briefcase}
+          title={t("admin.pharmacyOwners.noOwnersFound")}
+          description={t("admin.pharmacyOwners.noOwnersMatchFilters")}
+        />
       ) : (
         <div className="space-y-4">
           {owners.map((owner) => {
@@ -441,48 +407,44 @@ export function AdminPharmacyOwnersList() {
         }
       />
 
-      {/* Confirmation Dialog */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!selectedOwner && !!action}
-        onOpenChange={() => {
-          setSelectedOwner(null);
-          setAction(null);
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedOwner(null);
+            setAction(null);
+          }
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {action === "approve" && t("admin.pharmacyOwners.confirmApprove")}
-              {action === "reject" && t("admin.pharmacyOwners.confirmReject")}
-              {action === "suspend" && t("admin.pharmacyOwners.confirmSuspend")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {action === "approve" && t("admin.pharmacyOwners.approveMessage")}
-              {action === "reject" && t("admin.pharmacyOwners.rejectMessage")}
-              {action === "suspend" && t("admin.pharmacyOwners.suspendMessage")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleAction}
-              className={
-                action === "approve"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : action === "suspend"
-                    ? "bg-warning-600 hover:bg-warning-700"
-                    : "bg-error-600 hover:bg-error-700"
-              }
-              disabled={isPending}
-            >
-              {isPending && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
-              {action === "approve" && t("admin.approve")}
-              {action === "reject" && t("admin.reject")}
-              {action === "suspend" && t("admin.suspend")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        title={
+          action === "approve"
+            ? t("admin.pharmacyOwners.confirmApprove")
+            : action === "reject"
+              ? t("admin.pharmacyOwners.confirmReject")
+              : action === "suspend"
+                ? t("admin.pharmacyOwners.confirmSuspend")
+                : ""
+        }
+        description={
+          action === "approve"
+            ? t("admin.pharmacyOwners.approveMessage")
+            : action === "reject"
+              ? t("admin.pharmacyOwners.rejectMessage")
+              : action === "suspend"
+                ? t("admin.pharmacyOwners.suspendMessage")
+                : undefined
+        }
+        confirmLabel={
+          action === "approve"
+            ? t("admin.approve")
+            : action === "reject"
+              ? t("admin.reject")
+              : action === "suspend"
+                ? t("admin.suspend")
+                : t("common.confirm")
+        }
+        tone={action === "approve" ? "default" : "destructive"}
+        onConfirm={confirmAction}
+      />
+    </div>
   );
 }

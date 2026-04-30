@@ -58,8 +58,11 @@ import {
   type PrescriptionOrder,
 } from "@/types/prescription";
 import { getImageUrl } from "@/lib/utils";
-import { apiGet } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import {
+  useAdminPharmacies,
+  useAdminPharmacy,
+} from "@/features/admin/hooks/use-admin-pharmacies";
+import { PharmacyStatus } from "@/types/enums";
 
 interface AssignmentItem {
   medicationName: string;
@@ -165,38 +168,26 @@ function PharmacyCombobox({
     setPage(1);
   }, [debouncedSearch]);
 
-  const { data: pharmaciesData, isLoading } = useQuery({
-    queryKey: [
-      "admin-pharmacies-for-assignment",
-      { search: debouncedSearch, page },
-    ],
-    queryFn: () => {
-      const params = new URLSearchParams();
-      params.append("limit", "10");
-      params.append("page", page.toString());
-      params.append("status", "APPROVED");
-      if (debouncedSearch.length >= 2) {
-        params.append("search", debouncedSearch);
-      }
-      return apiGet<any>(`/admin/pharmacies?${params.toString()}`);
-    },
-    enabled: enabled && open,
+  const { data: pharmaciesData, isLoading } = useAdminPharmacies({
+    page,
+    limit: 10,
+    status: PharmacyStatus.APPROVED,
+    search: debouncedSearch.length >= 2 ? debouncedSearch : undefined,
   });
 
-  const pharmacies: any[] = pharmaciesData?.data || [];
+  const pharmacies = pharmaciesData?.data ?? [];
   const meta = pharmaciesData?.meta;
   const hasMore = meta ? page < meta.totalPages : false;
 
   // Get the selected pharmacy name for display
-  const { data: selectedPharmacyData } = useQuery({
-    queryKey: ["admin-pharmacy-selected", value],
-    queryFn: () => apiGet<any>(`/admin/pharmacies/${value}`),
-    enabled: !!value && enabled,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const selectedPharmacy = selectedPharmacyData?.data || selectedPharmacyData;
-  const selectedName = selectedPharmacy?.name || "";
+  const { data: selectedPharmacyData } = useAdminPharmacy(value);
+  const selectedPharmacy = selectedPharmacyData ?? null;
+  const rawName = selectedPharmacy?.name as
+    | string
+    | { ar?: string; en?: string }
+    | undefined;
+  const selectedName =
+    typeof rawName === "string" ? rawName : (rawName?.ar ?? rawName?.en ?? "");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

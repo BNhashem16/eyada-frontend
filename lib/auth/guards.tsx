@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   useUser,
@@ -9,6 +9,8 @@ import {
   useIsHydrated,
 } from "./store";
 import { Role } from "@/types";
+import { toastWarning } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -30,6 +32,8 @@ export function ProtectedRoute({
   const isAuthenticated = useIsAuthenticated();
   const isLoading = useIsAuthLoading();
   const isHydrated = useIsHydrated();
+  const { t } = useTranslation();
+  const hasNotifiedRef = useRef(false);
 
   useEffect(() => {
     // Wait for hydration
@@ -37,6 +41,10 @@ export function ProtectedRoute({
 
     // If not authenticated, redirect to login
     if (!isLoading && !isAuthenticated) {
+      if (!hasNotifiedRef.current) {
+        hasNotifiedRef.current = true;
+        toastWarning(t("auth.loginRequiredTitle"), t("auth.loginRequiredDesc"));
+      }
       const returnUrl = encodeURIComponent(pathname);
       router.replace(`${fallbackPath}?returnUrl=${returnUrl}`);
       return;
@@ -65,6 +73,7 @@ export function ProtectedRoute({
     router,
     pathname,
     fallbackPath,
+    t,
   ]);
 
   // Show nothing while checking auth

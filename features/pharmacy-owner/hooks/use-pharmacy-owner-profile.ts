@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPatch } from "@/lib/api";
 import { PHARMACY_OWNER_ENDPOINTS } from "@/lib/api/endpoints";
@@ -9,14 +9,14 @@ import type { PharmacyOwnerProfile } from "@/types/pharmacy";
 import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { pharmacyKeys } from "@/lib/query-keys";
 
 export function usePharmacyOwnerProfile(options?: { enabled?: boolean }) {
-  return useQuery({
-    queryKey: ["pharmacy-owner-profile"],
-    queryFn: async () => {
-      return apiGet<PharmacyOwnerProfile>(PHARMACY_OWNER_ENDPOINTS.PROFILE);
-    },
-    staleTime: 1000 * 60 * 5,
+  return usePharmacyQuery<PharmacyOwnerProfile>({
+    queryKey: pharmacyKeys.ownerProfile(),
+    queryFn: async () =>
+      apiGet<PharmacyOwnerProfile>(PHARMACY_OWNER_ENDPOINTS.PROFILE),
     enabled: options?.enabled ?? true,
   });
 }
@@ -33,7 +33,7 @@ export function useUpdatePharmacyOwnerProfile() {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pharmacy-owner-profile"] });
+      queryClient.invalidateQueries({ queryKey: pharmacyKeys.ownerProfile() });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(

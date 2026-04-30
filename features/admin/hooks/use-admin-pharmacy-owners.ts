@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPatch } from "@/lib/api";
 import { ADMIN_PHARMACY_ENDPOINTS } from "@/lib/api/endpoints";
@@ -10,6 +10,8 @@ import { PharmacyStatus } from "@/types/enums";
 import { toastError } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { adminPharmacyKeys } from "@/lib/query-keys";
 
 export interface AdminPharmacyOwnerFilters {
   page?: number;
@@ -27,8 +29,8 @@ export function useAdminPharmacyOwners(
 ) {
   const { page = 1, limit = 10, status, search } = filters;
 
-  return useQuery({
-    queryKey: ["admin-pharmacy-owners", { page, limit, status, search }],
+  return usePharmacyQuery<PaginatedResponse<PharmacyOwnerProfileWithCount>>({
+    queryKey: adminPharmacyKeys.owners({ page, limit, status, search }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -40,7 +42,6 @@ export function useAdminPharmacyOwners(
         `${ADMIN_PHARMACY_ENDPOINTS.PHARMACY_OWNERS}?${params.toString()}`,
       );
     },
-    staleTime: 1000 * 60,
   });
 }
 
@@ -56,7 +57,7 @@ export function useApprovePharmacyOwner() {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacy-owners"] });
+      queryClient.invalidateQueries({ queryKey: adminPharmacyKeys.owners() });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(
@@ -79,7 +80,7 @@ export function useRejectPharmacyOwner() {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacy-owners"] });
+      queryClient.invalidateQueries({ queryKey: adminPharmacyKeys.owners() });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(
@@ -102,7 +103,7 @@ export function useSuspendPharmacyOwner() {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-pharmacy-owners"] });
+      queryClient.invalidateQueries({ queryKey: adminPharmacyKeys.owners() });
     },
     onError: (error: AxiosError<ApiError>) => {
       toastError(

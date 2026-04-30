@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import Image from "next/image";
 import {
   Package,
@@ -28,35 +27,7 @@ import { usePublicCategories } from "@/features/admin/hooks";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import { getImageUrl } from "@/lib/utils/storage";
-
-const getProductSchema = (t: (key: string) => string) =>
-  z.object({
-    nameAr: z.string().min(2, t("validation.required")).max(200),
-    nameEn: z.string().min(2, t("validation.required")).max(200),
-    descriptionAr: z.string().max(2000).optional().or(z.literal("")),
-    descriptionEn: z.string().max(2000).optional().or(z.literal("")),
-    categoryId: z.string().optional().or(z.literal("")),
-    sku: z.string().max(50).optional().or(z.literal("")),
-    barcode: z.string().max(50).optional().or(z.literal("")),
-    price: z.coerce.number().min(0.01, t("validation.required")).max(100000),
-    discountPrice: z.coerce
-      .number()
-      .min(0)
-      .max(100000)
-      .optional()
-      .or(z.literal("")),
-    stockQuantity: z.coerce.number().int().min(0).optional().or(z.literal("")),
-    lowStockThreshold: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .optional()
-      .or(z.literal("")),
-    requiresPrescription: z.boolean(),
-    isActive: z.boolean(),
-  });
-
-type ProductFormData = z.infer<ReturnType<typeof getProductSchema>>;
+import { createProductSchema, type ProductFormData } from "../schemas";
 
 interface UploadedImage {
   url: string;
@@ -88,7 +59,7 @@ export function EditProductForm({ productId }: EditProductFormProps) {
   const [selectedParentCategoryId, setSelectedParentCategoryId] =
     useState<string>("");
 
-  const productSchema = getProductSchema(t);
+  const productSchema = useMemo(() => createProductSchema(t), [t]);
 
   const {
     register,

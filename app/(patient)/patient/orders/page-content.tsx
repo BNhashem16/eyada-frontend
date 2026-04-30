@@ -7,7 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 
 const PatientOrdersList = dynamic(
   () =>
-    import("@/features/patients/components/patient-orders-list").then(
+    import("@/features/patient-pharmacy/components/patient-orders-list").then(
       (mod) => ({
         default: mod.PatientOrdersList,
       }),

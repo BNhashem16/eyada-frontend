@@ -7,11 +7,9 @@ import {
   Mail,
   CheckCircle,
   XCircle,
-  Loader2,
   Search,
   Ban,
   Clock,
-  AlertTriangle,
   Car,
   CreditCard,
   FileText,
@@ -20,19 +18,14 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  ConfirmDialog,
+  ListSkeleton,
+  PharmacyEmptyState,
+  PharmacyErrorState,
+} from "@/components/pharmacy";
 import {
   useAdminDrivers,
   useApproveDriver,
@@ -87,7 +80,7 @@ export function AdminDriversList() {
   });
   const [searchInput, setSearchInput] = useState("");
 
-  const { data, isLoading, isError, error } = useAdminDrivers(filters);
+  const { data, isLoading, isError } = useAdminDrivers(filters);
 
   const approveDriver = useApproveDriver();
   const rejectDriver = useRejectDriver();
@@ -104,7 +97,10 @@ export function AdminDriversList() {
   }, [searchInput]);
 
   const handleFilterChange = useCallback(
-    (key: keyof AdminDriverFilters, value: any) => {
+    (
+      key: keyof AdminDriverFilters,
+      value: AdminDriverFilters[typeof key] | "all",
+    ) => {
       setFilters((prev) => ({
         ...prev,
         [key]: value === "all" ? undefined : value,
@@ -114,37 +110,15 @@ export function AdminDriversList() {
     [],
   );
 
-  const handleAction = () => {
+  const confirmAction = async () => {
     if (!selectedDriver || !action) return;
-
-    const callbacks = {
-      onSuccess: () => {
-        setSelectedDriver(null);
-        setAction(null);
-      },
-    };
-
-    switch (action) {
-      case "approve":
-        approveDriver.mutate(selectedDriver, callbacks);
-        break;
-      case "reject":
-        rejectDriver.mutate(selectedDriver, callbacks);
-        break;
-      case "suspend":
-        suspendDriver.mutate(selectedDriver, callbacks);
-        break;
-      case "activate":
-        activateDriver.mutate(selectedDriver, callbacks);
-        break;
-    }
+    if (action === "approve") await approveDriver.mutateAsync(selectedDriver);
+    if (action === "reject") await rejectDriver.mutateAsync(selectedDriver);
+    if (action === "suspend") await suspendDriver.mutateAsync(selectedDriver);
+    if (action === "activate") await activateDriver.mutateAsync(selectedDriver);
+    setSelectedDriver(null);
+    setAction(null);
   };
-
-  const isPending =
-    approveDriver.isPending ||
-    rejectDriver.isPending ||
-    suspendDriver.isPending ||
-    activateDriver.isPending;
 
   const statusFilterOptions = useMemo(
     () => [
@@ -178,61 +152,23 @@ export function AdminDriversList() {
   );
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex gap-4">
-              <Skeleton className="h-10 flex-1" />
-              <Skeleton className="h-10 w-40" />
-            </div>
-          </CardContent>
-        </Card>
-        {[...Array(5)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Skeleton className="h-16 w-16 rounded-xl" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-40" />
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-4 w-48" />
-                </div>
-                <Skeleton className="h-9 w-24" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    return <ListSkeleton rows={5} />;
   }
 
   if (isError) {
-    return (
-      <Card className="border-error-200 bg-error-50 dark:border-error-800 dark:bg-error-900/20">
-        <CardContent className="py-10 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto text-error-500 mb-4" />
-          <p className="text-error-600 dark:text-error-400">
-            {t("admin.loadError")}
-          </p>
-          <p className="text-sm text-error-500 mt-2">
-            {error instanceof Error ? error.message : t("common.unknownError")}
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <PharmacyErrorState />;
   }
 
   const drivers = data?.data || [];
   const meta = data?.meta;
 
   return (
-    <>
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 flex gap-2">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Sticky filter bar (mobile) */}
+      <Card className="sticky top-0 z-10 border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:static sm:bg-card sm:backdrop-blur-none">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="flex flex-1 gap-2">
               <Input
                 placeholder={t("admin.drivers.searchPlaceholder")}
                 value={searchInput}
@@ -277,17 +213,11 @@ export function AdminDriversList() {
 
       {/* Drivers List */}
       {drivers.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Truck className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              {t("admin.drivers.noDriversFound")}
-            </h3>
-            <p className="text-muted-foreground">
-              {t("admin.drivers.noDriversMatchFilters")}
-            </p>
-          </CardContent>
-        </Card>
+        <PharmacyEmptyState
+          icon={Truck}
+          title={t("admin.drivers.noDriversFound")}
+          description={t("admin.drivers.noDriversMatchFilters")}
+        />
       ) : (
         <div className="space-y-4">
           {drivers.map((driver) => {
@@ -450,51 +380,54 @@ export function AdminDriversList() {
         }
       />
 
-      {/* Confirmation Dialog */}
-      <AlertDialog
+      <ConfirmDialog
         open={!!selectedDriver && !!action}
-        onOpenChange={() => {
-          setSelectedDriver(null);
-          setAction(null);
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedDriver(null);
+            setAction(null);
+          }
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {action === "approve" && t("admin.drivers.confirmApprove")}
-              {action === "reject" && t("admin.drivers.confirmReject")}
-              {action === "suspend" && t("admin.drivers.confirmSuspend")}
-              {action === "activate" && t("admin.drivers.confirmActivate")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {action === "approve" && t("admin.drivers.approveMessage")}
-              {action === "reject" && t("admin.drivers.rejectMessage")}
-              {action === "suspend" && t("admin.drivers.suspendMessage")}
-              {action === "activate" && t("admin.drivers.activateMessage")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleAction}
-              className={
-                action === "approve" || action === "activate"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : action === "suspend"
-                    ? "bg-warning-600 hover:bg-warning-700"
-                    : "bg-error-600 hover:bg-error-700"
-              }
-              disabled={isPending}
-            >
-              {isPending && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
-              {action === "approve" && t("admin.approve")}
-              {action === "reject" && t("admin.reject")}
-              {action === "suspend" && t("admin.suspend")}
-              {action === "activate" && t("admin.drivers.reactivate")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        title={
+          action === "approve"
+            ? t("admin.drivers.confirmApprove")
+            : action === "reject"
+              ? t("admin.drivers.confirmReject")
+              : action === "suspend"
+                ? t("admin.drivers.confirmSuspend")
+                : action === "activate"
+                  ? t("admin.drivers.confirmActivate")
+                  : ""
+        }
+        description={
+          action === "approve"
+            ? t("admin.drivers.approveMessage")
+            : action === "reject"
+              ? t("admin.drivers.rejectMessage")
+              : action === "suspend"
+                ? t("admin.drivers.suspendMessage")
+                : action === "activate"
+                  ? t("admin.drivers.activateMessage")
+                  : undefined
+        }
+        confirmLabel={
+          action === "approve"
+            ? t("admin.approve")
+            : action === "reject"
+              ? t("admin.reject")
+              : action === "suspend"
+                ? t("admin.suspend")
+                : action === "activate"
+                  ? t("admin.drivers.reactivate")
+                  : t("common.confirm")
+        }
+        tone={
+          action === "approve" || action === "activate"
+            ? "default"
+            : "destructive"
+        }
+        onConfirm={confirmAction}
+      />
+    </div>
   );
 }

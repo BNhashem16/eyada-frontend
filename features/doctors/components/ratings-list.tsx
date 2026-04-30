@@ -29,7 +29,9 @@ interface RatingsListProps {
 }
 
 export function RatingsList({ doctorId }: RatingsListProps) {
-  const { t } = useTranslation();
+  const { t, isRtl } = useTranslation();
+  const PrevChevron = isRtl ? ChevronRight : ChevronLeft;
+  const NextChevron = isRtl ? ChevronLeft : ChevronRight;
   const [page, setPage] = useState(1);
   const [ratingFilter, setRatingFilter] = useState<number | undefined>(
     undefined,
@@ -240,11 +242,11 @@ export function RatingsList({ doctorId }: RatingsListProps) {
         <div className="flex items-center justify-center gap-4 pt-4">
           <Button
             variant="outline"
-            className="text-xs"
+            className="text-xs min-h-[44px]"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            <ChevronRight className="h-4 w-4" />
+            <PrevChevron className="h-4 w-4" />
             {t("common.previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
@@ -252,12 +254,12 @@ export function RatingsList({ doctorId }: RatingsListProps) {
           </span>
           <Button
             variant="outline"
-            className="text-xs"
+            className="text-xs min-h-[44px]"
             onClick={() => setPage((p) => p + 1)}
             disabled={!hasMore}
           >
             {t("common.next")}
-            <ChevronLeft className="h-4 w-4" />
+            <NextChevron className="h-4 w-4" />
           </Button>
         </div>
       )}

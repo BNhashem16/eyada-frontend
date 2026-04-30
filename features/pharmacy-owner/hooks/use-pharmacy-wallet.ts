@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { apiGet, apiPost } from "@/lib/api";
 import { PHARMACY_OWNER_ENDPOINTS } from "@/lib/api/endpoints";
@@ -15,15 +15,18 @@ import type {
 import { toastError, toastSuccess } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { extractApiError } from "@/lib/utils";
+import { usePharmacyQuery } from "@/features/_shared/hooks/use-pharmacy-query";
+import { pharmacyWalletKeys } from "@/lib/query-keys";
 
 export function useWalletSummary(pharmacyId: string) {
-  return useQuery({
-    queryKey: ["pharmacy-wallet", pharmacyId],
-    queryFn: async () => {
-      return apiGet<WalletSummary>(PHARMACY_OWNER_ENDPOINTS.WALLET(pharmacyId));
-    },
+  // 'fast-changing': balance updates from incoming orders should feel
+  // close to live; user can also press Refresh.
+  return usePharmacyQuery<WalletSummary>({
+    queryKey: pharmacyWalletKeys.balance(pharmacyId),
+    queryFn: async () =>
+      apiGet<WalletSummary>(PHARMACY_OWNER_ENDPOINTS.WALLET(pharmacyId)),
     enabled: !!pharmacyId,
-    staleTime: 1000 * 30,
+    preset: "fast-changing",
   });
 }
 
@@ -39,12 +42,12 @@ export function useWalletTransactions(
 ) {
   const { type, page = 1, limit = 10 } = filters;
 
-  return useQuery({
-    queryKey: [
-      "pharmacy-wallet-transactions",
-      pharmacyId,
-      { type, page, limit },
-    ],
+  return usePharmacyQuery<PaginatedResponse<WalletTransaction>>({
+    queryKey: pharmacyWalletKeys.transactions(pharmacyId, {
+      type,
+      page,
+      limit,
+    }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -56,7 +59,6 @@ export function useWalletTransactions(
       );
     },
     enabled: !!pharmacyId,
-    staleTime: 1000 * 30,
   });
 }
 
@@ -65,8 +67,8 @@ export function usePharmacySettlements(
   page = 1,
   limit = 10,
 ) {
-  return useQuery({
-    queryKey: ["pharmacy-settlements", pharmacyId, { page, limit }],
+  return usePharmacyQuery<PaginatedResponse<Settlement>>({
+    queryKey: pharmacyWalletKeys.settlements(pharmacyId, { page, limit }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -77,7 +79,6 @@ export function usePharmacySettlements(
       );
     },
     enabled: !!pharmacyId,
-    staleTime: 1000 * 30,
   });
 }
 
@@ -93,14 +94,10 @@ export function useRequestSettlement(pharmacyId: string) {
       );
     },
     onSuccess: () => {
+      // Settlement request changes balance, transactions log, and the
+      // settlements list — invalidate the whole wallet scope at once.
       queryClient.invalidateQueries({
-        queryKey: ["pharmacy-wallet", pharmacyId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["pharmacy-settlements", pharmacyId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["pharmacy-wallet-transactions", pharmacyId],
+        queryKey: pharmacyWalletKeys.scoped(pharmacyId),
       });
       toastSuccess(t("toast.success"), t("toast.created"));
     },

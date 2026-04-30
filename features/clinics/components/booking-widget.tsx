@@ -11,6 +11,7 @@ import {
   Loader2,
   User,
   Users,
+  LogIn,
 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -230,7 +231,11 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
 
   const handleBooking = () => {
     if (!isAuthenticated) {
-      // Redirect to login with return URL
+      toast({
+        title: t("auth.loginRequiredTitle"),
+        description: t("auth.loginRequiredDesc"),
+        variant: "warning",
+      });
       const returnUrl = encodeURIComponent(window.location.pathname);
       router.push(`/login?returnUrl=${returnUrl}`);
       return;
@@ -266,6 +271,44 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Guest CTA — always visible for logged-out users so they know
+            they must sign in before booking */}
+        {!isAuthenticated && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 p-5 sm:p-6 text-white shadow-md">
+            <div
+              className="pointer-events-none absolute -top-12 -end-12 h-40 w-40 rounded-full bg-white/10 blur-2xl"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute -bottom-16 -start-16 h-44 w-44 rounded-full bg-white/5 blur-3xl"
+              aria-hidden="true"
+            />
+
+            <div className="relative flex items-start gap-3 sm:gap-4">
+              <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25 backdrop-blur-sm">
+                <LogIn className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div className="min-w-0 flex-1 space-y-1">
+                <h3 className="text-base sm:text-lg font-semibold leading-tight">
+                  {t("auth.loginRequiredTitle")}
+                </h3>
+                <p className="text-sm leading-relaxed text-white/85">
+                  {t("booking.loginRequiredMessage")}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              className="relative mt-4 w-full min-h-[44px] bg-white text-primary-700 hover:bg-white/90 dark:bg-white dark:text-primary-700 dark:hover:bg-white/90 font-semibold shadow-sm"
+              size="lg"
+              onClick={handleBooking}
+              type="button"
+            >
+              {t("booking.loginToBook")}
+            </Button>
+          </div>
+        )}
+
         {/* Service Selection */}
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
