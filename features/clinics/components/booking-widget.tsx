@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -47,9 +47,22 @@ import type { DoctorPaymentAccount } from "@/types";
 
 interface BookingWidgetProps {
   clinicId: string;
+  /** Optional: pre-select a date (e.g. when the user chose a day from the
+   *  Schedule tab's day picker). The widget will scroll its week view
+   *  to contain this date and select it. */
+  initialDate?: Date | null;
 }
 
-export function BookingWidget({ clinicId }: BookingWidgetProps) {
+function startOfWeekSaturday(d: Date): Date {
+  const day = d.getDay();
+  const diff = day === 6 ? 0 : day + 1;
+  const saturday = new Date(d);
+  saturday.setDate(d.getDate() - diff);
+  saturday.setHours(0, 0, 0, 0);
+  return saturday;
+}
+
+export function BookingWidget({ clinicId, initialDate }: BookingWidgetProps) {
   const { t, locale } = useTranslation();
   const router = useRouter();
   const { toast } = useToast();
@@ -58,16 +71,20 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
   const user = useUser();
 
   // State
-  const [weekStart, setWeekStart] = useState(() => {
-    const today = new Date();
-    const day = today.getDay();
-    // Start from Saturday
-    const diff = day === 6 ? 0 : day + 1;
-    const saturday = new Date(today);
-    saturday.setDate(today.getDate() - diff);
-    return saturday;
-  });
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [weekStart, setWeekStart] = useState(() =>
+    startOfWeekSaturday(initialDate ?? new Date()),
+  );
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    initialDate ?? null,
+  );
+
+  // If an external initialDate is supplied later (after mount), sync to it.
+  useEffect(() => {
+    if (initialDate) {
+      setSelectedDate(initialDate);
+      setWeekStart(startOfWeekSaturday(initialDate));
+    }
+  }, [initialDate]);
   const [selectedServiceId, setSelectedServiceId] = useState<string>("");
   const [bookingFor, setBookingFor] = useState<"self" | "family">("self");
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] =
@@ -436,18 +453,36 @@ export function BookingWidget({ clinicId }: BookingWidgetProps) {
                 className="text-xs"
                 onClick={goToPreviousWeek}
                 disabled={!canGoPrevious}
+                aria-label={t("common.previous")}
               >
-                <ChevronRight className="h-4 w-4" />
+                {/* prev: arrow points away from "now" toward the past
+                    (inline-start of the reading flow) */}
+                <ChevronLeft
+                  className="h-4 w-4 rtl:hidden"
+                  aria-hidden="true"
+                />
+                <ChevronRight
+                  className="h-4 w-4 ltr:hidden"
+                  aria-hidden="true"
+                />
               </Button>
               <span className="text-sm text-muted-foreground">
-                {formatDate(weekStart, "MMM yyyy")}
+                <bdi>{formatDate(weekStart, "MMM yyyy", locale)}</bdi>
               </span>
               <Button
                 variant="ghost"
                 className="text-xs"
                 onClick={goToNextWeek}
+                aria-label={t("common.next")}
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronRight
+                  className="h-4 w-4 rtl:hidden"
+                  aria-hidden="true"
+                />
+                <ChevronLeft
+                  className="h-4 w-4 ltr:hidden"
+                  aria-hidden="true"
+                />
               </Button>
             </div>
           </div>

@@ -176,7 +176,10 @@ export function formatTime(
     }
   }
 
-  return format(date, "p", { locale: locales[locale] });
+  // Always render 12-hour clock with localized meridiem ("AM"/"PM" in en,
+  // "ص"/"م" in ar). date-fns short token "p" falls back to 24-hour for the
+  // Arabic locale, which hides the meridiem entirely; "h:mm a" forces both.
+  return format(date, "h:mm a", { locale: locales[locale] });
 }
 
 /**
@@ -193,7 +196,8 @@ export function formatTimeFromDatetime(
 
   if (!isValid(dateObj)) return "";
 
-  return format(dateObj, "p", { locale: locales[locale] });
+  // Force 12-hour with localized meridiem (see formatTime above).
+  return format(dateObj, "h:mm a", { locale: locales[locale] });
 }
 
 /**
