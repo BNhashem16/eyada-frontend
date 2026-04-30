@@ -1,29 +1,106 @@
 import type { NextConfig } from "next";
 
+// Applied to all responses via headers() — CSP omitted here as it requires
+// nonce-based per-request configuration for Next.js; enforce it at the CDN/
+// reverse-proxy layer with a nonce strategy.
+const securityHeaders = [
+  // Enable DNS prefetch for faster resource loading
+  { key: "X-DNS-Prefetch-Control", value: "on" },
+  // Force HTTPS for 2 years, include sub-domains, allow HSTS preload list
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
+  },
+  // Block rendering in cross-origin frames (clickjacking protection)
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  // Prevent MIME-type sniffing
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  // Legacy XSS filter — belt-and-suspenders alongside CSP
+  { key: "X-XSS-Protection", value: "1; mode=block" },
+  // Limit referrer information
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // Restrict browser feature APIs
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
+  },
+];
+
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
 
-  images: {
-    remotePatterns: [
+  async headers() {
+    return [
       {
-        protocol: "https",
-        hostname: "**",
+        // Apply security headers to every route
+        source: "/(.*)",
+        headers: securityHeaders,
       },
       {
+        // Aggressive caching for Next.js immutable static chunks
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
+
+  images: {
+    // Explicitly enumerate allowed image origins instead of using ** wildcards
+    // which would enable SSRF via the Next.js image optimisation proxy.
+    // Add your storage CDN hostname here (e.g. cdn.clinics-eg.com).
+    remotePatterns: [
+      // Primary CDN / storage endpoint
+      {
+        protocol: "https",
+        hostname: "cdn.clinics-eg.com",
+      },
+      // AWS S3 (direct bucket URLs and regional variants)
+      {
+        protocol: "https",
+        hostname: "*.amazonaws.com",
+      },
+      // Cloudflare R2 public buckets
+      {
+        protocol: "https",
+        hostname: "*.r2.dev",
+      },
+      // Cloudflare Workers / custom R2 domain
+      {
+        protocol: "https",
+        hostname: "*.cloudflarestorage.com",
+      },
+      // DigitalOcean Spaces
+      {
+        protocol: "https",
+        hostname: "*.digitaloceanspaces.com",
+      },
+      // Supabase Storage
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
+      // Local development backend
+      {
         protocol: "http",
-        hostname: "**",
+        hostname: "localhost",
+        port: "3000",
       },
     ],
     formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
   experimental: {
     // Tree-shake / sub-path imports from heavy packages so the pharmacy
-    // surfaces don't drag the full bundle into first paint. recharts,
-    // react-day-picker, and @radix-ui sub-packages are added on top of the
-    // existing lucide / date-fns set.
+    // surfaces don't drag the full bundle into first paint.
     optimizePackageImports: [
       "lucide-react",
       "date-fns",
