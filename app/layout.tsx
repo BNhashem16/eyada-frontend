@@ -3,6 +3,7 @@ import { Cairo, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { getTranslation } from "@/lib/i18n";
+import { WebsiteJsonLd } from "@/components/seo/WebsiteJsonLd";
 
 // Arabic font (Primary) - Cairo from Google Fonts
 const cairo = Cairo({
@@ -99,6 +100,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <WebsiteJsonLd />
       </head>
       <body
         className={`${cairo.variable} ${inter.variable} min-h-screen bg-background antialiased`}
