@@ -14,12 +14,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_KEY = "eyada-theme";
 
-interface ThemeProviderProps {
-  children: React.ReactNode;
-  nonce?: string;
-}
-
-export function ThemeProvider({ children, nonce }: ThemeProviderProps) {
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("system");
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
@@ -58,7 +53,9 @@ export function ThemeProvider({ children, nonce }: ThemeProviderProps) {
     applyTheme(newTheme);
   };
 
-  // Initial load
+  // Initial load. Note: the no-flash bootstrap runs separately from
+  // /theme-init.js (loaded by app/layout.tsx) before React hydrates, so we
+  // do not need an inline render-time script here anymore.
   useEffect(() => {
     const savedTheme = localStorage.getItem(THEME_KEY) as Theme | null;
     const initialTheme = savedTheme || "system";
@@ -82,26 +79,6 @@ export function ThemeProvider({ children, nonce }: ThemeProviderProps) {
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme, mounted]);
-
-  // Prevent flash of incorrect theme. The nonce comes from middleware so this
-  // inline script is permitted under the strict CSP.
-  if (!mounted) {
-    return (
-      <script
-        nonce={nonce}
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              const theme = localStorage.getItem('${THEME_KEY}') || 'system';
-              const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-              const resolved = theme === 'system' ? systemTheme : theme;
-              document.documentElement.classList.add(resolved);
-            })();
-          `,
-        }}
-      />
-    );
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>

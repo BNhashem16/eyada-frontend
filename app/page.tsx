@@ -1,7 +1,7 @@
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import { getTranslation } from "@/lib/i18n";
 import { JsonLd } from "@/components/seo/json-ld";
+import { WebsiteJsonLd } from "@/components/seo/WebsiteJsonLd";
 import { HomePageContent } from "@/components/home/home-page-content";
 
 const BASE_URL = "https://clinics-eg.com";
@@ -121,15 +121,17 @@ const breadcrumbJsonLd = {
   ],
 };
 
-export default async function HomePage() {
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
-
+// Static server component. Public CSP allows inline scripts via 'unsafe-inline'
+// (set in proxy.ts), so per-page JSON-LD does not need a nonce here. Keeping
+// this sync lets the homepage statically prerender at build / revalidate time.
+export default function HomePage() {
   return (
     <>
-      <JsonLd data={websiteJsonLd} nonce={nonce} />
-      <JsonLd data={medicalBusinessJsonLd} nonce={nonce} />
-      <JsonLd data={faqJsonLd} nonce={nonce} />
-      <JsonLd data={breadcrumbJsonLd} nonce={nonce} />
+      <WebsiteJsonLd />
+      <JsonLd data={websiteJsonLd} />
+      <JsonLd data={medicalBusinessJsonLd} />
+      <JsonLd data={faqJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <HomePageContent />
     </>
   );

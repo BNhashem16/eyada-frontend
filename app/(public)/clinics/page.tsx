@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import { getTranslation } from "@/lib/i18n";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ClinicsPageContent } from "@/features/clinics/components/clinics-page-content";
@@ -52,13 +51,11 @@ const breadcrumbJsonLd = {
   ],
 };
 
-export default async function ClinicsPage() {
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
-
+export default function ClinicsPage() {
   return (
     <>
-      <JsonLd data={clinicsJsonLd} nonce={nonce} />
-      <JsonLd data={breadcrumbJsonLd} nonce={nonce} />
+      <JsonLd data={clinicsJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ClinicsPageContent />
     </>
   );

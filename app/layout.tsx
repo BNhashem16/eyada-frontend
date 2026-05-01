@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo, Inter } from "next/font/google";
-import { headers } from "next/headers";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { getTranslation } from "@/lib/i18n";
-import { WebsiteJsonLd } from "@/components/seo/WebsiteJsonLd";
 
 // Arabic font (Primary) - Cairo from Google Fonts
 const cairo = Cairo({
@@ -92,25 +90,32 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function RootLayout({
+// Root layout is a static server component. It must NOT call headers() or
+// any other dynamic API: doing so cascades dynamic rendering into every
+// descendant route and kills static prerender for the public/SEO pages.
+//
+// - Theme bootstrap is loaded as an external script (/theme-init.js) so it
+//   doesn't need a CSP nonce.
+// - Per-page JSON-LD lives in the leaf pages where it belongs; the global
+//   WebsiteJsonLd is rendered from app/page.tsx (homepage) only.
+// - Sensitive routes (auth + role dashboards) get their nonce CSP via
+//   proxy.ts. Next.js framework scripts pick up the nonce from the
+//   x-nonce request header set by proxy on those routes.
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Per-request CSP nonce produced by middleware. Used to authorize the inline
-  // theme bootstrap script and the JSON-LD blocks under the strict CSP.
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
-
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <WebsiteJsonLd nonce={nonce} />
+        <script src="/theme-init.js" />
       </head>
       <body
         className={`${cairo.variable} ${inter.variable} min-h-screen bg-background antialiased`}
       >
-        <Providers nonce={nonce}>{children}</Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

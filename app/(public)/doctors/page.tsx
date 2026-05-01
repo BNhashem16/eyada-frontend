@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import { Suspense } from "react";
 import { getTranslation } from "@/lib/i18n";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -53,13 +52,11 @@ const breadcrumbJsonLd = {
   ],
 };
 
-export default async function DoctorsPage() {
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
-
+export default function DoctorsPage() {
   return (
     <>
-      <JsonLd data={doctorsJsonLd} nonce={nonce} />
-      <JsonLd data={breadcrumbJsonLd} nonce={nonce} />
+      <JsonLd data={doctorsJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <Suspense>
         <DoctorsPageContent />
       </Suspense>

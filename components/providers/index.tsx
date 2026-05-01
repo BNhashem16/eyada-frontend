@@ -5,15 +5,10 @@ import { ToastProvider } from "./toast-provider";
 import { ThemeProvider } from "./theme-provider";
 import { LanguageProvider } from "./language-provider";
 
-interface ProvidersProps {
-  children: React.ReactNode;
-  nonce?: string;
-}
-
-export function Providers({ children, nonce }: ProvidersProps) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
-      <ThemeProvider nonce={nonce}>
+      <ThemeProvider>
         <QueryProvider>
           {children}
           <ToastProvider />
