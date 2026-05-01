@@ -15,6 +15,13 @@ export enum PrescriptionType {
   MIXED = "MIXED",
 }
 
+export type ActorRole =
+  | "PATIENT"
+  | "ADMIN"
+  | "PHARMACY_OWNER"
+  | "DRIVER"
+  | "SYSTEM";
+
 // Interfaces
 export interface PrescriptionOrderItem {
   id: string;
@@ -38,6 +45,7 @@ export interface PrescriptionRequest {
   assignedAt: string | null;
   totalAmount: number | null;
   cancelReason: string | null;
+  cancelledAt: string | null;
   orders?: PrescriptionOrder[];
   patient?: {
     id: string;
@@ -60,6 +68,7 @@ export interface PrescriptionOrderStatusHistory {
   fromStatus: string | null;
   toStatus: string;
   changedBy: string;
+  changedByRole: ActorRole;
   note: string | null;
   createdAt: string;
 }
@@ -88,7 +97,10 @@ export interface PrescriptionOrder {
   statusHistory?: PrescriptionOrderStatusHistory[];
   createdAt: string;
   confirmedAt: string | null;
+  preparingAt: string | null;
+  readyAt: string | null;
   deliveredAt: string | null;
+  cancelledAt: string | null;
 }
 
 export interface PlatformCommissionConfig {

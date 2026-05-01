@@ -9,3 +9,4 @@ export { PharmacyErrorState } from "./error-state";
 export { ListSkeleton, CardSkeleton, KpiSkeleton } from "./skeletons";
 export { ConfirmDialog } from "./confirm-dialog";
 export { DataCardList } from "./data-card-list";
+export { OrderTimeline } from "./order-timeline";
