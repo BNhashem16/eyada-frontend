@@ -9,6 +9,9 @@ const SENSITIVE_PREFIXES = [
   "/secretary",
   "/driver",
   "/pharmacy-owner",
+  "/login",
+  "/register",
+  "/forgot-password",
 ];
 
 const isProd = process.env.NODE_ENV === "production";

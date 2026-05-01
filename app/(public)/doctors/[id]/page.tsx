@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import {
   QueryClient,
@@ -92,6 +93,7 @@ export async function generateMetadata({
 export default async function DoctorPage({ params }: DoctorPageProps) {
   const { id } = await params;
   const doctor = await fetchDoctor(id);
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   if (!doctor) {
     notFound();
@@ -184,8 +186,8 @@ export default async function DoctorPage({ params }: DoctorPageProps) {
 
   return (
     <>
-      <JsonLd data={physicianJsonLd} />
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={physicianJsonLd} nonce={nonce} />
+      <JsonLd data={breadcrumbJsonLd} nonce={nonce} />
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <HydrationBoundary state={dehydratedState}>
           <DoctorProfileComponent doctorId={id} />
