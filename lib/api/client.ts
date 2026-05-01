@@ -119,9 +119,17 @@ apiClient.interceptors.request.use(
     if (typeof window !== "undefined" && config.headers) {
       const locale = localStorage.getItem("eyada-locale") || "ar";
       config.headers["Accept-Language"] = locale;
-      // End-to-end trace correlation. Backend echoes this via its own
-      // middleware; Sentry tags errors with the same value.
-      if (SESSION_CORRELATION_ID) {
+      // End-to-end trace correlation. The session correlation ID is still
+      // available via getSessionCorrelationId() for Sentry tagging, but we
+      // only forward it on the wire when the backend explicitly opts in:
+      // some CORS configurations reject unknown headers and turn the
+      // preflight into a hard "Network Error" in the browser. Set
+      // NEXT_PUBLIC_FORWARD_CORRELATION_ID=true once the backend lists
+      // `x-correlation-id` in Access-Control-Allow-Headers.
+      if (
+        process.env.NEXT_PUBLIC_FORWARD_CORRELATION_ID === "true" &&
+        SESSION_CORRELATION_ID
+      ) {
         config.headers["x-correlation-id"] = SESSION_CORRELATION_ID;
       }
     }

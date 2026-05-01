@@ -137,6 +137,10 @@ const nextConfig: NextConfig = {
 // Sentry build plugin: source-map upload + Vercel monitor wrap. Activates
 // only when SENTRY_AUTH_TOKEN + SENTRY_ORG + SENTRY_PROJECT are set on the
 // build environment. Behaves as a pass-through locally without those vars.
+//
+// `disableLogger` was removed in favor of webpack.treeshake.removeDebugLogging,
+// which is not supported under Turbopack. The Sentry SDK's runtime debug logs
+// are minor and accepted for now.
 export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   silent: !process.env.CI,
   org: process.env.SENTRY_ORG,
@@ -144,7 +148,6 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // Tunnel Sentry traffic through this app so adblockers don't break captures.
   // Pair with the connect-src CSP entry in proxy.ts.
   tunnelRoute: "/monitoring",
-  disableLogger: true,
   sourcemaps: {
     deleteSourcemapsAfterUpload: true,
   },
