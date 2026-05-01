@@ -11,31 +11,99 @@ const SENSITIVE_PREFIXES = [
   "/pharmacy-owner",
 ];
 
+const isProd = process.env.NODE_ENV === "production";
+const apiOrigin = process.env.NEXT_PUBLIC_API_URL || "";
+const storageOrigin = process.env.NEXT_PUBLIC_STORAGE_BASE_URL || "";
+
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+function buildCsp(nonce: string): string {
+  // 'strict-dynamic' allows scripts loaded by nonce-trusted scripts (e.g. Next's
+  // framework chunks) to load further scripts without listing every host.
+  // In dev/Turbopack we also need 'unsafe-eval' for HMR.
+  const scriptSrc = [
+    "'self'",
+    `'nonce-${nonce}'`,
+    "'strict-dynamic'",
+    !isProd && "'unsafe-eval'",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const connectExtra = [apiOrigin, storageOrigin].filter(Boolean).join(" ");
+
+  const directives: Array<[string, string]> = [
+    ["default-src", "'self'"],
+    ["script-src", scriptSrc],
+    ["style-src", "'self' 'unsafe-inline' https://fonts.googleapis.com"],
+    ["font-src", "'self' https://fonts.gstatic.com"],
+    [
+      "img-src",
+      "'self' data: blob: https://cdn.clinics-eg.com https://*.amazonaws.com https://*.r2.dev https://*.cloudflarestorage.com https://*.digitaloceanspaces.com https://*.supabase.co",
+    ],
+    ["connect-src", `'self' ${connectExtra}`.trim()],
+    ["frame-ancestors", "'none'"],
+    ["base-uri", "'self'"],
+    ["object-src", "'none'"],
+    ["form-action", "'self'"],
+    ["worker-src", "'self' blob:"],
+    ["manifest-src", "'self'"],
+    ["upgrade-insecure-requests", ""],
+  ];
+
+  return directives
+    .map(([name, value]) => (value ? `${name} ${value}` : name))
+    .join("; ");
+}
+
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
   const { pathname } = request.nextUrl;
 
+  // Per-request CSP nonce. Forwarded as a request header so server components
+  // can read it via `headers()` and apply it to inline <script> tags.
+  const nonce = generateNonce();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+
   // Propagate a correlation ID for distributed tracing across frontend + backend.
-  // The backend echoes this back via its own middleware so logs can be correlated.
   const incomingId = request.headers.get("x-correlation-id");
   const correlationId = incomingId ?? crypto.randomUUID();
   response.headers.set("x-correlation-id", correlationId);
 
-  // Authenticated / sensitive routes: stricter caching + framing policy
+  // Mirror the nonce on the response so debugging tools / proxies can see it.
+  response.headers.set("x-nonce", nonce);
+
+  // Ship CSP in report-only mode first. Promote to "Content-Security-Policy"
+  // after a soak window confirms no legitimate violations.
+  response.headers.set("Content-Security-Policy-Report-Only", buildCsp(nonce));
+
+  // Authenticated / sensitive routes: stricter caching, framing, and indexing.
   const isSensitive = SENSITIVE_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix),
   );
 
   if (isSensitive) {
-    // Prevent any framing of authenticated dashboards
     response.headers.set("X-Frame-Options", "DENY");
-    // Ensure browsers never cache private dashboard responses
     response.headers.set(
       "Cache-Control",
       "no-store, no-cache, must-revalidate, proxy-revalidate",
     );
     response.headers.set("Pragma", "no-cache");
     response.headers.set("Expires", "0");
+    // Belt-and-suspenders alongside robots.txt and per-layout metadata.robots.
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
   }
 
   return response;

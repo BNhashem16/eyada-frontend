@@ -1,9 +1,13 @@
+interface WebsiteJsonLdProps {
+  nonce?: string;
+}
+
 /**
  * Global JSON-LD structured data injected into every page via the root layout.
  * Tells search engines about the site and the medical organisation behind it,
  * which improves E-E-A-T signals and enables sitelinks search-box eligibility.
  */
-export function WebsiteJsonLd() {
+export function WebsiteJsonLd({ nonce }: WebsiteJsonLdProps = {}) {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -70,12 +74,14 @@ export function WebsiteJsonLd() {
     <>
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(websiteSchema),
         }}
       />
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(organizationSchema),
         }}

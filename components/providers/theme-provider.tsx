@@ -14,7 +14,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_KEY = "eyada-theme";
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+interface ThemeProviderProps {
+  children: React.ReactNode;
+  nonce?: string;
+}
+
+export function ThemeProvider({ children, nonce }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>("system");
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
@@ -78,10 +83,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme, mounted]);
 
-  // Prevent flash of incorrect theme
+  // Prevent flash of incorrect theme. The nonce comes from middleware so this
+  // inline script is permitted under the strict CSP.
   if (!mounted) {
     return (
       <script
+        nonce={nonce}
         dangerouslySetInnerHTML={{
           __html: `
             (function() {

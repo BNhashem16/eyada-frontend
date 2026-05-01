@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo, Inter } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { getTranslation } from "@/lib/i18n";
@@ -91,21 +92,25 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Per-request CSP nonce produced by middleware. Used to authorize the inline
+  // theme bootstrap script and the JSON-LD blocks under the strict CSP.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <WebsiteJsonLd />
+        <WebsiteJsonLd nonce={nonce} />
       </head>
       <body
         className={`${cairo.variable} ${inter.variable} min-h-screen bg-background antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers nonce={nonce}>{children}</Providers>
       </body>
     </html>
   );
