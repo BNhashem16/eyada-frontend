@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -133,4 +134,18 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+// Sentry build plugin: source-map upload + Vercel monitor wrap. Activates
+// only when SENTRY_AUTH_TOKEN + SENTRY_ORG + SENTRY_PROJECT are set on the
+// build environment. Behaves as a pass-through locally without those vars.
+export default withSentryConfig(withBundleAnalyzer(nextConfig), {
+  silent: !process.env.CI,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Tunnel Sentry traffic through this app so adblockers don't break captures.
+  // Pair with the connect-src CSP entry in proxy.ts.
+  tunnelRoute: "/monitoring",
+  disableLogger: true,
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+});

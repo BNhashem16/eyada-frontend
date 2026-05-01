@@ -89,7 +89,13 @@ function buildSensitiveCsp(nonce: string): string {
     .filter(Boolean)
     .join(" ");
 
-  const connectExtra = [apiOrigin, storageOrigin].filter(Boolean).join(" ");
+  const connectExtra = [
+    apiOrigin,
+    storageOrigin,
+    "https://*.sentry.io",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return joinCsp([
     ["default-src", "'self'"],
@@ -121,7 +127,13 @@ function buildPublicCsp(): string {
     .filter(Boolean)
     .join(" ");
 
-  const connectExtra = [apiOrigin, storageOrigin].filter(Boolean).join(" ");
+  const connectExtra = [
+    apiOrigin,
+    storageOrigin,
+    "https://*.sentry.io",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return joinCsp([
     ["default-src", "'self'"],

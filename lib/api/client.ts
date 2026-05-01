@@ -17,6 +17,24 @@ export const apiClient = axios.create({
 const ACCESS_TOKEN_KEY = "eyada_access_token";
 const REFRESH_TOKEN_KEY = "eyada_refresh_token";
 
+// Per-tab session correlation ID. Generated once at module init and forwarded
+// on every API request as `x-correlation-id` so backend logs and frontend
+// errors (Sentry tags this same value) can be linked end-to-end. Stable for
+// the lifetime of the tab.
+function generateCorrelationId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
+const SESSION_CORRELATION_ID =
+  typeof window !== "undefined" ? generateCorrelationId() : "";
+
+export function getSessionCorrelationId(): string {
+  return SESSION_CORRELATION_ID;
+}
+
 // Callback for when session is invalidated (refresh token fails)
 let onSessionInvalidated: (() => void) | null = null;
 
@@ -101,6 +119,11 @@ apiClient.interceptors.request.use(
     if (typeof window !== "undefined" && config.headers) {
       const locale = localStorage.getItem("eyada-locale") || "ar";
       config.headers["Accept-Language"] = locale;
+      // End-to-end trace correlation. Backend echoes this via its own
+      // middleware; Sentry tags errors with the same value.
+      if (SESSION_CORRELATION_ID) {
+        config.headers["x-correlation-id"] = SESSION_CORRELATION_ID;
+      }
     }
 
     return config;
