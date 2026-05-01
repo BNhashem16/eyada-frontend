@@ -109,28 +109,34 @@ export function MobileSidebar({
   return (
     <div className="lg:hidden fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <aside className="absolute inset-y-0 start-0 w-[85vw] max-w-72 bg-card">
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-10 w-10">
+      <aside className="absolute top-0 bottom-0 start-0 w-[85vw] max-w-72 h-dvh bg-card flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <Avatar className="h-10 w-10 shrink-0">
               <AvatarImage src={user?.profilePicture || undefined} />
               <AvatarFallback>{getInitials(user?.name || "")}</AvatarFallback>
             </Avatar>
-            <div>
-              <p className="font-semibold text-foreground">
+            <div className="min-w-0">
+              <p className="font-semibold text-foreground truncate">
                 {getUserDisplayName()}
               </p>
               {userRoleLabel && (
-                <p className="text-sm text-muted-foreground">{userRoleLabel}</p>
+                <p className="text-sm text-muted-foreground truncate">
+                  {userRoleLabel}
+                </p>
               )}
             </div>
           </div>
-          <button onClick={onClose}>
+          <button
+            onClick={onClose}
+            className="shrink-0 p-1"
+            aria-label={t("common.close")}
+          >
             <X className="h-6 w-6 text-muted-foreground" />
           </button>
         </div>
 
-        <nav className="p-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);

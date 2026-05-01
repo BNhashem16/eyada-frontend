@@ -10,18 +10,16 @@ const DRIVER_STEPS = ["assigned", "pickedUp", "delivered"] as const;
 type DriverStepKey = (typeof DRIVER_STEPS)[number];
 
 const STEP_LABEL: Record<DriverStepKey, string> = {
-  assigned: "driver.timeline.assigned",
-  pickedUp: "driver.timeline.pickedUp",
-  delivered: "driver.timeline.delivered",
+  assigned: "driver.assigned",
+  pickedUp: "driver.pickedUp",
+  delivered: "driver.delivered",
 };
 
 /**
  * Pure mapper from a driver-side delivery DTO to the 3-step timeline.
  * Inputs come straight from `useDriverDelivery`; we never read globals.
  */
-export function mapDeliveryToTimeline(
-  delivery: DriverDelivery,
-): TimelineModel {
+export function mapDeliveryToTimeline(delivery: DriverDelivery): TimelineModel {
   const pickedUpAt = delivery.delivery?.pickedUpAt;
   const deliveredAt = delivery.delivery?.deliveredAt;
   const status = delivery.status;
@@ -48,7 +46,7 @@ export function mapDeliveryToTimeline(
       steps,
       terminal: {
         kind: "cancelled",
-        labelKey: "driver.timeline.cancelled",
+        labelKey: "driver.cancelled",
       },
     };
   }

@@ -1580,7 +1580,17 @@
     "paymentPending": "Pending",
     "paymentPaid": "Paid",
     "paymentFailed": "Failed",
-    "paymentRefunded": "Refunded"
+    "paymentRefunded": "Refunded",
+    "timeline": {
+      "submitted": "Request submitted",
+      "reviewed": "Reviewed",
+      "assigned": "Assigned to pharmacy",
+      "preparing": "Preparing your order",
+      "outForDelivery": "Out for delivery",
+      "delivered": "Delivered",
+      "cancelled": "Request cancelled",
+      "failed": "Request failed"
+    }
   },
   "driver": {
     "dashboardTitle": "Driver Dashboard",
@@ -1641,7 +1651,8 @@
     "timeline": "Timeline",
     "assigned": "Assigned",
     "pickedUp": "Picked Up",
-    "delivered": "Delivered"
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
   },
   "admin": {
     "dashboard": "Dashboard",
@@ -3268,6 +3279,22 @@
       "a4": "Eyada offers all medical specialties such as internal medicine, pediatrics, ophthalmology, orthopedics, dentistry, dermatology, cardiology, obstetrics & gynecology, neurology, ENT, and many more.",
       "q5": "Can I cancel or modify my appointment?",
       "a5": "Yes, you can cancel or modify your appointment through your account on the platform. The cancellation policy varies according to each clinic's terms."
+    }
+  },
+  "timeline": {
+    "label": "Order timeline",
+    "state": {
+      "done": "Completed",
+      "current": "In progress",
+      "pending": "Pending",
+      "skipped": "Skipped"
+    },
+    "actor": {
+      "patient": "Patient",
+      "admin": "Admin",
+      "pharmacy": "Pharmacy",
+      "driver": "Driver",
+      "system": "System"
     }
   }
 }

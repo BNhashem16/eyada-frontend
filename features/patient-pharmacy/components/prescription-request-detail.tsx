@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Package, ClipboardCheck, Eye } from "lucide-react";
+import { Clock, ClipboardCheck, Eye } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -20,12 +19,14 @@ import {
   CardSkeleton,
   Currency,
   OrderStatusBadge,
+  OrderTimeline,
   PrescriptionStatusBadge,
 } from "@/components/pharmacy";
 import {
   usePrescriptionRequest,
   useCancelPrescriptionRequest,
 } from "../hooks/use-prescription-requests";
+import { mapPrescriptionToTimeline } from "../utils/timeline-mapper";
 import { useTranslation } from "@/lib/i18n";
 import { getImageUrl } from "@/lib/utils/storage";
 
@@ -34,7 +35,7 @@ interface Props {
 }
 
 export function PrescriptionRequestDetail({ requestId }: Props) {
-  const { t, locale } = useTranslation();
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: request, isLoading } = usePrescriptionRequest(requestId);
   const cancelRequest = useCancelPrescriptionRequest();
@@ -139,6 +140,16 @@ export function PrescriptionRequestDetail({ requestId }: Props) {
               </span>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Timeline */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">{t("timeline.label")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <OrderTimeline {...mapPrescriptionToTimeline(request)} />
         </CardContent>
       </Card>
 

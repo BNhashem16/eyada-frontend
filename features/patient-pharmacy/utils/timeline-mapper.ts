@@ -1,7 +1,6 @@
 import type {
   PrescriptionRequest,
   PrescriptionOrder,
-  PrescriptionOrderStatusHistory,
   ActorRole,
 } from "@/types/prescription";
 import type {
@@ -84,12 +83,6 @@ const latest = (
   }
   return best?.iso;
 };
-
-const findFirstHistory = (
-  history: PrescriptionOrderStatusHistory[] | undefined,
-  status: string,
-): PrescriptionOrderStatusHistory | undefined =>
-  history?.find((entry) => entry.toStatus === status);
 
 interface OrderReachedMap {
   CONFIRMED?: InternalReached;
@@ -188,10 +181,7 @@ const aggregateReached = (orders: PrescriptionOrder[]): AggregateReached => {
   };
 };
 
-const stepState = (
-  reached: boolean,
-  isCurrent: boolean,
-): TimelineStepState => {
+const stepState = (reached: boolean, isCurrent: boolean): TimelineStepState => {
   if (reached) return "done";
   if (isCurrent) return "current";
   return "pending";
@@ -225,8 +215,6 @@ export function mapPrescriptionToTimeline(
     ? earliest(...orders.map((o) => o.createdAt))
     : undefined;
   const assignedAt = request.assignedAt ?? undefined;
-  const preparingAt = aggregate.preparing?.at;
-  const outForDeliveryAt = aggregate.outForDelivery?.at;
   const deliveredAt = aggregate.delivered?.at;
 
   const reached: Record<PatientStepKey, InternalReached | undefined> = {
@@ -304,9 +292,8 @@ function buildPartialStepsBeforeCancellation(
       request.assignedAt || aggregate.hasOrders
         ? {
             at:
-              earliest(
-                ...(request.orders ?? []).map((o) => o.createdAt),
-              ) ?? undefined,
+              earliest(...(request.orders ?? []).map((o) => o.createdAt)) ??
+              undefined,
             actor: "ADMIN",
           }
         : undefined,

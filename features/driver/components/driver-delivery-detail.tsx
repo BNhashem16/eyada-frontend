@@ -6,7 +6,6 @@ import {
   MapPin,
   Phone,
   Clock,
-  CheckCircle,
   ArrowLeft,
   StickyNote,
 } from "lucide-react";
@@ -25,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { OrderTimeline } from "@/components/pharmacy";
 import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import {
@@ -32,6 +32,7 @@ import {
   usePickupDelivery,
   useCompleteDelivery,
 } from "../hooks";
+import { mapDeliveryToTimeline } from "../utils/timeline-mapper";
 import { OrderStatus } from "@/types/enums";
 
 export function DriverDeliveryDetail() {
@@ -244,26 +245,7 @@ export function DriverDeliveryDetail() {
       <Card>
         <CardContent className="p-6">
           <h3 className="font-semibold mb-4">{t("driver.timeline")}</h3>
-          <div className="space-y-4">
-            <TimelineItem
-              label={t("driver.assigned")}
-              done={true}
-              icon={<Package className="h-4 w-4" />}
-            />
-            <TimelineItem
-              label={t("driver.pickedUp")}
-              done={!!delivery.delivery?.pickedUpAt}
-              timestamp={delivery.delivery?.pickedUpAt}
-              icon={<CheckCircle className="h-4 w-4" />}
-            />
-            <TimelineItem
-              label={t("driver.delivered")}
-              done={!!delivery.delivery?.deliveredAt}
-              timestamp={delivery.delivery?.deliveredAt}
-              icon={<CheckCircle className="h-4 w-4" />}
-              isLast
-            />
-          </div>
+          <OrderTimeline {...mapDeliveryToTimeline(delivery)} />
         </CardContent>
       </Card>
 
@@ -327,53 +309,6 @@ export function DriverDeliveryDetail() {
           )}
         </div>
       )}
-    </div>
-  );
-}
-
-function TimelineItem({
-  label,
-  done,
-  timestamp,
-  icon,
-  isLast,
-}: {
-  label: string;
-  done: boolean;
-  timestamp?: string;
-  icon: React.ReactNode;
-  isLast?: boolean;
-}) {
-  return (
-    <div className="flex gap-3">
-      <div className="flex flex-col items-center">
-        <div
-          className={`h-8 w-8 rounded-full flex items-center justify-center ${
-            done
-              ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
-              : "bg-muted text-muted-foreground"
-          }`}
-        >
-          {icon}
-        </div>
-        {!isLast && (
-          <div
-            className={`w-0.5 h-6 ${done ? "bg-green-300 dark:bg-green-700" : "bg-muted"}`}
-          />
-        )}
-      </div>
-      <div className="pt-1">
-        <p
-          className={`font-medium text-sm ${done ? "" : "text-muted-foreground"}`}
-        >
-          {label}
-        </p>
-        {timestamp && (
-          <p className="text-xs text-muted-foreground">
-            {new Date(timestamp).toLocaleString()}
-          </p>
-        )}
-      </div>
     </div>
   );
 }

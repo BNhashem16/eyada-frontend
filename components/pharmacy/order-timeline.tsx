@@ -130,10 +130,7 @@ function Step({
           )}
         >
           <Icon
-            className={cn(
-              "size-4",
-              isCurrent && "motion-safe:animate-spin",
-            )}
+            className={cn("size-4", isCurrent && "motion-safe:animate-spin")}
           />
         </span>
         {!isLast ? (
@@ -141,9 +138,7 @@ function Step({
             aria-hidden="true"
             className={cn(
               "mt-1 w-0.5 flex-1 min-h-[1.5rem]",
-              isDone
-                ? "bg-success-300 dark:bg-success-700"
-                : "bg-border",
+              isDone ? "bg-success-300 dark:bg-success-700" : "bg-border",
             )}
           />
         ) : null}
