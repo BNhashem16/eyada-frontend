@@ -18,6 +18,38 @@ const isProd = process.env.NODE_ENV === "production";
 const apiOrigin = process.env.NEXT_PUBLIC_API_URL || "";
 const storageOrigin = process.env.NEXT_PUBLIC_STORAGE_BASE_URL || "";
 
+const SUPPORTED_LOCALES = ["ar", "en"] as const;
+const DEFAULT_LOCALE = "ar";
+const LOCALE_COOKIE = "eyada-locale";
+
+function resolveLocale(request: NextRequest): string {
+  const cookieValue = request.cookies.get(LOCALE_COOKIE)?.value;
+  if (cookieValue && (SUPPORTED_LOCALES as readonly string[]).includes(cookieValue)) {
+    return cookieValue;
+  }
+
+  const acceptLanguage = request.headers.get("accept-language");
+  if (acceptLanguage) {
+    const tokens = acceptLanguage
+      .split(",")
+      .map((part) => {
+        const [tag, qPart] = part.trim().split(";");
+        const q = qPart ? Number(qPart.replace(/^q=/i, "")) : 1;
+        return { primary: (tag || "").toLowerCase().split("-")[0], q };
+      })
+      .filter((t) => Number.isFinite(t.q))
+      .sort((a, b) => b.q - a.q);
+
+    for (const { primary } of tokens) {
+      if ((SUPPORTED_LOCALES as readonly string[]).includes(primary)) {
+        return primary;
+      }
+    }
+  }
+
+  return DEFAULT_LOCALE;
+}
+
 function generateNonce(): string {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
@@ -76,9 +108,18 @@ export function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
 
+  // Resolve the active locale from cookie / Accept-Language and forward it
+  // so server components and metadata factories can read it via getServerLocale().
+  // No URL rewrite yet — that lands with the [locale] segment migration.
+  const locale = resolveLocale(request);
+  requestHeaders.set("x-locale", locale);
+
   const response = NextResponse.next({
     request: { headers: requestHeaders },
   });
+
+  response.headers.set("x-locale", locale);
+  response.headers.append("Vary", "Accept-Language, Cookie");
 
   // Propagate a correlation ID for distributed tracing across frontend + backend.
   const incomingId = request.headers.get("x-correlation-id");
