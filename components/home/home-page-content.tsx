@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Calendar,
   Search,
@@ -16,8 +15,6 @@ import {
   Eye,
   Bone,
   Baby,
-  LayoutDashboard,
-  CalendarCheck,
   Navigation,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,10 +23,28 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PublicLayout } from "@/components/common";
 import { useTranslation } from "@/lib/i18n";
 import { useSpecialties } from "@/features/specialties";
-import { useUser, useIsAuthenticated, useIsHydrated } from "@/lib/auth/store";
 import { useLanguage } from "@/components/providers";
+import { HomeSearchInput } from "./home-search-input";
+import { HomeTrackInput } from "./home-track-input";
 
-// Default icons for specialties
+// Auth CTA is below-the-fold and only one of three branches renders. Splitting
+// it into its own chunk keeps the initial JS payload smaller without losing
+// the SSR'd HTML on first paint.
+const HomeAuthCta = dynamic(
+  () => import("./home-auth-cta").then((m) => m.HomeAuthCta),
+  {
+    loading: () => (
+      <section className="bg-gradient-medical py-20 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <Skeleton className="mx-auto mb-4 h-10 w-64 bg-white/20" />
+          <Skeleton className="mx-auto mb-8 h-6 w-96 bg-white/20" />
+          <Skeleton className="mx-auto h-12 w-40 bg-white/20" />
+        </div>
+      </section>
+    ),
+  },
+);
+
 const defaultSpecialtyIcons: Record<
   string,
   { icon: typeof Heart; color: string }
@@ -45,22 +60,12 @@ const defaultSpecialtyIcons: Record<
   },
 };
 
-// Fallback icon
 const fallbackIcon = { icon: Stethoscope, color: "text-primary-500" };
 
 export function HomePageContent() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { locale } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [trackingNumber, setTrackingNumber] = useState("");
 
-  // Auth state
-  const user = useUser();
-  const isAuthenticated = useIsAuthenticated();
-  const isHydrated = useIsHydrated();
-
-  // Fetch specialties from backend
   const { data: specialties, isLoading: specialtiesLoading } = useSpecialties();
 
   const features = [
@@ -88,57 +93,10 @@ export function HomePageContent() {
     { value: "4.8", label: t("home.stats.rating") },
   ];
 
-  // Handle search
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      router.push(`/doctors?search=${encodeURIComponent(searchQuery.trim())}`);
-    } else {
-      router.push("/doctors");
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
-  // Handle tracking
-  const handleTrack = () => {
-    if (trackingNumber.trim()) {
-      router.push(`/track/${encodeURIComponent(trackingNumber.trim())}`);
-    }
-  };
-
-  const handleTrackKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleTrack();
-    }
-  };
-
-  // Get dashboard path based on role
-  const getDashboardPath = () => {
-    switch (user?.role) {
-      case "ADMIN":
-        return "/admin/dashboard";
-      case "DOCTOR":
-        return "/doctor/dashboard";
-      case "SECRETARY":
-        return "/secretary/dashboard";
-      case "PATIENT":
-      default:
-        return "/patient/dashboard";
-    }
-  };
-
-  // Get specialty name based on language
   const getSpecialtyName = (specialty: {
     name: { ar: string; en: string };
-  }) => {
-    return locale === "ar" ? specialty.name.ar : specialty.name.en;
-  };
+  }) => (locale === "ar" ? specialty.name.ar : specialty.name.en);
 
-  // Get icon for specialty
   const getSpecialtyIcon = (specialtyIcon?: string) => {
     if (specialtyIcon && defaultSpecialtyIcons[specialtyIcon]) {
       return defaultSpecialtyIcons[specialtyIcon];
@@ -163,29 +121,12 @@ export function HomePageContent() {
               {t("home.heroSubtitle")}
             </p>
 
-            {/* Search Box */}
             <div className="mx-auto max-w-2xl">
-              <div className="flex flex-col gap-3 rounded-2xl bg-card p-4 shadow-xl md:flex-row">
-                <div className="flex flex-1 items-center gap-2 rounded-xl border border-border px-4 py-3">
-                  <Search className="h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder={t("home.searchPlaceholder")}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
-                  />
-                </div>
-                <Button size="lg" className="md:px-8" onClick={handleSearch}>
-                  {t("home.searchButton")}
-                </Button>
-              </div>
+              <HomeSearchInput />
             </div>
           </div>
         </div>
 
-        {/* Decorative elements */}
         <div className="absolute -bottom-20 -start-20 h-64 w-64 rounded-full bg-primary-100 dark:bg-primary-900/30 opacity-50 blur-3xl" />
         <div className="absolute -top-20 -end-20 h-64 w-64 rounded-full bg-secondary-100 dark:bg-secondary-900/30 opacity-50 blur-3xl" />
       </section>
@@ -219,31 +160,7 @@ export function HomePageContent() {
             <p className="text-muted-foreground mb-6">
               {t("home.trackAppointmentDesc")}
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 rounded-2xl bg-card p-4 shadow-lg">
-              <div className="flex flex-1 items-center gap-2 rounded-xl border border-border px-4 py-3">
-                <Navigation className="h-5 w-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder={t("home.trackAppointmentPlaceholder")}
-                  value={trackingNumber}
-                  onChange={(e) => setTrackingNumber(e.target.value)}
-                  onKeyDown={handleTrackKeyDown}
-                  className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
-                  dir="ltr"
-                />
-              </div>
-              <Button
-                size="lg"
-                variant="secondary"
-                className="sm:px-8"
-                onClick={handleTrack}
-                disabled={!trackingNumber.trim()}
-              >
-                <Navigation className="h-4 w-4 ms-2" />
-                {t("home.trackButton")}
-              </Button>
-            </div>
+            <HomeTrackInput />
           </div>
         </div>
       </section>
@@ -260,7 +177,6 @@ export function HomePageContent() {
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {specialtiesLoading ? (
-              // Skeleton loading state
               Array.from({ length: 6 }).map((_, index) => (
                 <Card key={index} className="text-center">
                   <CardContent className="p-6">
@@ -270,7 +186,6 @@ export function HomePageContent() {
                 </Card>
               ))
             ) : specialties && specialties.length > 0 ? (
-              // Dynamic specialties from backend
               specialties.slice(0, 6).map((specialty) => {
                 const iconConfig = getSpecialtyIcon(specialty.icon);
                 const Icon = iconConfig.icon;
@@ -295,7 +210,6 @@ export function HomePageContent() {
                 );
               })
             ) : (
-              // Fallback static content when no data
               <div className="col-span-full text-center text-muted-foreground py-8">
                 {t("common.noData")}
               </div>
@@ -405,97 +319,8 @@ export function HomePageContent() {
         </div>
       </section>
 
-      {/* CTA Section - Different content based on auth state */}
-      {!isHydrated ? (
-        // Loading skeleton
-        <section className="bg-gradient-medical py-20 text-white">
-          <div className="container mx-auto px-4 text-center">
-            <Skeleton className="mx-auto mb-4 h-10 w-64 bg-white/20" />
-            <Skeleton className="mx-auto mb-8 h-6 w-96 bg-white/20" />
-            <Skeleton className="mx-auto h-12 w-40 bg-white/20" />
-          </div>
-        </section>
-      ) : isAuthenticated && user ? (
-        // Logged in user - Show quick actions
-        <section className="bg-gradient-medical py-12 sm:py-20 text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="mb-3 sm:mb-4 text-xl sm:text-3xl font-bold">
-              {t("home.welcomeBack")}, {user.name || user.fullName}!
-            </h2>
-            <p className="mb-6 sm:mb-8 text-sm sm:text-lg text-white/90">
-              {t("home.welcomeBackDesc")}
-            </p>
-            <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 sm:gap-4">
-              <Link href={getDashboardPath()} className="w-full sm:w-auto">
-                <Button
-                  size="default"
-                  className="w-full sm:w-auto bg-white text-primary-600 hover:bg-white/90"
-                >
-                  <LayoutDashboard className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                  {t("nav.dashboard")}
-                </Button>
-              </Link>
-              {user.role === "PATIENT" && (
-                <>
-                  <Link href="/doctors" className="w-full sm:w-auto">
-                    <Button
-                      size="default"
-                      variant="outline"
-                      className="w-full sm:w-auto border-white text-white hover:bg-white/10"
-                    >
-                      <Search className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                      {t("nav.findDoctor")}
-                    </Button>
-                  </Link>
-                  <Link
-                    href="/patient/appointments"
-                    className="w-full sm:w-auto"
-                  >
-                    <Button
-                      size="default"
-                      variant="outline"
-                      className="w-full sm:w-auto border-white text-white hover:bg-white/10"
-                    >
-                      <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                      {t("nav.myAppointments")}
-                    </Button>
-                  </Link>
-                </>
-              )}
-              {user.role === "DOCTOR" && (
-                <Link href="/doctor/appointments" className="w-full sm:w-auto">
-                  <Button
-                    size="default"
-                    variant="outline"
-                    className="w-full sm:w-auto border-white text-white hover:bg-white/10"
-                  >
-                    <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5 ms-2" />
-                    {t("nav.myAppointments")}
-                  </Button>
-                </Link>
-              )}
-            </div>
-          </div>
-        </section>
-      ) : (
-        // Not logged in - Show doctor registration CTA
-        <section className="bg-gradient-medical py-20 text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="mb-4 text-3xl font-bold">{t("home.doctorCta")}</h2>
-            <p className="mb-8 text-lg text-white/90">
-              {t("home.doctorCtaDesc")}
-            </p>
-            <Link href="/register?role=doctor">
-              <Button
-                size="lg"
-                className="bg-white text-primary-600 hover:bg-white/90"
-              >
-                {t("home.registerAsDoctor")}
-              </Button>
-            </Link>
-          </div>
-        </section>
-      )}
+      {/* CTA Section - Auth-state-dependent (dynamic import; below the fold) */}
+      <HomeAuthCta />
     </PublicLayout>
   );
 }
