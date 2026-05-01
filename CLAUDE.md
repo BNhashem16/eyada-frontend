@@ -276,7 +276,9 @@ Next.js 16 + React 19 frontend for Eyada (clinics-eg.com), a multi-role healthca
 - **State**: Zustand (auth, persisted to localStorage), TanStack Query v5 (server state)
 - **Forms**: react-hook-form + Zod (`@hookform/resolvers`)
 - **HTTP**: axios with interceptor-based token refresh
-- **i18n**: Custom JSON-based translator (next-intl is installed but not used at runtime)
+- **i18n**: Custom JSON-based translator. `getServerLocale()` resolves the active locale on the server side from the `x-locale` request header (set by `proxy.ts` from cookie / `Accept-Language`). The `[locale]` route-segment migration is at Phase 1 (scaffolding only, no routes moved yet).
+- **Observability**: `@sentry/nextjs` (errors + performance + Replay, no-ops without DSN). Per-tab session correlation ID forwarded via `x-correlation-id`.
+- **Edge layer**: `proxy.ts` (was `middleware.ts` — Next 16 renamed the convention). Sets per-request CSP nonce (sensitive routes) or static `'unsafe-inline'` CSP (public routes), `X-Robots-Tag: noindex` on sensitive prefixes, locale forwarding, correlation ID.
 - **Fonts**: Cairo (Arabic, primary), Inter (English) via `next/font/google`
 
 ## Commands
@@ -288,9 +290,16 @@ npm start            # Start built app
 npm run lint         # ESLint (next/core-web-vitals)
 npm run format       # Prettier write
 npm run format:check # Prettier check
+npm run analyze      # Production build with @next/bundle-analyzer (ANALYZE=true)
+npm test             # Vitest unit tests (run once)
+npm run test:watch   # Vitest watch mode
+npm run test:coverage# Vitest coverage report
+npm run test:ui      # Vitest UI
+npm run test:e2e     # Playwright E2E
+npm run test:e2e:ui  # Playwright UI runner
 ```
 
-No test runner is configured yet. Adding tests requires proposing the setup first (Playwright for E2E, Vitest/Jest for unit) per the testing rules in this doc.
+Vitest (unit + integration) and Playwright (E2E) are wired. The 80% coverage target from project rules applies to new code; existing code may be uncovered.
 
 ## Path Alias
 
@@ -399,9 +408,37 @@ NEXT_PUBLIC_APP_NAME=عيادة
 NEXT_PUBLIC_APP_URL=...
 NEXT_PUBLIC_STORAGE_BASE_URL=...
 PORT=3001          # optional, read by scripts/dev.js
+
+# Sentry (optional locally, required for production error reports)
+NEXT_PUBLIC_SENTRY_DSN=...
+SENTRY_DSN=...
+SENTRY_ORG=...
+SENTRY_PROJECT=...
+SENTRY_AUTH_TOKEN=...   # build-time only, set on Vercel for source-map upload
 ```
 
-`API_BASE_URL` falls back to `http://localhost:3000` when `NEXT_PUBLIC_API_URL` is missing.
+`API_BASE_URL` falls back to `http://localhost:3000` when `NEXT_PUBLIC_API_URL` is missing. Sentry SDK no-ops when the DSN is unset, so leaving these blank is safe in development and on preview deploys.
+
+## Lint debt (follow-up)
+
+`npm run lint` currently reports ~99 errors / ~191 warnings. Categorized:
+
+- **30 × `react-hooks/set-state-in-effect`** — real bugs (potential cascading
+  renders / loops). Highest fix priority.
+- **50 × `@typescript-eslint/no-explicit-any`** — type laxity, mostly in
+  feature hooks and admin pages.
+- **16 × `react-hooks/exhaustive-deps`** — hidden-stale-closure risks.
+- **156 × `@typescript-eslint/no-unused-vars`** (warnings) — cosmetic.
+- **2 × `react-hooks/refs`** — refs read during render, real bugs.
+- **1 × `react-hooks/rules-of-hooks`** — `lib/i18n/use-translation.ts:35`,
+  the conditional `useLanguageHook()` inside the SSR-safety dance. Documented
+  as intentional in the "Known Footguns" section; refactor with care.
+
+CI runs `npm run lint`. Until baseline is cleaned up, treat status-check
+failure on lint as expected and merge based on the *delta* — new contributions
+must not introduce new errors. Consider adding `continue-on-error: true` on
+the lint step in `.github/workflows/ci.yml` while the baseline is being
+worked down (requires a workflow-scoped token to commit).
 
 ## Known Footguns
 

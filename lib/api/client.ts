@@ -151,8 +151,10 @@ apiClient.interceptors.response.use(
 
     // Check for DOCTOR_PROFILE_INCOMPLETE error (403)
     if (error.response.status === 403) {
-      const errorData = error.response.data as any;
-      const errorCode = errorData?.error || errorData?.errorCode;
+      const errorData = error.response.data as
+        | { error?: string; errorCode?: string }
+        | undefined;
+      const errorCode = errorData?.error ?? errorData?.errorCode;
 
       if (errorCode === "DOCTOR_PROFILE_INCOMPLETE") {
         if (onDoctorProfileIncomplete) {
@@ -236,18 +238,19 @@ apiClient.interceptors.response.use(
   },
 );
 
-// Helper to unwrap API response { success: true, data: {...} }
-function unwrapResponse<T>(responseData: any): T {
-  // If response has success/data structure, unwrap it
+// Helper to unwrap API response { success: true, data: {...} }.
+// Accepts unknown rather than any so callers don't paper over malformed
+// payloads, then narrows on the envelope shape before extracting `data`.
+function unwrapResponse<T>(responseData: unknown): T {
   if (
     responseData &&
     typeof responseData === "object" &&
     "success" in responseData &&
     "data" in responseData
   ) {
-    return responseData.data;
+    return (responseData as { data: T }).data;
   }
-  return responseData;
+  return responseData as T;
 }
 
 // Helper function for API calls

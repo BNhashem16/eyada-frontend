@@ -49,6 +49,10 @@ export default function GlobalError({
         <p style={{ color: "#6b7280", marginBottom: 16 }}>
           نعتذر عن هذا الخطأ. يرجى إعادة تحميل الصفحة. — Please reload the page.
         </p>
+        {/* Plain anchor (not next/link) is intentional: global-error renders
+            when the root layout itself has failed; the React tree may not be
+            healthy enough to mount Link. Reason for eslint disable below. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/"
           style={{

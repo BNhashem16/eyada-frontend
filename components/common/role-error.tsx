@@ -39,7 +39,6 @@ export function RoleError({ error, reset, dashboardPath }: RoleErrorProps) {
       })
       .catch(() => {
         if (process.env.NODE_ENV !== "production") {
-          // eslint-disable-next-line no-console
           console.error(error);
         }
       });

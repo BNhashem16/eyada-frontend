@@ -42,10 +42,21 @@ const FORBID_API_FROM_COMPONENTS = {
   },
 };
 
+// Node-style scripts in /scripts/ run under bare Node (no Next.js bundler) so
+// CommonJS require() is correct. The TypeScript ESLint rule that forbids it
+// is project-wide for app code; relax it for these scripts only.
+const SCRIPTS_NODE_OVERRIDE = {
+  files: ["scripts/**/*.{js,cjs,mjs}"],
+  rules: {
+    "@typescript-eslint/no-require-imports": "off",
+  },
+};
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   FORBID_API_FROM_COMPONENTS,
+  SCRIPTS_NODE_OVERRIDE,
   globalIgnores([
     ".next/**",
     "out/**",

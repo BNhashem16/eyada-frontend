@@ -42,7 +42,7 @@ export interface CreateCampaignDto {
   perUserLimit?: number;
 }
 
-export interface UpdateCampaignDto extends Partial<CreateCampaignDto> {}
+export type UpdateCampaignDto = Partial<CreateCampaignDto>;
 
 export interface UpdateCampaignStatusDto {
   status: CampaignStatus;

@@ -67,7 +67,7 @@ export interface CreateDoctorProfileDto {
   whatsappNumbers?: string[];
 }
 
-export interface UpdateDoctorProfileDto extends Partial<CreateDoctorProfileDto> {}
+export type UpdateDoctorProfileDto = Partial<CreateDoctorProfileDto>;
 
 // ============================================
 // PATIENT PROFILE DTOs
@@ -82,7 +82,7 @@ export interface CreatePatientProfileDto {
   bloodType?: string;
 }
 
-export interface UpdatePatientProfileDto extends Partial<CreatePatientProfileDto> {}
+export type UpdatePatientProfileDto = Partial<CreatePatientProfileDto>;
 
 // ============================================
 // FAMILY MEMBER DTOs
@@ -126,7 +126,7 @@ export interface CreateClinicDto {
   isActive?: boolean; // default: true
 }
 
-export interface UpdateClinicDto extends Partial<CreateClinicDto> {}
+export type UpdateClinicDto = Partial<CreateClinicDto>;
 
 // ============================================
 // SCHEDULE DTOs
@@ -148,7 +148,7 @@ export interface CreateScheduleDto {
   isActive?: boolean; // default: true
 }
 
-export interface UpdateScheduleDto extends Partial<CreateScheduleDto> {}
+export type UpdateScheduleDto = Partial<CreateScheduleDto>;
 
 // ============================================
 // SERVICE TYPE DTOs
@@ -163,7 +163,7 @@ export interface CreateServiceTypeDto {
   isActive?: boolean; // default: true
 }
 
-export interface UpdateServiceTypeDto extends Partial<CreateServiceTypeDto> {}
+export type UpdateServiceTypeDto = Partial<CreateServiceTypeDto>;
 
 // ============================================
 // APPOINTMENT DTOs
@@ -292,7 +292,7 @@ export interface CreatePaymentMethodDto {
   isActive?: boolean; // default: true
 }
 
-export interface UpdatePaymentMethodDto extends Partial<CreatePaymentMethodDto> {}
+export type UpdatePaymentMethodDto = Partial<CreatePaymentMethodDto>;
 
 // ============================================
 // DOCTOR PAYMENT ACCOUNT DTOs
