@@ -1,3 +1,4 @@
+import "server-only";
 import { headers, cookies } from "next/headers";
 import { defaultLocale, locales, type Locale } from "./config";
 
