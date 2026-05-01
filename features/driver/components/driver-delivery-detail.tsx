@@ -83,7 +83,7 @@ export function DriverDeliveryDetail() {
         size="sm"
         onClick={() => router.push("/driver/deliveries")}
       >
-        <ArrowLeft className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
+        <ArrowLeft className="h-4 w-4 me-2 rtl:rotate-180" />
         {t("common.back")}
       </Button>
 

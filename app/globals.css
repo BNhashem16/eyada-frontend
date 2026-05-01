@@ -595,3 +595,23 @@ input[type="number"] {
 .ring-ring {
   --tw-ring-color: rgb(var(--ring));
 }
+
+/* ============================================
+   Accessibility — Reduced Motion
+   ============================================
+   Honor the OS-level prefers-reduced-motion preference. Suppress all
+   non-essential animation and transition (loading spinners become near-static,
+   slide-in transitions become instant). Healthcare audiences include patients
+   with vestibular disorders; this is required for WCAG 2.3.3 compliance.
+   The !important flags are intentional — they need to override Tailwind
+   utility specificity (animate-spin, animate-in, transition-*). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -22,13 +22,15 @@ export function HomeTrackInput() {
         <Navigation className="h-5 w-5 text-muted-foreground" />
         <input
           type="text"
+          inputMode="numeric"
+          aria-label={t("home.trackAppointmentPlaceholder")}
           placeholder={t("home.trackAppointmentPlaceholder")}
           value={trackingNumber}
           onChange={(e) => setTrackingNumber(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleTrack();
           }}
-          className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground"
+          className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground text-foreground rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
           dir="ltr"
         />
       </div>

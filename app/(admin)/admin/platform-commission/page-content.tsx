@@ -156,7 +156,7 @@ export function PlatformCommissionPageContent() {
                 }
               >
                 {createCommission.isPending || updateCommission.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Loader2 className="h-4 w-4 animate-spin me-2" />
                 ) : null}
                 {t("prescription.saveCommission")}
               </Button>
@@ -185,7 +185,7 @@ export function PlatformCommissionPageContent() {
                     <span className="font-medium">
                       {Number(config.commissionPercentage)}%
                     </span>
-                    <span className="text-sm text-muted-foreground ml-2">
+                    <span className="text-sm text-muted-foreground ms-2">
                       (Min: {Number(config.minCommission)}
                       {config.maxCommission &&
                         `, Max: ${Number(config.maxCommission)}`}

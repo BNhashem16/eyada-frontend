@@ -115,7 +115,17 @@ export default function RootLayout({
       <body
         className={`${cairo.variable} ${inter.variable} min-h-screen bg-background antialiased`}
       >
-        <Providers>{children}</Providers>
+        {/* Keyboard-only skip link. Visually hidden until focused.
+            WCAG 2.4.1 (Bypass Blocks). */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 focus:rounded-md focus:bg-primary-600 focus:px-3 focus:py-2 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+        >
+          {getTranslation("common.skipToContent")}
+        </a>
+        <Providers>
+          <div id="main">{children}</div>
+        </Providers>
       </body>
     </html>
   );

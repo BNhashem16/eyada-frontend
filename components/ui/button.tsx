@@ -24,12 +24,14 @@ const buttonVariants = cva(
           "bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
+        // Touch-target safe on mobile (44px), denser on >=sm where pointer
+        // input is the norm. WCAG 2.5.5 / 2.5.8.
+        default: "h-11 sm:h-10 px-4 py-2",
+        sm: "h-9 sm:h-8 rounded-md px-3 text-xs",
         lg: "h-12 rounded-lg px-6 text-base",
         xl: "h-14 rounded-xl px-8 text-lg",
-        icon: "h-10 w-10",
-        "icon-sm": "h-8 w-8",
+        icon: "h-11 w-11 sm:h-10 sm:w-10",
+        "icon-sm": "h-9 w-9 sm:h-8 sm:w-8",
         "icon-lg": "h-12 w-12",
       },
     },

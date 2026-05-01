@@ -253,7 +253,7 @@ export function AppointmentList() {
       )}
 
       {/* Floating Action Button - Mobile Only */}
-      <div className="fixed bottom-6 left-6 z-50 sm:hidden">
+      <div className="fixed bottom-6 start-6 z-50 sm:hidden">
         <Button
           asChild
           size="lg"
