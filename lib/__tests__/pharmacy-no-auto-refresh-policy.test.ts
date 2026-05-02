@@ -7,16 +7,20 @@ import path from "node:path";
  *
  * Server resources are precious. Every TanStack Query call inside a pharmacy
  * hook must go through the project's `usePharmacyQuery` wrapper (which sets
- * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount` to false and
- * disables `refetchInterval`) — OR set those flags explicitly itself.
+ * `refetchOnWindowFocus: false`, `refetchOnReconnect: false`,
+ * `refetchOnMount: true`, and disables `refetchInterval`) — OR set those
+ * flags explicitly itself.
+ *
+ * Note: `refetchOnMount` is `true` (not `false`) on purpose. Mutation-driven
+ * `invalidateQueries(...)` only triggers a refetch for active observers, so
+ * with `refetchOnMount: false` a list page returning from a sub-route would
+ * paint the pre-mutation snapshot. Within `staleTime` the cache is still
+ * hit on mount, so this is not auto-polling — it just lets invalidation
+ * actually take effect across navigations.
  *
  * This meta-test walks every hook file in the pharmacy module and fails
  * loudly when a `useQuery({...})` / `useInfiniteQuery({...})` slips through
  * without the wrapper or the explicit flags.
- *
- * Phase 0 lands this test in `.skip` so the suite stays green while the
- * wrapper is still being built. Phase 4 flips the `.skip` and turns the
- * test green by migrating every pharmacy hook to `usePharmacyQuery`.
  */
 
 const HOOK_DIRS = [
@@ -28,10 +32,20 @@ const HOOK_DIRS = [
 
 const ADMIN_PHARMACY_FILE_PATTERN = /pharmac|prescription/i;
 
-const REQUIRED_FLAGS = [
-  "refetchOnWindowFocus",
-  "refetchOnReconnect",
-  "refetchOnMount",
+// Each entry is the literal source-text the meta-test searches for. The
+// flags must be set verbatim somewhere in the file (or — preferred — the
+// hook should just use `usePharmacyQuery`, which sets them centrally).
+const REQUIRED_FLAG_LITERALS: Array<{ flag: string; literal: RegExp }> = [
+  {
+    flag: "refetchOnWindowFocus: false",
+    literal: /refetchOnWindowFocus\s*:\s*false/,
+  },
+  {
+    flag: "refetchOnReconnect: false",
+    literal: /refetchOnReconnect\s*:\s*false/,
+  },
+  // Mount-on-stale stays ON so invalidation works across navigations.
+  { flag: "refetchOnMount: true", literal: /refetchOnMount\s*:\s*true/ },
 ];
 
 interface Violation {
@@ -88,13 +102,13 @@ function findViolations(repoRoot: string): Violation[] {
       continue;
     }
 
-    const missing = REQUIRED_FLAGS.filter(
-      (flag) => !new RegExp(`${flag}\\s*:\\s*false`).test(src),
-    );
+    const missing = REQUIRED_FLAG_LITERALS.filter(
+      ({ literal }) => !literal.test(src),
+    ).map(({ flag }) => flag);
     if (missing.length > 0) {
       violations.push({
         file,
-        reason: `missing explicit \`${missing.join(", ")}: false\` and not using usePharmacyQuery`,
+        reason: `missing explicit \`${missing.join(", ")}\` and not using usePharmacyQuery`,
       });
     }
   }

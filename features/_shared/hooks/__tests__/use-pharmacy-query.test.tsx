@@ -17,11 +17,14 @@ function wrap(client: QueryClient) {
 }
 
 describe("pharmacyQueryDefaults / pharmacyQueryFastChanging presets", () => {
-  it("disables every form of automatic refresh", () => {
+  it("disables focus / reconnect / interval refetches and enables mount-on-stale", () => {
     for (const preset of [pharmacyQueryDefaults, pharmacyQueryFastChanging]) {
       expect(preset.refetchOnWindowFocus).toBe(false);
       expect(preset.refetchOnReconnect).toBe(false);
-      expect(preset.refetchOnMount).toBe(false);
+      // `true` is required so that `invalidateQueries` from a sub-route
+      // (e.g. /pharmacies/create) takes effect when the user returns to
+      // the list page. Within `staleTime` the cache is still hit.
+      expect(preset.refetchOnMount).toBe(true);
       expect(preset.refetchInterval).toBe(false);
     }
   });
@@ -51,7 +54,7 @@ describe("usePharmacyQuery wrapper", () => {
     expect(result.current.data).toEqual({ value: 42 });
   });
 
-  it("does not refetch on remount because refetchOnMount is forced false", async () => {
+  it("hits cache on remount when data is still fresh (within staleTime)", async () => {
     const client = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -83,9 +86,47 @@ describe("usePharmacyQuery wrapper", () => {
       { wrapper: wrap(client) },
     );
 
-    // Give React Query a tick to settle.
+    // Within staleTime → no refetch even with refetchOnMount: true.
     await new Promise((r) => setTimeout(r, 50));
     expect(calls).toBe(1);
+  });
+
+  it("refetches on remount after invalidateQueries (mutation-driven freshness)", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    let calls = 0;
+    const queryFn = () => {
+      calls += 1;
+      return Promise.resolve(calls);
+    };
+
+    const { unmount } = renderHook(
+      () =>
+        usePharmacyQuery({
+          queryKey: ["t", "invalidate-remount"],
+          queryFn,
+        }),
+      { wrapper: wrap(client) },
+    );
+
+    await waitFor(() => expect(calls).toBe(1));
+    unmount();
+
+    // Simulate a mutation invalidating the list while no observer is mounted.
+    await client.invalidateQueries({ queryKey: ["t", "invalidate-remount"] });
+
+    renderHook(
+      () =>
+        usePharmacyQuery({
+          queryKey: ["t", "invalidate-remount"],
+          queryFn,
+        }),
+      { wrapper: wrap(client) },
+    );
+
+    await waitFor(() => expect(calls).toBe(2));
   });
 
   it("'fast-changing' preset uses a shorter staleTime than the default", () => {

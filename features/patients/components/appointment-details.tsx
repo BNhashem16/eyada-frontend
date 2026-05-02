@@ -132,17 +132,20 @@ const PAYMENT_STYLES: Record<PaymentStatus, { label: string; classes: string }> 
 function buildAppointmentDateTime(
   appointmentDate: string,
   appointmentTime?: string,
-): Date {
+): Date | null {
   // appointmentDate is YYYY-MM-DD; appointmentTime is HH:mm (UTC by convention)
+  if (!appointmentDate) return null;
   if (appointmentTime) {
     const [hh, mm] = appointmentTime.split(":").map(Number);
     if (!Number.isNaN(hh) && !Number.isNaN(mm)) {
       const d = new Date(`${appointmentDate}T00:00:00`);
+      if (Number.isNaN(d.getTime())) return null;
       d.setUTCHours(hh, mm, 0, 0);
-      return d;
+      return Number.isNaN(d.getTime()) ? null : d;
     }
   }
-  return new Date(`${appointmentDate}T12:00:00`);
+  const fallback = new Date(`${appointmentDate}T12:00:00`);
+  return Number.isNaN(fallback.getTime()) ? null : fallback;
 }
 
 function getCountdown(target: Date, now: Date): string | null {
@@ -172,13 +175,19 @@ function buildIcsFile(
   location: string,
   start: Date,
   durationMinutes: number,
-): string {
+): string | null {
+  if (!(start instanceof Date) || Number.isNaN(start.getTime())) return null;
+  const safeDuration =
+    Number.isFinite(durationMinutes) && durationMinutes > 0
+      ? durationMinutes
+      : 30;
   const dt = (d: Date) =>
     d
       .toISOString()
       .replace(/[-:]/g, "")
       .replace(/\.\d{3}/, "");
-  const end = new Date(start.getTime() + durationMinutes * 60_000);
+  const end = new Date(start.getTime() + safeDuration * 60_000);
+  if (Number.isNaN(end.getTime())) return null;
   const sanitize = (s: string) =>
     s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,");
   return [
@@ -376,6 +385,14 @@ export function AppointmentDetails({ appointmentId }: AppointmentDetailsProps) {
       appointmentDateTime,
       serviceDuration,
     );
+    if (!ics) {
+      toast({
+        title: t("toast.error"),
+        description: t("errors.somethingWentWrong"),
+        variant: "error",
+      });
+      return;
+    }
     const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

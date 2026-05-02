@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   MapPin,
@@ -32,7 +32,7 @@ import { useTranslation } from "@/lib/i18n";
 import { getLocalizedText } from "@/lib/utils/multilingual";
 import { formatTime, utcTimeToLocal } from "@/lib/utils/date";
 import { getImageUrl } from "@/lib/utils/storage";
-import { cn } from "@/lib/utils";
+import { cn, formatDoctorName } from "@/lib/utils";
 
 interface ClinicDetailsProps {
   clinicId: string;
@@ -128,16 +128,42 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
     ? getLocalizedText(doctor.specialty.name, locale)
     : "";
 
-  // Pick a day from the schedule explorer → switch to the booking tab
-  // and seed BookingWidget with that date.
+  const tabsRef = useRef<HTMLDivElement | null>(null);
+  // Tracks the visual offset (in px) of the tabs strip at the moment a
+  // slot/day is picked. We use it to compensate for the document-height
+  // collapse that happens when we swap from the (tall) schedule explorer
+  // tab to the (short) booking tab, which otherwise makes the browser
+  // snap the viewport upward.
+  const pendingScrollAnchor = useRef<number | null>(null);
+
   const handlePickDay = (date: Date) => {
+    if (typeof window !== "undefined" && tabsRef.current) {
+      pendingScrollAnchor.current =
+        tabsRef.current.getBoundingClientRect().top;
+    }
     setBookingDate(date);
     setActiveTab("booking");
-    // Smooth scroll to top so the user sees the booking widget
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
   };
+
+  // After the tab swap commits and layout settles, restore the tabs strip
+  // to roughly the same on-screen position it occupied at click time. This
+  // keeps the user anchored to the same visual spot instead of being
+  // yanked to the top by the browser's scroll clamp.
+  useEffect(() => {
+    if (pendingScrollAnchor.current === null || !tabsRef.current) return;
+    const el = tabsRef.current;
+    const anchor = pendingScrollAnchor.current;
+    pendingScrollAnchor.current = null;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const delta = rect.top - anchor;
+        if (Math.abs(delta) > 1) {
+          window.scrollBy({ top: delta, behavior: "auto" });
+        }
+      });
+    });
+  }, [activeTab]);
 
   return (
     <div className="space-y-6">
@@ -256,7 +282,7 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
 
       {/* MAIN GRID */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 min-w-0 space-y-6">
+        <div ref={tabsRef} className="lg:col-span-2 min-w-0 space-y-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="w-full justify-start overflow-x-auto">
               <TabsTrigger
@@ -516,7 +542,10 @@ function ClinicHero({
           <div className="flex flex-col gap-2 text-sm text-white/90 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2">
             <span className="inline-flex items-start gap-2 min-w-0">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-              <bdi className="min-w-0">
+              {/* Address can start with a digit ("15 شارع 9, …") which would
+                  flip <bdi dir=auto> to LTR. Inherit the page direction
+                  instead so the line follows ar-RTL / en-LTR correctly. */}
+              <span className="min-w-0">
                 {getLocalizedText(clinic.address, locale)}
                 {cityName && (
                   <>
@@ -525,7 +554,7 @@ function ClinicHero({
                     {stateName && `, ${stateName}`}
                   </>
                 )}
-              </bdi>
+              </span>
             </span>
 
             {clinic.phoneNumbers && clinic.phoneNumbers.length > 0 && (
@@ -794,7 +823,9 @@ function StatCard({
             tone === "primary" ? "text-foreground" : "text-muted-foreground",
           )}
         >
-          <bdi>{value}</bdi>
+          {/* Only isolate as LTR for time/digit values. Translated text
+              (e.g. "مغلقة اليوم") must follow the page direction. */}
+          {isTime ? <bdi>{value}</bdi> : value}
         </p>
       </div>
     </div>
@@ -841,7 +872,7 @@ function DoctorPreviewCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
             <span className="text-base sm:text-lg font-semibold text-foreground truncate">
-              {t("doctors.doctorPrefix")} {doctor.user?.fullName}
+              {formatDoctorName(doctor.user?.fullName, t("doctors.doctorPrefix"))}
             </span>
             {doctor.totalRatings > 0 && (
               <span

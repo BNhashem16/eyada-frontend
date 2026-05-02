@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   Package,
   ShoppingCart,
+  Store,
   TrendingUp,
   Wallet,
   AlertTriangle,
@@ -11,6 +13,7 @@ import {
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -62,6 +65,7 @@ export function PharmacyOwnerDashboard() {
   } = usePharmacyOwnerDashboard(pharmacyId);
 
   const isLoading = loadingPharmacies || loadingDashboard;
+  const hasNoPharmacies = !loadingPharmacies && pharmacyList?.length === 0;
 
   const handleRefresh = useMemo(
     () => async () => {
@@ -107,8 +111,21 @@ export function PharmacyOwnerDashboard() {
         <RefreshButton onRefresh={handleRefresh} />
       </div>
 
-      {/* KPI cards */}
-      {isLoading ? (
+      {/* Empty state — owner has zero pharmacies */}
+      {hasNoPharmacies ? (
+        <PharmacyEmptyState
+          icon={Store}
+          title={t("pharmacyOwner.noPharmacies")}
+          description={t("pharmacyOwner.noPharmaciesDashboardHint")}
+          action={
+            <Button asChild>
+              <Link href="/pharmacy-owner/pharmacies/create">
+                {t("pharmacyOwner.addPharmacy")}
+              </Link>
+            </Button>
+          }
+        />
+      ) : isLoading ? (
         <KpiSkeleton count={4} />
       ) : dashboard ? (
         <>

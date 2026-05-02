@@ -46,3 +46,5 @@ next-env.d.ts
 .mcp.local.json
 !.mcp.local.example.json
 /.claude
+/.playwright-mcp
+

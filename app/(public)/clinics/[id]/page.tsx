@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { ClinicDetailsComponent } from "@/features/clinics";
 import { getTranslation } from "@/lib/i18n";
 import { JsonLd } from "@/components/seo/json-ld";
+import { stripDoctorPrefix } from "@/lib/utils/doctor-name";
 
 const BASE_URL = "https://clinics-eg.com";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -68,7 +69,9 @@ export async function generateMetadata({
   }
 
   const clinicName = clinic.name.ar;
-  const doctorName = clinic.doctorProfile?.user?.fullName || "";
+  // Backend `fullName` may already include the prefix ("د. كريم …"); strip
+  // it so we don't end up with "د. د. كريم …" in the page title.
+  const doctorName = stripDoctorPrefix(clinic.doctorProfile?.user?.fullName);
   const specialtyAr = clinic.doctorProfile?.specialty?.name?.ar || "";
   const cityName = clinic.city?.name?.ar || "";
   const stateName = clinic.city?.state?.name?.ar || "";

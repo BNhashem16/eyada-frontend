@@ -14,8 +14,17 @@ import {
  *
  *   - refetchOnWindowFocus: false
  *   - refetchOnReconnect:   false
- *   - refetchOnMount:       false
+ *   - refetchOnMount:       true   ← see note below
  *   - refetchInterval:      false
+ *
+ * `refetchOnMount` is `true` (not `false`) on purpose. `invalidateQueries`
+ * only triggers a refetch for active observers. When a mutation runs on a
+ * sub-route (e.g. /pharmacies/create), the list query has no active
+ * observer, so invalidation just flips the cache to stale. With
+ * `refetchOnMount: false` the user would then see the pre-mutation
+ * snapshot when navigating back. Setting it to `true` lets stale-on-mount
+ * trigger a refetch — within `staleTime` the cache is still hit, so this
+ * is not a polling regression.
  *
  * Cache freshness is controlled by:
  *   - mutation-driven invalidation (every mutation `onSuccess` invalidates
@@ -40,7 +49,7 @@ export const pharmacyQueryDefaults = {
   gcTime: TEN_MINUTES,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
-  refetchOnMount: false,
+  refetchOnMount: true,
   refetchInterval: false,
 } as const;
 
@@ -49,7 +58,7 @@ export const pharmacyQueryFastChanging = {
   gcTime: TEN_MINUTES,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
-  refetchOnMount: false,
+  refetchOnMount: true,
   refetchInterval: false,
 } as const;
 
@@ -103,7 +112,7 @@ export function usePharmacyQuery<
     ...rest,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchInterval: false,
     staleTime: staleTime ?? presetOptions.staleTime,
     gcTime: gcTime ?? presetOptions.gcTime,

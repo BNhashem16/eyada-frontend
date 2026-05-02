@@ -10,17 +10,17 @@ import { LanguageToggle } from "@/components/common/language-toggle";
 import { useTranslation } from "@/lib/i18n";
 import { useUser, useLogout } from "@/lib/auth/store";
 import { getInitials } from "@/lib/utils";
-import type { MenuItem } from "./sidebar";
+import type { MenuItem, MenuSection } from "./sidebar";
 
 export interface AdminLayoutProps {
   children: React.ReactNode;
-  menuItems: MenuItem[];
+  menuSections: MenuSection[];
   headerRightContent?: React.ReactNode;
 }
 
 export function AdminLayout({
   children,
-  menuItems,
+  menuSections,
   headerRightContent,
 }: AdminLayoutProps) {
   const { t } = useTranslation();
@@ -36,6 +36,43 @@ export function AdminLayout({
     );
   };
 
+  const renderMenuLink = (item: MenuItem, onClick?: () => void) => {
+    const Icon = item.icon;
+    const active = isActive(item.href);
+
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={onClick}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+          active
+            ? "bg-primary-600 text-white"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+        }`}
+      >
+        <Icon className="h-5 w-5" />
+        {item.label}
+      </Link>
+    );
+  };
+
+  const renderSections = (onItemClick?: () => void) =>
+    menuSections.map((section, index) => (
+      <div key={section.title ?? `section-${index}`} className="space-y-1">
+        {section.title && (
+          <p
+            className={`px-3 ${
+              index === 0 ? "mt-0" : "mt-4"
+            } mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400`}
+          >
+            {section.title}
+          </p>
+        )}
+        {section.items.map((item) => renderMenuLink(item, onItemClick))}
+      </div>
+    ));
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -46,6 +83,7 @@ export function AdminLayout({
             <button
               className="lg:hidden p-2 text-gray-300 hover:text-white"
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label={t("common.menu")}
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -89,25 +127,7 @@ export function AdminLayout({
         {/* Sidebar - Desktop */}
         <aside className="hidden lg:block w-64 bg-gray-800 dark:bg-gray-900 text-white min-h-[calc(100vh-4rem)]">
           <nav className="p-4 space-y-1">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    active
-                      ? "bg-primary-600 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
-                </Link>
-              );
-            })}
+            {renderSections()}
 
             <div className="my-4 border-t border-gray-700" />
 
@@ -154,26 +174,7 @@ export function AdminLayout({
               </div>
 
               <nav className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-1">
-                {menuItems.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                        active
-                          ? "bg-primary-600 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
+                {renderSections(() => setSidebarOpen(false))}
 
                 <div className="my-4 border-t border-gray-700" />
 

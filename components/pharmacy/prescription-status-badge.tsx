@@ -8,9 +8,14 @@ const TONE: Record<
   "default" | "warning" | "success" | "error" | "secondary"
 > = {
   PENDING: "warning",
+  PENDING_REVIEW: "warning",
   ASSIGNED: "default",
   IN_REVIEW: "default",
+  PREPARING: "default",
   READY: "default",
+  READY_FOR_PICKUP: "default",
+  OUT_FOR_DELIVERY: "warning",
+  DELIVERED: "success",
   FULFILLED: "success",
   REJECTED: "error",
   CANCELLED: "secondary",

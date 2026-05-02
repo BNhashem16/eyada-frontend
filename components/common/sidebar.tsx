@@ -15,6 +15,11 @@ export interface MenuItem {
   icon: LucideIcon;
 }
 
+export interface MenuSection {
+  title?: string;
+  items: MenuItem[];
+}
+
 export interface SidebarProps {
   menuItems: MenuItem[];
   userRoleLabel?: string;
