@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
+import { getTranslation } from "@/lib/i18n";
 
 export const runtime = "edge";
 
-export const alt =
-  "عيادة - احجز موعدك مع أفضل الأطباء في مصر | Eyada - Book Doctor Appointments";
+export const alt = `${getTranslation("seo.ogAlt", "ar")} | ${getTranslation("seo.ogAlt", "en")}`;
 export const size = {
   width: 1200,
   height: 600,
@@ -88,7 +88,7 @@ export default async function Image() {
           display: "flex",
         }}
       >
-        عيادة
+        {getTranslation("seo.brandNameShort", "ar")}
       </div>
 
       <div
@@ -99,7 +99,7 @@ export default async function Image() {
           display: "flex",
         }}
       >
-        Eyada
+        {getTranslation("seo.brandNameLatin", "en")}
       </div>
 
       <div
@@ -111,7 +111,7 @@ export default async function Image() {
           display: "flex",
         }}
       >
-        احجز موعدك مع أفضل الأطباء في مصر
+        {getTranslation("seo.heroTagline", "ar")}
       </div>
 
       {/* Bottom bar */}

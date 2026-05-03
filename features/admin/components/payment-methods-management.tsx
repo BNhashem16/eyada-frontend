@@ -421,7 +421,7 @@ export function PaymentMethodsManagement() {
                       code: e.target.value.toUpperCase(),
                     }))
                   }
-                  placeholder="INSTAPAY"
+                  placeholder={t("placeholder.paymentMethodCode")}
                   dir="ltr"
                   disabled={!!editingMethod}
                 />

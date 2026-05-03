@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getTranslation } from "@/lib/i18n";
 
 export const size = {
   width: 180,
@@ -40,7 +41,7 @@ export default function Icon() {
           display: "flex",
         }}
       >
-        عيادة
+        {getTranslation("seo.brandNameShort", "ar")}
       </div>
     </div>,
     {

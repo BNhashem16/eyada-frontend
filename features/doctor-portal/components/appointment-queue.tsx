@@ -384,8 +384,10 @@ export function AppointmentQueue() {
                           </p>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>
-                              {appointment.serviceName?.ar ||
-                                appointment.serviceName?.en}
+                              {getLocalizedText(
+                                appointment.serviceName,
+                                locale,
+                              )}
                             </span>
                             {appointment.patientProfile?.user?.phoneNumber && (
                               <>

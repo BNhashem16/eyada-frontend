@@ -44,7 +44,7 @@ export function Sidebar({ menuItems, basePath = "" }: SidebarProps) {
   };
 
   return (
-    <aside className="hidden lg:block w-64 bg-card border-e border-border min-h-[calc(100vh-4rem)]">
+    <aside className="hidden lg:block w-64 bg-card border-e border-border sticky top-16 self-start h-[calc(100dvh-4rem)] overflow-y-auto">
       <nav className="p-4 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;

@@ -35,7 +35,7 @@ export function DashboardLayout({
         rightContent={headerRightContent}
       />
 
-      <div className="flex">
+      <div className="flex pt-16">
         <Sidebar menuItems={menuItems} basePath={basePath} />
 
         <MobileSidebar
@@ -48,7 +48,7 @@ export function DashboardLayout({
           basePath={basePath}
         />
 
-        <main className="flex-1 min-w-0 overflow-x-hidden p-4 lg:p-6">
+        <main className="flex-1 min-w-0 overflow-x-clip p-4 lg:p-6">
           {children}
         </main>
       </div>

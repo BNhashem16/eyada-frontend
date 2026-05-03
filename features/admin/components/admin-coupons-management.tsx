@@ -339,7 +339,7 @@ export function AdminCouponsManagement() {
                       code: e.target.value.toUpperCase(),
                     })
                   }
-                  placeholder="WELCOME10"
+                  placeholder={t("placeholder.couponCode")}
                   maxLength={20}
                 />
               </div>

@@ -18,6 +18,27 @@
   - **Tables / data grids:** below `md`, switch to a card layout or expose only the priority columns. Never let a 6-column table force horizontal scroll on a phone.
   - **Modals/dialogs:** full-screen sheet on mobile, centered dialog on `md+`. Constrain max-height with `max-h-[90dvh]` and make the body scrollable.
   - **Verification before declaring done:** mentally (or via DevTools) check the change at 320px, 768px, and 1280px in both `ar` and `en`. If a real browser is available, test it.
+- **Translations are mandatory for every task (no exceptions).** Any new or modified string that is rendered to a user, returned to a client, or shown in a log surfaced to a user MUST be translated in BOTH locales — whether the change is in the frontend or in the backend (`C:\Nest\eyada_backend`). A task is not complete until translations are added.
+  - **Frontend (`C:\React\eyada-frontend`):**
+    - Every user-visible string goes through `t()` (client components via `useTranslation`) or `getTranslation(key, locale?)` (server components, Zod factories, page `metadata`, route handlers, axios layer, utilities, `next/font` metadata, OG/Twitter/apple icon image generators, `WebsiteJsonLd` and other JSON-LD blocks, `loading.tsx`/`error.tsx`/`not-found.tsx`, toast/error fallbacks, `aria-label`, `placeholder`, `title`, button labels, table headers).
+    - **Both files updated.** Adding a key means adding it to BOTH `lib/i18n/ar.json` AND `lib/i18n/en.json`. ar is the source of truth and the fallback; en must be a real translation, not a copy of the Arabic value.
+    - **Zod schemas are factories** taking a `locale` and resolving messages via `getTranslation(...)`. Never inline error strings.
+    - **Page `metadata` MUST use `getTranslation(...)`** — never a literal title/description.
+    - **Doctor prefix** (`"د."` / `"Dr."`) ALWAYS comes from `doctors.doctorPrefix`.
+    - Use logical Tailwind direction utilities only (`ms-*`, `me-*`, `ps-*`, `pe-*`, `start-*`, `end-*`, `text-start`, `text-end`).
+    - Localized backend fields (e.g. `{ ar, en }`) MUST be read via `lib/utils/multilingual.ts` (`getLocalizedText`), never `field.ar || field.en` inline.
+  - **Backend (NestJS — `C:\Nest\eyada_backend`):**
+    - Any new or changed user-facing message — validation errors, exception messages, email/SMS/push templates, scheduled notifications, success messages, audit-log strings rendered to users — MUST be added in BOTH Arabic and English in the backend's i18n source (`src/i18n/ar/*.json` + `src/i18n/en/*.json`, or wherever the project keeps locale catalogs).
+    - Prefer returning a **localization key** (e.g. `errors.appointment.slot_taken`) over a raw message; the frontend resolves via `t()`. When the backend returns a literal message, it MUST honor the `Accept-Language` header.
+    - DTO `class-validator` messages, `i18nValidationMessage(...)` calls, and any string passed to `HttpException`/`BadRequestException`/`UnauthorizedException` are user-visible and MUST be localized.
+    - Notification templates (email subject/body, SMS text, push title/body, WhatsApp messages) MUST exist in both locales and be selected based on the recipient's stored locale preference.
+    - Enum labels exposed to clients (status, role, payment method type) MUST be returned as `{ value, label: { ar, en } }` or as a localization key — never as a single hardcoded string.
+  - **Pre-merge translation checklist (every PR):**
+    - [ ] Every new/changed string has keys in BOTH `ar.json` AND `en.json` (frontend) AND in BOTH ar/en backend catalogs (backend).
+    - [ ] No hardcoded Arabic OR English literals in JSX, props, Zod messages, toasts, page metadata, JSON-LD, OG images, or backend exception messages.
+    - [ ] English values are real translations, not copy-pasted Arabic.
+    - [ ] Cross-repo: if backend added a new error key, frontend has a matching `t()` lookup and a translated value in both files. If frontend started consuming a new field, backend returns it localized.
+    - [ ] Run `/i18n-audit` (frontend) before declaring the task done.
 
 ---
 

@@ -225,7 +225,7 @@ export function BookAppointmentDialog({
                 dir="ltr"
                 value={patientPhone}
                 onChange={(e) => setPatientPhone(e.target.value)}
-                placeholder="01xxxxxxxxx"
+                placeholder={t("placeholder.phone")}
               />
             </div>
           </div>

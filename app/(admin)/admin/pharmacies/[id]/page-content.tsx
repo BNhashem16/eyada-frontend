@@ -548,7 +548,7 @@ export function AdminPharmacyDetailsContent({
                         <span>{t("common.egp")} →</span>
                         <Input
                           type="number"
-                          placeholder="%"
+                          placeholder={t("placeholder.percent")}
                           value={tier.percentage}
                           onChange={(e) => {
                             const tiers = [...commissionForm.tiers!];

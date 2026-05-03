@@ -757,7 +757,7 @@ function PrepaymentSettingsCard({
               <Input
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
-                placeholder="01xxxxxxxxx"
+                placeholder={t("placeholder.whatsapp")}
                 dir="ltr"
               />
               <p className="text-xs text-muted-foreground mt-1">

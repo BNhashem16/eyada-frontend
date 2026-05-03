@@ -98,7 +98,7 @@ export function Header({
   // Auth variant - simple header
   if (variant === "auth") {
     return (
-      <header className="absolute top-0 w-full p-4 flex items-center justify-between">
+      <header className="fixed top-0 inset-x-0 z-40 p-4 flex items-center justify-between bg-card/80 backdrop-blur-lg">
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-medical">
             <Stethoscope className="h-6 w-6 text-white" />
@@ -118,7 +118,7 @@ export function Header({
   // Dashboard variant - with sidebar toggle
   if (variant === "dashboard") {
     return (
-      <header className="sticky top-0 z-40 bg-card border-b border-border">
+      <header className="fixed top-0 inset-x-0 z-40 bg-card border-b border-border">
         <div className="flex h-16 items-center justify-between px-4">
           {/* Logo */}
           <div className="flex items-center gap-4">

@@ -2152,7 +2152,8 @@
       "cancellationReason": "Cancellation Reason",
       "cancellationReasonPlaceholder": "Enter cancellation reason...",
       "confirmCancel": "Confirm Cancellation",
-      "filterBySpecialty": "Filter by specialty"
+      "filterBySpecialty": "Filter by specialty",
+      "newPageTitle": "Book Appointment | Admin"
     },
     "collectionsPage": {
       "title": "Collections & Balances",
@@ -3067,7 +3068,11 @@
     "stateNameEn": "Cairo",
     "stateCode": "CAI",
     "cityNameAr": "مدينة نصر",
-    "cityNameEn": "Nasr City"
+    "cityNameEn": "Nasr City",
+    "couponCode": "WELCOME10",
+    "paymentMethodCode": "INSTAPAY",
+    "iconExample": "pill, heart, etc.",
+    "percent": "%"
   },
   "feedback": {
     "title": "Complaints & Suggestions",
@@ -3323,6 +3328,28 @@
     "clinicTitleNoDoctor": "{clinicName}{location}",
     "clinicDescWithDesc": "{description}... Book your appointment now.",
     "clinicDescNoDesc": "Book your appointment at {clinicName}{doctor}{specialty}{location}. Easy and fast online booking.",
+    "inCity": " in {location}",
+    "inCitySeparator": " - {location}",
+    "brandNameShort": "Eyada",
+    "brandNameLatin": "Eyada",
+    "heroTagline": "Book with Egypt's top doctors",
+    "ogAlt": "Eyada - Book Doctor Appointments in Egypt",
+    "organizationName": "Eyada - Medical Appointment Booking Platform",
+    "organizationAlternateName": "Eyada Medical Clinic Booking Platform",
+    "alternateNameLatin": "Eyada",
+    "alternateNameClinicsEg": "Clinics EG",
+    "alternateNameAr": "عيادة - حجز مواعيد طبية",
+    "organizationDescription": "A platform for booking doctor appointments and clinics in Egypt easily and securely",
+    "contactType": "customer service",
+    "serviceTypeDoctorBooking": "Doctor Appointment Booking",
+    "serviceTypeClinicBooking": "Clinic Booking",
+    "serviceTypeReferral": "Medical Specialist Referral",
+    "serviceTypePharmacyDelivery": "Pharmacy Prescription Delivery",
+    "knowsAboutAppointments": "Medical Appointments",
+    "knowsAboutDoctorBooking": "Doctor Booking",
+    "knowsAboutClinicManagement": "Clinic Management",
+    "knowsAboutDoctorBookingAr": "حجز طبيب",
+    "knowsAboutEgyptianClinics": "عيادات مصر",
     "faq": {
       "q1": "How do I book an appointment with a doctor on Eyada?",
       "a1": "You can easily book an appointment by searching for the doctor or specialty you need, then selecting the clinic and suitable time slot and clicking the book button. You can book online 24/7.",

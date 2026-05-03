@@ -1,3 +1,5 @@
+import { getTranslation } from "@/lib/i18n";
+
 interface WebsiteJsonLdProps {
   nonce?: string;
 }
@@ -12,8 +14,12 @@ export function WebsiteJsonLd({ nonce }: WebsiteJsonLdProps = {}) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": "https://clinics-eg.com/#website",
-    name: "عيادة",
-    alternateName: ["Eyada", "Clinics EG", "عيادة - حجز مواعيد طبية"],
+    name: getTranslation("seo.brandNameShort", "ar"),
+    alternateName: [
+      getTranslation("seo.alternateNameLatin", "en"),
+      getTranslation("seo.alternateNameClinicsEg", "en"),
+      getTranslation("seo.alternateNameAr", "ar"),
+    ],
     url: "https://clinics-eg.com",
     inLanguage: ["ar-EG", "en-US"],
     potentialAction: [
@@ -33,8 +39,8 @@ export function WebsiteJsonLd({ nonce }: WebsiteJsonLdProps = {}) {
     "@context": "https://schema.org",
     "@type": "MedicalOrganization",
     "@id": "https://clinics-eg.com/#organization",
-    name: "عيادة - منصة حجز المواعيد الطبية",
-    alternateName: "Eyada Medical Clinic Booking Platform",
+    name: getTranslation("seo.organizationName", "ar"),
+    alternateName: getTranslation("seo.organizationAlternateName", "en"),
     url: "https://clinics-eg.com",
     logo: {
       "@type": "ImageObject",
@@ -42,31 +48,33 @@ export function WebsiteJsonLd({ nonce }: WebsiteJsonLdProps = {}) {
       width: 512,
       height: 512,
     },
-    description:
-      "منصة لحجز مواعيد الأطباء والعيادات في مصر بكل سهولة وأمان",
+    description: getTranslation("seo.organizationDescription", "ar"),
     areaServed: {
       "@type": "Country",
-      name: "Egypt",
+      name: getTranslation("seo.country", "en"),
       "@id": "https://www.wikidata.org/wiki/Q79",
     },
     contactPoint: {
       "@type": "ContactPoint",
-      contactType: "customer service",
-      availableLanguage: ["Arabic", "English"],
+      contactType: getTranslation("seo.contactType", "en"),
+      availableLanguage: [
+        getTranslation("seo.langArabic", "en"),
+        getTranslation("seo.langEnglish", "en"),
+      ],
       url: "https://clinics-eg.com/contact",
     },
     serviceType: [
-      "Doctor Appointment Booking",
-      "Clinic Booking",
-      "Medical Specialist Referral",
-      "Pharmacy Prescription Delivery",
+      getTranslation("seo.serviceTypeDoctorBooking", "en"),
+      getTranslation("seo.serviceTypeClinicBooking", "en"),
+      getTranslation("seo.serviceTypeReferral", "en"),
+      getTranslation("seo.serviceTypePharmacyDelivery", "en"),
     ],
     knowsAbout: [
-      "Medical Appointments",
-      "Doctor Booking",
-      "Clinic Management",
-      "حجز طبيب",
-      "عيادات مصر",
+      getTranslation("seo.knowsAboutAppointments", "en"),
+      getTranslation("seo.knowsAboutDoctorBooking", "en"),
+      getTranslation("seo.knowsAboutClinicManagement", "en"),
+      getTranslation("seo.knowsAboutDoctorBookingAr", "ar"),
+      getTranslation("seo.knowsAboutEgyptianClinics", "ar"),
     ],
   };
 

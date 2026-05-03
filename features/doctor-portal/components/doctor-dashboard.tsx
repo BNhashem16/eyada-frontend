@@ -30,6 +30,7 @@ import { AppointmentStatus } from "@/types/enums";
 import { formatDate, formatTime } from "@/lib/utils/date";
 import { getInitials } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/utils/multilingual";
 import { useMemo, useCallback } from "react";
 
 export function DoctorDashboard() {
@@ -330,8 +331,7 @@ export function DoctorDashboard() {
                         {formatTime(appointment.appointmentTime)}
                       </span>
                       {" - "}
-                      {appointment.serviceName?.ar ||
-                        appointment.serviceName?.en}
+                      {getLocalizedText(appointment.serviceName, locale)}
                     </p>
                   </div>
                   <Badge

@@ -49,8 +49,8 @@ export function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header + Mobile Nav wrapped in sticky container */}
-      <div className="sticky top-0 z-40">
+      {/* Header + Mobile Nav wrapped in fixed container — always visible */}
+      <div className="fixed top-0 inset-x-0 z-40">
         <Header
           variant="public"
           navLinks={navLinks}
@@ -96,8 +96,8 @@ export function PublicLayout({ children }: PublicLayoutProps) {
         )}
       </div>
 
-      {/* Main Content */}
-      <main>{children}</main>
+      {/* Main Content (pt-16 spacer compensates for fixed header) */}
+      <main className="pt-16">{children}</main>
 
       {/* Footer */}
       <Footer isAiEnabled={isAiEnabled} />

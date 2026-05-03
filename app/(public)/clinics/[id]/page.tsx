@@ -79,12 +79,12 @@ export async function generateMetadata({
   const drPrefix = getTranslation("seo.doctorPrefix");
 
   const titleAr = doctorName
-    ? `${getTranslation("seo.clinicKeyword")} ${drPrefix} ${doctorName} - ${specialtyAr}${location ? ` في ${location}` : ""}`
-    : `${clinicName}${location ? ` - ${location}` : ""}`;
+    ? `${getTranslation("seo.clinicKeyword")} ${drPrefix} ${doctorName} - ${specialtyAr}${location ? getTranslation("seo.inCity", "ar", { location }) : ""}`
+    : `${clinicName}${location ? getTranslation("seo.inCitySeparator", "ar", { location }) : ""}`;
 
   const descriptionAr = clinic.description?.ar
     ? `${clinic.description.ar.substring(0, 150)}... ${getTranslation("seo.bookAppointment")}.`
-    : `${getTranslation("seo.bookAppointment")} ${clinicName}${doctorName ? ` - ${drPrefix} ${doctorName}` : ""}${specialtyAr ? ` - ${specialtyAr}` : ""}${location ? ` في ${location}` : ""}.`;
+    : `${getTranslation("seo.bookAppointment")} ${clinicName}${doctorName ? ` - ${drPrefix} ${doctorName}` : ""}${specialtyAr ? ` - ${specialtyAr}` : ""}${location ? getTranslation("seo.inCity", "ar", { location }) : ""}.`;
 
   const url = `${BASE_URL}/clinics/${id}`;
 

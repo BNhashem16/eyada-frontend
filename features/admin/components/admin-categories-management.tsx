@@ -289,7 +289,7 @@ export function AdminCategoriesManagement() {
                   onChange={(e) =>
                     setFormData({ ...formData, icon: e.target.value })
                   }
-                  placeholder="pill, heart, etc."
+                  placeholder={t("placeholder.iconExample")}
                   dir="ltr"
                 />
               </div>
