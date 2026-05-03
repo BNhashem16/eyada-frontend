@@ -68,7 +68,7 @@ export async function generateMetadata({
     };
   }
 
-  const clinicName = clinic.name.ar;
+  const clinicName = clinic.name?.ar || clinic.name?.en || "";
   // Backend `fullName` may already include the prefix ("د. كريم …"); strip
   // it so we don't end up with "د. د. كريم …" in the page title.
   const doctorName = stripDoctorPrefix(clinic.doctorProfile?.user?.fullName);

@@ -97,6 +97,34 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
     [schedules, now],
   );
 
+  const tabsRef = useRef<HTMLDivElement | null>(null);
+  // Tracks the visual offset (in px) of the tabs strip at the moment a
+  // slot/day is picked. We use it to compensate for the document-height
+  // collapse that happens when we swap from the (tall) schedule explorer
+  // tab to the (short) booking tab, which otherwise makes the browser
+  // snap the viewport upward.
+  const pendingScrollAnchor = useRef<number | null>(null);
+
+  // After the tab swap commits and layout settles, restore the tabs strip
+  // to roughly the same on-screen position it occupied at click time. This
+  // keeps the user anchored to the same visual spot instead of being
+  // yanked to the top by the browser's scroll clamp.
+  useEffect(() => {
+    if (pendingScrollAnchor.current === null || !tabsRef.current) return;
+    const el = tabsRef.current;
+    const anchor = pendingScrollAnchor.current;
+    pendingScrollAnchor.current = null;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const delta = rect.top - anchor;
+        if (Math.abs(delta) > 1) {
+          window.scrollBy({ top: delta, behavior: "auto" });
+        }
+      });
+    });
+  }, [activeTab]);
+
   if (isLoading) return <ClinicDetailsSkeleton />;
 
   if (isError || !clinic) {
@@ -128,14 +156,6 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
     ? getLocalizedText(doctor.specialty.name, locale)
     : "";
 
-  const tabsRef = useRef<HTMLDivElement | null>(null);
-  // Tracks the visual offset (in px) of the tabs strip at the moment a
-  // slot/day is picked. We use it to compensate for the document-height
-  // collapse that happens when we swap from the (tall) schedule explorer
-  // tab to the (short) booking tab, which otherwise makes the browser
-  // snap the viewport upward.
-  const pendingScrollAnchor = useRef<number | null>(null);
-
   const handlePickDay = (date: Date) => {
     if (typeof window !== "undefined" && tabsRef.current) {
       pendingScrollAnchor.current =
@@ -144,26 +164,6 @@ export function ClinicDetailsComponent({ clinicId }: ClinicDetailsProps) {
     setBookingDate(date);
     setActiveTab("booking");
   };
-
-  // After the tab swap commits and layout settles, restore the tabs strip
-  // to roughly the same on-screen position it occupied at click time. This
-  // keeps the user anchored to the same visual spot instead of being
-  // yanked to the top by the browser's scroll clamp.
-  useEffect(() => {
-    if (pendingScrollAnchor.current === null || !tabsRef.current) return;
-    const el = tabsRef.current;
-    const anchor = pendingScrollAnchor.current;
-    pendingScrollAnchor.current = null;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        const delta = rect.top - anchor;
-        if (Math.abs(delta) > 1) {
-          window.scrollBy({ top: delta, behavior: "auto" });
-        }
-      });
-    });
-  }, [activeTab]);
 
   return (
     <div className="space-y-6">
